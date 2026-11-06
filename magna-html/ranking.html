@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Ranking</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+.pod{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:14px;align-items:end;margin:8px 0 26px}
+.pc{position:relative;background:linear-gradient(180deg,var(--tint,#1b2260),var(--card) 75%);border:1px solid var(--line);border-radius:24px;padding:22px 16px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;animation:rkIn .5s cubic-bezier(.2,.9,.2,1) both}
+.pc.p1{padding-top:34px;border-color:rgba(255,210,63,.55);box-shadow:0 18px 50px rgba(255,210,63,.12)}
+.pc .ps{position:absolute;top:12px;left:14px;font:900 22px/1 Archivo,sans-serif;font-stretch:125%;color:var(--muted)}.pc.p1 .ps{color:var(--yellow);font-size:30px}.pc.p2 .ps{color:#d6dbe8}.pc.p3 .ps{color:#e3a36b}
+.pc b{font-size:17px;text-transform:uppercase;font-stretch:115%;overflow-wrap:anywhere;line-height:1.15}.pc small{color:var(--muted);font-size:13px}
+.pc .big{font:900 34px/1 Archivo,sans-serif;font-stretch:125%}.pc.p1 .big{font-size:42px;color:var(--yellow)}
+.av{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:#191f3c;border:3px solid rgba(255,255,255,.25);font:900 24px Archivo,sans-serif;color:var(--muted);overflow:hidden}.pc.p1 .av{width:88px;height:88px;border-color:var(--yellow)}
+.av img{width:100%;height:100%;object-fit:cover}
+.pc .cr{margin:0}
+@keyframes rkIn{from{opacity:0;transform:translateY(16px)}}
+.rt td{vertical-align:middle}.rt .who{display:flex;align-items:center;gap:12px;min-width:0}.rt .who .cr,.rt .who .av{width:36px;height:36px;font-size:12px;border-width:2px;flex:none}.rt .who b{display:block}.rt .who small{color:var(--muted);font-size:12px}
+.rt .pos{font:900 18px Archivo,sans-serif;font-stretch:125%;color:var(--muted);width:48px}
+.tier{display:inline-block;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.bar2{height:6px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden;min-width:70px}.bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple))}
+.lead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.note{color:var(--muted);font-size:14px;margin:18px 0 0}
+.em{color:var(--muted)}
+.hide-s{}
+@media(max-width:700px){.pod{grid-template-columns:1fr;gap:10px}.pc{flex-direction:row;text-align:left;padding:14px 16px 14px 52px;align-items:center}.pc.p1{padding-top:14px;order:-1}.pc .ps{top:50%;transform:translateY(-50%)}.pc .sc{margin-left:auto;text-align:right}.pc .big{font-size:26px}.pc.p1 .big{font-size:30px}.av,.pc.p1 .av{width:52px;height:52px;font-size:18px}.pc .txt{min-width:0}.hide-s{display:none}td,th{padding:10px 8px}}
+</style></head>
+<body><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap"><div class="eyebrow mono">Comunidad</div><h1 class="x">Ranking</h1><p class="sub">Los mejores de Magna Sports: equipos por nivel, jugadores por media y miembros por Bits. Se actualiza solo con cada resultado.</p>
+<div class="chips" id="tabs" role="tablist"></div>
+<div id="pod" class="pod"></div><div id="list"></div><p class="note" id="note"></p>
+<p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella. Los Bits son una moneda ficticia sin valor real.</p></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="ranking.js" defer></script></body></html>

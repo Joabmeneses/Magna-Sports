@@ -178,10 +178,10 @@ span.p{position:absolute;width:9px;height:14px;border-radius:2px}
 <header>
 <div class="wrap hd">
 <div class="logo x"><i></i>Magna Arena</div>
-<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="champions.html" class="on">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html" class="on">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
 <a class="pill o mono enter" href="admin.html" style="padding:9px 14px">Administración</a>
 </div>
-</header>
+</header><script src="nav.js"></script>
 <main class="wrap">
 <section class="top">
 <div class="tag mono"><i class="lv"></i><span id="ctag">Champions · Fase de liga</span></div>
@@ -208,7 +208,7 @@ span.p{position:absolute;width:9px;height:14px;border-radius:2px}
 </main>
 <div id="fx"></div>
 <div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="champions-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="champions-data.js"></script>
 <script>
 (function(){
 var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};

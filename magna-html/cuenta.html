@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Mi cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+.acw{max-width:880px}
+.lg{max-width:440px;margin:30px auto 0;background:radial-gradient(90% 60% at 50% 0,rgba(139,92,246,.25),transparent 70%),var(--card);border:1px solid var(--line);border-radius:28px;padding:28px}
+.lg img{height:64px;width:auto;display:block;margin-bottom:12px;filter:drop-shadow(0 0 14px rgba(255,140,0,.35))}
+.lg h2{margin:0 0 6px;font-size:30px}.lg .msg{min-height:1.3em;color:var(--red);font-size:14px;margin:8px 0}.lg .msg.ok{color:var(--green)}
+.code{letter-spacing:.4em;font:700 22px "JetBrains Mono",monospace;text-align:center}
+.top2{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:10px}
+.bal{position:relative;overflow:hidden;margin-top:22px;border-radius:28px;padding:clamp(20px,4vw,32px);background:radial-gradient(80% 90% at 85% 10%,rgba(255,210,63,.28),transparent 60%),linear-gradient(135deg,#2a1c6e,#141a3d);border:1px solid rgba(255,210,63,.35)}
+.bal small{display:block;color:#d6d9ea;font:500 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.bal b{display:flex;align-items:center;gap:14px;font:900 clamp(48px,11vw,84px)/1 Archivo,sans-serif;font-stretch:120%;margin:10px 0 6px;font-variant-numeric:tabular-nums}
+.bal b i{width:.62em;height:.62em;border-radius:50%;background:linear-gradient(135deg,#ffd23f,#ff9d00);box-shadow:inset 0 0 0 4px rgba(0,0,0,.15),0 0 24px rgba(255,190,40,.5);flex:none}
+.bal .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn2{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 18px;font:700 14px Archivo,sans-serif;text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--fg);cursor:pointer}
+.btn2.o{background:var(--orange);border-color:var(--orange);color:#fff}.btn2:hover{border-color:var(--purple)}
+.pl{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px}
+.pl .md{font:900 54px/1 Archivo,sans-serif;font-stretch:125%;color:var(--c)}.pl h3{margin:0;font-size:20px}
+.tb2{display:inline-block;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 10px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.stl{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.stl span{background:rgba(255,255,255,.06);border-radius:12px;padding:6px 10px;font-size:13px}
+.bets{display:grid;gap:8px;margin-top:10px}
+.bt{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;animation:up .35s both}
+.bt b{font-size:15px}.bt small{color:var(--muted);font-size:12.5px}.bt .r{text-align:right}
+.chip2{display:inline-block;border-radius:999px;padding:4px 10px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.chip2.open{background:rgba(255,90,54,.16);color:var(--orange)}.chip2.won{background:rgba(46,229,157,.16);color:var(--green)}.chip2.lost{background:rgba(255,77,109,.14);color:var(--red)}.chip2.refund,.chip2.cash{background:rgba(255,255,255,.08);color:#c9cde0}
+.em2{color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:22px;text-align:center}
+</style></head>
+<body><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap acw"><div class="eyebrow mono">Comunidad</div><h1 class="x">Mi cuenta</h1><div id="app"><p class="sub">Cargando…</p></div>
+<p class="foot">Los Bits son una moneda ficticia sin valor real. Magna Sports es una comunidad independiente y gratuita, no afiliada a Supercell.</p></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js"></script><script src="accounts.js"></script><script src="live.js" defer></script>
+<script>
+(function () {
+  var A = ACCOUNTS, app = document.getElementById('app'), h = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  var ST = { open: 'En juego', won: 'Ganada', lost: 'Perdida', refund: 'Devuelta', cash: 'Retirada' };
+  function fmt(n) { return Number(n || 0).toLocaleString('es'); }
+  function login() {
+    app.innerHTML = ''; var c = h('div', 'lg'), im = h('img'); im.src = 'logo.png'; im.alt = ''; c.appendChild(im); c.appendChild(h('h2', 'x', 'Entrar')); c.appendChild(h('p', 'sub', 'Usa el usuario y el código de 6 dígitos que te dio la administración.'));
+    var f = h('form'), l1 = h('label', 'f', 'Usuario'), us = h('input', 'in'); us.autocomplete = 'username'; us.autocapitalize = 'none'; us.spellcheck = false; us.id = 'u'; l1.appendChild(us); f.appendChild(l1);
+    var l2 = h('label', 'f', 'Código'), cd = h('input', 'in code'); cd.type = 'password'; cd.inputMode = 'numeric'; cd.maxLength = 6; cd.autocomplete = 'one-time-code'; cd.id = 'c'; cd.placeholder = '••••••'; l2.appendChild(cd); f.appendChild(l2);
+    var m = h('p', 'msg'), go = h('button', 'btn', 'Entrar'); go.type = 'submit'; f.appendChild(m); f.appendChild(go); c.appendChild(f); var tc = h('p', 'sub'); tc.style.cssText = 'font-size:13px;margin-top:14px'; tc.innerHTML = 'Al entrar aceptas los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.'; c.appendChild(tc); app.appendChild(c);
+    f.onsubmit = function (e) { e.preventDefault(); var u = us.value.trim().toLowerCase(), k = cd.value.replace(/\D/g, ''); if (u.length < 3) { m.textContent = 'Escribe tu usuario.'; return; } if (k.length !== 6) { m.textContent = 'El código tiene 6 dígitos.'; return; }
+      go.disabled = true; m.className = 'msg ok'; m.textContent = 'Entrando…'; A.login(u, k).then(show, function (er) { go.disabled = false; m.className = 'msg'; m.textContent = er.message || 'No se pudo entrar.'; }); };
+    us.focus();
+  }
+  function show() {
+    Promise.all([A.me(), A.myBets().catch(function () { return []; })]).then(function (r) { var acc = r[0], bets = r[1]; if (!acc) return login(); draw(acc, bets); sub(acc); });
+  }
+  function draw(acc, bets) {
+    app.innerHTML = ''; var tp = h('div', 'top2'); tp.appendChild(h('p', 'sub', 'Hola, ' + acc.display_name + ' · usuario ' + acc.username)); var out = h('button', 'btn2', 'Salir'); out.type = 'button'; out.onclick = function () { A.logout().then(login); }; tp.appendChild(out); app.appendChild(tp);
+    var bl = h('div', 'bal'); bl.appendChild(h('small', null, 'Tu saldo')); var b = h('b'); b.appendChild(h('i')); b.appendChild(document.createTextNode(fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Bits'));
+    var ac = h('div', 'acts'), ap = h('a', 'btn2 o', 'Ir a Apuestas'); ap.href = 'apuestas.html'; ac.appendChild(ap); if (acc.role === 'admin') { var pn = h('a', 'btn2', 'Ir al panel'); pn.href = 'admin.html'; ac.appendChild(pn); } bl.appendChild(ac); app.appendChild(bl);
+    if (acc.player_id) { var p = MAGNA.by(MAGNA.S.players, acc.player_id); if (p) { var x = MAGNA.playerStats()[p.id] || {}, tr = MAGNA.tierOf(x.media), t = MAGNA.by(MAGNA.S.teams, p.teamId), pl = h('div', 'pl'), md = h('div', 'md', x.media == null ? '—' : x.media); md.style.setProperty('--c', tr.color); pl.appendChild(md);
+      var w = h('div'); w.appendChild(h('h3', 'x', p.name)); var sb = h('p', 'sub', (t ? t.name : 'Agente libre') + '  '); sb.style.margin = '4px 0'; var bd = h('span', 'tb2', tr.name); bd.style.setProperty('--c', tr.color); sb.appendChild(bd); w.appendChild(sb);
+      var sl = h('div', 'stl'); [['Partidos', x.pj || 0], ['Títulos', (x.titles || []).length], ['Récord', (x.w || 0) + 'V · ' + (x.l || 0) + 'D'], ['Victorias vs fuertes', x.topW || 0], ['Nota media', x.nota == null ? '—' : String(x.nota).replace('.', ',')], ['Goles', x.g || 0], ['MVP', x.mvp || 0]].forEach(function (k) { sl.appendChild(h('span', null, k[0] + ': ' + k[1])); }); w.appendChild(sl); pl.appendChild(w); app.appendChild(pl); } }
+    app.appendChild(h('h2', 'x', 'Mis apuestas'));
+    var bs = h('div', 'bets'); if (!bets.length) bs.appendChild(h('div', 'em2', 'Todavía no has apostado. Entra a Apuestas y elige un partido.'));
+    bets.forEach(function (x, i) { var m = MAGNA.by(MAGNA.S.matches, x.match_id), r = h('div', 'bt'); r.style.animationDelay = Math.min(i, 10) * 30 + 'ms'; var l = h('div'); l.appendChild(h('b', null, m ? MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) : 'Partido #' + x.match_id));
+      l.appendChild(h('small', null, ' · Gana ' + (m ? MAGNA.teamName(x.side === 'h' ? m.home : m.away) : '') + ' @' + String(x.odds).replace('.', ',') + ' · ' + new Date(x.created_at).toLocaleDateString('es', { day: 'numeric', month: 'short' }))); r.appendChild(l);
+      var rr = h('div', 'r'); rr.appendChild(h('span', 'chip2 ' + x.status, ST[x.status] || x.status)); rr.appendChild(h('small', null, ' ' + fmt(x.stake) + ' → ' + (x.status === 'open' ? fmt(Math.round(x.stake * x.odds)) + ' posible' : fmt(x.payout || 0)))); r.appendChild(rr); bs.appendChild(r); });
+    app.appendChild(bs);
+  }
+  var subbed = false;
+  function sub(acc) { if (subbed) return; subbed = true; window.MAGNA_SB().then(function (c) { var t = null, re = function () { clearTimeout(t); t = setTimeout(show, 300); };
+    c.channel('mi-cuenta').on('postgres_changes', { event: '*', schema: 'public', table: 'bets', filter: 'account_id=eq.' + acc.id }, re).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'accounts', filter: 'id=eq.' + acc.id }, re).subscribe(); }); }
+  if (MAGNA.cloud.source !== 'cloud') { app.innerHTML = ''; app.appendChild(h('div', 'em2', 'No se pudo conectar. Revisa tu internet y recarga la página.')); return; }
+  show();
+})();
+</script>
+</body></html>

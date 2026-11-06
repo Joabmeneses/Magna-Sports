@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Magna Arena · Mundial</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--blue:#3b4bff;--orange:#ff5a36;--purple:#8b5cf6;--green:#2ee59d;--red:#ff4d5e;--gold:#ffd23f;--card:#0f1326;--card2:#141a33;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 Archivo,system-ui,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(60% 40% at 50% 0%,rgba(139,92,246,.18),transparent 70%),radial-gradient(40% 30% at 100% 10%,rgba(255,90,54,.08),transparent 70%)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px;position:relative}
+.mono{font:500 12px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.x{font-stretch:125%;font-weight:900;text-transform:uppercase}
+header{border-bottom:1px solid var(--line);position:relative}
+.hd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:18px;gap:10px}
+.logo{display:flex;align-items:center;gap:12px;font-size:clamp(22px,6.6vw,34px);white-space:nowrap;color:var(--fg);text-decoration:none}
+.logo i{width:16px;height:16px;border-radius:50%;background:var(--orange)}
+nav{order:3;width:100%;display:flex;gap:26px;padding:10px 4px 16px;overflow-x:auto}
+nav a{color:var(--fg);text-decoration:none;font-weight:600;font-size:17px;white-space:nowrap;opacity:.8}
+nav a:hover{opacity:1}nav a.on{opacity:1;color:var(--orange)}
+.enter{border:1px solid var(--orange);color:var(--orange);text-decoration:none;border-radius:999px;padding:9px 14px}
+.top{padding:34px 0 10px}
+.tag{display:inline-flex;align-items:center;gap:10px;color:var(--muted)}
+.lv{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;flex:none;animation:blink 1.3s ease-in-out infinite}
+@keyframes blink{50%{opacity:.15}}
+h1{margin:14px 0 6px;font-size:clamp(40px,11vw,96px);line-height:.95;background:linear-gradient(100deg,#fff 0%,#c9b8ff 55%,var(--orange) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tn{margin:0 0 8px;font-size:clamp(18px,4.6vw,26px);color:var(--fg)}
+.sub{margin:0;color:var(--muted);max-width:620px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.chip{border:1px solid var(--line);background:color-mix(in srgb,var(--fg) 5%,transparent);color:var(--fg);font:600 14px Archivo,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer}
+.chip.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:22px 0 6px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.stat b{display:block;font:900 clamp(22px,6vw,32px)/1 Archivo,sans-serif;font-stretch:115%}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:10px}
+.stat.hl b{color:var(--orange)}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px;margin:22px 0 18px;background:var(--card)}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 14px Archivo,sans-serif;padding:10px 18px;border-radius:999px;cursor:pointer;transition:background-color .25s,color .25s}
+.tabs button.on{background:var(--orange);color:#fff}
+.leg{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:13px;margin:0 0 14px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+/* grupos */
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px}
+.gc{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:22px;padding:16px;position:relative;overflow:hidden;animation:up .5s cubic-bezier(.2,.9,.2,1) backwards}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.gc::after{content:attr(data-l);position:absolute;right:-6px;top:-30px;font:900 130px/1 Archivo,sans-serif;font-stretch:125%;color:rgba(139,92,246,.09);pointer-events:none}
+.gh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;z-index:1}
+.gh h3{margin:0;font-size:22px}
+.gh h3 em{font-style:normal;color:var(--orange)}
+.gh small{color:var(--muted)}
+.gt{width:100%;border-collapse:collapse;position:relative;z-index:1;font-variant-numeric:tabular-nums}
+.gt th{font:500 10px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--muted);text-align:center;padding:6px 4px;border-bottom:1px solid var(--line)}
+.gt th:nth-child(2){text-align:left}
+.gt td{padding:8px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.gt td.t{text-align:left;width:100%}
+.gt tr.q td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+.gt td.p{font-weight:900;color:var(--gold)}
+.tm{display:flex;align-items:center;gap:10px;min-width:0;font-weight:700}
+.tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font:900 11px Archivo,sans-serif;color:#fff;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.12)}
+.gm{margin-top:12px;position:relative;z-index:1}
+.gm summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none;display:flex;align-items:center;gap:6px}
+.gm summary::-webkit-details-marker{display:none}
+.gm summary::before{content:"▸";transition:transform .2s}.gm[open] summary::before{transform:rotate(90deg)}
+.ml{display:grid;gap:6px;margin-top:8px}
+.mr{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:12px;padding:8px 10px;font-size:13px}
+.mr .h{justify-content:flex-end;text-align:right}
+.mr .s{font:800 14px Archivo,sans-serif;min-width:52px;text-align:center}
+.mr .s.pe{color:var(--muted);font:500 10px "JetBrains Mono",monospace;letter-spacing:.06em}
+.mr .s.lvm{color:var(--orange)}
+.mr .tm{gap:6px;font-weight:600}.mr .cr{width:22px;height:22px;font-size:9px}
+/* eliminatoria */
+.brw{overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch}
+.br{display:flex;gap:18px;min-width:max-content;align-items:stretch}
+.rd{width:250px;display:flex;flex-direction:column}
+.rd h4{margin:0 0 12px;font-size:13px;color:var(--muted)}
+.rd h4.cur{color:var(--orange)}
+.rm{display:flex;flex-direction:column;justify-content:space-around;gap:12px;flex:1}
+.mt{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:up .45s cubic-bezier(.2,.9,.2,1) backwards}
+.mt.live{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange),0 0 24px rgba(255,90,54,.25)}
+.mt .r{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.mt .r+.r{border-top:1px solid var(--line)}
+.mt .r .tm{flex:1}
+.mt .r b.sc{font:900 16px Archivo,sans-serif;min-width:20px;text-align:right}
+.mt .r.w{background:linear-gradient(90deg,rgba(46,229,157,.12),transparent)}
+.mt .r.w .tm span{color:#fff}.mt .r.w b.sc{color:var(--green)}
+.mt .r.l{opacity:.55}
+.mt .r .ph{color:var(--muted);font-style:italic;font-weight:500}
+.mt .ft{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(255,255,255,.03);color:var(--muted);font-size:10px}
+.mt.tbd .r{color:var(--muted)}
+.champ{width:250px;display:flex;flex-direction:column;justify-content:center}
+.cc{border-radius:22px;padding:22px 18px;text-align:center;background:radial-gradient(120% 90% at 50% 0%,rgba(255,210,63,.25),transparent 70%),var(--card);border:1px solid rgba(255,210,63,.45)}
+.cc .tr{font-size:52px;line-height:1;display:block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-4deg)}}
+.cc .cr{width:70px;height:70px;margin:12px auto 10px;font-size:22px;border-color:var(--gold)}
+.cc b{display:block;font:900 22px Archivo,sans-serif;font-stretch:120%;text-transform:uppercase}
+.cc small{color:var(--gold)}
+.note{color:var(--muted);font-size:13px;margin:14px 0 0}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:22px;padding:40px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-size:20px;margin-bottom:6px}
+.foot{color:var(--muted);font-size:12px;margin:40px 0 30px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:640px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.rd,.champ{width:220px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap hd">
+<a class="logo x" href="index.html"><i></i>Magna Arena</a>
+<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html" class="on">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<a class="mono enter" href="admin.html">Administración</a>
+</div>
+</header><script src="nav.js"></script>
+<main class="wrap">
+<section class="top">
+<div class="tag mono"><i class="lv"></i><span id="tag">Mundial</span></div>
+<h1 class="x">Mundial</h1>
+<p class="tn x" id="tn"></p>
+<p class="sub" id="ds">Fase de grupos y eliminatoria directa. Las tablas y los cruces se actualizan con cada resultado que registra el administrador.</p>
+<div class="chips" id="chips"></div>
+<div class="stats" id="stats"></div>
+<div class="tabs" role="tablist"><button data-p="g" class="on" role="tab">Fase de grupos</button><button data-p="k" role="tab">Eliminatoria</button></div>
+</section>
+<section id="pg"></section>
+<section id="pk" hidden></section>
+<p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+</main>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script>
+<script>
+(function(){
+'use strict';
+var S=MAGNA.S,$=function(s){return document.querySelector(s)};
+var TINT=['#6d28d9','#1d4ed8','#be185d','#b45309','#047857','#7c3aed','#0e7490','#c2410c'];
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function crest(id){var c=el('span','cr'),u=id!=null?MAGNA.crestUrl(id):null,n=id!=null?MAGNA.teamName(id):'?';if(u)c.style.backgroundImage='url('+u+')';else{c.textContent=n.slice(0,2).toUpperCase();c.style.background=id!=null?TINT[id%TINT.length]:'#2a3050'}return c}
+function team(id,ph){var d=el('div','tm');d.appendChild(crest(id));var s=el('span',ph&&id==null?'ph':'',id!=null?MAGNA.teamName(id):(ph||'Por definir'));if(ph&&id!=null){s.title=ph}d.appendChild(s);return d}
+function when(m){if(m.status==='live')return['En vivo','lvm'];if(m.status==='cancelled')return['Cancelado','pe'];if(!m.at)return['Sin fecha','pe'];var d=new Date(m.at.replace(' ','T')+'Z');return[d.toLocaleDateString('es',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}),'pe']}
+function rname(n){return n===2?'Final':n===4?'Semifinales':n===8?'Cuartos de final':n===16?'Octavos de final':'Ronda de '+n}
+var LIST=S.tournaments.filter(function(c){return c.format==='groups_knockout'&&c.status!=='draft'});
+var cur=null,tab=null;
+if(!LIST.length){$('#tn').textContent='Próximamente';$('.tabs').hidden=true;var e=el('div','empty');e.appendChild(el('b',null,'Todavía no hay un Mundial en juego'));e.appendChild(document.createTextNode('Cuando el administrador cree y active un torneo con formato Mundial, aquí verás sus grupos y la eliminatoria.'));$('#pg').appendChild(e);return}
+if(LIST.length>1)LIST.forEach(function(c,i){var b=el('button','chip',c.name);b.onclick=function(){pick(c)};b.dataset.id=c.id;$('#chips').appendChild(b)});
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){show(b.dataset.p)}});
+function show(p){tab=p;document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.p===p)});$('#pg').hidden=p!=='g';$('#pk').hidden=p!=='k'}
+function ms(c){return S.matches.filter(function(m){return m.type==='tournament'&&m.cid===c.id})}
+function pick(c){cur=c;document.querySelectorAll('.chip').forEach(function(b){b.classList.toggle('on',Number(b.dataset.id)===c.id)});
+ var st=c.state,ph=!st?'Sorteo pendiente':st.phase==='groups'?'Fase de grupos':st.phase==='done'?'Finalizado':st.round;
+ $('#tag').textContent='Mundial · '+ph;$('#tn').textContent=c.name;$('#ds').textContent=c.description||'Fase de grupos y eliminatoria directa. Las tablas y los cruces se actualizan con cada resultado que registra el administrador.';
+ var all=ms(c).filter(function(m){return m.status!=='cancelled'}),done=all.filter(function(m){return m.status==='finished'}).length,q=c.gcfg?c.gcfg.q:2;
+ var sx=$('#stats');sx.innerHTML='';[[c.teamIds.length,'Equipos'],[c.gcfg?c.gcfg.n:0,'Grupos'],[q+' por grupo','Clasifican'],[done+'/'+all.length,'Partidos jugados',1]].forEach(function(k){var d=el('div','stat'+(k[2]?' hl':''));d.appendChild(el('b',null,k[0]));d.appendChild(el('span','mono',k[1]));sx.appendChild(d)});
+ groups(c);bracket(c);show(tab||(st&&(st.phase==='knockout'||st.phase==='done')?'k':'g'))}
+function groups(c){var pg=$('#pg');pg.innerHTML='';
+ if(!c.groups){var e=el('div','empty');e.appendChild(el('b',null,'Sorteo pendiente'));e.appendChild(document.createTextNode('Los grupos aparecerán cuando el administrador genere el calendario.'));pg.appendChild(e);return}
+ var q=c.gcfg.q,lg=el('div','leg');lg.innerHTML='<span><i style="background:var(--green)"></i>Clasifica a la eliminatoria ('+q+' por grupo)</span><span>Victoria = 3 pts · No hay empates</span>';pg.appendChild(lg);
+ var gw=el('div','groups');pg.appendChild(gw);
+ c.groups.forEach(function(g,gi){var card=el('article','gc');card.dataset.l=g.name;card.style.animationDelay=gi*60+'ms';
+  var gh=el('div','gh'),h3=el('h3','x');h3.innerHTML='Grupo <em></em>';h3.querySelector('em').textContent=g.name;gh.appendChild(h3);gh.appendChild(el('small','mono',g.teamIds.length+' equipos'));card.appendChild(gh);
+  var t=el('table','gt'),hr=el('tr');['#','Equipo','PJ','G','P','DG','Pts'].forEach(function(x){hr.appendChild(el('th',null,x))});t.appendChild(hr);
+  MAGNA.groupTable(c,g).forEach(function(r){var tr=el('tr',r.pos<=q?'q':'');tr.appendChild(el('td',null,r.pos));var td=el('td','t');td.appendChild(team(r.team_id));tr.appendChild(td);[r.pj,r.g,r.p,(r.dg>0?'+':'')+r.dg].forEach(function(v){tr.appendChild(el('td',null,v))});tr.appendChild(el('td','p',r.pts));t.appendChild(tr)});
+  card.appendChild(t);
+  var gm=ms(c).filter(function(m){return m.group===g.name}),dt=el('details','gm'),sm=el('summary',null,'Partidos del grupo ('+gm.filter(function(m){return m.status==='finished'}).length+'/'+gm.length+' jugados)');dt.appendChild(sm);
+  var ml=el('div','ml');gm.forEach(function(m){var r=el('div','mr'),a=team(m.home);a.classList.add('h');r.appendChild(a);var w=when(m),s=m.status==='finished'?el('span','s',m.hs+' - '+m.as):m.status==='live'?el('span','s lvm',(m.hs||0)+' - '+(m.as||0)):el('span','s '+w[1],w[0]);r.appendChild(s);r.appendChild(team(m.away));ml.appendChild(r)});dt.appendChild(ml);card.appendChild(dt);gw.appendChild(card)})}
+function bracket(c){var pk=$('#pk');pk.innerHTML='';var st=c.state;
+ if(!c.groups){var e=el('div','empty');e.appendChild(el('b',null,'Eliminatoria por definir'));e.appendChild(document.createTextNode('Primero se sortean y se juegan los grupos.'));pk.appendChild(e);return}
+ var seeds=MAGNA.groupSeeds(c),n=seeds.length,size=1;while(size<n)size*=2;
+ var rounds=[];for(var s=size;s>=2;s/=2)rounds.push(rname(s));
+ var ko=ms(c).filter(function(m){return!m.group&&m.status!=='cancelled'}),prov=!st||st.phase==='groups';
+ var lg=el('div','leg');lg.innerHTML=prov?'<span>Cruces provisionales según la tabla actual de los grupos. Se confirman al terminar la fase de grupos.</span>':'<span><i style="background:var(--green)"></i>Gana y avanza</span><span><i class="lv" style="border-radius:50%"></i>Jugando ahora</span>';pk.appendChild(lg);
+ var w=el('div','brw'),br=el('div','br');w.appendChild(br);pk.appendChild(w);var k=0;
+ rounds.forEach(function(rn,ri){var col=el('div','rd'),h4=el('h4','mono'+(st&&st.round===rn?' cur':''),rn);col.appendChild(h4);var box=el('div','rm');col.appendChild(box);
+  var rm=ko.filter(function(m){return m.round===rn});
+  if(rm.length){rm.forEach(function(m){box.appendChild(mcard(m,null,k++))});if(st&&st.round===rn&&st.byes)st.byes.forEach(function(t){box.appendChild(bye(t,k++))})}
+  else if(ri===0&&prov){var byes=seeds.slice(0,size-n),rest=seeds.slice(size-n);for(var i=0;i<rest.length/2;i++)box.appendChild(mcard(null,[rest[i],rest[rest.length-1-i]],k++));byes.forEach(function(x){box.appendChild(bye(x.t,k++,x.label))})}
+  else{var cnt=size/Math.pow(2,ri+1);for(var j=0;j<cnt;j++){var d=el('div','mt tbd');d.appendChild(row(null,'Por definir'));d.appendChild(row(null,'Por definir'));box.appendChild(d)}}
+  br.appendChild(col)});
+ var ch=el('div','champ'),cc=el('div','cc');cc.appendChild(el('span','tr','🏆'));
+ if(st&&st.phase==='done'){cc.appendChild(crest(st.champion));cc.appendChild(el('b',null,MAGNA.teamName(st.champion)));cc.appendChild(el('small','mono','Campeón'))}else{cc.appendChild(el('b',null,'¿Quién será?'));cc.appendChild(el('small','mono','Campeón por definir'))}
+ ch.appendChild(cc);br.appendChild(ch);
+ var nt=el('p','note','Series '+(c.best_of>1?'al mejor de '+c.best_of:'a 1 partida')+'. Si el número de clasificados no es potencia de 2, los mejores primeros de grupo pasan directo a la siguiente ronda.');pk.appendChild(nt)}
+function row(id,ph,score,cls){var r=el('div','r'+(cls?' '+cls:''));r.appendChild(team(id,ph));if(score!=null)r.appendChild(el('b','sc',score));return r}
+function mcard(m,proj,i){var d=el('div','mt'+(m&&m.status==='live'?' live':''));d.style.animationDelay=i*50+'ms';
+ if(proj){d.appendChild(row(proj[0].t,proj[0].label));d.appendChild(row(proj[1].t,proj[1].label));var f=el('div','ft mono');f.appendChild(el('span',null,proj[0].label+' vs '+proj[1].label));f.appendChild(el('span',null,'Provisional'));d.appendChild(f);return d}
+ var fin=m.status==='finished',lv=m.status==='live',hw=fin&&m.hs>m.as;d.appendChild(row(m.home,null,fin||lv?m.hs||0:null,fin?(hw?'w':'l'):''));d.appendChild(row(m.away,null,fin||lv?m.as||0:null,fin?(hw?'l':'w'):''));
+ var f=el('div','ft mono'),w=when(m);f.appendChild(el('span',null,fin?'Terminado':w[0]));if(m.status==='live')f.lastChild.style.color='var(--orange)';d.appendChild(f);return d}
+function bye(t,i,label){var d=el('div','mt');d.style.animationDelay=i*50+'ms';d.appendChild(row(t,label,null,'w'));var f=el('div','ft mono');f.appendChild(el('span',null,'Pase directo'));d.appendChild(f);return d}
+pick(LIST.filter(function(c){return c.status==='active'})[0]||LIST[0]);
+})();
+</script>
+</body>
+</html>

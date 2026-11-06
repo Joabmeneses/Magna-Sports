@@ -25,8 +25,31 @@
       }
     });
   }
+  var CATN = { torneo: 'Torneo', liga: 'Liga', champions: 'Champions', otro: 'Otro' };
+  function histDetail(e) {
+    M.modal(function (b) {
+      b.appendChild(h('h3', 'x', e.name)); b.appendChild(h('p', 'sub', (e.mundial ? 'Mundial' : CATN[e.cat] || 'Torneo') + (e.date ? ' · ' + e.date : '') + ' · Historial'));
+      if (e.champion) { var c = h('p', 'sub'); c.appendChild(h('b', null, '🏆 Campeón: ' + e.champion)); b.appendChild(c); }
+      var names = (e.champIds || []).map(function (id) { var p = MAGNA.by(MAGNA.S.players, id); return p ? p.name : null; }).filter(Boolean);
+      if (names.length) b.appendChild(h('p', 'sub', 'Jugadores campeones: ' + names.join(', ')));
+      b.appendChild(h('h2', 'x', 'Resultados')); var l = h('div', 'ml'); b.appendChild(l);
+      if (!(e.matches || []).length) l.appendChild(h('p', 'em', 'No hay marcadores registrados.'));
+      (e.matches || []).forEach(function (m) { var a = h('article', 'm'); a.style.gridTemplateColumns = '1fr auto'; var d = h('div'); d.appendChild(h('b', null, m.home + ' vs ' + m.away)); if (m.d) d.appendChild(h('small', null, m.d)); a.appendChild(d); a.appendChild(h('span', 'tt', m.hs + ' - ' + m.as)); l.appendChild(a); });
+    });
+  }
+  function drawHist(g) {
+    var L = ((window.MAGNA && MAGNA.S.history) || []).slice().sort(function (a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
+    if (!L.length) { g.appendChild(h('p', 'em', 'Todavía no hay torneos en el historial.')); return; }
+    L.forEach(function (e, i) {
+      var c = h('button', 'tc'); c.style.animationDelay = i * 50 + 'ms'; c.style.setProperty('--bar', COL[i % COL.length]); c.style.setProperty('--tint', M.tint(i));
+      var lg = h('div', 'lg mono'); lg.appendChild(h('span', null, e.mundial ? 'Mundial' : CATN[e.cat] || 'Torneo')); lg.appendChild(h('span', 'badge', e.date ? e.date.slice(0, 4) : 'Historial')); c.appendChild(lg);
+      var cr = h('div', 'cr'); cr.style.width = cr.style.height = '88px'; cr.style.fontSize = '34px'; cr.textContent = '🏆'; c.appendChild(cr);
+      c.appendChild(h('h3', 'x', e.name)); var rk = h('div', 'ranks'); [[e.champion || '—', 'Campeón'], [(e.matches || []).length, 'Partidos']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
+      c.onclick = function () { histDetail(e); }; g.appendChild(c);
+    });
+  }
   function draw() {
-    var g = document.getElementById('g'); g.innerHTML = ''; var items = cache[kind] || [];
+    var g = document.getElementById('g'); g.innerHTML = ''; if (kind === 'history') return drawHist(g); var items = cache[kind] || [];
     if (!items.length) { g.appendChild(h('p', 'em', 'Todavía no hay ' + (kind === 'leagues' ? 'ligas' : 'torneos') + ' activos.')); return; }
     items.forEach(function (it, i) {
       var c = h('button', 'tc'); c.style.animationDelay = i * 50 + 'ms'; c.style.setProperty('--bar', COL[i % COL.length]); c.style.setProperty('--tint', M.tint(i));
@@ -38,6 +61,7 @@
     });
   }
   var tabs = document.getElementById('tabs');
-  [['leagues', 'Ligas'], ['tournaments', 'Torneos']].forEach(function (k, i) { var b = h('button', 'chip' + (i ? '' : ' on'), k[1]); b.onclick = function () { kind = k[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === b); }); draw(); }; tabs.appendChild(b); });
+  [['leagues', 'Ligas'], ['tournaments', 'Torneos'], ['history', 'Historial']].forEach(function (k, i) { var b = h('button', 'chip' + (i ? '' : ' on'), k[1]); b.onclick = function () { kind = k[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === b); }); draw(); }; tabs.appendChild(b); });
+  if (/historial/.test(location.hash)) { kind = 'history'; [].forEach.call(tabs.children, function (x, i) { x.classList.toggle('on', i === 2); }); }
   Promise.all([M.get('/api/public/leagues'), M.get('/api/public/tournaments')]).then(function (r) { cache.leagues = r[0].items; cache.tournaments = r[1].items; draw(); });
 })();

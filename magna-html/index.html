@@ -116,8 +116,8 @@ nav a:hover{color:var(--orange)}
 .coins,.enter{display:inline-block}
 #theme{width:42px;height:42px}
 .mob{display:none}.desk{display:block}
-.others{display:grid;grid-template-columns:repeat(4,1fr);overflow:visible}
-.mc{flex:initial}
+.others{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}
+.mc{flex:initial;min-width:0}
 .banner{margin:8px 0 36px;border-radius:32px;padding:40px 48px 40px}
 }
 
@@ -328,11 +328,11 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <header>
 <div class="wrap hd">
 <div class="logo x"><i></i>Magna Arena</div>
-<nav><a href="index.html" class="on">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<nav><a href="index.html" class="on">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
 <div class="act"><a class="pill o mono enter" href="admin.html">Administración</a>
 </div>
 </div>
-</header>
+</header><script src="nav.js"></script>
 
 <main class="wrap" id="partidos"><div class="vac"><h1 class="x">Aún no hay partidos</h1><p>Cuando el administrador programe partidos en el panel, aparecerán aquí con marcador, reacciones y animaciones de gol.</p><a class="btn" href="admin.html">Ir al panel</a></div>
 
@@ -402,7 +402,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <p class="maphint mono">Toca el mapa para interactuar</p></div></div>
 <div class="pk" id="pk" hidden><div class="pkc" role="dialog" aria-modal="true" aria-label="Elegir reacción"><div class="pkh"><b class="x" id="pkt"></b><button id="pkx" aria-label="Cerrar">×</button></div><div class="pkb" id="pkb"></div><div class="pkg" id="pkg"></div></div></div>
 <div id="fx"></div><div id="ov"></div><div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="home-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script>
 <script>
 (function(){
 if(!window.__HOME_N){document.body.classList.add('vacio');return}

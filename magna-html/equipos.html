@@ -100,6 +100,12 @@ h1{margin:14px 0 8px;font-size:clamp(34px,9.5vw,72px);line-height:.98}
 .dh small{display:block;color:rgba(255,255,255,.65);margin-top:4px}
 .dh .lgc{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font:700 11px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:#fff}.dh .lgc i{width:8px;height:8px;border-radius:50%;background:var(--lc)}
 .sec{margin:18px 0 8px;color:rgba(255,255,255,.6)}
+.tro{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.tro div{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 2px}
+.tro b{display:block;font:800 18px Archivo,sans-serif;color:var(--gold)}.tro small{font:500 9px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.trl{display:grid;gap:6px;margin-top:8px}.trl div{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:14px;padding:9px 12px;font-size:14px}
+.trl i{font-style:normal}.trl em{font-style:normal;margin-left:auto;font:700 11px "JetBrains Mono",monospace;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em}
+
 .tbl{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
 .tbl div{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 2px}
 .tbl b{display:block;font:800 16px Archivo,sans-serif;font-variant-numeric:tabular-nums}.tbl small{font:500 9px "JetBrains Mono",monospace;letter-spacing:.1em;color:rgba(255,255,255,.6)}
@@ -143,10 +149,10 @@ h1{margin:14px 0 8px;font-size:clamp(34px,9.5vw,72px);line-height:.98}
 <header>
 <div class="wrap hd">
 <div class="logo x"><i></i>Magna Arena</div>
-<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html" class="on">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html" class="on">Equipos</a><a href="mercado.html">Fichajes</a></nav>
 
 </div>
-</header>
+</header><script src="nav.js"></script>
 <main class="wrap" id="top">
 <section class="top">
 <div class="tag mono"><i class="lv"></i>Directorio</div>
@@ -167,7 +173,7 @@ h1{margin:14px 0 8px;font-size:clamp(34px,9.5vw,72px);line-height:.98}
 <div class="sov" id="cm" hidden><div class="sh" role="dialog" aria-modal="true" aria-label="Comparación"><div class="shh"><button class="xb" data-c="cm" aria-label="Cerrar">×</button></div><div id="cmb"></div></div></div>
 <div id="fx"></div>
 <div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="equipos-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="equipos-data.js"></script>
 <script>
 (function(){
 var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
@@ -215,7 +221,7 @@ cnt($('#k1'),TEAMS.length);cnt($('#k2'),window.MAGNA_EQ.NLG);cnt($('#k3'),TEAMS.
 /* ---- tarjetas ---- */
 var flt='all',qs='',sortk='lg',cmp=false,pick=[],grid=$('#grid');
 TEAMS.forEach(function(t,i){var e=document.createElement('article');e.className='tc';e.tabIndex=0;e.setAttribute('role','button');e.dataset.n=t.n;e.style.setProperty('--lc',LGC[t.lg]);e.style.setProperty('--tc',COL[t.n]);
- e.innerHTML='<div class="tc-top"><span class="lg mono"><i></i>'+t.lg+'</span>'+(t.live?'<span class="lvb">● En vivo</span>':'')+'</div>'+crest(t)+'<h3 class="x"></h3><div class="ps"><span><b>#'+t.lp+'</b><small>Liga</small></span><span><b>#'+t.cp+'</b><small>Tabla</small></span></div><div class="form">'+formH(t.lr.f)+'</div><span class="sel">✓</span>';
+ e.innerHTML='<div class="tc-top"><span class="lg mono"><i></i>'+t.lg+'</span>'+(t.live?'<span class="lvb">● En vivo</span>':'')+'</div>'+crest(t)+'<h3 class="x"></h3><div class="ps"><span><b>#'+t.lp+'</b><small>Liga</small></span><span><b>#'+t.cp+'</b><small>Tabla</small></span><span><b>🏆 '+t.tr.length+'</b><small>Trofeos</small></span></div><div class="form">'+formH(t.lr.f)+'</div><span class="sel">✓</span>';
  $('h3',e).textContent=t.n;e.setAttribute('aria-label',t.n+', '+t.lg);
  function act(){if(cmp)togglePick(t,e);else openDetail(t)}
  e.addEventListener('click',act);e.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();act()}});t.el=e;grid.appendChild(e)});
@@ -235,12 +241,14 @@ function row(r,h){return['pj','g','p','gf','gc','dg','pts'].map(function(k){var 
 function openDetail(t){var sh=$('#dt .sh'),col=COL[t.n];sh.style.setProperty('--lc',LGC[t.lg]);
  var q=SQ[t.n];
  $('#db').innerHTML='<div class="dh" style="--tc:'+col+';--lc:'+LGC[t.lg]+'">'+crest(t)+'<div><h2 class="x"></h2><span class="lgc"><i></i>'+t.lg+' · puesto '+t.lp+' de '+t.ln+'</span><small>DT: '+(t.coach||'por asignar')+'</small></div></div>'
+ +'<div class="sec mono">Palmarés · '+t.tr.length+' trofeo'+(t.tr.length===1?'':'s')+'</div><div class="tro">'+window.MAGNA_EQ.TCATS.map(function(c){return'<div><b>'+t.tr.filter(function(x){return x.c===c[0]}).length+'</b><small>'+c[1]+'</small></div>'}).join('')+'</div><div class="trl" id="trl"></div>'
  +'<div class="sec mono">Tabla de '+t.lg+'</div><div class="tbl">'+row(t.lr)+'</div><div class="pl2" style="margin-top:10px"><span>Últimos partidos</span><div class="form">'+formH(t.lr.f)+'</div></div>'
  +'<div class="sec mono">Tabla general · puesto '+t.cp+' de '+TEAMS.length+'</div><div class="tbl">'+row(t.cr)+'</div><div class="pl2" style="margin-top:10px"><span>Últimos partidos</span><div class="form">'+formH(t.cr.f)+'</div></div>'
  +'<div class="sec mono">Próximos partidos</div><div class="nx" id="nx"></div>'
  +'<div class="sec mono">Plantilla</div><div class="sq" id="sq"></div><p class="cn" id="cn"></p>'
  +'<div class="lk"><a class="pri" href="ligas.html">Ver tabla de la liga</a><a href="champions.html">Tabla general</a><a href="calendario.html">Calendario</a></div>';
  $('#db h2').textContent=t.n;
+ var trl=$('#trl'),CN={};window.MAGNA_EQ.TCATS.forEach(function(c){CN[c[0]]=c[1]});t.tr.forEach(function(x){var d=document.createElement('div');d.innerHTML='<i>🏆</i><span></span><em></em>';$('span',d).textContent=x.n+(x.y?' · '+x.y:'');$('em',d).textContent=CN[x.c]||'Otro';trl.appendChild(d)});
  var nx=$('#nx');if(!t.nx.length)nx.innerHTML='<div><span>Sin partidos en las próximas 48 h.</span></div>';
  t.nx.forEach(function(f){var o=f.h===t.n?BY[f.a]:BY[f.h],d=document.createElement('div');d.innerHTML=crest(o)+'<span></span>'+(f.live?'<em class="lvt">● EN VIVO</em>':'<em>'+f.t+'</em>');$('span:nth-of-type(2)',d).textContent='vs '+o.n+' · '+f.c;nx.appendChild(d)});
  var sq=$('#sq');if(!q.length)sq.innerHTML='<div class="sr"><div class="i"><small>Este equipo todavía no tiene jugadores.</small></div></div>';q.forEach(function(p,i){var d=document.createElement('div');d.className='sr';d.style.animationDelay=i*55+'ms';d.innerHTML='<span class="sa" style="--tc:'+col+';display:grid;place-items:center;font:900 18px Archivo,sans-serif;color:#fff"></span><div class="i"><b></b><small></small></div><span class="rl mono"></span>';$('.sa',d).textContent=p.n.slice(0,2).toUpperCase();$('b',d).textContent=p.n;$('small',d).textContent=p.coach?'DT del equipo':'Jugador';$('.rl',d).textContent=p.slot==='starter'?'Titular':'Suplente';sq.appendChild(d)});$('#cn').textContent=q.length+' de 4 jugadores (3 titulares y 1 suplente).';

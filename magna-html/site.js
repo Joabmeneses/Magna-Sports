@@ -16,9 +16,9 @@ var M = (function () {
     ov.onclick = function (e) { if (e.target === ov) close(); }; document.addEventListener('keydown', k);
     var x = h('button', 'close', 'Cerrar'); x.onclick = close; b.appendChild(x); build(b, close); ov.appendChild(b); document.body.appendChild(ov);
   }
-  var L = [['index.html', 'Partidos'], ['ligas.html', 'Ligas'], ['competiciones.html', 'Torneos'], ['champions.html', 'Champions'], ['apuestas.html', 'Apuestas'], ['calendario.html', 'Calendario'], ['equipos.html', 'Equipos'], ['mercado.html', 'Fichajes']];
+  var L = [['index.html', 'Partidos'], ['ligas.html', 'Ligas'], ['competiciones.html', 'Torneos'], ['mundial.html', 'Mundial'], ['champions.html', 'Champions'], ['apuestas.html', 'Apuestas'], ['calendario.html', 'Calendario'], ['equipos.html', 'Equipos'], ['mercado.html', 'Fichajes']];
   var hd = document.getElementById('top');
-  if (hd) {
+  if (hd && !document.querySelector('header.mn')) {
     var w = h('div', 'wrap'), a = h('a', 'logo x'); a.href = 'index.html'; a.appendChild(h('i')); a.appendChild(document.createTextNode('Magna Arena')); w.appendChild(a);
     var n = h('nav'); L.forEach(function (x) { var l = h('a', location.pathname.split('/').pop() === x[0] ? 'on' : '', x[1]); l.href = x[0]; n.appendChild(l); }); w.appendChild(n);
     var e = h('a', 'enter', 'Administración'); e.href = 'admin.html'; w.appendChild(e); hd.appendChild(w);
