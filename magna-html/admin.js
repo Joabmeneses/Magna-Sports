@@ -58,7 +58,7 @@
           var t = { id: MAGNA.id(), name: n, info: (v.i || '').slice(0, 300), crest: img || null, budget: 0, coach: null }; S().teams.push(t); MAGNA.addNews('team_created', 'Nace un nuevo equipo: ' + n + '.'); commit('Equipo creado'); }); }, 'Crear');
     }, 'o')); b.appendChild(bar);
     b.appendChild(table(['Equipo', 'DT', 'Plantilla', 'Trofeos', 'Bits', ''], S().teams.map(function (t) { var c = by(S().players, t.coach), n = S().players.filter(function (p) { return p.teamId === t.id; }).length;
-      return [[M.crest(t.id, t.name, 34), ' ', h('b', null, t.name)], c ? c.name : 'por asignar', n + '/4', String((t.trophies || []).length), t.budget, [btn('Plantilla', function () { squadDlg(t.id); }), btn('Trofeos', function () { trophyDlg(t.id); }), btn('Editar', function () { editTeam(t); }), btn('Eliminar', function () { delTeam(t); }, 'd')]]; })));
+      return [[M.crest(t.id, t.name, 34), ' ', h('b', null, t.name)], c ? c.name : 'por asignar', n + '/4', String(MAGNA.teamTrophies(t.id).length), t.budget, [btn('Plantilla', function () { squadDlg(t.id); }), btn('Trofeos', function () { trophyDlg(t.id); }), btn('Página ↗', function () { window.open('equipo.html?id=' + t.id, '_blank'); }), btn('Editar', function () { editTeam(t); }), btn('Eliminar', function () { delTeam(t); }, 'd')]]; })));
   }
   // ---------- trofeos (palmarés) ----------
   function trophyDlg(tid) {
@@ -66,9 +66,10 @@
     dialog('Trofeos de ' + t.name, function (b) {
       var box = h('div'); b.appendChild(box);
       function draw() {
-        box.innerHTML = ''; var list = t.trophies || [];
-        box.appendChild(h('p', 'sub', list.length ? list.length + ' trofeo' + (list.length === 1 ? '' : 's') + ' · ' + CATS.map(function (c) { return c[1] + ': ' + list.filter(function (x) { return x.cat === c[0]; }).length; }).join(' · ') : 'Este equipo todavía no tiene trofeos.'));
-        box.appendChild(table(['Trofeo', 'Categoría', 'Temporada', ''], list.map(function (x) { return [h('b', null, x.name), catName(x.cat), x.season || '—', [btn('Quitar', function () { confirmBox('¿Quitar "' + x.name + '"?', 'Se borra del palmarés de ' + t.name + '.', 'Quitar', function () { t.trophies = list.filter(function (y) { return y !== x; }); MAGNA.save(); draw(); render(); }); }, 'd')]]; })));
+        box.innerHTML = ''; var list = t.trophies || [], all = MAGNA.teamTrophies(tid), SRC = { tournament: 'Automático · campeón del torneo', league: 'Automático · primero de la liga', history: 'Automático · historial' };
+        box.appendChild(h('p', 'sub', all.length ? all.length + ' trofeo' + (all.length === 1 ? '' : 's') + ' · ' + CATS.map(function (c) { return c[1] + ': ' + all.filter(function (x) { return x.cat === c[0]; }).length; }).join(' · ') : 'Este equipo todavía no tiene trofeos.'));
+        box.appendChild(h('p', 'hint', 'Los títulos se suman solos como trofeos: cuando un equipo es campeón de un torneo o del Mundial, termina primero en una liga finalizada o es campeón en el Historial. Aquí puedes añadir otros a mano.'));
+        box.appendChild(table(['Trofeo', 'Categoría', 'Temporada', ''], all.map(function (x) { var man = x.id != null && list.some(function (y) { return y.id === x.id; }); return [h('b', null, (MAGNA.TROPHY_ICON[x.cat] || '🏆') + ' ' + x.name), catName(x.cat), x.season || '—', !man ? h('span', 'hint', x.auto ? SRC[x.auto] : '') : [btn('Quitar', function () { x = list.filter(function (y) { return y.id === x.id; })[0]; confirmBox('¿Quitar "' + x.name + '"?', 'Se borra del palmarés de ' + t.name + '.', 'Quitar', function () { t.trophies = list.filter(function (y) { return y !== x; }); MAGNA.save(); draw(); render(); }); }, 'd')]]; })));
         var f = h('form'), r = h('div', 'bar2'), nm = h('input', 'in'), cs = h('select', 'in'), se = h('input', 'in'), err = h('p', 'err');
         nm.placeholder = 'Nombre del trofeo (ej. Liga Magna)'; nm.maxLength = 40; se.placeholder = 'Temporada (opcional)'; se.maxLength = 20;
         CATS.forEach(function (c) { var o = h('option', null, c[1]); o.value = c[0]; cs.appendChild(o); });
@@ -99,11 +100,16 @@
       function draw() {
         box.innerHTML = ''; var mem = S().players.filter(function (p) { return p.teamId === tid; }), st = mem.filter(function (p) { return p.slot === 'starter'; }).length;
         box.appendChild(h('p', 'sub', mem.length + '/4 jugadores · ' + st + ' titulares (máx. 3) · 1 suplente'));
+        var cand = S().players.filter(function (p) { return MAGNA.canCoach(p) && (MAGNA.roleOf(p) === 'coach' || p.teamId === tid) && !S().teams.some(function (x) { return x.id !== tid && x.coach === p.id; }); });
+        var dr = h('div', 'bar2'), ds = h('select', 'in'); ds.style.maxWidth = '320px'; var o0 = h('option', null, 'Sin DT'); o0.value = ''; ds.appendChild(o0);
+        cand.forEach(function (p) { var o = h('option', null, p.name + ' · ' + MAGNA.roleName(p)); o.value = p.id; ds.appendChild(o); }); ds.value = t.coach || '';
+        ds.onchange = function () { var id = ds.value ? Number(ds.value) : null, pp = by(S().players, id); t.coach = id; if (pp) MAGNA.addNews('coach', pp.name + ' es el nuevo DT de ' + t.name + '.'); MAGNA.save(); draw(); };
+        var lb = h('label', 'f', 'DT del equipo (solo personas con rol "Solo coach" o "Coach y jugador" de este equipo)'); lb.appendChild(ds); dr.appendChild(lb); box.appendChild(dr);
         box.appendChild(table(['Jugador', 'Puesto', 'DT', ''], mem.map(function (p) { return [p.name, p.slot === 'starter' ? 'Titular' : 'Suplente', t.coach === p.id ? 'Sí' : '', [
           btn(p.slot === 'starter' ? 'A suplente' : 'A titular', function () { var o = mem.filter(function (x) { return x.slot === 'reserve' && x !== p; }).length; if (p.slot === 'starter') { if (o >= 1) return toast('Ya hay un suplente.', true); p.slot = 'reserve'; } else { if (st >= 3) return toast('Ya hay 3 titulares.', true); p.slot = 'starter'; } MAGNA.save(); draw(); }),
-          btn(t.coach === p.id ? 'Quitar DT' : 'Hacer DT', function () { if (t.coach !== p.id && S().teams.some(function (x) { return x.coach === p.id; })) return toast('Ese jugador ya es DT de otro equipo.', true); t.coach = t.coach === p.id ? null : p.id; MAGNA.save(); draw(); }),
+          btn(t.coach === p.id ? 'Quitar DT' : 'Hacer DT', function () { if (t.coach !== p.id && !MAGNA.canCoach(p)) return toast(p.name + ' tiene el rol "Jugador". Cámbialo a "Coach y jugador" en Jugadores para que pueda ser DT.', true); if (t.coach !== p.id && S().teams.some(function (x) { return x.coach === p.id; })) return toast('Ese jugador ya es DT de otro equipo.', true); t.coach = t.coach === p.id ? null : p.id; MAGNA.save(); draw(); }),
           btn('Retirar', function () { p.teamId = null; p.slot = null; if (t.coach === p.id) t.coach = null; MAGNA.addNews('transfer', p.name + ' deja ' + t.name + '.'); MAGNA.save(); draw(); }, 'd')]]; })));
-        var free = S().players.filter(function (p) { return !p.teamId; }), PSx = MAGNA.playerStats(), lvR = MAGNA.tierRank(t.level || 'plata');
+        var free = S().players.filter(function (p) { return !p.teamId && MAGNA.plays(p); }), PSx = MAGNA.playerStats(), lvR = MAGNA.tierRank(t.level || 'plata');
         if (mem.length < 4 && free.length && !MAGNA.marketState().open) { var mc = h('div', 'mkt'); var mt = h('div'); mt.appendChild(h('span', 'mkt-s', '● Mercado cerrado')); mt.appendChild(h('p', 'hint', 'Para fichar jugadores, abre el mercado de fichajes.')); mc.appendChild(mt); var mb = h('div', 'mkt-b'); mb.appendChild(btn('Abrir mercado', function () { close(); closesDlg(true); }, 'o')); mc.appendChild(mb); box.appendChild(mc); }
         else if (mem.length < 4 && free.length) { box.appendChild(h('p', 'hint', 'Nivel de fichajes de ' + t.name + ': ' + MAGNA.TIERS[lvR][1] + '. Los jugadores de un nivel superior aparecen bloqueados.')); var sel = h('select', 'in'); free.forEach(function (p) { var md = (PSx[p.id] || {}).media, tr = MAGNA.tierOf(md), lock = md != null && tr.rank > lvR, o = h('option', null, p.name + ' · ' + (md == null ? 'sin media' : 'media ' + md + ' (' + tr.name + ')') + (lock ? ' 🔒' : '')); o.value = p.id; o.disabled = lock; sel.appendChild(o); }); var sl = h('select', 'in'); [['starter', 'Titular'], ['reserve', 'Suplente']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; sl.appendChild(o); });
           var r = h('div', 'bar2'); r.appendChild(sel); r.appendChild(sl); r.appendChild(btn('Fichar', function () { var p = by(S().players, Number(sel.value)); if (!p) return toast('Elige un jugador disponible.', true); var md0 = (PSx[p.id] || {}).media; if (!MAGNA.marketState().open) return toast('El mercado de fichajes está cerrado.', true); if (md0 != null && MAGNA.tierOf(md0).rank > lvR) return toast('Ese jugador está por encima del nivel de fichajes del equipo.', true); if (sl.value === 'starter' && st >= 3) return toast('Ya hay 3 titulares.', true); if (sl.value === 'reserve' && mem.length - st >= 1) return toast('Ya hay un suplente.', true); p.teamId = tid; p.slot = sl.value; MAGNA.addNews('transfer', p.name + ' ficha por ' + t.name + '.'); MAGNA.save(); draw(); }, 'o')); box.appendChild(r); }
@@ -156,10 +162,11 @@
     var sep = lines[0].indexOf('\t') >= 0 ? '\t' : lines[0].indexOf(';') >= 0 ? ';' : ',';
     var rows = lines.map(function (l) { return l.split(sep).map(function (c) { return c.trim().replace(/^"|"$/g, ''); }); });
     var hd = rows[0].map(function (c) { return nk(c).normalize('NFD').replace(/[̀-ͯ]/g, ''); }), col = function (names) { for (var i = 0; i < hd.length; i++) if (names.indexOf(hd[i]) >= 0) return i; return -1; };
-    var iN = col(['nombre', 'jugador', 'name', 'nick', 'nombre en brawl stars']), iT = col(['equipo', 'team', 'club']), iS = col(['puesto', 'rol', 'titular', 'slot', 'posicion']), iW = col(['titulos', 'trofeos', 'torneos ganados', 'campeonatos', 'titles']);
+    var iN = col(['nombre', 'jugador', 'name', 'nick', 'nombre en brawl stars']), iT = col(['equipo', 'team', 'club']), iS = col(['puesto', 'rol', 'titular', 'slot', 'posicion']), iW = col(['titulos', 'trofeos', 'torneos ganados', 'campeonatos', 'titles']), iR = col(['rol', 'role', 'tipo', 'cargo']);
     var body = rows; if (iN >= 0) body = rows.slice(1); else { iN = 0; iT = rows[0].length > 1 ? 1 : -1; iS = rows[0].length > 2 ? 2 : -1; iW = rows[0].length > 3 ? 3 : -1; }
-    return body.map(function (r) { var sl = iS >= 0 ? nk(r[iS] || '') : ''; return { name: r[iN] || '', team: iT >= 0 ? (r[iT] || '') : '', slot: /supl|reserv|banca/.test(sl) ? 'reserve' : sl ? 'starter' : '', titles: iW >= 0 ? parseTitles(r[iW]) : [] }; }).filter(function (r) { return r.name; });
+    return body.map(function (r) { var sl = iS >= 0 ? nk(r[iS] || '') : ''; return { name: r[iN] || '', team: iT >= 0 ? (r[iT] || '') : '', slot: /supl|reserv|banca/.test(sl) ? 'reserve' : sl ? 'starter' : '', titles: iW >= 0 ? parseTitles(r[iW]) : [], kind: iR >= 0 ? parseRole(r[iR]) : 'player' }; }).filter(function (r) { return r.name; });
   }
+  function parseRole(v) { v = nk(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''); var c = /coach|dt|entrenador|tecnico/.test(v), j = /jugador|player/.test(v); return c && j ? 'both' : c ? 'coach' : 'player'; }
   // "Copa Verano | Mundial 2025" → 2 títulos con nombre; "3" → 3 títulos sin nombre.
   function parseTitles(v) { v = String(v || '').trim(); if (!v || v === '0' || v === '-') return []; if (/^\d+$/.test(v)) { var n = Math.min(20, Number(v)), o = []; for (var i = 1; i <= n; i++) o.push('Título anterior ' + i); return o; }
     return v.split(/\s*[|/+]\s*/).map(function (t) { return okName(t, 2, 40); }).filter(Boolean).slice(0, 20); }
@@ -169,7 +176,7 @@
   }
   function importDlg() {
     dialog('Importar jugadores', function (b, close) {
-      b.appendChild(h('p', 'sub', 'Copia las filas desde Excel o Google Sheets y pégalas aquí, o sube un archivo CSV. Columnas: Nombre (obligatoria); Equipo, Puesto (titular o suplente) y Títulos, opcionales. En Títulos pon los nombres separados por | (Copa Verano | Mundial 2025) o solo el número de torneos ganados. Cada jugador recibe su cuenta con 1.000 Bits y un código fijo.'));
+      b.appendChild(h('p', 'sub', 'Copia las filas desde Excel o Google Sheets y pégalas aquí, o sube un archivo CSV. Columnas: Nombre (obligatoria); Equipo, Puesto (titular o suplente), Títulos y Rol (Jugador, Coach y jugador o Solo coach), opcionales. Un "Solo coach" con equipo queda como su DT. En Títulos pon los nombres separados por | (Copa Verano | Mundial 2025) o solo el número de torneos ganados. Cada jugador recibe su cuenta con 1.000 Bits y un código fijo.'));
       var ta = h('textarea', 'in'); ta.rows = 8; ta.placeholder = 'Nombre\tEquipo\tPuesto\tTítulos\nLeo\tGalaxy\tTitular\tCopa Verano | Mundial 2025\nAna\tRealty\tSuplente\t2'; b.appendChild(ta);
       var fi = h('input'); fi.type = 'file'; fi.accept = '.csv,.txt,.tsv'; fi.style.display = 'none'; b.appendChild(fi); fi.onchange = function () { var f = fi.files[0]; if (f) f.text().then(function (t) { ta.value = t; prev(); }); };
       var r0 = h('div', 'bar2'); r0.appendChild(btn('Subir archivo CSV', function () { fi.click(); })); b.appendChild(r0);
@@ -177,13 +184,14 @@
       function prev() { rows = parseRows(ta.value); pv.innerHTML = ''; if (!rows.length) return; var dup = 0, bad = 0;
         rows.forEach(function (r) { r.n = okName(r.name, 2, 24); r.exists = r.n && S().players.some(function (p) { return nk(p.name) === nk(r.n); }); r.t = r.team ? S().teams.filter(function (t) { return nk(t.name) === nk(r.team); })[0] : null; if (r.exists) dup++; if (!r.n) bad++; });
         pv.appendChild(h('p', 'hint', rows.length + ' filas · ' + (rows.length - dup - bad) + ' jugadores nuevos' + (dup ? ' · ' + dup + ' ya existen (no se duplican; solo se suman sus títulos)' : '') + (bad ? ' · ' + bad + ' nombres no válidos (se omiten)' : '')));
-        pv.appendChild(table(['Jugador', 'Equipo', 'Puesto', 'Títulos', ''], rows.slice(0, 60).map(function (r) { return [r.n || r.name, r.team ? (r.t ? r.t.name : r.team + ' (no existe, queda libre)') : 'Agente libre', r.slot === 'reserve' ? 'Suplente' : r.slot ? 'Titular' : '—', r.titles.length ? r.titles.length + ' · ' + r.titles.join(', ') : '—', !r.n ? 'Nombre no válido' : r.exists ? (r.titles.length ? 'Ya existe: se suman sus títulos' : 'Ya existe') : 'Nuevo']; }))); }
+        pv.appendChild(table(['Nombre', 'Rol', 'Equipo', 'Puesto', 'Títulos', ''], rows.slice(0, 60).map(function (r) { return [r.n || r.name, (MAGNA.ROLES.filter(function (x) { return x[0] === r.kind; })[0] || MAGNA.ROLES[0])[1], r.team ? (r.t ? r.t.name : r.team + ' (no existe, queda libre)') : 'Agente libre', r.slot === 'reserve' ? 'Suplente' : r.slot ? 'Titular' : '—', r.titles.length ? r.titles.length + ' · ' + r.titles.join(', ') : '—', !r.n ? 'Nombre no válido' : r.exists ? (r.titles.length ? 'Ya existe: se suman sus títulos' : 'Ya existe') : 'Nuevo']; }))); }
       ta.addEventListener('input', function () { clearTimeout(ta._t); ta._t = setTimeout(prev, 250); });
       var rr = h('div', 'row'); rr.appendChild(btn('Cancelar', close)); var go = btn('Importar y crear cuentas', function () {
         var upd = 0; rows.forEach(function (r) { if (!r.exists || !r.titles.length) return; var p = S().players.filter(function (x) { return nk(x.name) === nk(r.n); })[0], cur = p.prevTitles || []; r.titles.forEach(function (t) { if (cur.map(nk).indexOf(nk(t)) < 0) cur.push(t); }); p.prevTitles = cur.slice(0, 20); upd++; });
         var todo = rows.filter(function (r) { return r.n && !r.exists; }); if (!todo.length) { if (upd) { commit('Títulos de ' + upd + ' jugadores actualizados'); MAGNA.cloud.flush(); close(); return; } err.textContent = 'No hay jugadores nuevos para importar.'; return; }
         go.disabled = true; var made = [];
-        todo.forEach(function (r) { var p = { id: MAGNA.id(), name: r.n, teamId: null, slot: null }; if (r.titles.length) p.prevTitles = r.titles;
+        todo.forEach(function (r) { var p = { id: MAGNA.id(), name: r.n, teamId: null, slot: null }; if (r.titles.length) p.prevTitles = r.titles; if (r.kind !== 'player') p.kind = r.kind;
+          if (r.kind === 'coach') { if (r.t && !r.t.coach) r.t.coach = p.id; S().players.push(p); made.push({ p: p, r: r }); return; }
           if (r.t) { var mem = S().players.filter(function (x) { return x.teamId === r.t.id; }), st = mem.filter(function (x) { return x.slot === 'starter'; }).length, rs = mem.length - st, want = r.slot || (st < 3 ? 'starter' : 'reserve');
             if (want === 'starter' && st < 3 || want === 'reserve' && rs < 1) { p.teamId = r.t.id; p.slot = want; } else if (st < 3) { p.teamId = r.t.id; p.slot = 'starter'; } else if (rs < 1) { p.teamId = r.t.id; p.slot = 'reserve'; } else r.full = true; }
           S().players.push(p); made.push({ p: p, r: r }); });
@@ -200,18 +208,30 @@
         setTimeout(next, 600); }, 'o'); rr.appendChild(go); b.appendChild(rr); ta.focus();
     });
   }
+  var PROLE = 'all';
+  function roleSel(p) {
+    var s = h('select', 'in'); s.style.cssText = 'margin:0;padding:6px 10px;min-width:150px'; MAGNA.ROLES.forEach(function (r) { var o = h('option', null, r[1]); o.value = r[0]; s.appendChild(o); }); s.value = MAGNA.roleOf(p);
+    s.onchange = function () { var k = s.value, old = MAGNA.roleOf(p), team = by(S().teams, p.teamId), dt = S().teams.filter(function (t) { return t.coach === p.id; })[0], warn = [];
+      if (k === 'coach' && team) warn.push('Sale de la plantilla de ' + team.name + ' (los "Solo coach" no juegan).');
+      if (k === 'player' && dt) warn.push('Deja de ser DT de ' + dt.name + ' (los "Jugador" no dirigen).');
+      function apply() { p.kind = k; if (k === 'coach' && team) { p.teamId = null; p.slot = null; } if (k === 'player' && dt) dt.coach = null; MAGNA.addNews('role', p.name + ' ahora es ' + MAGNA.roleName(p) + '.'); commit('Rol actualizado: ' + MAGNA.roleName(p)); }
+      if (warn.length) { s.value = old; confirmBox('¿Cambiar el rol de ' + p.name + '?', warn.join(' '), 'Cambiar rol', apply); } else apply(); };
+    return s;
+  }
   function playersV(b) {
-    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('🎁 Regalar Bits', function () { giftDlg(); })); bar.appendChild(btn('Importar jugadores', importDlg)); bar.appendChild(btn('+ Nuevo jugador', function () {
-      ask('Nuevo jugador', [{ k: 'n', label: 'Nombre en Brawl Stars', maxlength: 24 }, { k: 't', label: 'Torneos que ya ganó (opcional, uno por línea; si dice "Mundial" cuenta como Mundial)', type: 'textarea' }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido (2 a 24 caracteres).'; if (S().players.some(function (p) { return nk(p.name) === nk(n); })) return 'Ya existe un jugador con ese nombre.';
-        var p = { id: MAGNA.id(), name: n, teamId: null, slot: null }, tt = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (tt.length) p.prevTitles = tt; S().players.push(p); commit('Jugador registrado'); MAGNA.cloud.flush(); setTimeout(function () { createAcc(p); }, 500); }, 'Registrar', 'Se crea la ficha del jugador y su cuenta con un código de 6 dígitos para entrar y apostar con sus Bits. Los torneos ganados suben el mínimo de su media: +10 cada uno y +15 cada Mundial (hasta 60).'); }, 'o')); b.appendChild(bar);
+    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('🎁 Regalar Bits', function () { giftDlg(); })); bar.appendChild(btn('Importar jugadores', importDlg)); bar.appendChild(btn('+ Nueva persona', function () {
+      ask('Registrar persona', [{ k: 'n', label: 'Nombre en Brawl Stars', maxlength: 24 }, { k: 'k', label: 'Rol', type: 'select', value: 'player', options: MAGNA.ROLES }, { k: 't', label: 'Torneos que ya ganó (opcional, uno por línea; si dice "Mundial" cuenta como Mundial)', type: 'textarea' }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido (2 a 24 caracteres).'; if (S().players.some(function (p) { return nk(p.name) === nk(n); })) return 'Ya existe un jugador con ese nombre.';
+        var p = { id: MAGNA.id(), name: n, teamId: null, slot: null }; if (v.k && v.k !== 'player') p.kind = v.k; var tt = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (tt.length) p.prevTitles = tt; S().players.push(p); commit('Jugador registrado'); MAGNA.cloud.flush(); setTimeout(function () { createAcc(p); }, 500); }, 'Registrar', 'Se crea su ficha y su cuenta con un código de 6 dígitos para entrar y apostar con sus Bits. Rol: Jugador (juega en un equipo), Coach y jugador (juega y puede ser DT) o Solo coach (solo dirige, no ocupa lugar en la plantilla). Los torneos ganados suben el mínimo de su media: +10 cada uno y +15 cada Mundial (hasta 60).'); }, 'o')); b.appendChild(bar);
+    var rf = h('select', 'in'); rf.style.cssText = 'max-width:220px;margin:0'; [['all', 'Todos los roles']].concat(MAGNA.ROLES).forEach(function (r) { var o = h('option', null, r[1]); o.value = r[0]; rf.appendChild(o); }); rf.value = PROLE; rf.onchange = function () { PROLE = rf.value; render(); }; bar.insertBefore(rf, bar.firstChild);
     var PS = MAGNA.playerStats(); b.appendChild(h('p', 'hint', 'La media va de 10 a 100 y todos empiezan en 10. Sale de los partidos narrados en vivo: ganarle a un equipo fuerte suma mucho y perder con uno más débil resta mucho; la valoración (1 a 10) de cada partido también sube o baja. El nivel de cada equipo se calcula solo con sus resultados. Los títulos aseguran un mínimo: cada liga o torneo ganado sube el piso de la media 10 puntos (el Mundial, 15), hasta 60.'));
     if (ACCS === null) { b.appendChild(h('p', 'hint', 'Cargando cuentas…')); loadAccs(function () { if (tab === 'jugadores') render(); }); }
-    b.appendChild(table(['ID', 'Jugador', 'Equipo', 'PJ', 'Goles', 'Media', 'Cuenta', 'Bits', ''], S().players.map(function (p) { var t = by(S().teams, p.teamId), x = PS[p.id] || {}, tr = MAGNA.tierOf(x.media), md = h('span', 'tier', (x.media == null ? '—' : x.media) + ' · ' + tr.name); md.style.setProperty('--c', tr.color);
+    b.appendChild(table(['ID', 'Nombre', 'Rol', 'Equipo', 'PJ', 'Goles', 'Media', 'Cuenta', 'Bits', ''], S().players.filter(function (p) { return PROLE === 'all' || MAGNA.roleOf(p) === PROLE; }).map(function (p) { var t = by(S().teams, p.teamId), x = PS[p.id] || {}, tr = MAGNA.tierOf(x.media), md = h('span', 'tier', (x.media == null ? '—' : x.media) + ' · ' + tr.name); md.style.setProperty('--c', tr.color);
       var a = accOf(p.id), ac = h('span', 'acc');
       if (a) { ac.appendChild(h('code', null, a.username)); var cp = btn('Copiar código', function () { ACCOUNTS.copy('Magna Arena · Usuario: ' + a.username + ' · Código: ' + a.code, cp); }, 'sm'); ac.appendChild(cp); ac.appendChild(btn('Ver', function () { showCode('Cuenta de ' + p.name, a); }, 'sm')); ac.appendChild(btn('🎁', function () { giftDlg([a.id]); }, 'sm')); if (a.locked) { ac.appendChild(h('span', 'lk', 'Bloqueada')); ac.appendChild(btn('Desbloquear', function () { ACCOUNTS.manage('unlock', { id: a.id }).then(function () { toast('Cuenta desbloqueada'); loadAccs(render); }, function (e) { toast(e.message, true); }); }, 'sm')); } }
       else if (ACCS !== null) ac.appendChild(btn('Crear cuenta', function () { createAcc(p); }, 'sm'));
       var bits = a ? btn(String(a.bits), function () { ask('Bits de ' + p.name, [{ k: 'b', label: 'Bits disponibles', type: 'number', value: a.bits, min: 0 }], function (v) { var n = Number(v.b); if (!Number.isInteger(n) || n < 0 || n > 1e8) return 'Cantidad no válida.'; return ACCOUNTS.setBits(a.id, n).then(function () { toast('Bits actualizados'); loadAccs(render); }, function (e) { return e.message; }); }); }, 'sm') : '—';
-      return ['#' + p.id, h('b', null, p.name), t ? t.name + (p.slot === 'reserve' ? ' (suplente)' : '') : 'Agente libre', x.pj || 0, x.g || 0, md, ac, bits, [
+      var dtOf = S().teams.filter(function (tm) { return tm.coach === p.id; })[0];
+      return ['#' + p.id, h('b', null, p.name), roleSel(p), (t ? t.name + (p.slot === 'reserve' ? ' (suplente)' : '') : MAGNA.plays(p) ? 'Agente libre' : '—') + (dtOf ? ' · DT de ' + dtOf.name : ''), x.pj || 0, x.g || 0, md, ac, bits, [
       btn('Renombrar', function () { ask('Renombrar', [{ k: 'n', label: 'Nombre', value: p.name, maxlength: 24 }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido.'; if (S().players.some(function (x) { return x.id !== p.id && nk(x.name) === nk(n); })) return 'Ya existe ese nombre.'; p.name = n; commit('Nombre actualizado'); }); }),
       btn('Títulos' + (p.prevTitles && p.prevTitles.length ? ' (' + p.prevTitles.length + ')' : ''), function () { titlesDlg(p); }),
       btn('Eliminar para siempre', function () { confirmBox('¿Eliminar a ' + p.name + ' para siempre?', 'Se borran su ficha' + (a ? ', su cuenta (' + a.username + '), sus Bits y sus apuestas' : '') + '. No se puede deshacer.', 'Eliminar para siempre', function () {
@@ -471,6 +491,9 @@
   // ---------- economía ----------
   function econV(b) {
     b.appendChild(marketCard());
+    var OF = (S().offers || []).slice().reverse().slice(0, 30), OST = { pending: 'Pendiente', accepted: 'Aceptada', rejected: 'Rechazada', cancelled: 'Cancelada' };
+    if (OF.length) { b.appendChild(h('h2', 'x', 'Ofertas entre equipos')); b.appendChild(h('p', 'hint', 'Las hacen y responden los coaches desde su panel "Mi equipo". Aquí puedes ver todas y anular una pendiente.'));
+      b.appendChild(table(['Jugador', 'Comprador', 'Vendedor', 'Bits', 'Estado', ''], OF.map(function (o) { return [MAGNA.playerName(o.player) || '—', MAGNA.teamName(o.buyer), MAGNA.teamName(o.seller), o.amount, OST[o.status] || o.status, o.status === 'pending' ? btn('Anular', function () { o.status = 'cancelled'; commit('Oferta anulada'); }, 'd') : '']; }))); }
     b.appendChild(h('p', 'sub', 'Los Bits son una moneda ficticia sin valor real. Cada equipo tiene su presupuesto y los contratos vigentes lo comprometen.'));
     var today = MAGNA.now().slice(0, 10), act = function (c) { return !c.ends || c.ends >= today; };
     b.appendChild(h('h2', 'x', 'Presupuestos'));
@@ -709,7 +732,7 @@
     { id: 'historial', g: 'Competiciones', l: 'Historial', i: 'cup', f: histV, d: 'Torneos anteriores al sitio: marcadores y campeones. Ajustan el nivel de los equipos y los títulos de los jugadores.', p: 'competiciones.html' },
     { id: 'partidos', g: 'Competiciones', l: 'Partidos', i: 'cal', f: matchesV, d: 'Programa partidos, cambia fechas y registra resultados.', p: 'calendario.html', ct: function () { return S().matches.filter(function (m) { return m.status === 'scheduled'; }).length; }, dim: 1 },
     { id: 'equipos', g: 'Clubes', l: 'Equipos', i: 'shield', f: teamsV, d: 'Equipos, fotos, plantillas y trofeos.', p: 'equipos.html' },
-    { id: 'jugadores', g: 'Clubes', l: 'Jugadores', i: 'user', f: playersV, d: 'Fichas de jugadores. Al registrar uno se crea su cuenta con un código fijo de 6 dígitos para entrar y apostar con sus Bits.', p: 'mercado.html' },
+    { id: 'jugadores', g: 'Clubes', l: 'Jugadores y coaches', i: 'user', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
     { id: 'economia', g: 'Clubes', l: 'Fichajes y Bits', i: 'coin', f: econV, d: 'Abre o cierra el mercado de fichajes, y maneja presupuestos y contratos de cada equipo.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
     { id: 'noticias', g: 'Comunicación', l: 'Noticias', i: 'news', f: function (b) { window.ADMIN_NEWS(b, { h: h, btn: btn, toast: toast, dialog: dialog, confirmBox: confirmBox }); }, d: 'Crea, programa, destaca y edita las noticias de la comunidad.', p: 'noticias.html' },
     { id: 'actividad', g: 'Comunicación', l: 'Actividad', i: 'league', f: newsV, d: 'Avisos cortos y el registro automático de lo que pasa (resultados, fichajes, MVP).', p: 'index.html' },
@@ -735,4 +758,6 @@
   }
   MAGNA.cloud.onStatus(function () { banner(); });
   render(); banner();
+  window.addEventListener('magna:update', function (e) { if (e.detail && e.detail.remote) { render(); banner(); if (e.detail.why === 'remote') toast('Se actualizaron los datos: un coach hizo cambios en su equipo.'); } });
+  window.addEventListener('magna:conflict', function () { toast('Tu último cambio no se guardó porque un coach acababa de modificar los datos. Ya se recargaron: vuelve a hacerlo.', true); });
 })();

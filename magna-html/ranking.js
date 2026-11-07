@@ -16,15 +16,15 @@
     real.concat(MAGNA.histMatches ? MAGNA.histMatches() : []).forEach(function (m) {
       [[m.home, m.hs, m.as], [m.away, m.as, m.hs]].forEach(function (x) { var r = rec[x[0]]; if (!r) return; r.pj++; r.gf += x[1]; r.gc += x[2]; if (x[1] > x[2]) r.w++; else r.l++; }); });
     var PT = MAGNA.teamPoints();
-    return S().teams.map(function (t) { var r = rec[t.id], p = PT[t.id] || { pts: 0 }; return { t: t, pts: p.pts, bd: p, lvl: Math.round(TL.get(t.id)), pj: r.pj, w: r.w, l: r.l, dg: r.gf - r.gc, pct: r.pj ? Math.round(r.w / r.pj * 100) : null, tro: (t.trophies || []).length }; })
+    return S().teams.map(function (t) { var r = rec[t.id], p = PT[t.id] || { pts: 0 }; return { t: t, pts: p.pts, bd: p, lvl: Math.round(TL.get(t.id)), pj: r.pj, w: r.w, l: r.l, dg: r.gf - r.gc, pct: r.pj ? Math.round(r.w / r.pj * 100) : null, tro: MAGNA.teamTrophies(t.id).length }; })
       .sort(function (a, b) { return b.pts - a.pts || b.lvl - a.lvl || b.w - a.w || b.dg - a.dg || a.t.name.localeCompare(b.t.name); });
   }
   function drawTeams(pod, list, note) {
     var R = teamRows(); if (!R.length) { list.appendChild(h('p', 'em', 'Todavía no hay equipos.')); return; }
-    podium(pod, R.slice(0, 3).map(function (r) { return { av: M.crest(r.t.id, r.t.name, 72), name: r.t.name, sub: r.pj ? r.w + 'V · ' + r.l + 'D' + (r.tro ? ' · ' + r.tro + ' 🏆' : '') : 'Sin partidos', big: fmt(r.pts), unit: 'puntos' }; }));
+    podium(pod, R.slice(0, 3).map(function (r) { return { href: 'equipo.html?id=' + r.t.id, av: M.crest(r.t.id, r.t.name, 72), name: r.t.name, sub: r.pj ? r.w + 'V · ' + r.l + 'D' + (r.tro ? ' · ' + r.tro + ' 🏆' : '') : 'Sin partidos', big: fmt(r.pts), unit: 'puntos' }; }));
     list.appendChild(table(['#', 'Equipo', 'Puntos', 'PJ', 'V', 'D', 'DG', 'Nivel', 'Trofeos'], R.map(function (r, i) {
       var pc = h('button', 'ptb', fmt(r.pts)); pc.type = 'button'; pc.title = 'Ver de dónde salen los puntos'; pc.onclick = function () { breakdown(r); };
-      return [i + 1, who(M.crest(r.t.id, r.t.name, 36), r.t.name, (S().players.filter(function (p) { return p.teamId === r.t.id; }).length) + ' jugadores'), pc, r.pj, r.w, r.l, (r.dg > 0 ? '+' : '') + r.dg, r.lvl, r.tro || '—']; }), [3, 4, 5, 6, 7, 8]));
+      return [i + 1, teamLink(r.t.id, who(M.crest(r.t.id, r.t.name, 36), r.t.name, (S().players.filter(function (p) { return p.teamId === r.t.id; }).length) + ' jugadores')), pc, r.pj, r.w, r.l, (r.dg > 0 ? '+' : '') + r.dg, r.lvl, r.tro || '—']; }), [3, 4, 5, 6, 7, 8]));
     var leg = h('div', 'ptleg'); [['Liga', 'league'], ['Champions', 'champions'], ['Mundial', 'mundial'], ['Otros torneos', 'tournament'], ['Amistoso (gane o pierda)', 'friendly']].forEach(function (x) { var s = h('span'); s.appendChild(h('b', null, fmt(MAGNA.PTS[x[1]]))); s.appendChild(document.createTextNode(' ' + x[0])); leg.appendChild(s); });
     list.insertBefore(leg, list.firstChild);
     note.textContent = 'Cada victoria suma puntos según la competición: liga 15.000, Champions 35.000, Mundial 50.000 y cualquier otro torneo 25.000. En un amistoso los dos equipos suman 5.000. Toca los puntos de un equipo para ver el detalle. Incluye los torneos del historial. Si empatan en puntos, desempata el nivel.';
@@ -41,17 +41,18 @@
   // ---------- jugadores ----------
   function playerRows() {
     var P = MAGNA.playerStats();
-    return S().players.map(function (p) { var x = P[p.id] || {}; return { p: p, media: x.media == null ? 10 : x.media, pj: x.pj || 0, w: x.w || 0, l: x.l || 0, g: x.g || 0, mvp: x.mvp || 0, nota: x.nota, titles: (x.titles || []).length }; })
+    return S().players.filter(function (p) { if (MAGNA.plays(p)) return true; var x = P[p.id] || {}; return (x.pj || 0) > 0 || (x.titles || []).length > 0; }).map(function (p) { var x = P[p.id] || {}; return { p: p, media: x.media == null ? 10 : x.media, pj: x.pj || 0, w: x.w || 0, l: x.l || 0, g: x.g || 0, mvp: x.mvp || 0, nota: x.nota, titles: (x.titles || []).length }; })
       .sort(function (a, b) { return b.media - a.media || b.titles - a.titles || b.w - a.w || a.p.name.localeCompare(b.p.name); });
   }
+  function pSub(p, t) { if (!MAGNA.plays(p)) { var dt = S().teams.filter(function (x) { return x.coach === p.id; })[0]; return 'Ahora Solo coach' + (dt ? ' · DT de ' + dt.name : ''); } return t ? t.name + (p.slot === 'reserve' ? ' · suplente' : '') : 'Agente libre'; }
   function initials(n) { var a = h('div', 'av'); a.textContent = String(n).slice(0, 2).toUpperCase(); return a; }
   function drawPlayers(pod, list, note) {
     var R = playerRows(); if (!R.length) { list.appendChild(h('p', 'em', 'Todavía no hay jugadores.')); return; }
-    podium(pod, R.slice(0, 3).map(function (r) { var t = team(r.p.teamId); return { av: initials(r.p.name), name: r.p.name, sub: (t ? t.name : 'Agente libre') + ' · ' + MAGNA.tierOf(r.media).name, big: r.media, unit: 'media' }; }));
-    list.appendChild(table(['#', 'Jugador', 'Media', 'Nivel', 'PJ', 'V-D', 'Goles', 'MVP', 'Títulos'], R.map(function (r, i) {
+    podium(pod, R.slice(0, 3).map(function (r) { var t = team(r.p.teamId); return { av: initials(r.p.name), name: r.p.name, sub: pSub(r.p, t) + ' · ' + MAGNA.tierOf(r.media).name, big: r.media, unit: 'media' }; }));
+    list.appendChild(table(['#', 'Jugador', 'Media', 'Nivel', 'PJ', 'V-D', 'Goles', 'MVP', 'Trofeos'], R.map(function (r, i) {
       var t = team(r.p.teamId), tr = MAGNA.tierOf(r.media), tg = h('span', 'tier', tr.name); tg.style.setProperty('--c', tr.color);
       var md = h('div'); md.appendChild(h('b', null, String(r.media))); var bar = h('div', 'bar2'), fill = h('i'); fill.style.width = r.media + '%'; bar.appendChild(fill); md.appendChild(bar);
-      return [i + 1, who(initials(r.p.name), r.p.name, t ? t.name + (r.p.slot === 'reserve' ? ' · suplente' : '') : 'Agente libre'), md, tg, r.pj, r.w + '-' + r.l, r.g, r.mvp, r.titles || '—']; }), [3, 4, 5, 6, 7]));
+      return [i + 1, who(initials(r.p.name), r.p.name, pSub(r.p, t)), md, tg, r.pj, r.w + '-' + r.l, r.g, r.mvp, r.titles || '—']; }), [3, 4, 5, 6, 7]));
     note.textContent = 'La media va de 10 a 100. Sale de los resultados contra rivales de distinto nivel y de las valoraciones de cada partido. Los títulos aseguran un mínimo de media.';
   }
 
@@ -72,11 +73,12 @@
       return [i + 1, who(initials(r.display_name), r.display_name, p ? (t ? t.name : 'Agente libre') : 'Miembro'), h('b', null, fmt(r.bits)), bar]; }), [3]));
   }
 
+  function teamLink(id, el) { var a = h('a'); a.href = 'equipo.html?id=' + id; a.style.cssText = 'color:inherit;text-decoration:none;display:block'; a.appendChild(el); return a; }
   // ---------- piezas ----------
   function who(av, name, sub) { var w = h('div', 'who'); w.appendChild(av); var t = h('div'); t.appendChild(h('b', null, name)); if (sub) t.appendChild(h('small', null, sub)); w.appendChild(t); return w; }
   function podium(pod, items) {
     var order = items.length === 3 ? [1, 0, 2] : items.map(function (_, i) { return i; });
-    order.forEach(function (i, k) { var it = items[i], c = h('div', 'pc p' + (i + 1)); c.style.setProperty('--tint', TINT[i]); c.style.animationDelay = k * 80 + 'ms';
+    order.forEach(function (i, k) { var it = items[i], c = h(it.href ? 'a' : 'div', 'pc p' + (i + 1)); if (it.href) { c.href = it.href; c.style.textDecoration = 'none'; c.style.color = 'inherit'; } c.style.setProperty('--tint', TINT[i]); c.style.animationDelay = k * 80 + 'ms';
       c.appendChild(h('span', 'ps', String(i + 1))); c.appendChild(it.av); var tx = h('div', 'txt'); tx.appendChild(h('b', null, it.name)); tx.appendChild(document.createElement('br')); tx.appendChild(h('small', null, it.sub)); c.appendChild(tx);
       var bg = h('div', 'sc'); bg.appendChild(h('div', 'big', String(it.big))); bg.appendChild(h('small', null, it.unit)); c.appendChild(bg); pod.appendChild(c); });
     if (items.length < 3) pod.style.gridTemplateColumns = 'repeat(' + items.length + ',minmax(0,320px))';

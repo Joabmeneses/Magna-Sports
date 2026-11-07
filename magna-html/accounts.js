@@ -16,6 +16,9 @@ window.ACCOUNTS = (function () {
     if (r.data && r.data.error) throw new Error(r.data.error); return r.data; }); }); }
   function setBits(id, bits) { return sb().then(function (c) { return c.rpc('admin_set_bits', { p_account: id, p_bits: bits }).then(chk); }); }
   function gift(ids, amount, message) { return sb().then(function (c) { return c.rpc('admin_gift_bits', { p_accounts: ids, p_amount: amount, p_message: message || null }).then(chk).then(function (r) { return r.data; }); }); }
+  // Acciones del coach (DT): alineación, fichar, liberar y ofertas. Las valida la base de datos.
+  function coach(fn, args) { return sb().then(function (c) { return c.rpc(fn, args || {}).then(chk).then(function (r) { return r.data; }); }); }
+  function pullState() { return sb().then(function (c) { return c.from('site_state').select('data').eq('id', 1).single().then(function (r) { if (r.data && r.data.data) { MAGNA.cloud.applyRemote(r.data.data); try { window.dispatchEvent(new CustomEvent('magna:update', { detail: { remote: true } })); } catch (e) {} } return r.data && r.data.data; }); }); }
   function playerBits() { return sb().then(function (c) { return c.rpc('player_bits').then(function (r) { var o = {}; (r.data || []).forEach(function (x) { o[x.player_id] = x.bits; }); return o; }); }).catch(function () { return {}; }); }
   function myBets() { return sb().then(function (c) { return c.from('bets').select('*').order('created_at', { ascending: false }).limit(100).then(chk).then(function (r) { return r.data || []; }); }); }
   function placeBet(matchId, side, stake) { return sb().then(function (c) { return c.rpc('place_bet', { p_match: matchId, p_side: side, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
@@ -32,5 +35,5 @@ window.ACCOUNTS = (function () {
     function done() { var t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(function () { btn.textContent = t; }, 1600); }
     (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject()).then(done, function () { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); });
   }
-  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, playerBits: playerBits, myBets: myBets, placeBet: placeBet, cashOut: cashOut, codeBox: codeBox, copy: copy };
+  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, cashOut: cashOut, codeBox: codeBox, copy: copy };
 })();

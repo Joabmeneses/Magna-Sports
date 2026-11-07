@@ -41,6 +41,45 @@ var MAGNA = (function () {
   function compOf(m) { if (m.type === 'friendly') return FRIENDLY; return by(m.type === 'league' ? S.leagues : S.tournaments, m.cid); }
   // ---------- mercado de fichajes (lo abre y cierra la administración) ----------
   function marketState() { var mk = S.market || {}, closes = mk.closes ? Date.parse(mk.closes.replace(' ', 'T') + 'Z') : null, open = !!mk.open && !(closes && Date.now() >= closes); return { open: open, since: mk.since || null, closes: mk.closes || null, expired: !!mk.open && !open }; }
+  // ---------- roles de las personas: jugador, coach y jugador, solo coach ----------
+  var ROLES = [['player', 'Jugador'], ['both', 'Coach y jugador'], ['coach', 'Solo coach']];
+  function roleOf(p) { if (!p) return 'player'; if (p.kind) return p.kind; return S.teams.some(function (t) { return t.coach === p.id; }) ? 'both' : 'player'; } // un DT sin rol guardado cuenta como Coach y jugador
+  function roleName(p) { var k = roleOf(p); return (ROLES.filter(function (r) { return r[0] === k; })[0] || ROLES[0])[1]; }
+  function plays(p) { return roleOf(p) !== 'coach'; }
+  function canCoach(p) { return roleOf(p) !== 'player'; }
+  // ---------- trofeos de cada equipo (títulos = trofeos) ----------
+  // Se suman solos: campeón de un torneo, primero de una liga finalizada y campeón del historial. Más los que la administración agregue a mano.
+  function compYear(type, cid) { var ds = S.matches.filter(function (m) { return m.type === type && m.cid === cid && m.at; }).map(function (m) { return m.at; }).sort(); return ds.length ? ds[ds.length - 1].slice(0, 4) : null; }
+  function trnKind(c) { if (/champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'torneo'; }
+  function teamTrophies(tid) {
+    var t = by(S.teams, tid); if (!t) return []; var out = [], seen = {}, key = function (n, y) { return hnk(n) + '|' + (y || ''); };
+    function push(x) { var k = key(x.name, x.season); if (seen[k] || seen[key(x.name, '')]) return; seen[k] = 1; out.push(x); }
+    S.tournaments.forEach(function (c) { if (c.state && c.state.phase === 'done' && c.state.champion === tid) push({ name: c.name, cat: trnKind(c), season: compYear('tournament', c.id), auto: 'tournament' }); });
+    S.leagues.forEach(function (c) { if (c.status !== 'finished') return; var r = standings(Object.assign({ kind: 'league' }, c))[0]; if (r && r.pj && r.team_id === tid) push({ name: c.name, cat: 'liga', season: compYear('league', c.id), auto: 'league' }); });
+    (S.history || []).forEach(function (e) { if (!e.champion || histTeam(e.champion) !== tid) return; push({ name: e.name, cat: e.mundial ? 'mundial' : e.cat === 'liga' ? 'liga' : e.cat === 'champions' ? 'champions' : e.cat === 'otro' ? 'otro' : 'torneo', season: e.date ? String(e.date).slice(0, 4) : null, auto: 'history', hist: e.id }); });
+    (t.trophies || []).forEach(function (x) { if (x.hist && out.some(function (o) { return o.hist === x.hist; })) return; push({ id: x.id, name: x.name, cat: x.cat || 'otro', season: x.season || null }); });
+    var ORD = { mundial: 0, champions: 1, liga: 2, torneo: 3, otro: 4 };
+    var yr = function (x) { return (String(x.season || '').match(/\d{4}/) || [''])[0]; };
+    return out.sort(function (a, b) { return yr(b).localeCompare(yr(a)) || ORD[a.cat] - ORD[b.cat]; });
+  }
+  var TCOL = ['#ff9d00', '#8b5cf6', '#4ade80', '#f472b6', '#a3e635', '#22d3ee', '#c9c7a6', '#2ee59d', '#fb7185', '#60a5fa'];
+  function teamColor(tid) { var i = S.teams.map(function (t) { return t.id; }).indexOf(tid); return TCOL[(i < 0 ? 0 : i) % TCOL.length]; }
+  // ---------- previa de un partido: lo que pesa en las cuotas de las apuestas ----------
+  // Nivel (resultados contra rivales fuertes o débiles), forma reciente (últimos 5), cara a cara (incluye el historial) y puntos de ranking.
+  function matchPreview(m) {
+    var H = m.home, A = m.away, TL = teamLevels(), PT = teamPoints();
+    var played = histMatches().concat(S.matches.filter(function (x) { return x.status === 'finished' && x.hs != null && x.as != null && x.hs !== x.as && x.id !== m.id; })).sort(byTime).reverse();
+    function won(x, t) { return x.home === t ? x.hs > x.as : x.as > x.hs; }
+    function form(t) { var l = played.filter(function (x) { return x.home === t || x.away === t; }).slice(0, 5); return { s: l.map(function (x) { return won(x, t) ? 'V' : 'D'; }).join(''), w: l.length ? l.filter(function (x) { return won(x, t); }).length / l.length : 0.5, n: l.length }; }
+    var fh = form(H), fa = form(A), meet = played.filter(function (x) { return (x.home === H && x.away === A) || (x.home === A && x.away === H); }), wh = meet.filter(function (x) { return won(x, H); }).length, wa = meet.length - wh;
+    var eh = TL.get(H), ea = TL.get(A), ph = (PT[H] || {}).pts || 0, pa = (PT[A] || {}).pts || 0;
+    var rk = S.teams.map(function (t) { return { id: t.id, p: (PT[t.id] || {}).pts || 0, l: TL.get(t.id) }; }).sort(function (a, b) { return b.p - a.p || b.l - a.l; }).map(function (x) { return x.id; });
+    var parts = { casa: 0.15, nivel: (eh - ea) * 0.004, forma: (fh.w - fa.w) * 0.9, h2h: meet.length ? (wh - wa) / (meet.length + 2) * 1.2 : 0, ranking: (ph - pa) / Math.max(ph + pa, 50000) * 0.8 };
+    var L = Math.max(-2.4, Math.min(2.4, parts.casa + parts.nivel + parts.forma + parts.h2h + parts.ranking));
+    return { sd: Math.round(L / 2 * 1000) / 1000, p: 1 / (1 + Math.exp(-L)), parts: parts,
+      h2h: { n: meet.length, h: wh, a: wa, last: meet.slice(0, 5).map(function (x) { return { at: x.at, h: x.home === H ? x.hs : x.as, a: x.home === H ? x.as : x.hs, hist: !!x.hist }; }) },
+      form: { h: fh, a: fa }, level: { h: Math.round(eh), a: Math.round(ea) }, points: { h: ph, a: pa }, pos: { h: rk.indexOf(H) + 1, a: rk.indexOf(A) + 1, of: rk.length } };
+  }
   // ---------- puntos del ranking de equipos ----------
   // Liga 15.000 · Champions 35.000 · Mundial 50.000 · otro torneo 25.000 (por victoria) · amistoso 5.000 (gane o pierda).
   var PTS = { league: 15000, champions: 35000, mundial: 50000, tournament: 25000, friendly: 5000 };
@@ -199,7 +238,7 @@ var MAGNA = (function () {
     return st;
   }
   function market() {
-    var PS = playerStats(), rows = S.players.map(function (p) {
+    var PS = playerStats(), rows = S.players.filter(plays).map(function (p) {
       var t = by(S.teams, p.teamId), ct = S.contracts.filter(function (c) { return c.playerId === p.id && (!c.ends || c.ends >= now().slice(0, 10)); })[0];
       var x = PS[p.id] || {}, tr = tierOf(x.media);
       return { id: p.id, name: p.name, team: t ? t.name : null, team_id: t ? t.id : null, slot: t ? p.slot : null, matches: x.pj || 0, nota: x.nota == null ? null : x.nota, goals: x.g || 0, wins: x.w || 0, losses: x.l || 0, top_wins: x.topW || 0, titles: x.titles || [], floor: x.floor || 10, upset_losses: x.upsetL || 0, avg_rating: x.media == null ? null : x.media, mvp: x.mvp || 0, tier: tr, salary_bits: ct ? ct.salary : null };
@@ -231,10 +270,10 @@ var MAGNA = (function () {
   return {
     get S() { return S; }, load: load, save: save, hasLocal: hasLocal, discardLocal: discardLocal, id: id, now: now, by: by, addNews: addNews, teamName: teamName, standings: standings, clone: clone, EMPTY: EMPTY,
     MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
-    marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
+    ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
     groupTable: groupTable, groupSeeds: groupSeeds,
-    TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['otro', 'Otro']],
+    TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },
     legacyLocal: legacyLocal, clearLegacy: function () { try { localStorage.removeItem(KEY); } catch (e) {} },

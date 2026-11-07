@@ -44,14 +44,27 @@
   function start(session) {
     gate.remove(); root.hidden = false;
     var lastCrests = {}; MAGNA.S.teams.forEach(function (t) { if (t.crest) lastCrests[t.id] = t.crest; });
+    // Control de versión: los coaches también guardan cambios (alineación, fichajes, ofertas). Si alguien guardó antes, no se pisa: se recargan sus datos.
+    var lastRev = MAGNA.S.rev == null ? null : Number(MAGNA.S.rev);
+    function pullRemote(why) { return sb.from('site_state').select('data').eq('id', 1).single().then(function (r) { if (r.error || !r.data) throw r.error || new Error('Sin datos');
+      var d = r.data.data; lastRev = d.rev == null ? null : Number(d.rev); MAGNA.cloud.applyRemote(d); try { window.dispatchEvent(new CustomEvent('magna:update', { detail: { remote: true, why: why } })); } catch (e) {} return d; }); }
+    sb.channel('magna-admin').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_state' }, function (p) {
+      var d = p.new && p.new.data; if (!d || d.rev == null || Number(d.rev) === lastRev || MAGNA.cloud.dirty) return; if (lastRev != null && Number(d.rev) < lastRev) return;
+      pullRemote('remote'); }).subscribe();
     MAGNA.cloud.setWriter(function (st) {
       var crests = {}; st.teams.forEach(function (t) { if (t.crest) crests[t.id] = t.crest; });
       var ups = Object.keys(crests).filter(function (k) { return crests[k] !== lastCrests[k]; }).map(function (k) { return { team_id: Number(k), img: crests[k] }; }),
         dels = Object.keys(lastCrests).filter(function (k) { return !crests[k]; }).map(Number), jobs = [];
       if (ups.length) jobs.push(sb.from('team_crests').upsert(ups));
       if (dels.length) jobs.push(sb.from('team_crests').delete().in('team_id', dels));
-      jobs.push(sb.from('site_state').update({ data: MAGNA.cloud.strip(st) }).eq('id', 1).select('id'));
-      return Promise.all(jobs).then(function (rs) { rs.forEach(function (r) { if (r.error) throw r.error; }); var last = rs[rs.length - 1]; if (!last.data || !last.data.length) throw new Error('Sin permiso para guardar'); lastCrests = crests; });
+      (st.matches || []).forEach(function (m) { if (m.status === 'scheduled' || m.status === 'live') { try { m.pre = MAGNA.matchPreview(m).sd; } catch (e) {} } });
+      try { var PSx = MAGNA.playerStats(); (st.players || []).forEach(function (p) { var x = PSx[p.id]; p.media = x && x.media != null ? x.media : 10; }); } catch (e) {}
+      st.rev = (lastRev || 0) + 1;
+      var up = sb.from('site_state').update({ data: MAGNA.cloud.strip(st) }).eq('id', 1); up = lastRev == null ? up.is('data->rev', null) : up.eq('data->>rev', String(lastRev));
+      jobs.push(up.select('id'));
+      return Promise.all(jobs).then(function (rs) { rs.forEach(function (r) { if (r.error) throw r.error; }); var last = rs[rs.length - 1];
+        if (!last.data || !last.data.length) return pullRemote('conflict').then(function (d) { if (Number(d.rev || 0) === Number(st.rev - 1)) throw new Error('Sin permiso para guardar'); lastCrests = crests; try { window.dispatchEvent(new CustomEvent('magna:conflict')); } catch (e) {} });
+        lastRev = st.rev; MAGNA.S.rev = st.rev; lastCrests = crests; });
     });
     window.MAGNA_ADMIN = { email: session.user.email, sb: sb, signOut: function () { MAGNA.cloud.flush(); setTimeout(function () { sb.auth.signOut().then(function () { location.reload(); }); }, 600); } };
     window.addEventListener('beforeunload', function (e) { if (MAGNA.cloud.dirty) { MAGNA.cloud.flush(); e.preventDefault(); e.returnValue = ''; } });

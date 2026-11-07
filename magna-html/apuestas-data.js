@@ -16,22 +16,10 @@ window.MAGNA_BETS_MS = function () {
   return list.map(function (m) {
     var c = MAGNA.compOf(m), name = c ? c.name : '—'; if (!cols[name]) cols[name] = COL[n++ % COL.length];
     var live = m.status === 'live', fin = m.status === 'finished', el = live ? MAGNA.liveSecs(m) : 0, L = m.live || {};
-// Datos actualizados de un partido (para el tiempo real).
-window.MAGNA_BET_STATE = function (id) {
-  var m = MAGNA.by(MAGNA.S.matches, id); if (!m) return null; var L = m.live || {}, live = m.status === 'live';
-  return { live: live || m.status === 'finished' ? 1 : 0, fin: m.status === 'finished' ? 1 : 0, cx: m.status === 'cancelled' ? 1 : 0, s: [m.hs || 0, m.as || 0], t: m.status === 'finished' ? 5400 : live ? Math.max(0, Math.min(MAGNA.liveSecs(m), 5399)) : 0,
-    phase: L.phase || (live ? '1T' : 'pre'), mode: L.mode || null, min: live ? MAGNA.liveMinute(m) : 0, run: !!(L.clock && L.clock.run), closed: live && (L.phase === 'HT' || L.phase === '2T') };
-};
-    var hu = MAGNA.crestUrl(m.home), au = MAGNA.crestUrl(m.away);
+    var hu = MAGNA.crestUrl(m.home), au = MAGNA.crestUrl(m.away), pv = MAGNA.matchPreview(m);
     return { id: m.id, lg: name, c: cols[name], h: MAGNA.teamName(m.home), a: MAGNA.teamName(m.away), hi: hu ? 'url:' + hu : 'e', ai: au ? 'url:' + au : 'e', live: live || fin ? 1 : 0, fin: fin ? 1 : 0,
-      t: fin ? 5400 : live ? Math.max(0, Math.min(el, 5399)) : 0, s: [m.hs || 0, m.as || 0], phase: L.phase || (live ? '1T' : 'pre'), mode: L.mode || null, min: live ? MAGNA.liveMinute(m) : 0, run: !!(L.clock && L.clock.run), closed: live && (L.phase === 'HT' || L.phase === '2T'), cx: m.status === 'cancelled' ? 1 : 0, sd: Math.max(-.9, Math.min(.9, (wr(m.home) - wr(m.away)) * .8 + .1)), ph: 0,
+      t: fin ? 5400 : live ? Math.max(0, Math.min(el, 5399)) : 0, s: [m.hs || 0, m.as || 0], phase: L.phase || (live ? '1T' : 'pre'), mode: L.mode || null, min: live ? MAGNA.liveMinute(m) : 0, run: !!(L.clock && L.clock.run), closed: live && (L.phase === 'HT' || L.phase === '2T'), cx: m.status === 'cancelled' ? 1 : 0, sd: pv.sd, an: pv, ph: 0,
       when: m.at ? new Date(m.at.replace(' ', 'T') + 'Z').toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha' };
-// Datos actualizados de un partido (para el tiempo real).
-window.MAGNA_BET_STATE = function (id) {
-  var m = MAGNA.by(MAGNA.S.matches, id); if (!m) return null; var L = m.live || {}, live = m.status === 'live';
-  return { live: live || m.status === 'finished' ? 1 : 0, fin: m.status === 'finished' ? 1 : 0, cx: m.status === 'cancelled' ? 1 : 0, s: [m.hs || 0, m.as || 0], t: m.status === 'finished' ? 5400 : live ? Math.max(0, Math.min(MAGNA.liveSecs(m), 5399)) : 0,
-    phase: L.phase || (live ? '1T' : 'pre'), mode: L.mode || null, min: live ? MAGNA.liveMinute(m) : 0, run: !!(L.clock && L.clock.run), closed: live && (L.phase === 'HT' || L.phase === '2T') };
-};
   });
 };
 // Datos actualizados de un partido (para el tiempo real).

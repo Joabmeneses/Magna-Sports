@@ -69,7 +69,7 @@
   }
   document.body.appendChild(bar); pills(); setInterval(pills, 15000);
   // ---- tiempo real ----
-  function core(st) { var o = MAGNA.cloud.strip(st); (o.matches || []).forEach(function (m) { delete m.live; delete m.hs; delete m.as; delete m.status; }); delete o.news; delete o.seq; return JSON.stringify(o); }
+  function core(st) { var o = MAGNA.cloud.strip(st); (o.matches || []).forEach(function (m) { delete m.live; delete m.hs; delete m.as; delete m.status; delete m.pre; delete m.sets; }); (o.players || []).forEach(function (p) { delete p.media; }); delete o.news; delete o.seq; delete o.rev; delete o.offers; return JSON.stringify(o); }
   var note = null;
   function changed(prev, next) {
     var goal = next.matches.some(function (m) { var p = MAGNA.by(prev.matches, m.id); return p && m.status === 'live' && ((m.hs || 0) + (m.as || 0)) > ((p.hs || 0) + (p.as || 0)); });
