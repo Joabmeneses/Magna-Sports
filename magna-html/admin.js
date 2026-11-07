@@ -349,7 +349,9 @@
   var ST = { draft: 'Borrador', active: 'Activa', paused: 'Pausada', finished: 'Finalizada' }, NEXT = { draft: [['active', 'Activar']], active: [['paused', 'Pausar'], ['finished', 'Finalizar']], paused: [['active', 'Reanudar'], ['finished', 'Finalizar']], finished: [] };
   function compV(b, kind) {
     var L = kind === 'leagues', list = S()[kind], word = L ? 'liga' : 'torneo';
-    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Crear ' + word, function () { newComp(kind); }, 'o')); b.appendChild(bar);
+    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Crear ' + word, function () { L ? newComp(kind) : newTour(); }, 'o')); b.appendChild(bar);
+    if (!L) { if (!list.length) b.appendChild(h('p', 'sub', 'Aún no hay torneos. Pulsa "+ Crear torneo": eliges el formato (Champions, Mundial, eliminatoria o todos contra todos), los equipos y el calendario se genera solo.'));
+      else b.appendChild(table(['Nombre', 'Formato', 'Equipos', 'Fase', ''], list.map(function (c) { var F = TF[c.format] || TF.knockout; return [h('b', null, c.name), F.i + ' ' + F.n, String(c.teamIds.length), (c.status === 'paused' ? '⏸ ' : c.status === 'finished' && c.state ? '✓ ' : '') + phaseLabel(c), [btn('Gestionar', function () { tourDlg(c.id); }, c.state && c.state.phase === 'done' ? '' : 'o')]]; }))); return; }
     b.appendChild(table(['Nombre', 'Estado', 'Equipos', L ? 'Puntos (V/D)' : 'Formato', ''], list.map(function (c) { return [h('b', null, c.name), ST[c.status], String(c.teamIds.length), L ? c.config.win + ' / ' + c.config.loss : (c.format === 'knockout' ? 'Eliminatoria · al mejor de ' + c.best_of : c.format === 'groups_knockout' ? 'Mundial · ' + c.gcfg.n + ' grupos, pasan ' + c.gcfg.q : c.format === 'champions' ? 'Champions · liga ida y vuelta + play-off' : 'Todos contra todos'), [btn('Gestionar', function () { compDlg(kind, c.id); })]]; })));
   }
   function newComp(kind) {
@@ -365,6 +367,7 @@
   }
   function compMatches(kind, c) { var ty = kind === 'leagues' ? 'league' : 'tournament'; return S().matches.filter(function (m) { return m.type === ty && m.cid === c.id; }); }
   function compDlg(kind, cid) {
+    if (kind === 'tournaments') return tourDlg(cid);
     var c = by(S()[kind], cid), L = kind === 'leagues', ty = L ? 'league' : 'tournament';
     dialog(c.name, function (b, close) {
       var box = h('div'); b.appendChild(box);
@@ -409,6 +412,141 @@
         c.teamIds = ids; MAGNA.save(); close(); done(); }, 'o')); b.appendChild(r);
     });
   }
+  // ---------- torneos: asistente de creación y panel paso a paso ----------
+  var TF = {
+    champions: { i: '⭐', n: 'Champions', d: 'Liga de ida y vuelta con todos, luego play-off y eliminatoria a partido único.', p: 'champions.html', min: 3 },
+    groups_knockout: { i: '🌍', n: 'Mundial', d: 'Fase de grupos y después eliminatoria con los mejores de cada grupo.', p: 'mundial.html', min: 2 },
+    knockout: { i: '⚔️', n: 'Eliminatoria directa', d: 'Cuadro de cruces: quien pierde queda fuera.', p: 'competiciones.html', min: 2 },
+    round_robin: { i: '🔁', n: 'Todos contra todos', d: 'Una sola vuelta. Gana quien más puntos sume.', p: 'competiciones.html', min: 2 }
+  };
+  (function () { var st = document.createElement('style'); st.textContent =
+    '.tf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:6px 0 4px}' +
+    '.tf-card{text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--fg);border-radius:16px;padding:14px;cursor:pointer;display:grid;gap:4px;font:inherit;transition:border-color .2s,background-color .2s}' +
+    '.tf-card b{font-size:15px}.tf-card span{color:var(--muted);font-size:13px;line-height:1.35}.tf-card em{font-style:normal;font-size:22px}' +
+    '.tf-card.on{border-color:var(--orange);background:rgba(255,90,54,.12);box-shadow:0 0 0 1px var(--orange)}' +
+    '.tf-plan{border-radius:14px;padding:12px 14px;background:rgba(59,75,255,.13);border:1px solid rgba(59,75,255,.45);font-size:14px;line-height:1.45;margin:12px 0}.tf-plan.bad{background:rgba(255,77,94,.1);border-color:rgba(255,77,94,.45)}' +
+    '.tf-sec{font:700 12px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tf-sec .sp{flex:1}' +
+    '.tf-steps{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tf-steps span{padding:6px 12px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--muted)}.tf-steps span.ok{color:var(--green);border-color:rgba(46,229,157,.5)}.tf-steps span.on{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:700}' +
+    '.tf-next{border:1px solid var(--line);border-radius:18px;padding:16px;background:linear-gradient(135deg,rgba(255,90,54,.14),rgba(139,92,246,.12));margin:6px 0 14px;display:grid;gap:10px}.tf-next h4{margin:0;font-size:18px}.tf-next p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}.tf-next .bar2{margin:0}' +
+    '.tf-pg{height:8px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden}.tf-pg i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow))}' +
+    '.tf-more{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}.tf-more summary{cursor:pointer;color:var(--muted);font-size:14px}.tf-more .bar2{margin-top:10px}' +
+    '.tf-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.tf-badge{border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08)}.tf-head a{margin-left:auto;color:var(--yellow);font-size:14px;font-weight:700}' +
+    '.tf-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.tf-grid,.tf-two{grid-template-columns:1fr}}';
+    document.head.appendChild(st); })();
+  function rrRounds(n) { return n % 2 ? n : n - 1; }
+  function chTxtN(n) { var sp = MAGNA.champSplit(n); if (!sp) return ''; var D = sp.direct, K = sp.playoff;
+    return (D === 1 ? '1.º' : '1.º–' + D + '.º') + ' directo a ' + (D === 1 ? 'la final' : MAGNA.koName(D * 2).toLowerCase()) + ', ' + (D + 1) + '.º–' + (D + K) + '.º play-off' + (sp.out ? ', ' + (D + K + 1) + '.º en adelante eliminados' : ''); }
+  function chTxt(c) { return chTxtN((c.groups ? c.groups[0].teamIds : c.teamIds).length); }
+  // Qué se va a generar con ese formato y esa cantidad de equipos.
+  function plan(f, n, g, q, legs) {
+    if (n < TF[f].min) return { ok: false, t: 'Elige al menos ' + TF[f].min + ' equipos.' };
+    if (f === 'champions') { var R = rrRounds(n), L2 = legs === 1 ? 1 : 2; return { ok: true, t: '<b>' + n + ' equipos</b> · fase de liga de ' + L2 * R + ' jornadas (' + L2 * n * (n - 1) / 2 + ' partidos' + (L2 === 2 ? ', ida y vuelta' : ', solo ida') + ').<br>' + chTxtN(n) + '. Eliminatoria a partido único.' }; }
+    if (f === 'groups_knockout') { if (n < g * 2) return { ok: false, t: 'Con ' + g + ' grupos necesitas al menos ' + g * 2 + ' equipos.' }; if (Math.floor(n / g) < q) return { ok: false, t: 'Con ' + n + ' equipos en ' + g + ' grupos no pueden clasificar ' + q + ' por grupo.' }; if (g * q < 2) return { ok: false, t: 'Con 1 grupo deben clasificar al menos 2.' };
+      var lo = Math.floor(n / g), hi = Math.ceil(n / g), size = 1; while (size < g * q) size *= 2; return { ok: true, t: '<b>' + n + ' equipos</b> en ' + g + ' grupo' + (g > 1 ? 's' : '') + ' de ' + (lo === hi ? lo : lo + '–' + hi) + ' (sorteo automático). Pasan ' + q + ' por grupo → ' + MAGNA.koName(size).toLowerCase() + '.' }; }
+    if (f === 'knockout') { var s = 1; while (s < n) s *= 2; return { ok: true, t: '<b>' + n + ' equipos</b> · primera ronda: ' + MAGNA.koName(s).toLowerCase() + (s > n ? ' (' + (s - n) + ' pasan directo a la siguiente ronda)' : '') + '.' }; }
+    return { ok: true, t: '<b>' + n + ' equipos</b> · ' + rrRounds(n) + ' jornadas (' + n * (n - 1) / 2 + ' partidos). Al terminar, el líder es campeón.' };
+  }
+  function webLink(c) { return TF[c.format] ? TF[c.format].p + (c.format === 'champions' ? '?t=' + c.id : '') : 'competiciones.html'; }
+  function newTour() {
+    dialog('Nuevo torneo', function (b, close) {
+      var f = 'champions', name = h('input', 'in'); name.maxLength = 40; name.placeholder = 'Ej.: Champions Magna 2026';
+      var l0 = h('label', 'f', 'Nombre'); l0.appendChild(name); b.appendChild(l0);
+      b.appendChild(h('div', 'tf-sec', '1 · Formato')); var grid = h('div', 'tf-grid'); b.appendChild(grid);
+      var gOpt = h('div', 'tf-two'), gs = h('select', 'in'), qs = h('select', 'in');
+      [1, 2, 3, 4, 5, 6, 7, 8].forEach(function (n) { var o = h('option', null, n + (n > 1 ? ' grupos' : ' grupo')); o.value = n; if (n === 4) o.selected = true; gs.appendChild(o); });
+      [[1, 'El 1.º'], [2, 'Los 2 primeros'], [3, 'Los 3 primeros'], [4, 'Los 4 primeros']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; if (x[0] === 2) o.selected = true; qs.appendChild(o); });
+      var lg = h('label', 'f', 'Grupos'); lg.appendChild(gs); var lq = h('label', 'f', 'Clasifican por grupo'); lq.appendChild(qs); gOpt.appendChild(lg); gOpt.appendChild(lq); b.appendChild(gOpt);
+      var bo = h('select', 'in'); [[1, 'A 1 partida'], [3, 'Al mejor de 3'], [5, 'Al mejor de 5'], [7, 'Al mejor de 7']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; if (x[0] === 3) o.selected = true; bo.appendChild(o); });
+      var lgs = h('select', 'in'); [[2, 'Ida y vuelta (cada pareja juega 2 veces)'], [1, 'Solo ida (cada pareja juega 1 vez)']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; lgs.appendChild(o); });
+      var ll = h('label', 'f', 'Fase de liga'); ll.appendChild(lgs); b.appendChild(ll); lgs.onchange = function () { upd(); };
+      var lb = h('label', 'f', 'Cada partido se juega'); lb.appendChild(bo); b.appendChild(lb);
+      var sec = h('div', 'tf-sec'), cnt = h('span'), sp = h('span', 'sp'); sec.appendChild(document.createTextNode('2 · Equipos ')); sec.appendChild(cnt); sec.appendChild(sp);
+      var boxes = [], all = btn('Todos', function () { boxes.forEach(function (i) { i.checked = true; }); upd(); }), none = btn('Ninguno', function () { boxes.forEach(function (i) { i.checked = false; }); upd(); });
+      sec.appendChild(all); sec.appendChild(none); b.appendChild(sec);
+      var chk = h('div', 'chk'); S().teams.forEach(function (t) { var l = h('label'), i = h('input'); i.type = 'checkbox'; i.value = t.id; i.checked = true; i.onchange = upd; boxes.push(i); l.appendChild(i); l.appendChild(document.createTextNode(t.name)); chk.appendChild(l); });
+      if (!S().teams.length) b.appendChild(h('p', 'sub', 'Primero registra equipos en la sección Equipos.')); b.appendChild(chk);
+      var pl = h('div', 'tf-plan'); b.appendChild(pl);
+      var more = h('details', 'tf-more'), sm = h('summary', null, 'Descripción y reglas (opcional)'); more.appendChild(sm);
+      var de = h('textarea', 'in'); de.rows = 2; de.placeholder = 'Descripción'; var ru = h('textarea', 'in'); ru.rows = 3; ru.placeholder = 'Reglas'; more.appendChild(de); more.appendChild(ru); b.appendChild(more);
+      var err = h('p', 'err'); b.appendChild(err);
+      Object.keys(TF).forEach(function (k) { var x = TF[k], c = h('button', 'tf-card'); c.type = 'button'; c.dataset.f = k; c.appendChild(h('em', null, x.i)); c.appendChild(h('b', null, x.n)); c.appendChild(h('span', null, x.d)); c.onclick = function () { f = k; upd(); }; grid.appendChild(c); });
+      function ids() { return boxes.filter(function (i) { return i.checked; }).map(function (i) { return Number(i.value); }); }
+      function upd() { [].forEach.call(grid.children, function (c) { c.classList.toggle('on', c.dataset.f === f); }); gOpt.style.display = f === 'groups_knockout' ? '' : 'none'; ll.style.display = f === 'champions' ? '' : 'none';
+        var n = ids().length, p = plan(f, n, Number(gs.value), Number(qs.value), Number(lgs.value)); cnt.textContent = '(' + n + ' de ' + S().teams.length + ')'; pl.innerHTML = p.t; pl.classList.toggle('bad', !p.ok); return p; }
+      gs.onchange = upd; qs.onchange = upd; upd();
+      function create(gen) {
+        var n = okName(name.value, 2, 40); if (!n) { err.textContent = 'Escribe un nombre (2 a 40 caracteres).'; name.focus(); return; }
+        if (S().tournaments.some(function (c) { return nk(c.name) === nk(n); })) { err.textContent = 'Ya existe un torneo con ese nombre.'; return; }
+        var p = upd(); if (gen && !p.ok) { err.textContent = p.t.replace(/<[^>]+>/g, ''); return; }
+        var c = { id: MAGNA.id(), name: n, description: (de.value || '').slice(0, 500), status: gen ? 'active' : 'draft', teamIds: ids(), format: f, best_of: Number(bo.value), legs: f === 'champions' ? Number(lgs.value) : undefined, rules: (ru.value || '').slice(0, 2000), state: null };
+        if (f === 'groups_knockout') c.gcfg = { n: Number(gs.value), q: Number(qs.value) };
+        S().tournaments.push(c); MAGNA.addNews('tournament_created', 'Se crea el torneo: ' + n + '.');
+        if (gen) { var e = generate(c); if (e) { c.status = 'draft'; err.textContent = e; MAGNA.save(); return; } MAGNA.addNews('tournament_bracket', 'Arranca ' + n + ': ya está el calendario.'); }
+        close(); commit(gen ? 'Torneo creado y calendario generado' : 'Borrador guardado'); tourDlg(c.id);
+      }
+      var r = h('div', 'row'); r.appendChild(btn('Cancelar', close)); r.appendChild(btn('Guardar borrador', function () { create(false); })); r.appendChild(btn('Crear y generar calendario', function () { create(true); }, 'o')); b.appendChild(r);
+      name.focus();
+    });
+  }
+  function steps(c) { var f = c.format; return f === 'champions' ? ['Equipos', 'Calendario', 'Fase de liga', 'Play-off', 'Eliminatoria', 'Campeón'] : f === 'groups_knockout' ? ['Equipos', 'Calendario', 'Fase de grupos', 'Eliminatoria', 'Campeón'] : f === 'knockout' ? ['Equipos', 'Calendario', 'Eliminatoria', 'Campeón'] : ['Equipos', 'Calendario', 'Liga', 'Campeón']; }
+  function stepIx(c) { var st = c.state, s = steps(c); if (!st) return c.teamIds.length < (TF[c.format] || TF.knockout).min ? 0 : 1; if (st.phase === 'done') return s.length - 1;
+    if (st.phase === 'groups' || st.phase === 'league') return 2; if (st.phase === 'playoff') return 3; return s.length - 2; }
+  function phaseLabel(c) { if (c.state && c.state.phase === 'done') return '🏆 ' + MAGNA.teamName(c.state.champion); if (c.state && c.state.round && c.state.phase !== 'groups') return c.state.round; return steps(c)[stepIx(c)]; }
+  function phaseMatches(c) { var st = c.state, ms = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.status !== 'cancelled'; });
+    if (st.phase === 'groups') return ms.filter(function (m) { return m.group; }); if (st.phase === 'league') return ms; return ms.filter(function (m) { return m.round === st.round; }); }
+  function proclaim(c) { var ms = phaseMatches(c); if (ms.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos sin terminar.'; var t = MAGNA.groupTable(c, { teamIds: c.teamIds })[0]; if (!t) return 'No hay equipos.';
+    c.state = { phase: 'done', champion: t.team_id }; MAGNA.addNews('tournament_bracket', t.team + ' es campeón de ' + c.name + '.'); return null; }
+  function tourDlg(cid) {
+    var c = by(S().tournaments, cid);
+    dialog(c.name, function (b, close) {
+      var box = h('div'); b.appendChild(box);
+      function done(e, msg) { if (e) return toast(e, true); MAGNA.save(); if (msg) toast(msg); draw(); render(); }
+      function regen() { c.status = 'active'; var e = generate(c); if (!e) MAGNA.addNews('tournament_bracket', 'Arranca ' + c.name + ': ya está el calendario.'); done(e, 'Calendario generado'); }
+      function draw() {
+        box.innerHTML = ''; var st = c.state, F = TF[c.format] || TF.knockout, sx = stepIx(c);
+        var hd = h('div', 'tf-head'); hd.appendChild(h('span', 'tf-badge', F.i + ' ' + F.n)); hd.appendChild(h('span', 'tf-badge', ST[c.status] + ' · ' + c.teamIds.length + ' equipos'));
+        var wl = h('a', null, 'Ver en la web ↗'); wl.href = webLink(c); wl.target = '_blank'; wl.rel = 'noopener'; hd.appendChild(wl); box.appendChild(hd);
+        var sw = h('div', 'tf-steps'); steps(c).forEach(function (s, i) { sw.appendChild(h('span', i < sx ? 'ok' : i === sx ? 'on' : '', (i < sx ? '✓ ' : (i + 1) + '. ') + s)); }); box.appendChild(sw);
+        var nx = h('div', 'tf-next'), act = h('div', 'bar2'); box.appendChild(nx);
+        function card(t, p, pg) { nx.appendChild(h('h4', null, t)); if (p) nx.appendChild(h('p', null, p)); if (pg != null) { var g = h('div', 'tf-pg'), i = h('i'); i.style.width = Math.round(pg * 100) + '%'; g.appendChild(i); nx.appendChild(g); } nx.appendChild(act); }
+        if (c.status === 'paused') { card('Torneo en pausa', 'Reanúdalo para seguir cargando resultados.'); act.appendChild(btn('Reanudar', function () { c.status = 'active'; done(null, 'Reanudado'); }, 'o')); }
+        else if (!st) {
+          var p = plan(c.format, c.teamIds.length, c.gcfg ? c.gcfg.n : 1, c.gcfg ? c.gcfg.q : 1, c.legs);
+          if (sx === 0) { card('Paso 1: elige los equipos', 'Inscribe al menos ' + F.min + ' equipos para poder generar el calendario.'); act.appendChild(btn('Elegir equipos', function () { pickTeams(c, 'tournament', draw); }, 'o')); }
+          else { card(c.status === 'finished' ? 'Este torneo se cerró sin calendario' : 'Paso 2: genera el calendario', (c.status === 'finished' ? 'Se marcó como finalizado antes de crear los partidos, por eso no aparece en la web. ' : '') + p.t.replace(/<[^>]+>/g, ''));
+            if (c.format === 'champions') { var lsel = h('select', 'in'); lsel.style.cssText = 'margin:0;max-width:340px'; [[2, 'Fase de liga: ida y vuelta'], [1, 'Fase de liga: solo ida']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; if ((c.legs || 2) === x[0]) o.selected = true; lsel.appendChild(o); }); lsel.onchange = function () { c.legs = Number(lsel.value); MAGNA.save(); draw(); }; act.appendChild(lsel); }
+            var gb = btn(c.status === 'finished' ? 'Reabrir y generar calendario' : 'Generar calendario', regen, 'o'); gb.disabled = !p.ok; act.appendChild(gb); act.appendChild(btn('Cambiar equipos', function () { pickTeams(c, 'tournament', draw); })); }
+        } else if (st.phase === 'done') {
+          card('🏆 Campeón: ' + MAGNA.teamName(st.champion), c.status === 'finished' ? 'Torneo cerrado. El título ya cuenta en la vitrina del equipo.' : 'El título ya cuenta en la vitrina del equipo. Cierra el torneo cuando quieras archivarlo.');
+          if (c.status !== 'finished') act.appendChild(btn('Cerrar torneo', function () { c.status = 'finished'; MAGNA.addNews('tournament_finished', 'Finaliza ' + c.name + '.'); done(null, 'Torneo cerrado'); }, 'o'));
+        } else {
+          var pm = phaseMatches(c), fin = pm.filter(function (m) { return m.status === 'finished'; }).length, left = pm.length - fin, ph = st.phase === 'groups' ? (c.format === 'champions' ? 'la fase de liga' : 'la fase de grupos') : st.phase === 'league' ? 'la liga' : st.round;
+          if (left) { card('Juega ' + ph, 'Van ' + fin + ' de ' + pm.length + ' partidos con resultado. Cárgalos en Partidos (o desde la consola en vivo); cuando estén todos, aquí aparece el siguiente paso.', fin / (pm.length || 1));
+            act.appendChild(btn('Cargar resultados', function () { MF = 'tournament:' + c.id; close(); go('partidos'); }, 'o')); }
+          else {
+            var nl = st.phase === 'groups' ? (c.format === 'champions' ? 'Pasar al play-off' : 'Pasar a la eliminatoria') : st.phase === 'league' ? 'Proclamar campeón' : st.phase === 'playoff' ? 'Pasar a ' + MAGNA.koName(st.direct.length * 2).toLowerCase() : (st.round === 'Final' ? 'Proclamar campeón' : 'Pasar a la siguiente ronda');
+            card('✓ Resultados completos: ' + ph.replace(/^la /, ''), st.phase === 'groups' && c.format === 'champions' ? chTxt(c) + '.' : 'Todos los partidos tienen resultado. Los cruces siguientes se arman solos.', 1);
+            act.appendChild(btn(nl, function () { done(st.phase === 'groups' ? toKnockout(c) : st.phase === 'league' ? proclaim(c) : advance(c)); }, 'o'));
+          }
+        }
+        if (st && c.format === 'champions' && c.groups) { var sp = MAGNA.champSplit(c.groups[0].teamIds.length); box.appendChild(h('h2', 'x', 'Fase de liga')); box.appendChild(h('p', 'sub', '✓ directo a ' + (sp.direct === 1 ? 'la final' : MAGNA.koName(sp.direct * 2).toLowerCase()) + ' · ▶ play-off' + (sp.out ? ' · sin marca: eliminado' : '')));
+          box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, c.groups[0]).map(function (r) { return [r.pos <= sp.direct ? r.pos + ' ✓' : r.pos <= sp.direct + sp.playoff ? r.pos + ' ▶' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); }
+        else if (st && c.groups) c.groups.forEach(function (g) { var q = c.gcfg.q; box.appendChild(h('h2', 'x', 'Grupo ' + g.name)); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, g).map(function (r) { return [r.pos <= q ? r.pos + ' ✓' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); });
+        else if (st && c.format === 'round_robin') { box.appendChild(h('h2', 'x', 'Tabla')); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, { teamIds: c.teamIds }).map(function (r) { return [r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); }
+        var ms = compMatches('tournaments', c).filter(function (m) { return !m.group || !st || st.phase === 'groups'; });
+        if (ms.length) { box.appendChild(h('h2', 'x', st && st.phase !== 'groups' && st.phase !== 'league' && c.groups ? 'Eliminatoria' : 'Partidos (' + ms.length + ')'));
+          box.appendChild(table(['Ronda', 'Partido', 'Resultado'], ms.slice(-40).map(function (m) { return [m.round, MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), m.status === 'finished' ? m.hs + ' - ' + m.as : m.status === 'cancelled' ? 'Cancelado' : m.status === 'live' ? 'En vivo' : 'Pendiente']; }))); }
+        var mo = h('details', 'tf-more'); mo.appendChild(h('summary', null, 'Más opciones')); var ma = h('div', 'bar2'); mo.appendChild(ma); box.appendChild(mo);
+        if (c.status !== 'finished') ma.appendChild(btn('Elegir equipos', function () { pickTeams(c, 'tournament', draw); }));
+        if (c.status === 'active') ma.appendChild(btn('Pausar', function () { c.status = 'paused'; done(null, 'En pausa'); }));
+        if (c.status === 'finished') ma.appendChild(btn('Reabrir', function () { c.status = 'active'; done(null, 'Reabierto'); }));
+        ma.appendChild(btn('Editar nombre y reglas', function () { ask('Editar ' + c.name, [{ k: 'n', label: 'Nombre', value: c.name, maxlength: 40 }, { k: 'd', label: 'Descripción', type: 'textarea', value: c.description || '' }, { k: 'r', label: 'Reglas', type: 'textarea', value: c.rules || '' }], function (v) { var n = okName(v.n, 2, 40); if (!n) return 'Nombre no válido.'; if (S().tournaments.some(function (x) { return x !== c && nk(x.name) === nk(n); })) return 'Ya existe uno con ese nombre.'; c.name = n; c.description = (v.d || '').slice(0, 500); c.rules = (v.r || '').slice(0, 2000); MAGNA.save(); draw(); render(); }); }));
+        if (st) ma.appendChild(btn('Reiniciar calendario', function () { var pl = compMatches('tournaments', c).filter(function (m) { return m.status === 'finished'; }).length; confirmBox('¿Reiniciar el calendario de ' + c.name + '?', 'Se borran todos sus partidos' + (pl ? ' (incluidos ' + pl + ' con resultado)' : '') + ' y vuelve al paso "Generar calendario".', 'Reiniciar', function () { S().matches = S().matches.filter(function (m) { return !(m.type === 'tournament' && m.cid === c.id); }); c.state = null; c.groups = null; done(null, 'Calendario borrado'); }); }, 'd'));
+        ma.appendChild(btn('Eliminar torneo', function () { confirmBox('¿Eliminar ' + c.name + '?', 'Se borra con todos sus partidos. No se puede deshacer.', 'Eliminar', function () { S().matches = S().matches.filter(function (m) { return !(m.type === 'tournament' && m.cid === c.id); }); S().tournaments = S().tournaments.filter(function (x) { return x.id !== c.id; }); close(); commit('Torneo eliminado'); }); }, 'd'));
+      }
+      draw(); var r = h('div', 'row'); r.appendChild(btn('Cerrar', function () { close(); render(); banner(); })); b.appendChild(r);
+    });
+  }
   // ---------- generación de cruces ----------
   function rr(ids) { var l = ids.slice(); if (l.length % 2) l.push(null); var n = l.length, out = []; for (var r = 0; r < n - 1; r++) { var ps = []; for (var i = 0; i < n / 2; i++) { var a = l[i], b = l[n - 1 - i]; if (a != null && b != null) ps.push(r % 2 ? [b, a] : [a, b]); } out.push(ps); l.splice(1, 0, l.pop()); } return out; }
   function rname(n) { return n === 2 ? 'Final' : n === 4 ? 'Semifinales' : n === 8 ? 'Cuartos de final' : n === 16 ? 'Octavos de final' : 'Ronda de ' + n; }
@@ -433,13 +571,11 @@
       for (var a = cid.length - 1; a > 0; a--) { var b = Math.floor(Math.random() * (a + 1)), t2 = cid[a]; cid[a] = cid[b]; cid[b] = t2; }
       c.groups = [{ name: 'Liga', teamIds: cid }]; var R = rr(cid);
       R.forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Liga · Jornada ' + (i + 1), p[0], p[1]); S().matches[S().matches.length - 1].group = 'Liga'; }); });
-      R.forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Liga · Jornada ' + (R.length + i + 1), p[1], p[0]); S().matches[S().matches.length - 1].group = 'Liga'; }); });
+      if (c.legs !== 1) R.forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Liga · Jornada ' + (R.length + i + 1), p[1], p[0]); S().matches[S().matches.length - 1].group = 'Liga'; }); });
       c.state = { phase: 'groups' };
     }
     else koRound(c, c.teamIds.slice()); return null;
   }
-  function chTxt(c) { var sp = MAGNA.champSplit((c.groups ? c.groups[0].teamIds : c.teamIds).length); if (!sp) return ''; var D = sp.direct, K = sp.playoff;
-    return (D === 1 ? '1.º' : '1.º–' + D + '.º') + ' directo a ' + (D === 1 ? 'la final' : MAGNA.koName(D * 2).toLowerCase()) + ', ' + (D + 1) + '.º–' + (D + K) + '.º play-off' + (sp.out ? ', ' + (D + K + 1) + '.º en adelante eliminados' : ''); }
   function toPlayoff(c) {
     var gm = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.group && m.status !== 'cancelled'; });
     if (gm.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de la fase de liga sin terminar.';

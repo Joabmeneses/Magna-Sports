@@ -4,8 +4,8 @@
 (function () {
   var S = MAGNA.S, by = MAGNA.by, COL = ['#8b5cf6', '#2ee59d', '#ffd23f', '#ff5a36', '#ff4d5e', '#22d3ee', '#f472b6', '#a3e635', '#60a5fa'], LGC = {};
   var q = Number(new URLSearchParams(location.search).get('t')) || 0;
-  var CHS = S.tournaments.filter(function (c) { return c.format === 'champions' && c.status !== 'draft'; });
-  var T = (q && by(CHS, q)) || CHS.filter(function (c) { return c.state && c.status === 'active'; }).pop() || CHS.filter(function (c) { return c.state; }).pop() || null;
+  var CHS = S.tournaments.filter(function (c) { return c.format === 'champions' && c.teamIds.length; });
+  var T = (q && by(CHS, q)) || CHS.filter(function (c) { return c.state && c.status === 'active'; }).pop() || CHS.filter(function (c) { return c.state; }).pop() || CHS.slice(-1)[0] || null;
   if (T) LGC[T.name] = COL[0];
   else {
     S.leagues.forEach(function (l, i) { LGC[l.name] = COL[i % COL.length]; });
@@ -33,6 +33,6 @@
     });
   };
   // Cuadro oficial: partidos del play-off y la eliminatoria del torneo (los de liga llevan m.group).
-  window.MAGNA_CH_CFG = T ? { name: T.name, id: T.id, phase: T.state ? T.state.phase : null, champion: T.state && T.state.champion || null,
+  window.MAGNA_CH_CFG = T ? { name: T.name, id: T.id, legs: T.legs === 1 ? 1 : 2, phase: T.state ? T.state.phase : null, champion: T.state && T.state.champion || null,
     ko: S.matches.filter(function (m) { return m.type === 'tournament' && m.cid === T.id && !m.group && m.status !== 'cancelled'; }) } : null;
 })();
