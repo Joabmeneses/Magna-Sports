@@ -402,7 +402,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <p class="maphint mono">Toca el mapa para interactuar</p></div></div>
 <div class="pk" id="pk" hidden><div class="pkc" role="dialog" aria-modal="true" aria-label="Elegir reacción"><div class="pkh"><b class="x" id="pkt"></b><button id="pkx" aria-label="Cerrar">×</button></div><div class="pkb" id="pkb"></div><div class="pkg" id="pkg"></div></div></div>
 <div id="fx"></div><div id="ov"></div><div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script><script src="home-hub.js" defer></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script><script src="home-hub.js" defer></script><script src="home-lineups.js" defer></script>
 <script>
 (function(){
 if(!window.__HOME_N){document.body.classList.add('vacio');return}
@@ -460,7 +460,7 @@ function fill(anim){var m=M[cur],lab=[m.lg,m.jn].filter(Boolean).join(' · ');
  T('.hero .meta span:last-child',lab);var hl=$('.hero .live');hl.innerHTML='<i></i>'+(m.live?'En vivo':'Próximo');hl.classList.toggle('up',!m.live);
  $('.hero p').textContent=cur===0?P0:'Sigue el partido y reacciona con los stickers de tu equipo.';
  $$('[data-act]').forEach(function(b){b.disabled=!m.live&&b.dataset.act!=='intro'});
- render();clock();renderEv();rxl();prog();sync();view(m.mode,anim)}
+ render();clock();renderEv();rxl();prog();sync();view(m.mode,anim);try{window.__HOME_SEL=m.mid;window.dispatchEvent(new CustomEvent('magna:homesel',{detail:{mid:m.mid}}))}catch(e){}}
 function select(i,go){cur=i;clearTimeout(pvT);$$('.mc').forEach(function(c,j){c.classList.toggle('on',j===i);c.setAttribute('aria-pressed',j===i)});fill(go);
  if(go){if(!RM)['.bn-grid','.desk .board'].forEach(function(s){var e=$(s);if(e&&e.offsetParent)e.animate([{opacity:0,transform:'translateY(14px) scale(.97)'},{opacity:1,transform:'none'}],{duration:450,easing:'cubic-bezier(.2,1.2,.4,1)'})});
   $('#marcador').scrollIntoView({behavior:'smooth',block:'start'})}}

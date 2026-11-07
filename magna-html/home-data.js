@@ -18,11 +18,13 @@
   var live = S.matches.filter(function (m) { return m.status === 'live'; });
   var next = S.matches.filter(function (m) { return m.status === 'scheduled'; }).sort(function (a, b) { return String(a.at || '9').localeCompare(String(b.at || '9')); });
   var done = S.matches.filter(function (m) { return m.status === 'finished'; }).sort(function (a, b) { return String(b.at || '').localeCompare(String(a.at || '')); });
-  var pick = live.concat(next, done).slice(0, 4);
+  // el partido que acaba de terminar (últimas 24 h) se queda en el banner para ver el rendimiento de los jugadores
+  var nowMs = Date.parse(now.replace(' ', 'T') + 'Z'), recent = done.filter(function (m) { var t = Date.parse(String(m.ended || m.at || '').replace(' ', 'T') + 'Z'); return !isNaN(t) && nowMs - t < 24 * 3600e3; }).slice(0, 1);
+  var pick = live.concat(recent, next, done.filter(function (m) { return recent.indexOf(m) < 0; })).slice(0, 4);
   var out = pick.map(function (m) {
     var c = comp(m), isL = m.status === 'live', fin = m.status === 'finished', el = m.at ? Math.floor((Date.parse(now.replace(' ', 'T') + 'Z') - Date.parse(m.at.replace(' ', 'T') + 'Z')) / 1000) : 0;
     var p = pos(m);
-    return { lg: c ? c.name : '', jn: m.round || '', v: '', live: isL || fin ? 1 : 0, fin: fin ? 1 : 0, real: 1, h: MAGNA.teamName(m.home), a: MAGNA.teamName(m.away), hi: crest(m.home), ai: crest(m.away),
+    return { mid: m.id, lg: c ? c.name : '', jn: m.round || '', v: '', live: isL || fin ? 1 : 0, fin: fin ? 1 : 0, real: 1, h: MAGNA.teamName(m.home), a: MAGNA.teamName(m.away), hi: crest(m.home), ai: crest(m.away),
       s: [m.hs || 0, m.as || 0], t: fin ? 5400 : isL ? Math.max(0, Math.min(el, 5399)) : 0, when: fdt(m.at), mode: 0, left: 0, ev: [], n: { h: 0, a: 0 }, cc: m.type === 'league' ? '#8b5cf6' : '#3b4bff', pos: p, form: [form(m.home), form(m.away)] };
   });
   return out;
