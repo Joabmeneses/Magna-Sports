@@ -33,9 +33,9 @@
     var kp = h('div', 'ce-kp'); [[fmt(t.budget || 0), 'Presupuesto (Bits)', 'gold'], [members.length + '/4', 'Plantilla'], [inbox.length, 'Ofertas por responder']].forEach(function (x) { var d = h('div', x[2] || ''); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); kp.appendChild(d); }); hero.appendChild(kp); app.appendChild(hero);
     var mb = h('div', 'mk' + (mk.open ? ' on' : '')); mb.appendChild(h('i')); var mt = h('span'); mt.appendChild(h('b', null, mk.open ? 'Mercado abierto' : 'Mercado cerrado')); mt.appendChild(document.createTextNode(mk.open ? ' · Puedes fichar, liberar y hacer ofertas' + (mk.closes ? ' hasta el ' + M.fdt(mk.closes) : '') + '.' : ' · Puedes armar tu alineación; los fichajes se habilitan cuando la administración abra el mercado.')); mb.appendChild(mt); app.appendChild(mb);
     // pestañas
-    var tb = h('div', 'tabs'); [['alineacion', 'Alineación'], ['plantilla', 'Plantilla'], ['mercado', 'Mercado'], ['ofertas', 'Ofertas']].forEach(function (x) { var b = h('button', x[0] === tab ? 'on' : '', x[1]); b.type = 'button'; if (x[0] === 'ofertas' && inbox.length) b.appendChild(h('span', 'nb', String(inbox.length))); b.onclick = function () { tab = x[0]; try { history.replaceState(null, '', '#' + tab); } catch (e) {} render(); }; tb.appendChild(b); }); app.appendChild(tb);
+    var tb = h('div', 'tabs'); [['alineacion', 'Alineación'], ['plantilla', 'Plantilla'], ['mercado', 'Mercado'], ['ofertas', 'Ofertas'], ['amistosos', 'Amistosos']].forEach(function (x) { var b = h('button', x[0] === tab ? 'on' : '', x[1]); b.type = 'button'; if (x[0] === 'ofertas' && inbox.length) b.appendChild(h('span', 'nb', String(inbox.length))); b.onclick = function () { tab = x[0]; try { history.replaceState(null, '', '#' + tab); } catch (e) {} render(); }; tb.appendChild(b); }); app.appendChild(tb);
     var body = h('div'); app.appendChild(body);
-    if (tab === 'alineacion') lineupV(body, t, members); else if (tab === 'plantilla') squadV(body, t, members, mk); else if (tab === 'mercado') marketV(body, t, members, mk, lv); else offersV(body, t, offers);
+    if (tab === 'alineacion') lineupV(body, t, members); else if (tab === 'plantilla') squadV(body, t, members, mk); else if (tab === 'mercado') marketV(body, t, members, mk, lv); else if (tab === 'amistosos') friendlyV(body, t); else offersV(body, t, offers);
   }
 
   function lineupV(b, t, members) {
@@ -97,6 +97,33 @@
     var inb = offers.filter(function (o) { return o.seller === t.id; }).reverse(), out = offers.filter(function (o) { return o.buyer === t.id; }).reverse();
     b.appendChild(h('h3', 'x', 'Recibidas')); if (!inb.length) b.appendChild(h('p', 'em', 'Nadie ha ofertado por tus jugadores todavía.')); inb.slice(0, 20).forEach(function (o) { b.appendChild(row(o, false)); });
     b.appendChild(h('h3', 'x', 'Enviadas')); if (!out.length) b.appendChild(h('p', 'em', 'No has hecho ofertas. Búscalas en Mercado → Jugadores de otros equipos.')); out.slice(0, 20).forEach(function (o) { b.appendChild(row(o, true)); });
+  }
+
+  // Proponer un amistoso al administrador.
+  function friendlyV(b, t) {
+    var reqs = (S().friendlyReqs || []).filter(function (r) { return r.from === t.id || r.rival === t.id; }).slice().reverse(), pend = reqs.filter(function (r) { return r.from === t.id && r.status === 'pending'; }).length;
+    var card = h('div', 'fq'); card.appendChild(h('h3', 'x', 'Proponer un amistoso')); card.appendChild(h('p', 'em', 'Elige el rival y, si quieres, una fecha. La propuesta le llega al administrador, que la aprueba y programa el partido. Cada amistoso da 5.000 pts de ranking a los dos equipos.'));
+    var f = h('div', 'fq-f'), l1 = h('label', null, 'Rival'), rs = h('select'); S().teams.filter(function (x) { return x.id !== t.id; }).sort(function (a, c) { return a.name.localeCompare(c.name); }).forEach(function (x) { var o = h('option', null, x.name); o.value = x.id; rs.appendChild(o); }); l1.appendChild(rs);
+    var l2 = h('label', null, 'Fecha y hora (opcional)'), dt = h('input'); dt.type = 'datetime-local'; l2.appendChild(dt);
+    var l3 = h('label', 'w', 'Mensaje para el administrador (opcional)'), nt = h('textarea'); nt.rows = 2; nt.maxLength = 200; nt.placeholder = 'Ej.: Podemos jugar el sábado en la tarde.'; l3.appendChild(nt);
+    f.appendChild(l1); f.appendChild(l2); f.appendChild(l3); card.appendChild(f);
+    var go = h('button', 'btn o', busy ? 'Enviando…' : 'Enviar propuesta'); go.type = 'button'; go.disabled = busy || !rs.options.length || pend >= 3;
+    if (pend >= 3) card.appendChild(h('p', 'em', 'Tienes 3 propuestas pendientes. Espera a que el administrador responda.'));
+    go.onclick = function () { var at = null; if (dt.value) { var d = new Date(dt.value); if (isNaN(d)) return toast('Fecha no válida', 'bad'); if (d < new Date()) return toast('La fecha debe ser en el futuro', 'bad'); at = d.toISOString().slice(0, 19).replace('T', ' '); }
+      var rv = by(S().teams, Number(rs.value)); act('coach_friendly_request', { p_rival: Number(rs.value), p_at: at, p_note: nt.value.trim() || null }, 'Propuesta enviada: ' + t.name + ' vs ' + (rv ? rv.name : 'rival')); };
+    card.appendChild(go); b.appendChild(card);
+    var ST = { pending: ['Pendiente', 'pending'], approved: ['Aprobado', 'ok'], rejected: ['Rechazado', 'no'], cancelled: ['Cancelado', 'no'] };
+    b.appendChild(h('h3', 'x', 'Propuestas'));
+    if (!reqs.length) b.appendChild(h('p', 'em', 'Todavía no hay propuestas de amistoso con tu equipo.'));
+    reqs.slice(0, 20).forEach(function (r) { var mine = r.from === t.id, other = mine ? r.rival : r.from, row = h('div', 'row'); var tx = h('div', 'tx');
+      tx.appendChild(h('b', null, (mine ? 'Contra ' : 'Te propone ') + MAGNA.teamName(other)));
+      var m = r.match ? by(S().matches, r.match) : null, when = m && m.at ? m.at : r.at;
+      tx.appendChild(h('small', null, (when ? M.fdt(when) : 'Sin fecha') + (r.note ? ' · “' + r.note + '”' : '') + (r.status === 'rejected' && r.reason ? ' · Motivo: ' + r.reason : '')));
+      row.appendChild(tx); var a = h('div', 'act'), sc = ST[r.status] || [r.status, '']; a.appendChild(h('span', 'st ' + sc[1], sc[0]));
+      if (mine && r.status === 'pending') { var c = h('button', 'btn d', 'Cancelar'); c.type = 'button'; c.disabled = busy; c.onclick = function () { act('coach_friendly_cancel', { p_req: r.id }, 'Propuesta cancelada'); }; a.appendChild(c); }
+      row.appendChild(a); b.appendChild(row); });
+    var up = S().matches.filter(function (m) { return m.type === 'friendly' && m.status !== 'cancelled' && m.status !== 'finished' && (m.home === t.id || m.away === t.id); });
+    if (up.length) { b.appendChild(h('h3', 'x', 'Amistosos programados')); up.forEach(function (m) { var row = h('div', 'row'), tx = h('div', 'tx'); tx.appendChild(h('b', null, MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away))); tx.appendChild(h('small', null, (m.at ? M.fdt(m.at) : 'Fecha por confirmar') + (m.status === 'live' ? ' · En vivo' : ''))); row.appendChild(tx); b.appendChild(row); }); }
   }
 
   function boot() { if (!window.ACCOUNTS) return setTimeout(boot, 50); ACCOUNTS.me().then(function (a) { me = a; render(); }, function () { me = null; render(); }); }

@@ -8,7 +8,8 @@
   function okName(s, min, max) { var t = String(s || '').normalize('NFKC').trim().replace(/\s+/g, ' '); return t.length >= min && t.length <= max && !/[<>\u0000-\u0008]/.test(t) ? t : null; }
   function table(cols, rows) { var w = h('div', 'pn tw'), tb = h('table'), th = h('tr'); cols.forEach(function (c) { th.appendChild(h('th', null, c)); }); tb.appendChild(th);
     if (!rows.length) { var e = h('tr'), td = h('td', null, 'Todavía no hay nada aquí.'); td.colSpan = cols.length; td.style.color = 'var(--muted)'; e.appendChild(td); tb.appendChild(e); }
-    rows.forEach(function (r) { var tr = h('tr'); r.forEach(function (c) { var td = h('td'); (Array.isArray(c) ? c : [c]).forEach(function (x) { td.appendChild(x && x.nodeType ? x : document.createTextNode(x == null ? '—' : x)); }); tr.appendChild(td); }); tb.appendChild(tr); }); w.appendChild(tb); return w; }
+    if (cols.length >= 3 && cols[cols.length - 1] === '') tb.className = 'rt';
+    rows.forEach(function (r) { var tr = h('tr'); r.forEach(function (c, ci) { var td = h('td'); td.setAttribute('data-l', cols[ci] || ''); (Array.isArray(c) ? c : [c]).forEach(function (x) { td.appendChild(x && x.nodeType ? x : document.createTextNode(x == null ? '—' : x)); }); tr.appendChild(td); }); tb.appendChild(tr); }); w.appendChild(tb); return w; }
   function btn(txt, fn, cls) { var b = h('button', 'b sm ' + (cls || ''), txt); b.type = 'button'; b.onclick = fn; return b; }
   function dialog(title, build) {
     M.modal(function (b, close) { b.appendChild(h('h3', 'x', title)); build(b, close); });
@@ -613,7 +614,31 @@
   }
   // ---------- partidos ----------
   var MF = '';
+  // ---------- propuestas de amistoso de los DT ----------
+  function pendingReqs() { return (S().friendlyReqs || []).filter(function (r) { return r.status === 'pending'; }); }
+  function notifyTeams(ids, title, body) { try { var sb = window.MAGNA_ADMIN && MAGNA_ADMIN.sb; if (sb) sb.rpc('admin_notify_teams', { p_teams: ids, p_title: title, p_body: body }).then(function () {}, function () {}); } catch (e) {} }
+  function reqCard(b) {
+    var P = pendingReqs(); if (!P.length) return;
+    var box = h('div', 'frq'); box.appendChild(h('h2', 'x', 'Propuestas de amistoso (' + P.length + ')')); box.appendChild(h('p', 'hint', 'Las envían los DT desde "Mi equipo". Al aprobar se programa el partido como amistoso (5.000 pts para ambos) y se avisa a los dos DT.'));
+    P.forEach(function (r) { var row = h('div', 'frq-r'), tx = h('div'), dt = by(S().players, r.by);
+      tx.appendChild(h('b', null, MAGNA.teamName(r.from) + ' vs ' + MAGNA.teamName(r.rival)));
+      tx.appendChild(h('small', null, 'Propone ' + (dt ? dt.name : 'el DT de ' + MAGNA.teamName(r.from)) + ' · ' + (r.at ? 'para el ' + fdate(r.at) : 'sin fecha') + (r.created ? ' · enviada ' + fdate(r.created) : '')));
+      if (r.note) tx.appendChild(h('p', 'frq-n', '“' + r.note + '”'));
+      row.appendChild(tx); var ac = h('div', 'frq-a');
+      ac.appendChild(btn('Aprobar', function () { ask('Aprobar amistoso', [{ k: 'a', label: 'Fecha y hora (hora de ' + ((window.MAGNA_TZ && MAGNA_TZ.label) || 'tu zona') + ')', type: 'datetime-local', value: toLocal(r.at) }, { k: 'r', label: 'Ronda / nombre (opcional)', value: 'Amistoso' }], function (v) {
+        if (!by(S().teams, r.from) || !by(S().teams, r.rival)) return 'Uno de los equipos ya no existe.';
+        var at = toUtc(v.a); if (at === undefined) return 'Fecha no válida.'; var round = (v.r || '').trim() || 'Amistoso', ce = conflict({ id: 0, type: 'friendly', cid: 0 }, at, r.from, r.rival, round); if (ce) return ce;
+        var id = MAGNA.id(); S().matches.push({ id: id, type: 'friendly', cid: 0, round: round, home: r.from, away: r.rival, at: at, status: 'scheduled', hs: null, as: null, sets: [] });
+        r.status = 'approved'; r.match = id; r.done = MAGNA.now(); MAGNA.addNews('friendly', 'Amistoso programado: ' + MAGNA.teamName(r.from) + ' vs ' + MAGNA.teamName(r.rival) + (at ? ' (' + fdate(at) + ')' : '') + '.');
+        commit('Amistoso aprobado y programado'); notifyTeams([r.from, r.rival], 'Amistoso aprobado', MAGNA.teamName(r.from) + ' vs ' + MAGNA.teamName(r.rival) + (at ? ' · ' + fdate(at) : ' · fecha por confirmar') + '.'); }, 'Aprobar y programar', 'Puedes ajustar la fecha antes de programarlo.'); }, 'o'));
+      ac.appendChild(btn('Rechazar', function () { ask('Rechazar propuesta', [{ k: 'm', label: 'Motivo (opcional, lo verá el DT)', type: 'textarea', maxlength: 200 }], function (v) { var m = (v.m || '').replace(/[<>]/g, '').trim().slice(0, 200);
+        r.status = 'rejected'; r.reason = m || null; r.done = MAGNA.now(); commit('Propuesta rechazada'); notifyTeams([r.from], 'Amistoso rechazado', 'Tu propuesta contra ' + MAGNA.teamName(r.rival) + ' no fue aprobada' + (m ? ': ' + m : '.')); }, 'Rechazar'); }, 'd'));
+      row.appendChild(ac); box.appendChild(row); });
+    b.appendChild(box);
+  }
+  (function () { var st = document.createElement('style'); st.textContent = '.frq{border:1px solid rgba(255,210,63,.45);background:linear-gradient(135deg,rgba(255,210,63,.12),rgba(255,90,54,.08));border-radius:22px;padding:16px 18px;margin:0 0 18px}.frq h2{margin:0 0 4px}.frq-r{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.frq-r>div:first-child{min-width:0;flex:1 1 240px}.frq-r b{display:block;font-size:16px}.frq-r small{color:var(--muted);font-size:13px}.frq-n{margin:6px 0 0;font-style:italic;color:#d9dcf0;font-size:14px}.frq-a{display:flex;gap:8px;flex-wrap:wrap}'; document.head.appendChild(st); })();
   function matchesV(b) {
+    reqCard(b);
     var comps = S().leagues.map(function (c) { return ['league:' + c.id, 'Liga · ' + c.name]; }).concat(S().tournaments.map(function (c) { return ['tournament:' + c.id, 'Torneo · ' + c.name]; })).concat([['friendly:0', 'Amistosos']]);
     var bar = h('div', 'bar2'), sel = h('select', 'in'); sel.style.maxWidth = '320px'; [['', 'Todas las competiciones']].concat(comps).forEach(function (o) { var op = h('option', null, o[1]); op.value = o[0]; if (o[0] === MF) op.selected = true; sel.appendChild(op); }); sel.onchange = function () { MF = sel.value; render(); };
     bar.appendChild(sel); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Programar partido', function () { matchDlg(null); }, 'o')); b.appendChild(bar);
@@ -942,7 +967,7 @@
     { id: 'ligas', g: 'Competiciones', l: 'Ligas', i: 'league', f: function (b) { compV(b, 'leagues'); }, d: 'Crea ligas, inscribe equipos y sigue la clasificación.', p: 'ligas.html' },
     { id: 'torneos', g: 'Competiciones', l: 'Torneos y Mundial', i: 'cup', f: function (b) { compV(b, 'tournaments'); }, d: 'Eliminatorias, todos contra todos o formato Mundial con fase de grupos.', p: 'mundial.html' },
     { id: 'historial', g: 'Competiciones', l: 'Historial', i: 'cup', f: histV, d: 'Torneos anteriores al sitio: marcadores y campeones. Ajustan el nivel de los equipos y los títulos de los jugadores.', p: 'competiciones.html' },
-    { id: 'partidos', g: 'Competiciones', l: 'Partidos', i: 'cal', f: matchesV, d: 'Programa partidos, cambia fechas y registra resultados.', p: 'calendario.html', ct: function () { return S().matches.filter(function (m) { return m.status === 'scheduled'; }).length; }, dim: 1 },
+    { id: 'partidos', g: 'Competiciones', l: 'Partidos', i: 'cal', f: matchesV, d: 'Programa partidos, cambia fechas y registra resultados.', p: 'calendario.html', ct: function () { var p = pendingReqs().length; return p || S().matches.filter(function (m) { return m.status === 'scheduled'; }).length; }, dim: function () { return !pendingReqs().length; } },
     { id: 'equipos', g: 'Clubes', l: 'Equipos', i: 'shield', f: teamsV, d: 'Equipos, fotos, plantillas y trofeos.', p: 'equipos.html' },
     { id: 'jugadores', g: 'Clubes', l: 'Jugadores y coaches', i: 'user', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
     { id: 'economia', g: 'Clubes', l: 'Fichajes y Bits', i: 'coin', f: econV, d: 'Abre o cierra el mercado de fichajes, y maneja presupuestos y contratos de cada equipo.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
@@ -955,7 +980,7 @@
     if (TICK) { clearInterval(TICK); TICK = null; }
     var sd = document.getElementById('side'); sd.innerHTML = ''; var grp = null, cur = null;
     TABS.forEach(function (t) { if (t.g !== grp) { grp = t.g; cur = h('div', 'sg'); cur.appendChild(h('h4', null, t.g)); sd.appendChild(cur); }
-      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.appendChild(icon(t.i)); x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + (t.dim ? ' dim' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
+      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.appendChild(icon(t.i)); x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + ((typeof t.dim === 'function' ? t.dim() : t.dim) ? ' dim' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
     var T = TABS.filter(function (t) { return t.id === tab; })[0], hd = document.getElementById('shead'); hd.innerHTML = '';
     var l = h('div'); l.appendChild(h('div', 'eb mono', 'Panel · ' + T.g)); l.appendChild(h('h1', 'x', T.l)); l.appendChild(h('p', null, T.d)); hd.appendChild(l);
     if (T.p) { var a = h('a', 'lk', 'Ver en el sitio ↗'); a.href = T.p; a.target = '_blank'; a.rel = 'noopener'; hd.appendChild(a); }

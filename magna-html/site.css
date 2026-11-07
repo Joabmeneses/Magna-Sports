@@ -85,3 +85,19 @@ label.f{display:block;margin:16px 0;color:var(--muted);font-size:13px}label.f in
 .tcard.t-oro{box-shadow:0 10px 26px rgba(0,0,0,.35),0 0 18px rgba(255,210,63,.25)}
 @keyframes tierSpin{to{transform:rotate(1turn)}}
 @media(prefers-reduced-motion:reduce){.skel i,.skel-card:after,.tcard.t-elite:after,.tav.t-elite:after{animation:none}}
+
+/* adaptación a pantallas pequeñas */
+h1{overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto}
+@media(max-width:380px){h1{font-size:clamp(30px,10.4vw,44px)}}
+img,svg,video,canvas{max-width:100%}
+/* tablas del panel como tarjetas en el teléfono */
+@media(max-width:640px){
+table.rt,table.rt tbody{display:block}table.rt tr:first-child{display:none}
+table.rt tr{display:block;border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin:0 0 10px;background:rgba(255,255,255,.03)}
+table.rt td{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;border:0;padding:5px 0;text-align:right;min-width:0;overflow-wrap:anywhere}
+table.rt td::before{content:attr(data-l);color:var(--muted);font:500 10px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;text-align:left;flex:none}
+table.rt td:first-child{font-size:16px;font-weight:700;justify-content:flex-start;text-align:left}
+table.rt td:first-child::before,table.rt td[data-l=""]::before{display:none}
+table.rt td:last-child{justify-content:flex-start;padding-top:8px;gap:6px}
+table.rt td[colspan]{display:block;text-align:left}
+}

@@ -6,8 +6,9 @@
   function refreshList() { S = MAGNA.S; live = S.matches.filter(function (m) { return m.status === 'live'; }); }
   refreshList();
   var css = '' +
-    '.mlv{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:80;display:flex;gap:8px;max-width:calc(100% - 24px);overflow-x:auto;padding:2px;font-family:Archivo,system-ui,sans-serif;scrollbar-width:none}' +
+    '.mlv{position:fixed;left:0;right:0;margin:0 auto;width:fit-content;bottom:14px;z-index:80;display:flex;gap:8px;max-width:calc(100% - 24px);overflow-x:auto;padding:2px;font-family:Archivo,system-ui,sans-serif;scrollbar-width:none}' +
     '.mlv::-webkit-scrollbar{display:none}' +
+    '@media(max-width:460px){.mlv button{gap:7px;padding:7px 12px 7px 10px;font-size:13px}.mlv small{display:none}.mlv .s{font-size:14px;padding:2px 6px}}' +
     '.mlv button{flex:none;display:flex;align-items:center;gap:10px;background:rgba(15,19,38,.94);backdrop-filter:blur(10px);border:1px solid rgba(255,90,54,.7);color:#f1f3fb;border-radius:999px;padding:9px 16px 9px 12px;cursor:pointer;font:600 14px Archivo,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:mlvIn .5s cubic-bezier(.2,.9,.2,1) both}' +
     '@keyframes mlvIn{from{opacity:0;transform:translateY(20px)}}' +
     '.mlv .d{display:inline-flex;align-items:center;gap:6px;color:#ff5a36;font:700 11px/1 "JetBrains Mono",monospace;letter-spacing:.1em}' +
@@ -69,7 +70,7 @@
   }
   document.body.appendChild(bar); pills(); setInterval(pills, 15000);
   // ---- tiempo real ----
-  function core(st) { var o = MAGNA.cloud.strip(st); (o.matches || []).forEach(function (m) { delete m.live; delete m.hs; delete m.as; delete m.status; delete m.pre; delete m.sets; }); (o.players || []).forEach(function (p) { delete p.media; }); delete o.news; delete o.seq; delete o.rev; delete o.offers; return JSON.stringify(o); }
+  function core(st) { var o = MAGNA.cloud.strip(st); (o.matches || []).forEach(function (m) { delete m.live; delete m.hs; delete m.as; delete m.status; delete m.pre; delete m.sets; }); (o.players || []).forEach(function (p) { delete p.media; }); delete o.news; delete o.seq; delete o.rev; delete o.offers; delete o.friendlyReqs; return JSON.stringify(o); }
   var note = null;
   function changed(prev, next) {
     var goal = next.matches.some(function (m) { var p = MAGNA.by(prev.matches, m.id); return p && m.status === 'live' && ((m.hs || 0) + (m.as || 0)) > ((p.hs || 0) + (p.as || 0)); });
