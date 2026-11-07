@@ -14,7 +14,7 @@ window.MAGNA_BETS_MS = function () {
     .sort(function (a, b) { return (b.status === 'live') - (a.status === 'live') || String(a.at || '9').localeCompare(String(b.at || '9')); }).slice(0, 12);
   var cols = {}, n = 0;
   return list.map(function (m) {
-    var c = by(m.type === 'league' ? S.leagues : S.tournaments, m.cid), name = c ? c.name : '—'; if (!cols[name]) cols[name] = COL[n++ % COL.length];
+    var c = MAGNA.compOf(m), name = c ? c.name : '—'; if (!cols[name]) cols[name] = COL[n++ % COL.length];
     var live = m.status === 'live', fin = m.status === 'finished', el = live ? MAGNA.liveSecs(m) : 0, L = m.live || {};
 // Datos actualizados de un partido (para el tiempo real).
 window.MAGNA_BET_STATE = function (id) {

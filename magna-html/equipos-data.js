@@ -24,7 +24,7 @@
   var FX = [], order = 0, now = Date.now();
   function lbl(ms) { var d = new Date(ms), a = new Date(); a.setHours(0, 0, 0, 0); var b = new Date(ms); b.setHours(0, 0, 0, 0); var off = Math.round((b - a) / 864e5), p = function (n) { return String(n).padStart(2, '0'); }; return (off === 0 ? 'Hoy ' : off === 1 ? 'Mañana ' : d.toLocaleDateString('es', { day: 'numeric', month: 'short' }) + ' ') + p(d.getHours()) + ':' + p(d.getMinutes()); }
   S.matches.filter(function (m) { return m.status === 'live' || (m.status === 'scheduled' && m.at); }).sort(function (a, b) { return String(a.at || '').localeCompare(String(b.at || '')); }).forEach(function (m) {
-    var c = by(m.type === 'league' ? S.leagues : S.tournaments, m.cid), f = { c: c ? c.name : '—', h: MAGNA.teamName(m.home), a: MAGNA.teamName(m.away) };
+    var c = MAGNA.compOf(m), f = { c: c ? c.name : '—', h: MAGNA.teamName(m.home), a: MAGNA.teamName(m.away) };
     if (m.status === 'live') f.live = 1; else { f.t = lbl(Date.parse(m.at.replace(' ', 'T') + 'Z')); f.o = ++order; } FX.push(f);
   });
   window.MAGNA_EQ = { TCATS: MAGNA.TROPHY_CATS, TEAMS: TEAMS, LGC: LGC, SQ: SQ, COL: COL, FX: FX, NLG: S.leagues.length + S.tournaments.length };

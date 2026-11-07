@@ -17,13 +17,15 @@
 .tier{display:inline-block;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
 .bar2{height:6px;border-radius:9px;background:rgba(255,255,255,.07);overflow:hidden;min-width:70px}.bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple))}
 .lead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.ptb{background:transparent;border:1px solid rgba(255,210,63,.4);color:#ffd23f;border-radius:999px;padding:5px 12px;font:800 14px Archivo,sans-serif;font-variant-numeric:tabular-nums;cursor:pointer;white-space:nowrap}.ptb:hover{background:rgba(255,210,63,.12)}
+.ptleg{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.ptleg span{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted)}.ptleg b{color:var(--fg)}
 .note{color:var(--muted);font-size:14px;margin:18px 0 0}
 .em{color:var(--muted)}
 .hide-s{}
 @media(max-width:700px){.pod{grid-template-columns:1fr;gap:10px}.pc{flex-direction:row;text-align:left;padding:14px 16px 14px 52px;align-items:center}.pc.p1{padding-top:14px;order:-1}.pc .ps{top:50%;transform:translateY(-50%)}.pc .sc{margin-left:auto;text-align:right}.pc .big{font-size:26px}.pc.p1 .big{font-size:30px}.av,.pc.p1 .av{width:52px;height:52px;font-size:18px}.pc .txt{min-width:0}.hide-s{display:none}td,th{padding:10px 8px}}
 </style></head>
 <body><header class="top" id="top"></header><script src="nav.js"></script>
-<main class="wrap"><div class="eyebrow mono">Comunidad</div><h1 class="x">Ranking</h1><p class="sub">Los mejores de Magna Sports: equipos por nivel, jugadores por media y miembros por Bits. Se actualiza solo con cada resultado.</p>
+<main class="wrap"><div class="eyebrow mono">Comunidad</div><h1 class="x">Ranking</h1><p class="sub">Los mejores de Magna Sports: equipos por puntos, jugadores por media y miembros por Bits. Se actualiza solo con cada resultado.</p>
 <div class="chips" id="tabs" role="tablist"></div>
 <div id="pod" class="pod"></div><div id="list"></div><p class="note" id="note"></p>
 <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella. Los Bits son una moneda ficticia sin valor real.</p></main>

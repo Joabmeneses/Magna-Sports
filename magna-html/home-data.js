@@ -4,7 +4,7 @@
   function fdt(s) { return s ? new Date(s.replace(' ', 'T') + 'Z').toLocaleString('es', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha'; }
   function build() {
   var S = MAGNA.S, by = MAGNA.by, now = MAGNA.now();
-  function comp(m) { return by(m.type === 'league' ? S.leagues : S.tournaments, m.cid); }
+  function comp(m) { return MAGNA.compOf(m); }
   function form(tid) {
     var f = S.matches.filter(function (m) { return m.status === 'finished' && (m.home === tid || m.away === tid); }).sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); }).slice(0, 4);
     return f.map(function (m) { var h = m.home === tid; return (h ? m.hs > m.as : m.as > m.hs) ? 'V' : 'D'; }).join('');

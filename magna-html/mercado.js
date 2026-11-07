@@ -1,6 +1,12 @@
 'use strict';
 (function () {
   var h = M.h, all = [], f = 'all', q = '', ch = document.getElementById('ch');
+  // estado del mercado
+  function mkt() { var box = document.getElementById('mkt'); if (!box) return; var ms = MAGNA.marketState(); box.innerHTML = ''; box.className = 'mkt' + (ms.open ? ' on' : '');
+    box.appendChild(h('i', 'dot')); var t = h('div'); t.appendChild(h('b', null, ms.open ? 'Mercado abierto' : 'Mercado cerrado')); t.appendChild(document.createElement('br'));
+    t.appendChild(h('span', null, ms.open ? (ms.closes ? 'Los equipos pueden fichar hasta el ' + M.fdt(ms.closes) + '.' : 'Los equipos pueden fichar jugadores libres de su nivel.') : 'Por ahora no hay fichajes. La administración avisará cuando se abra.')); box.appendChild(t);
+    if (ms.open && ms.closes) { var cd = h('span', 'cd'); box.appendChild(cd); (function tick() { var s = Math.max(0, Math.floor((Date.parse(ms.closes.replace(' ', 'T') + 'Z') - Date.now()) / 1000)); if (!document.body.contains(cd)) return; if (!s) return mkt(); var d = Math.floor(s / 86400), hh = Math.floor(s % 86400 / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60; cd.textContent = 'Cierra en ' + (d ? d + 'd ' : '') + String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0'); setTimeout(tick, 1000); })(); } }
+  mkt(); window.addEventListener('magna:update', mkt);
   // niveles
   var tw = document.getElementById('tiers');
   MAGNA.TIERS.forEach(function (t) { var s = h('span'); s.style.setProperty('--c', t[3]); s.appendChild(h('i')); s.appendChild(document.createTextNode(t[1] + (t[2] ? ' · media ' + t[2] + '+' : ' · menos de ' + MAGNA.TIERS[1][2]))); tw.appendChild(s); });

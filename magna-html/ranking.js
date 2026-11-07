@@ -4,7 +4,7 @@
   var h = M.h, tab = 'equipos', bitsRows = null, bitsErr = null;
   var TABS = [['equipos', 'Equipos'], ['jugadores', 'Jugadores'], ['bits', 'Bits']];
   var TINT = ['rgba(255,210,63,.28)', 'rgba(214,219,232,.2)', 'rgba(227,163,107,.22)'];
-  function fmt(n) { return Number(n || 0).toLocaleString('es'); }
+  function fmt(n) { return String(Math.round(Number(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function S() { return MAGNA.S; }
   function team(id) { return MAGNA.by(S().teams, id); }
 
@@ -15,17 +15,29 @@
     var real = S().matches.filter(function (m) { return m.status === 'finished' && m.hs != null && m.as != null; });
     real.concat(MAGNA.histMatches ? MAGNA.histMatches() : []).forEach(function (m) {
       [[m.home, m.hs, m.as], [m.away, m.as, m.hs]].forEach(function (x) { var r = rec[x[0]]; if (!r) return; r.pj++; r.gf += x[1]; r.gc += x[2]; if (x[1] > x[2]) r.w++; else r.l++; }); });
-    return S().teams.map(function (t) { var r = rec[t.id]; return { t: t, lvl: Math.round(TL.get(t.id)), pj: r.pj, w: r.w, l: r.l, dg: r.gf - r.gc, pct: r.pj ? Math.round(r.w / r.pj * 100) : null, tro: (t.trophies || []).length }; })
-      .sort(function (a, b) { return b.lvl - a.lvl || b.w - a.w || b.dg - a.dg || a.t.name.localeCompare(b.t.name); });
+    var PT = MAGNA.teamPoints();
+    return S().teams.map(function (t) { var r = rec[t.id], p = PT[t.id] || { pts: 0 }; return { t: t, pts: p.pts, bd: p, lvl: Math.round(TL.get(t.id)), pj: r.pj, w: r.w, l: r.l, dg: r.gf - r.gc, pct: r.pj ? Math.round(r.w / r.pj * 100) : null, tro: (t.trophies || []).length }; })
+      .sort(function (a, b) { return b.pts - a.pts || b.lvl - a.lvl || b.w - a.w || b.dg - a.dg || a.t.name.localeCompare(b.t.name); });
   }
   function drawTeams(pod, list, note) {
     var R = teamRows(); if (!R.length) { list.appendChild(h('p', 'em', 'Todavía no hay equipos.')); return; }
-    podium(pod, R.slice(0, 3).map(function (r) { return { av: M.crest(r.t.id, r.t.name, 72), name: r.t.name, sub: r.pj ? r.w + 'V · ' + r.l + 'D' + (r.tro ? ' · ' + r.tro + ' 🏆' : '') : 'Sin partidos', big: r.lvl, unit: 'nivel' }; }));
-    list.appendChild(table(['#', 'Equipo', 'Nivel', 'PJ', 'V', 'D', 'DG', '% Vict.', 'Trofeos'], R.map(function (r, i) {
-      return [i + 1, who(M.crest(r.t.id, r.t.name, 36), r.t.name, (S().players.filter(function (p) { return p.teamId === r.t.id; }).length) + ' jugadores'), h('b', null, String(r.lvl)), r.pj, r.w, r.l, (r.dg > 0 ? '+' : '') + r.dg, r.pct == null ? '—' : r.pct + '%', r.tro || '—']; }), [3, 4, 5, 6, 8]));
-    note.textContent = 'El nivel arranca en 1000 y sube o baja con cada resultado: ganarle a un equipo de más nivel suma más, perder con uno de menos nivel resta más. Incluye los marcadores del historial.';
+    podium(pod, R.slice(0, 3).map(function (r) { return { av: M.crest(r.t.id, r.t.name, 72), name: r.t.name, sub: r.pj ? r.w + 'V · ' + r.l + 'D' + (r.tro ? ' · ' + r.tro + ' 🏆' : '') : 'Sin partidos', big: fmt(r.pts), unit: 'puntos' }; }));
+    list.appendChild(table(['#', 'Equipo', 'Puntos', 'PJ', 'V', 'D', 'DG', 'Nivel', 'Trofeos'], R.map(function (r, i) {
+      var pc = h('button', 'ptb', fmt(r.pts)); pc.type = 'button'; pc.title = 'Ver de dónde salen los puntos'; pc.onclick = function () { breakdown(r); };
+      return [i + 1, who(M.crest(r.t.id, r.t.name, 36), r.t.name, (S().players.filter(function (p) { return p.teamId === r.t.id; }).length) + ' jugadores'), pc, r.pj, r.w, r.l, (r.dg > 0 ? '+' : '') + r.dg, r.lvl, r.tro || '—']; }), [3, 4, 5, 6, 7, 8]));
+    var leg = h('div', 'ptleg'); [['Liga', 'league'], ['Champions', 'champions'], ['Mundial', 'mundial'], ['Otros torneos', 'tournament'], ['Amistoso (gane o pierda)', 'friendly']].forEach(function (x) { var s = h('span'); s.appendChild(h('b', null, fmt(MAGNA.PTS[x[1]]))); s.appendChild(document.createTextNode(' ' + x[0])); leg.appendChild(s); });
+    list.insertBefore(leg, list.firstChild);
+    note.textContent = 'Cada victoria suma puntos según la competición: liga 15.000, Champions 35.000, Mundial 50.000 y cualquier otro torneo 25.000. En un amistoso los dos equipos suman 5.000. Toca los puntos de un equipo para ver el detalle. Incluye los torneos del historial. Si empatan en puntos, desempata el nivel.';
   }
 
+  function breakdown(r) {
+    M.modal(function (b) {
+      b.appendChild(h('h3', 'x', r.t.name)); b.appendChild(h('p', 'sub', fmt(r.pts) + ' puntos en el ranking'));
+      var w = h('div', 'pn tw'), tb = h('table'), th = h('tr'); ['Competición', 'Por partido', 'Puntos'].forEach(function (c) { th.appendChild(h('th', null, c)); }); tb.appendChild(th);
+      [['Liga', 'league', 'victoria'], ['Champions', 'champions', 'victoria'], ['Mundial', 'mundial', 'victoria'], ['Otros torneos', 'tournament', 'victoria'], ['Amistosos', 'friendly', 'partido']].forEach(function (x) { var tr = h('tr'); tr.appendChild(h('td', null, x[0])); tr.appendChild(h('td', 'n', fmt(MAGNA.PTS[x[1]]) + ' por ' + x[2])); tr.appendChild(h('td', 'n', fmt(r.bd[x[1]] || 0))); tb.appendChild(tr); });
+      w.appendChild(tb); b.appendChild(w);
+    });
+  }
   // ---------- jugadores ----------
   function playerRows() {
     var P = MAGNA.playerStats();

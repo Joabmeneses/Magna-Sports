@@ -8,7 +8,7 @@ window.MAGNA_CARD = function (m) {
   function rr(px, py, w, h, r) { x.beginPath(); x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r); x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath(); }
   function fit(text, max, size, weight) { var s = size; do { x.font = weight + ' ' + s + 'px ' + F; s -= 2; } while (x.measureText(text).width > max && s > 18); return x.font; }
   var L = m.live || {}, ev = L.ev || [], hn = MAGNA.teamName(m.home), an = MAGNA.teamName(m.away), hw = m.hs > m.as;
-  var cmp = MAGNA.by(m.type === 'league' ? MAGNA.S.leagues : MAGNA.S.tournaments, m.cid), cname = cmp ? cmp.name : '';
+  var cmp = MAGNA.compOf(m), cname = cmp ? cmp.name : '';
   function draw(useLogo) { return fonts().then(function () { return Promise.all([img(MAGNA.crestUrl(m.home)), img(MAGNA.crestUrl(m.away)), useLogo ? img('logo.png') : null]); }).then(function (ims) {
     // fondo
     x.fillStyle = '#0a0d18'; x.fillRect(0, 0, W, H);

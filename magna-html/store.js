@@ -37,7 +37,24 @@ var MAGNA = (function () {
 
   // ---------- cálculos ----------
   function teamName(i) { var t = by(S.teams, i); return t ? t.name : '—'; }
-  function compOf(m) { return by(m.type === 'league' ? S.leagues : S.tournaments, m.cid); }
+  var FRIENDLY = { id: 0, name: 'Amistoso', status: 'active', friendly: true, teamIds: [] };
+  function compOf(m) { if (m.type === 'friendly') return FRIENDLY; return by(m.type === 'league' ? S.leagues : S.tournaments, m.cid); }
+  // ---------- mercado de fichajes (lo abre y cierra la administración) ----------
+  function marketState() { var mk = S.market || {}, closes = mk.closes ? Date.parse(mk.closes.replace(' ', 'T') + 'Z') : null, open = !!mk.open && !(closes && Date.now() >= closes); return { open: open, since: mk.since || null, closes: mk.closes || null, expired: !!mk.open && !open }; }
+  // ---------- puntos del ranking de equipos ----------
+  // Liga 15.000 · Champions 35.000 · Mundial 50.000 · otro torneo 25.000 (por victoria) · amistoso 5.000 (gane o pierda).
+  var PTS = { league: 15000, champions: 35000, mundial: 50000, tournament: 25000, friendly: 5000 };
+  function compKind(m) { if (m.type === 'friendly') return 'friendly'; if (m.type === 'league') return 'league'; var c = by(S.tournaments, m.cid); if (!c) return 'tournament';
+    if (/champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'tournament'; }
+  function histKind(e) { if (e.mundial || /mundial/i.test(e.name)) return 'mundial'; if (e.cat === 'champions' || /champions/i.test(e.name)) return 'champions'; if (e.cat === 'liga') return 'league'; return 'tournament'; }
+  function teamPoints() {
+    var P = {}; S.teams.forEach(function (t) { P[t.id] = { pts: 0, league: 0, champions: 0, mundial: 0, tournament: 0, friendly: 0 }; });
+    function add(tid, k) { var x = P[tid]; if (!x) return; x.pts += PTS[k]; x[k] += PTS[k]; }
+    S.matches.forEach(function (m) { if (m.status !== 'finished' || m.hs == null || m.as == null || m.hs === m.as) return; var k = compKind(m);
+      if (k === 'friendly') { add(m.home, k); add(m.away, k); } else add(m.hs > m.as ? m.home : m.away, k); });
+    (S.history || []).forEach(function (e) { var k = histKind(e); (e.matches || []).forEach(function (m) { if (m.hs === m.as) return; var w = histTeam(m.hs > m.as ? m.home : m.away); if (typeof w === 'number') add(w, k); }); });
+    return P;
+  }
   function visible(c) { return c && c.status !== 'draft'; }
   function standings(c) {
     var sc = (c.config && c.config.win) ? c.config : { win: 3, loss: 0 }, r = {};
@@ -77,7 +94,19 @@ var MAGNA = (function () {
     return out;
   }
   // ---------- partidos en vivo ----------
-  var MODES = ['Balón Brawl', 'Atrapagemas', 'Atraco', 'Zona restringida', 'Noqueo', 'Caza estelar', 'Asedio', 'Supervivencia'];
+  // Modos competitivos y sus mapas (los elige el administrador para cada set)
+  var MAPS = {
+    'Balón Brawl': ['Estadio Brawl', 'Triple Drible', 'Cancha Peleona', 'Campos Fugitivos', 'Superplaya', 'Pinball', 'Palco Central', 'Pelota de Playa', 'Fútbol Soleado'],
+    'Atrapagemas': ['Mina Rocosa', 'Arcade de Cristal', 'Fuerte de Gemas', 'Cueva Subterránea', 'Brrrum Brrrum'],
+    'Noqueo': ['Roca Belle', 'Fénix en Llamas', 'Manantial Caudaloso', 'A la Intemperie', 'Nuevos Horizontes', 'Barranco del Brazo de Oro'],
+    'Caza estelar': ['Escondite', 'Tiroteo Estelar', 'Sequía Sanguinaria', 'Crimen Organizado'],
+    'Atraco': ['Refugio', 'Cañón Explosivo', 'Patata Caliente', 'Aguas Turbulentas', 'Neumáticos Maniáticos'],
+    'Hot Zone': ['Campo Abierto', 'Pista Ardiente', 'Duelo de Escarabajos', 'Estrategias Paralelas']
+  };
+  var MODES = Object.keys(MAPS);
+  var MODE_COLOR = { 'Balón Brawl': '#2d7bff', 'Atrapagemas': '#a855f7', 'Noqueo': '#ff8a3d', 'Caza estelar': '#ffb800', 'Atraco': '#ef2b2b', 'Hot Zone': '#ff4fa3' };
+  function setLabel(x) { return x ? (x.mode || 'Modo por definir') + (x.map ? ' · ' + x.map : '') : ''; }
+  function setScore(m) { var h = 0, a = 0; (m.sets || []).forEach(function (x) { if (x.w === 'h') h++; else if (x.w === 'a') a++; }); return { h: h, a: a }; }
   var PHASES = { pre: 'Por empezar', '1T': '1.er tiempo', HT: 'Entretiempo', '2T': '2.º tiempo', FT: 'Finalizado' };
   function liveMs(m) { var c = m.live && m.live.clock; if (!c) return 0; return (c.acc || 0) + (c.run && c.since ? Math.max(0, Date.now() - c.since) : 0); }
   function liveMinute(m) { return Math.floor(liveMs(m) / 60000) + 1; }
@@ -88,7 +117,8 @@ var MAGNA = (function () {
     switch (e.k) {
       case 'start': return 'Arranca el partido';
       case 'goal': return '¡Gol de ' + tn + '!' + (e.player ? ' Anota ' + (playerName(e.player) || 'jugador') : '') + (e.score ? ' (' + e.score + ')' : '');
-      case 'mode': return 'Modo de juego: ' + e.mode;
+      case 'mode': return (e.set ? 'Set ' + e.set + ': ' : 'Modo de juego: ') + e.mode + (e.map ? ' · ' + e.map : '');
+      case 'set': return 'Set ' + e.set + ' para ' + tn + (e.score ? ' (sets ' + e.score + ')' : '');
       case 'sub': return 'Cambio en ' + tn + ': entra ' + (playerName(e.in) || '—') + ', sale ' + (playerName(e.out) || '—');
       case 'ht': return 'Entretiempo';
       case 'resume': return 'Comienza el 2.º tiempo';
@@ -200,8 +230,8 @@ var MAGNA = (function () {
   load();
   return {
     get S() { return S; }, load: load, save: save, hasLocal: hasLocal, discardLocal: discardLocal, id: id, now: now, by: by, addNews: addNews, teamName: teamName, standings: standings, clone: clone, EMPTY: EMPTY,
-    MODES: MODES, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
-    histMatches: histMatches, histTeam: histTeam, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
+    MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
+    marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
     groupTable: groupTable, groupSeeds: groupSeeds,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['otro', 'Otro']],
