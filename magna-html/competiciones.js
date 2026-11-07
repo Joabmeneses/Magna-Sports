@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  var h = M.h, FM = { round_robin: 'Todos contra todos', double_round_robin: 'Ida y vuelta', knockout: 'Eliminatorias', groups_knockout: 'Grupos + eliminatorias' }, ST = { active: ['En juego', 'a'], paused: ['En pausa', 'p'], finished: ['Finalizada', ''] };
+  var h = M.h, FM = { round_robin: 'Todos contra todos', double_round_robin: 'Ida y vuelta', knockout: 'Eliminatorias', groups_knockout: 'Grupos + eliminatorias', champions: 'Champions: liga + play-off' }, ST = { active: ['En juego', 'a'], paused: ['En pausa', 'p'], finished: ['Finalizada', ''] };
   var COL = ['#8b5cf6', '#2ee59d', '#ffd23f', '#ff6fb1', '#4aa8ff'], kind = 'leagues', cache = {};
   function table(rows, cols) {
     var w = h('div', 'pn tw'), tb = h('table'), th = h('tr'); cols.forEach(function (c) { th.appendChild(h('th', null, c[0])); }); tb.appendChild(th);
@@ -15,8 +15,9 @@
       } else {
         var br = it.bracket;
         if (br) {
-          b.appendChild(h('p', 'sub', br.champion ? 'Campeón: ' + br.champion.name : br.round ? 'Ronda actual: ' + br.round : br.phase === 'groups' ? 'Fase de grupos' : ''));
-          (br.groups || []).forEach(function (g) { b.appendChild(h('h2', 'x', 'Grupo ' + g.name)); b.appendChild(table(g.table, [['#', 'pos'], ['Equipo', 'team'], ['G', 'g'], ['P', 'p'], ['DG', 'dg'], ['Pts', 'pts']])); });
+          b.appendChild(h('p', 'sub', br.champion ? 'Campeón: ' + br.champion.name : br.round ? 'Ronda actual: ' + br.round : br.phase === 'groups' ? (it.config.format === 'champions' ? 'Fase de liga (ida y vuelta)' : 'Fase de grupos') : ''));
+          if (it.config.format === 'champions') { var cl = h('a', 'btn', 'Ver tabla y cuadro de la Champions →'); cl.href = 'champions.html?t=' + it.id; b.appendChild(cl); }
+          (br.groups || []).forEach(function (g) { b.appendChild(h('h2', 'x', g.name === 'Liga' ? 'Fase de liga' : 'Grupo ' + g.name)); b.appendChild(table(g.table, [['#', 'pos'], ['Equipo', 'team'], ['G', 'g'], ['P', 'p'], ['DG', 'dg'], ['Pts', 'pts']])); });
         } else b.appendChild(h('p', 'sub', 'Series al mejor de ' + it.config.best_of + ' · ' + it.teams.length + ' equipos inscritos.'));
         b.appendChild(h('h2', 'x', 'Partidos')); var l = h('div', 'ml'); b.appendChild(l);
         M.get('/api/public/calendar').then(function (c) { var ms = c.upcoming.concat(c.recent).filter(function (m) { return m.competition === it.name; });

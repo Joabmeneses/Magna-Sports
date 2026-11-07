@@ -50,7 +50,7 @@ var MAGNA = (function () {
   // ---------- trofeos de cada equipo (títulos = trofeos) ----------
   // Se suman solos: campeón de un torneo, primero de una liga finalizada y campeón del historial. Más los que la administración agregue a mano.
   function compYear(type, cid) { var ds = S.matches.filter(function (m) { return m.type === type && m.cid === cid && m.at; }).map(function (m) { return m.at; }).sort(); return ds.length ? ds[ds.length - 1].slice(0, 4) : null; }
-  function trnKind(c) { if (/champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'torneo'; }
+  function trnKind(c) { if (c.format === 'champions' || /champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'torneo'; }
   function teamTrophies(tid) {
     var t = by(S.teams, tid); if (!t) return []; var out = [], seen = {}, key = function (n, y) { return hnk(n) + '|' + (y || ''); };
     function push(x) { var k = key(x.name, x.season); if (seen[k] || seen[key(x.name, '')]) return; seen[k] = 1; out.push(x); }
@@ -84,7 +84,7 @@ var MAGNA = (function () {
   // Liga 15.000 · Champions 35.000 · Mundial 50.000 · otro torneo 25.000 (por victoria) · amistoso 5.000 (gane o pierda).
   var PTS = { league: 15000, champions: 35000, mundial: 50000, tournament: 25000, friendly: 5000 };
   function compKind(m) { if (m.type === 'friendly') return 'friendly'; if (m.type === 'league') return 'league'; var c = by(S.tournaments, m.cid); if (!c) return 'tournament';
-    if (/champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'tournament'; }
+    if (c.format === 'champions' || /champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'tournament'; }
   function histKind(e) { if (e.mundial || /mundial/i.test(e.name)) return 'mundial'; if (e.cat === 'champions' || /champions/i.test(e.name)) return 'champions'; if (e.cat === 'liga') return 'league'; return 'tournament'; }
   function teamPoints() {
     var P = {}; S.teams.forEach(function (t) { var b = Math.max(0, Math.round(Number(t.basePts) || 0)); P[t.id] = { pts: b, base: b, league: 0, champions: 0, mundial: 0, tournament: 0, friendly: 0 }; });
@@ -121,6 +121,10 @@ var MAGNA = (function () {
     });
     return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.team.localeCompare(y.team, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; });
   }
+  // Formato Champions: liga ida y vuelta → los D primeros directo, los K siguientes al play-off (D = K/2), el resto fuera.
+  // K es la mayor potencia de 2 que no supera la mitad de los equipos (36 → 8 directo + 16 play-off, como la Champions real).
+  function champSplit(n) { if (n < 3) return null; var k = 2; while (k * 2 <= n / 2) k *= 2; return { direct: k / 2, playoff: k, out: n - k / 2 - k }; }
+  function koName(n) { return n === 2 ? 'Final' : n === 4 ? 'Semifinales' : n === 8 ? 'Cuartos de final' : n === 16 ? 'Octavos de final' : 'Ronda de ' + n; }
   // Orden de los clasificados para el primer cruce: en la lista, el puesto i juega contra el puesto n-1-i.
   // Con 2 por grupo se cruzan grupos (1.º A vs 2.º B, 1.º B vs 2.º A...). Los primeros reciben los pases directos si sobran equipos.
   function groupSeeds(c) {
@@ -272,7 +276,7 @@ var MAGNA = (function () {
     MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
-    groupTable: groupTable, groupSeeds: groupSeeds,
+    groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },

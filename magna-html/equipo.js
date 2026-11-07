@@ -106,7 +106,7 @@
 
     // ---- competiciones ----
     if (comps.length) { var sc2 = section('Competiciones'), cl = h('div', 'cmp');
-      comps.forEach(function (x) { var a = h('a'); a.href = x.k === 'league' ? 'ligas.html' : x.c.format === 'groups_knockout' ? 'mundial.html' : 'competiciones.html'; var tx = h('div'); tx.appendChild(h('b', null, x.c.name)); var info = x.k === 'league' ? 'Liga' : 'Torneo';
+      comps.forEach(function (x) { var a = h('a'); a.href = x.k === 'league' ? 'ligas.html' : x.c.format === 'groups_knockout' ? 'mundial.html' : x.c.format === 'champions' ? 'champions.html?t=' + x.c.id : 'competiciones.html'; var tx = h('div'); tx.appendChild(h('b', null, x.c.name)); var info = x.k === 'league' ? 'Liga' : 'Torneo';
         var posTxt = '';
         if (x.k === 'league') { var rows = MAGNA.standings(Object.assign({ kind: 'league' }, x.c)), me2 = rows.filter(function (y) { return y.team_id === t.id; })[0]; if (me2) { posTxt = '#' + me2.pos; info += ' · ' + me2.pts + ' pts · ' + me2.pj + ' PJ'; } }
         else if (x.c.state && x.c.state.champion === t.id) posTxt = '🏆';

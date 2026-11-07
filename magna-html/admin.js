@@ -350,12 +350,12 @@
   function compV(b, kind) {
     var L = kind === 'leagues', list = S()[kind], word = L ? 'liga' : 'torneo';
     var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Crear ' + word, function () { newComp(kind); }, 'o')); b.appendChild(bar);
-    b.appendChild(table(['Nombre', 'Estado', 'Equipos', L ? 'Puntos (V/D)' : 'Formato', ''], list.map(function (c) { return [h('b', null, c.name), ST[c.status], String(c.teamIds.length), L ? c.config.win + ' / ' + c.config.loss : (c.format === 'knockout' ? 'Eliminatoria · al mejor de ' + c.best_of : c.format === 'groups_knockout' ? 'Mundial · ' + c.gcfg.n + ' grupos, pasan ' + c.gcfg.q : 'Todos contra todos'), [btn('Gestionar', function () { compDlg(kind, c.id); })]]; })));
+    b.appendChild(table(['Nombre', 'Estado', 'Equipos', L ? 'Puntos (V/D)' : 'Formato', ''], list.map(function (c) { return [h('b', null, c.name), ST[c.status], String(c.teamIds.length), L ? c.config.win + ' / ' + c.config.loss : (c.format === 'knockout' ? 'Eliminatoria · al mejor de ' + c.best_of : c.format === 'groups_knockout' ? 'Mundial · ' + c.gcfg.n + ' grupos, pasan ' + c.gcfg.q : c.format === 'champions' ? 'Champions · liga ida y vuelta + play-off' : 'Todos contra todos'), [btn('Gestionar', function () { compDlg(kind, c.id); })]]; })));
   }
   function newComp(kind) {
     var L = kind === 'leagues', f = [{ k: 'n', label: 'Nombre', maxlength: 40 }, { k: 'd', label: 'Descripción (opcional)', type: 'textarea' }];
     if (L) f.push({ k: 'w', label: 'Puntos por victoria', type: 'number', value: 3, min: 1, max: 10 }, { k: 'l', label: 'Puntos por derrota', type: 'number', value: 0, min: 0, max: 9 });
-    else f.push({ k: 'f', label: 'Formato', type: 'select', value: 'knockout', options: [['knockout', 'Eliminatoria directa'], ['round_robin', 'Todos contra todos'], ['groups_knockout', 'Mundial: fase de grupos + eliminatoria']] }, { k: 'g', label: 'Número de grupos (solo formato Mundial)', type: 'select', value: 4, options: [[1, '1 grupo'], [2, '2 grupos'], [3, '3 grupos'], [4, '4 grupos'], [5, '5 grupos'], [6, '6 grupos'], [7, '7 grupos'], [8, '8 grupos']] }, { k: 'q', label: 'Clasifican por grupo (solo formato Mundial)', type: 'select', value: 2, options: [[1, 'El 1.º'], [2, 'Los 2 primeros'], [3, 'Los 3 primeros'], [4, 'Los 4 primeros']] }, { k: 'b', label: 'Series (sin empates)', type: 'select', value: 3, options: [[1, 'A 1 partida'], [3, 'Al mejor de 3'], [5, 'Al mejor de 5'], [7, 'Al mejor de 7']] }, { k: 'r', label: 'Reglas (opcional)', type: 'textarea' });
+    else f.push({ k: 'f', label: 'Formato', type: 'select', value: 'knockout', options: [['knockout', 'Eliminatoria directa'], ['round_robin', 'Todos contra todos'], ['groups_knockout', 'Mundial: fase de grupos + eliminatoria'], ['champions', 'Champions: liga ida y vuelta + play-off + eliminatoria']] }, { k: 'g', label: 'Número de grupos (solo formato Mundial)', type: 'select', value: 4, options: [[1, '1 grupo'], [2, '2 grupos'], [3, '3 grupos'], [4, '4 grupos'], [5, '5 grupos'], [6, '6 grupos'], [7, '7 grupos'], [8, '8 grupos']] }, { k: 'q', label: 'Clasifican por grupo (solo formato Mundial)', type: 'select', value: 2, options: [[1, 'El 1.º'], [2, 'Los 2 primeros'], [3, 'Los 3 primeros'], [4, 'Los 4 primeros']] }, { k: 'b', label: 'Series (sin empates)', type: 'select', value: 3, options: [[1, 'A 1 partida'], [3, 'Al mejor de 3'], [5, 'Al mejor de 5'], [7, 'Al mejor de 7']] }, { k: 'r', label: 'Reglas (opcional)', type: 'textarea' });
     ask('Crear ' + (L ? 'liga' : 'torneo'), f, function (v) {
       var n = okName(v.n, 2, 40); if (!n) return 'Nombre no válido (2 a 40 caracteres).'; if (S()[kind].some(function (c) { return nk(c.name) === nk(n); })) return 'Ya existe uno con ese nombre.';
       var c = { id: MAGNA.id(), name: n, description: (v.d || '').slice(0, 500), status: 'draft', teamIds: [] };
@@ -379,15 +379,17 @@
         box.appendChild(a);
         if (L) { var rows = MAGNA.standings(Object.assign({ kind: 'league' }, c)); box.appendChild(h('h2', 'x', 'Clasificación')); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], rows.map(function (r) { return [r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); }
         else {
-          var st = c.state; box.appendChild(h('h2', 'x', 'Calendario automático'));
+          var st = c.state, CH = c.format === 'champions'; box.appendChild(h('h2', 'x', 'Calendario automático'));
+          if (CH && !st) { var sp0 = MAGNA.champSplit(c.teamIds.length); box.appendChild(h('p', 'sub', sp0 ? 'Con ' + c.teamIds.length + ' equipos: liga de ida y vuelta (' + (c.teamIds.length - 1) * 2 + ' jornadas) · ' + chTxt(c) + '. Eliminatoria a partido único.' : 'El formato Champions necesita al menos 3 equipos.')); }
           if (!st) { box.appendChild(h('p', 'sub', c.status === 'active' ? 'Genera los cruces según el formato.' : 'Activa el torneo con al menos 2 equipos para generar los cruces.')); var g = btn('Generar calendario', function () { var e = generate(c); if (e) toast(e, true); else { MAGNA.addNews('tournament_bracket', 'Se genera el calendario de ' + c.name + '.'); MAGNA.save(); draw(); render(); } }, 'o'); g.disabled = c.status !== 'active'; box.appendChild(g); }
-          else { box.appendChild(h('p', 'sub', st.phase === 'done' ? 'Campeón: ' + MAGNA.teamName(st.champion) : st.phase === 'league' ? 'Todos contra todos en curso' : st.phase === 'groups' ? 'Fase de grupos en curso · clasifican ' + c.gcfg.q + ' por grupo' : 'Ronda actual: ' + st.round));
-            if (c.groups) c.groups.forEach(function (g) { var q = c.gcfg.q; box.appendChild(h('h2', 'x', 'Grupo ' + g.name)); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, g).map(function (r) { return [r.pos <= q ? r.pos + ' ✓' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); });
+          else { box.appendChild(h('p', 'sub', st.phase === 'done' ? 'Campeón: ' + MAGNA.teamName(st.champion) : st.phase === 'league' ? 'Todos contra todos en curso' : st.phase === 'groups' ? (CH ? 'Fase de liga (ida y vuelta) en curso · ' + chTxt(c) : 'Fase de grupos en curso · clasifican ' + c.gcfg.q + ' por grupo') : st.phase === 'playoff' ? 'Play-off en curso · ' + st.direct.length + ' equipos esperan en ' + MAGNA.koName(st.direct.length * 2) : 'Ronda actual: ' + st.round));
+            if (CH && c.groups) { var sp = MAGNA.champSplit(c.groups[0].teamIds.length); box.appendChild(h('h2', 'x', 'Fase de liga')); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, c.groups[0]).map(function (r) { return [r.pos <= sp.direct ? r.pos + ' ✓' : r.pos <= sp.direct + sp.playoff ? r.pos + ' ▶' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); box.appendChild(h('p', 'sub', '✓ directo a ' + (sp.direct === 1 ? 'la final' : MAGNA.koName(sp.direct * 2).toLowerCase()) + ' · ▶ juega el play-off' + (sp.out ? ' · sin marca: eliminado' : ''))); }
+            else if (c.groups) c.groups.forEach(function (g) { var q = c.gcfg.q; box.appendChild(h('h2', 'x', 'Grupo ' + g.name)); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, g).map(function (r) { return [r.pos <= q ? r.pos + ' ✓' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); });
             if (st.phase === 'groups') { var gb = h('div', 'bar2');
-              gb.appendChild(btn('Pasar a la eliminatoria', function () { var e = toKnockout(c); if (e) toast(e, true); else { MAGNA.save(); draw(); render(); } }, 'o'));
-              if (!compMatches(kind, c).some(function (m) { return m.status === 'finished'; })) gb.appendChild(btn('Repetir sorteo de grupos', function () { confirmBox('¿Repetir el sorteo?', 'Se borran los partidos de grupos (ninguno se ha jugado) y se reparten los equipos de nuevo.', 'Repetir', function () { S().matches = S().matches.filter(function (m) { return !(m.type === 'tournament' && m.cid === c.id); }); c.state = null; c.groups = null; var e = generate(c); if (e) toast(e, true); MAGNA.save(); draw(); render(); }); }));
+              gb.appendChild(btn(CH ? 'Pasar al play-off' : 'Pasar a la eliminatoria', function () { var e = toKnockout(c); if (e) toast(e, true); else { MAGNA.save(); draw(); render(); } }, 'o'));
+              if (!CH && !compMatches(kind, c).some(function (m) { return m.status === 'finished'; })) gb.appendChild(btn('Repetir sorteo de grupos', function () { confirmBox('¿Repetir el sorteo?', 'Se borran los partidos de grupos (ninguno se ha jugado) y se reparten los equipos de nuevo.', 'Repetir', function () { S().matches = S().matches.filter(function (m) { return !(m.type === 'tournament' && m.cid === c.id); }); c.state = null; c.groups = null; var e = generate(c); if (e) toast(e, true); MAGNA.save(); draw(); render(); }); }));
               box.appendChild(gb); }
-            if (st.phase === 'knockout') box.appendChild(btn('Avanzar a la siguiente ronda', function () { var e = advance(c); if (e) toast(e, true); else { MAGNA.save(); draw(); render(); } }, 'o')); }
+            if (st.phase === 'knockout' || st.phase === 'playoff') box.appendChild(btn(st.phase === 'playoff' ? 'Pasar a ' + MAGNA.koName(st.direct.length * 2) : 'Avanzar a la siguiente ronda', function () { var e = advance(c); if (e) toast(e, true); else { MAGNA.save(); draw(); render(); } }, 'o')); }
         }
         var ms = compMatches(kind, c); box.appendChild(h('h2', 'x', 'Partidos (' + ms.length + ')'));
         box.appendChild(table(['Ronda', 'Partido', 'Resultado'], ms.map(function (m) { return [m.round, MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), m.status === 'finished' ? m.hs + ' - ' + m.as : m.status === 'cancelled' ? 'Cancelado' : 'Pendiente']; })));
@@ -426,9 +428,29 @@
       c.groups.forEach(function (gr) { rr(gr.teamIds).forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Grupo ' + gr.name + ' · Jornada ' + (i + 1), p[0], p[1]); S().matches[S().matches.length - 1].group = gr.name; }); }); });
       c.state = { phase: 'groups' };
     }
+    else if (c.format === 'champions') {
+      var cid = c.teamIds.slice(); if (cid.length < 3) return 'El formato Champions necesita al menos 3 equipos.';
+      for (var a = cid.length - 1; a > 0; a--) { var b = Math.floor(Math.random() * (a + 1)), t2 = cid[a]; cid[a] = cid[b]; cid[b] = t2; }
+      c.groups = [{ name: 'Liga', teamIds: cid }]; var R = rr(cid);
+      R.forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Liga · Jornada ' + (i + 1), p[0], p[1]); S().matches[S().matches.length - 1].group = 'Liga'; }); });
+      R.forEach(function (ps, i) { ps.forEach(function (p) { addM(c, 'Liga · Jornada ' + (R.length + i + 1), p[1], p[0]); S().matches[S().matches.length - 1].group = 'Liga'; }); });
+      c.state = { phase: 'groups' };
+    }
     else koRound(c, c.teamIds.slice()); return null;
   }
+  function chTxt(c) { var sp = MAGNA.champSplit((c.groups ? c.groups[0].teamIds : c.teamIds).length); if (!sp) return ''; var D = sp.direct, K = sp.playoff;
+    return (D === 1 ? '1.º' : '1.º–' + D + '.º') + ' directo a ' + (D === 1 ? 'la final' : MAGNA.koName(D * 2).toLowerCase()) + ', ' + (D + 1) + '.º–' + (D + K) + '.º play-off' + (sp.out ? ', ' + (D + K + 1) + '.º en adelante eliminados' : ''); }
+  function toPlayoff(c) {
+    var gm = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.group && m.status !== 'cancelled'; });
+    if (gm.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de la fase de liga sin terminar.';
+    var tab = MAGNA.groupTable(c, c.groups[0]).map(function (r) { return r.team_id; }), sp = MAGNA.champSplit(tab.length); if (!sp) return 'Faltan equipos.';
+    var D = sp.direct, K = sp.playoff, pairs = [];
+    for (var j = 0; j < K / 2; j++) { pairs.push([tab[D + j], tab[D + K - 1 - j]]); addM(c, 'Play-off', tab[D + j], tab[D + K - 1 - j]); }
+    c.state = { phase: 'playoff', round: 'Play-off', direct: tab.slice(0, D), pairs: pairs };
+    MAGNA.addNews('tournament_bracket', c.name + ': termina la fase de liga. ' + tab.slice(0, D).map(MAGNA.teamName).join(', ') + (D === 1 ? ' pasa' : ' pasan') + ' directo y comienza el play-off.'); return null;
+  }
   function toKnockout(c) {
+    if (c.format === 'champions' && c.state && c.state.phase === 'groups') return toPlayoff(c);
     if (!c.state || c.state.phase !== 'groups') return 'El torneo no está en fase de grupos.';
     var gm = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.group && m.status !== 'cancelled'; });
     if (gm.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de grupos sin terminar.';
@@ -438,7 +460,15 @@
     koRound(c, seeds); MAGNA.addNews('tournament_bracket', c.name + ': termina la fase de grupos y comienza ' + c.state.round + '.'); return null;
   }
   function advance(c) {
-    var st = c.state; if (!st || st.phase !== 'knockout') return 'No hay ronda que avanzar.';
+    var st = c.state;
+    if (st && st.phase === 'playoff') {
+      var pm = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.round === 'Play-off' && m.status !== 'cancelled'; });
+      if (pm.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos del play-off sin terminar.';
+      var win = st.pairs.map(function (p) { var m = pm.filter(function (x) { return (x.home === p[0] && x.away === p[1]) || (x.home === p[1] && x.away === p[0]); })[0]; return m ? (m.hs > m.as ? m.home : m.away) : null; });
+      if (win.some(function (w) { return w == null; })) return 'Falta el partido de algún cruce del play-off (¿se canceló?). Prográmalo de nuevo con los mismos equipos.';
+      koRound(c, st.direct.concat(win)); MAGNA.addNews('tournament_bracket', c.name + ': termina el play-off y comienzan ' + c.state.round.toLowerCase() + '.'); return null;
+    }
+    if (!st || st.phase !== 'knockout') return 'No hay ronda que avanzar.';
     var ms = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.round === st.round && m.status !== 'cancelled'; });
     if (ms.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de esta ronda sin terminar.';
     var alive = st.byes.concat(ms.map(function (m) { return m.hs > m.as ? m.home : m.away; }));
