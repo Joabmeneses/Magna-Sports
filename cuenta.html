@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Mi cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+.acw{max-width:880px}
+.lg{max-width:440px;margin:30px auto 0;background:radial-gradient(90% 60% at 50% 0,rgba(139,92,246,.25),transparent 70%),var(--card);border:1px solid var(--line);border-radius:28px;padding:28px}
+.lg img{height:64px;width:auto;display:block;margin-bottom:12px;filter:drop-shadow(0 0 14px rgba(255,140,0,.35))}
+.lg h2{margin:0 0 6px;font-size:30px}.lg .msg{min-height:1.3em;color:var(--red);font-size:14px;margin:8px 0}.lg .msg.ok{color:var(--green)}
+.code{letter-spacing:.4em;font:700 22px "JetBrains Mono",monospace;text-align:center}
+.top2{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:10px}
+.bal{position:relative;overflow:hidden;margin-top:22px;border-radius:28px;padding:clamp(20px,4vw,32px);background:radial-gradient(80% 90% at 85% 10%,rgba(255,210,63,.28),transparent 60%),linear-gradient(135deg,#2a1c6e,#141a3d);border:1px solid rgba(255,210,63,.35)}
+.bal small{display:block;color:#d6d9ea;font:500 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.bal b{display:flex;align-items:center;gap:14px;font:900 clamp(48px,11vw,84px)/1 Archivo,sans-serif;font-stretch:120%;margin:10px 0 6px;font-variant-numeric:tabular-nums}
+.bal b i{width:.62em;height:.62em;border-radius:50%;background:linear-gradient(135deg,#ffd23f,#ff9d00);box-shadow:inset 0 0 0 4px rgba(0,0,0,.15),0 0 24px rgba(255,190,40,.5);flex:none}
+.bal .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn2{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 18px;font:700 14px Archivo,sans-serif;text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--fg);cursor:pointer}
+.btn2.o{background:var(--orange);border-color:var(--orange);color:#fff}.btn2:hover{border-color:var(--purple)}
+.pl{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px}
+.pl .md{font:900 54px/1 Archivo,sans-serif;font-stretch:125%;color:var(--c)}.pl h3{margin:0;font-size:20px}
+.tb2{display:inline-block;border:1px solid var(--c);color:var(--c);border-radius:999px;padding:3px 10px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.stl{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.stl span{background:rgba(255,255,255,.06);border-radius:12px;padding:6px 10px;font-size:13px}
+.bets{display:grid;gap:8px;margin-top:10px}
+.bt{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 16px;animation:up .35s both}
+.bt b{font-size:15px}.bt small{color:var(--muted);font-size:12.5px}.bt .r{text-align:right}
+.chip2{display:inline-block;border-radius:999px;padding:4px 10px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+.chip2.open{background:rgba(255,90,54,.16);color:var(--orange)}.chip2.won{background:rgba(46,229,157,.16);color:var(--green)}.chip2.lost{background:rgba(255,77,109,.14);color:var(--red)}.chip2.refund,.chip2.cash{background:rgba(255,255,255,.08);color:#c9cde0}
+.em2{color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:22px;text-align:center}
+
+.pp{margin:14px 0 18px;border-radius:24px;padding:16px;border:1px solid rgba(139,92,246,.45);background:radial-gradient(70% 120% at 0 0,rgba(139,92,246,.3),transparent 70%),var(--card)}
+.pp-t{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.pp-t>div{display:grid;gap:4px;justify-items:start}.pp-t b{font:900 18px Archivo,sans-serif}.pp-t small{color:var(--muted);font-size:13px}.pp-t .btn2{margin-top:6px}
+.pp-big{position:relative;width:96px;height:96px;border-radius:50%;padding:0;border:3px solid var(--yellow);background:linear-gradient(135deg,#8b5cf6,#3b4bff);cursor:pointer;display:grid;place-items:center;font:900 30px Archivo,sans-serif;color:#fff;box-shadow:0 0 0 6px rgba(255,210,63,.15),0 14px 30px rgba(0,0,0,.4);flex:none}
+.pp-big img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}.pp-big i{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;background:var(--orange);color:#fff;font-style:normal;font-size:14px;display:grid;place-items:center;border:2px solid #0a0d18}
+.pp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;margin-top:16px}.pp-g[hidden]{display:none}
+.pp-g button{aspect-ratio:1;border-radius:50%;padding:0;border:3px solid transparent;background:none;cursor:pointer;transition:transform .15s,border-color .15s}.pp-g button:hover{transform:scale(1.08)}.pp-g button.on{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,210,63,.25)}.pp-g img{width:100%;height:100%;border-radius:50%;display:block}
+.pp-g .pp-none{border:2px dashed var(--line);color:var(--muted);font:700 12px Archivo,sans-serif}.pp-g .pp-none.on{border-color:var(--yellow);color:var(--fg)}
+.pp-m{margin:10px 0 0;font-size:14px;color:var(--muted);min-height:1em}.pp-m.ok{color:var(--green)}.pp-m.bad{color:#ff8aa0}
+</style></head>
+<body><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap acw"><div class="eyebrow mono">Comunidad</div><h1 class="x">Mi cuenta</h1><div id="app"><div class="skel" role="status" aria-label="Cargando" style="margin-top:24px"><div class="skel-card" style="height:120px"></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div></div></div>
+</main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js"></script><script src="accounts.js"></script><script src="live.js" defer></script><script src="site.js"></script><script src="inventario.js"></script>
+<script>
+(function () {
+  var A = ACCOUNTS, app = document.getElementById('app'), h = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+  var ST = { open: 'En juego', won: 'Ganada', lost: 'Perdida', refund: 'Devuelta', cash: 'Retirada' };
+  function fmt(n) { return Number(n || 0).toLocaleString('es'); }
+  function login() {
+    app.innerHTML = ''; var c = h('div', 'lg'), im = h('img'); im.src = 'logo.png'; im.alt = ''; c.appendChild(im); c.appendChild(h('h2', 'x', 'Entrar')); c.appendChild(h('p', 'sub', 'Usa el usuario y el código de 6 dígitos que te dio la administración.'));
+    var f = h('form'), l1 = h('label', 'f', 'Usuario'), us = h('input', 'in'); us.autocomplete = 'username'; us.autocapitalize = 'none'; us.spellcheck = false; us.id = 'u'; l1.appendChild(us); f.appendChild(l1);
+    var l2 = h('label', 'f', 'Código'), cd = h('input', 'in code'); cd.type = 'password'; cd.inputMode = 'numeric'; cd.maxLength = 6; cd.autocomplete = 'one-time-code'; cd.id = 'c'; cd.placeholder = '••••••'; l2.appendChild(cd); f.appendChild(l2);
+    var m = h('p', 'msg'), go = h('button', 'btn', 'Entrar'); go.type = 'submit'; f.appendChild(m); f.appendChild(go); c.appendChild(f); var tc = h('p', 'sub'); tc.style.cssText = 'font-size:13px;margin-top:14px'; tc.innerHTML = 'Al entrar aceptas los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.'; c.appendChild(tc); app.appendChild(c);
+    f.onsubmit = function (e) { e.preventDefault(); var u = us.value.trim().toLowerCase(), k = cd.value.replace(/\D/g, ''); if (u.length < 3) { m.textContent = 'Escribe tu usuario.'; return; } if (k.length !== 6) { m.textContent = 'El código tiene 6 dígitos.'; return; }
+      go.disabled = true; m.className = 'msg ok'; m.textContent = 'Entrando…'; A.login(u, k).then(show, function (er) { go.disabled = false; m.className = 'msg'; m.textContent = er.message || 'No se pudo entrar.'; }); };
+    us.focus();
+  }
+  // Foto de perfil: el usuario elige uno de los avatares de Magna
+  function photo(acc) {
+    var cur = acc.avatar || null, box = h('div', 'pp'), top = h('div', 'pp-t'), big = h('button', 'pp-big'); big.type = 'button'; big.setAttribute('aria-label', 'Cambiar foto de perfil');
+    function paint() { big.innerHTML = ''; var u = MAGNA_AVATAR_URL(cur); if (u) { var im = h('img'); im.src = u; im.alt = 'Tu foto de perfil'; big.appendChild(im); } else big.appendChild(h('span', null, (acc.display_name || '?').slice(0, 2).toUpperCase())); big.appendChild(h('i', null, '✎')); }
+    paint(); top.appendChild(big); var tx = h('div'); tx.appendChild(h('b', null, 'Foto de perfil')); var st = h('small', null, cur ? MAGNA_AVATARS[Number(cur.slice(1)) - 1] : 'Elige un avatar de Magna para tu perfil'); tx.appendChild(st);
+    var tg = h('button', 'btn2', cur ? 'Cambiar foto' : 'Elegir foto'); tg.type = 'button'; tx.appendChild(tg); top.appendChild(tx); box.appendChild(top);
+    var grid = h('div', 'pp-g'); grid.hidden = true; box.appendChild(grid); var msg = h('p', 'pp-m'); box.appendChild(msg);
+    function toggle() { grid.hidden = !grid.hidden; tg.textContent = grid.hidden ? (cur ? 'Cambiar foto' : 'Elegir foto') : 'Cerrar'; if (!grid.hidden) { var on = grid.querySelector('.on') || grid.firstChild; if (on) on.focus(); } }
+    big.onclick = toggle; tg.onclick = toggle;
+    function save(v) { var prev = cur; cur = v; paint(); mark(); st.textContent = v ? MAGNA_AVATARS[Number(v.slice(1)) - 1] : 'Sin foto'; msg.textContent = 'Guardando…'; msg.className = 'pp-m';
+      window.MAGNA_SB().then(function (c) { return c.rpc('set_my_avatar', { p_avatar: v }); }).then(function (r) { if (r && r.error) throw r.error; msg.textContent = v ? '¡Listo! Ya es tu foto de perfil.' : 'Foto quitada.'; msg.className = 'pp-m ok'; if (window.MAGNA_ME && MAGNA_ME.setAvatar) MAGNA_ME.setAvatar(v); acc.avatar = v; },
+        function (e) { cur = prev; paint(); mark(); msg.textContent = 'No se pudo guardar: ' + (e.message || 'inténtalo de nuevo'); msg.className = 'pp-m bad'; }); }
+    function mark() { [].forEach.call(grid.children, function (b) { var on = b.dataset.a === (cur || ''); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); }
+    MAGNA_AVATARS.forEach(function (n, i) { var id = 'a' + String(i + 1).padStart(2, '0'), b = h('button'); b.type = 'button'; b.dataset.a = id; b.title = n; b.setAttribute('aria-label', n); var im = h('img'); im.src = MAGNA_AVATAR_URL(id); im.alt = ''; im.loading = 'lazy'; b.appendChild(im); b.onclick = function () { save(id); }; grid.appendChild(b); });
+    var none = h('button', 'pp-none', 'Sin foto'); none.type = 'button'; none.dataset.a = ''; none.onclick = function () { save(null); }; grid.appendChild(none); mark();
+    return box;
+  }
+  function show() {
+    Promise.all([A.me(), A.myBets().catch(function () { return []; })]).then(function (r) { var acc = r[0], bets = r[1]; if (!acc) return login(); draw(acc, bets); sub(acc); });
+  }
+  function draw(acc, bets) {
+    app.innerHTML = ''; var tp = h('div', 'top2'); tp.appendChild(h('p', 'sub', 'Hola, ' + acc.display_name + ' · usuario ' + acc.username)); var out = h('button', 'btn2', 'Salir'); out.type = 'button'; out.onclick = function () { A.logout().then(login); }; tp.appendChild(out); app.appendChild(tp); app.appendChild(photo(acc));
+    var bl = h('div', 'bal'); bl.appendChild(h('small', null, 'Tu saldo')); var b = h('b'); b.appendChild(h('i')); b.appendChild(document.createTextNode(fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Bits'));
+    var ac = h('div', 'acts'), ap = h('a', 'btn2 o', 'Ir a Apuestas'); ap.href = 'apuestas.html'; ac.appendChild(ap); if (acc.role === 'admin') { var pn = h('a', 'btn2', 'Ir al panel'); pn.href = 'admin.html'; ac.appendChild(pn); } if (acc.player_id && MAGNA.S.teams.some(function (q) { return q.coach === acc.player_id; })) { var ce = h('a', 'btn2 o', 'Gestionar mi equipo'); ce.href = 'mi-equipo.html'; ac.insertBefore(ce, ac.firstChild); } if (acc.player_id) { var mp = h('a', 'btn2', 'Mi perfil público'); mp.href = 'jugador.html?id=' + acc.player_id; ac.appendChild(mp); } var tn = h('a', 'btn2', '🛍️ Tienda'); tn.href = 'tienda.html'; ac.appendChild(tn); bl.appendChild(ac); app.appendChild(bl); if (window.MAGNA_INV) app.appendChild(MAGNA_INV.mount(acc));
+    if (acc.player_id) { var p = MAGNA.by(MAGNA.S.players, acc.player_id); if (p) { var x = MAGNA.playerStats()[p.id] || {}, tr = MAGNA.tierOf(x.media), t = MAGNA.by(MAGNA.S.teams, p.teamId), pl = h('div', 'pl'), md = h('div', 'md', x.media == null ? '—' : x.media); md.style.setProperty('--c', tr.color); pl.appendChild(md);
+      var w = h('div'); w.appendChild(h('h3', 'x', p.name)); var dtT = MAGNA.S.teams.filter(function (q) { return q.coach === p.id; })[0], sb = h('p', 'sub', MAGNA.roleName(p) + ' · ' + (t ? t.name : MAGNA.plays(p) ? 'Agente libre' : 'Sin equipo') + (dtT ? ' · DT de ' + dtT.name : '') + '  '); sb.style.margin = '4px 0'; var bd = h('span', 'tb2', tr.name); bd.style.setProperty('--c', tr.color); sb.appendChild(bd); w.appendChild(sb);
+      var sl = h('div', 'stl'); [['Partidos', x.pj || 0], ['Trofeos', (x.titles || []).length], ['Récord', (x.w || 0) + 'V · ' + (x.l || 0) + 'D'], ['Victorias vs fuertes', x.topW || 0], ['Nota media', x.nota == null ? '—' : String(x.nota).replace('.', ',')], ['Goles', x.g || 0], ['MVP', x.mvp || 0]].forEach(function (k) { sl.appendChild(h('span', null, k[0] + ': ' + k[1])); }); w.appendChild(sl); pl.appendChild(w); app.appendChild(pl); } }
+    app.appendChild(h('h2', 'x', 'Mis apuestas'));
+    var bs = h('div', 'bets'); if (!bets.length) bs.appendChild(h('div', 'em2', 'Todavía no has apostado. Entra a Apuestas y elige un partido.'));
+    bets.forEach(function (x, i) { var m = MAGNA.by(MAGNA.S.matches, x.match_id), r = h('div', 'bt'); r.style.animationDelay = Math.min(i, 10) * 30 + 'ms'; var l = h('div'); l.appendChild(h('b', null, m ? MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) : 'Partido #' + x.match_id));
+      l.appendChild(h('small', null, ' · Gana ' + (m ? MAGNA.teamName(x.side === 'h' ? m.home : m.away) : '') + ' @' + String(x.odds).replace('.', ',') + ' · ' + new Date(x.created_at).toLocaleDateString('es', { day: 'numeric', month: 'short' }))); r.appendChild(l);
+      var rr = h('div', 'r'); rr.appendChild(h('span', 'chip2 ' + x.status, ST[x.status] || x.status)); rr.appendChild(h('small', null, ' ' + fmt(x.stake) + ' → ' + (x.status === 'open' ? fmt(Math.round(x.stake * x.odds)) + ' posible' : fmt(x.payout || 0)))); r.appendChild(rr); bs.appendChild(r); });
+    app.appendChild(bs);
+  }
+  var subbed = false;
+  function sub(acc) { if (subbed) return; subbed = true; window.MAGNA_SB().then(function (c) { var t = null, re = function () { clearTimeout(t); t = setTimeout(show, 300); };
+    c.channel('mi-cuenta').on('postgres_changes', { event: '*', schema: 'public', table: 'bets', filter: 'account_id=eq.' + acc.id }, re).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'accounts', filter: 'id=eq.' + acc.id }, re).subscribe(); }); }
+  if (MAGNA.cloud.source !== 'cloud') { app.innerHTML = ''; app.appendChild(h('div', 'em2', 'No se pudo conectar. Revisa tu internet y recarga la página.')); return; }
+  show();
+})();
+</script>
+</body></html>

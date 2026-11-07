@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Perfil de jugador</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+body.jp{background:#0d0b2a}
+body.jp:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(45% 40% at 10% 0,var(--jc1,rgba(139,92,246,.35)),transparent 70%),radial-gradient(40% 40% at 100% 20%,var(--jc2,rgba(255,90,54,.25)),transparent 70%),radial-gradient(50% 40% at 50% 100%,rgba(34,211,238,.14),transparent 70%)}
+.jp-h{position:relative;margin-top:26px;border-radius:32px;overflow:hidden;padding:clamp(22px,4.5vw,44px);border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,var(--jt,#3b2a8a),#15123f 62%);display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,3vw,34px);align-items:center;isolation:isolate}
+.jp-h:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.14),transparent 40%),repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px)}
+.jp-h .tav{--s:clamp(96px,14vw,150px)}
+.jp-ey{font:700 12px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.jp-nm{margin:8px 0 6px;font:900 clamp(34px,6.4vw,68px)/1.02 Archivo,sans-serif;font-stretch:118%;text-transform:uppercase;letter-spacing:-.01em;overflow-wrap:anywhere}
+.jp-nm .mpn{align-items:flex-start}.jp-nm .mpn-t{font-size:14px;margin-top:6px}
+.jp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.jp-chips>*{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(10,13,24,.38);border:1px solid rgba(255,255,255,.14);font:600 13px Archivo,sans-serif;color:#fff;text-decoration:none}
+.jp-chips a:hover{border-color:#fff}.jp-chips .cr{border-radius:6px}
+.jp-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.jp-act a{border-radius:999px;padding:10px 16px;font:800 14px Archivo,sans-serif;text-decoration:none;background:#fff;color:#14113a}.jp-act a.g{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.jp-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-top:18px}
+.jp-k div{border-radius:20px;padding:14px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);animation:jpIn .5s both}.jp-k b{display:block;font:900 30px/1 Archivo,sans-serif;font-stretch:115%}.jp-k small{color:var(--muted);font:600 10px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+.jp-k div:nth-child(1) b{color:#a78bfa}.jp-k div:nth-child(2) b{color:#2ee59d}.jp-k div:nth-child(3) b{color:#ffd23f}.jp-k div:nth-child(4) b{color:#ff8a65}.jp-k div:nth-child(5) b{color:#22d3ee}.jp-k div:nth-child(6) b{color:#f472b6}
+.jp-s{margin-top:38px}.jp-s>h2{margin:0 0 4px;font-size:clamp(22px,3.4vw,32px)}.jp-s>p{margin:0 0 14px;color:var(--muted)}
+.jp-two{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.jp-box{border-radius:24px;padding:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+/* vitrina */
+.jp-vit{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.jp-tr{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:16px 10px;border-radius:20px;background:linear-gradient(180deg,rgba(255,210,63,.16),rgba(255,255,255,.03));border:1px solid rgba(255,210,63,.3);animation:jpIn .5s both}
+.jp-tr i{font-style:normal;font-size:34px;filter:drop-shadow(0 6px 10px rgba(255,196,0,.35))}.jp-tr b{font:800 14px Archivo,sans-serif}.jp-tr small{color:var(--muted);font-size:12px}
+.jp-tr.bo{background:linear-gradient(180deg,rgba(255,196,0,.32),rgba(139,92,246,.12));border-color:#ffd23f}
+/* insignias */
+.jp-bd{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.bd{position:relative;padding:14px 10px 12px;border-radius:20px;text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);transition:transform .2s}
+.bd:hover{transform:translateY(-3px)}.bd i{display:grid;place-items:center;margin:0 auto 6px;width:52px;height:52px;border-radius:50%;font-style:normal;font-size:26px;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(139,92,246,.35));box-shadow:0 0 0 2px rgba(255,255,255,.2)}
+.bd b{display:block;font:800 13px Archivo,sans-serif}.bd small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.bd.ok{border-color:rgba(46,229,157,.45);background:linear-gradient(180deg,rgba(46,229,157,.14),rgba(255,255,255,.03))}.bd.ok i{background:radial-gradient(circle at 35% 30%,#fff7c2,#ffc400 60%,#a86f00);box-shadow:0 0 0 2px #ffd23f,0 8px 20px -6px rgba(255,196,0,.6)}
+.bd.lk{opacity:.62}.bd.lk i{filter:grayscale(1)}.bd .pg{height:5px;border-radius:9px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden}.bd .pg span{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#22d3ee)}
+.jp-bdh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.jp-bdh .cnt{font:900 22px Archivo,sans-serif;color:#2ee59d}
+/* inventario */
+.jp-inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.iv{border-radius:20px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:8px;animation:jpIn .45s both}.iv.on{border-color:#2ee59d;box-shadow:0 0 0 1px #2ee59d inset}
+.iv .cos-prev{min-height:76px;font-size:16px}.iv b{font:800 14px Archivo,sans-serif}.iv .mt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}.iv .eqd{color:#2ee59d;font:700 10px "JetBrains Mono",monospace;letter-spacing:.06em}
+/* partidos */
+.jp-gm{display:grid;gap:8px}.gm{display:grid;grid-template-columns:34px 1fr auto auto;gap:12px;align-items:center;padding:10px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.gm .grs{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:900 13px Archivo,sans-serif;color:#0a0d18}.gm .grs.W{background:#2ee59d}.gm .grs.L{background:#ff5a6a}.gm .grs.D{background:#9aa0b8}
+.gm .gvs{min-width:0}.gm .gvs b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gm .gvs small{color:var(--muted);font-size:12px}.gm .gex{display:flex;gap:6px;font-size:13px}.gm .gnt{min-width:44px;text-align:center;padding:5px 8px;border-radius:10px;font:900 15px Archivo,sans-serif;background:rgba(255,255,255,.08)}
+.gnt.hi{background:#2ee59d;color:#0a0d18}.gnt.md{background:#ffd23f;color:#1a1200}.gnt.lo{background:#ff5a6a;color:#fff}
+.jp-spark{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:6px}.jp-spark i{flex:1;min-width:6px;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#22d3ee,#8b5cf6);animation:jpUp .6s both;transform-origin:bottom}
+@keyframes jpUp{from{transform:scaleY(0)}}@keyframes jpIn{from{opacity:0;transform:translateY(10px)}}
+.jp-emp{padding:22px;border-radius:20px;border:1px dashed rgba(255,255,255,.2);text-align:center;color:var(--muted)}
+/* directorio */
+.jp-dir-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:26px 0 16px}.jp-dir-top h1{margin:0;font-size:clamp(32px,6vw,58px);flex:1 1 260px}
+.jp-q{flex:1 1 240px;max-width:360px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(10,13,24,.5);color:#fff;padding:12px 18px;font:500 15px Archivo,sans-serif}
+.jp-dir{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.jd{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);text-decoration:none;color:inherit;transition:transform .15s,border-color .15s;min-width:0}.jd:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.35)}
+.jd>div{min-width:0}.jd b{display:block}.jd .mpn{max-width:100%}.jd small{color:var(--muted);font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:860px){.jp-h{grid-template-columns:auto 1fr}.jp-h .tcard{display:none}.jp-two{grid-template-columns:1fr}}
+@media(max-width:560px){.jp-bd{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.bd{padding:10px 6px}.bd i{width:42px;height:42px;font-size:21px}.bd small{font-size:10px}.jp-h{grid-template-columns:1fr;text-align:left}.jp-h .tav{--s:96px}.gm{grid-template-columns:30px 1fr auto}.gm .gex{display:none}}
+@media(prefers-reduced-motion:reduce){.jp-k div,.jp-tr,.iv,.jp-spark i{animation:none}}
+</style></head>
+<body class="jp"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="jp"></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="jugador.js" defer></script></body></html>
