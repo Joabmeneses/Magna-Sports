@@ -61,18 +61,18 @@
     var bench = squad.filter(function (p) { return starters.indexOf(p) < 0; });
     var sA = feat('Alineación', liveIds && liveIds.length ? 'La alineación que está jugando <b>ahora mismo</b>. Toca un jugador para ver su carta.' : 'Los <b>3 titulares</b> en la arena y los suplentes en el banquillo. Toca un jugador para ver su carta más abajo.');
     var pitch = h('div', 'pitch'); pitch.appendChild(h('span', 'lbl', liveIds && liveIds.length ? '● En vivo' : 'Titulares · 3 vs 3'));
-    if (coach) { var dt = h('div', 'dt'); dt.appendChild(M.tierAv(coach.name, media(coach), 28)); dt.appendChild(h('span', null, coach.name)); dt.appendChild(h('span', 'b', 'DT')); pitch.appendChild(dt); }
+    if (coach) { var dt = h('div', 'dt'); dt.appendChild(M.tierAv(coach.name, media(coach), 28, coach.id)); dt.appendChild(h('span', null, coach.name)); dt.appendChild(h('span', 'b', 'DT')); pitch.appendChild(dt); }
     var slots = h('div', 'slots'), SP = [[50, 26], [24, 72], [76, 72]];
     for (var i = 0; i < 3; i++) { var p = starters[i], tk = h('button', 'tok' + (p ? '' : ' empty')); tk.type = 'button'; tk.style.left = SP[i][0] + '%'; tk.style.top = SP[i][1] + '%'; tk.style.animationDelay = i * 120 + 'ms';
       var ring = h('span', 'ring');
-      if (p) { var md = media(p), tr = MAGNA.tierOf(md); tk.style.setProperty('--kc', tr.color); tk.style.setProperty('--pc', Math.max(4, Math.min(100, md))); ring.appendChild(h('span', 'ini2', p.name.slice(0, 2).toUpperCase())); ring.appendChild(h('span', 'mdl', String(md))); tk.appendChild(ring); tk.appendChild(h('b', null, p.name)); tk.appendChild(h('small', null, (t.coach === p.id ? 'DT · ' : '') + tr.name));
+      if (p) { var md = media(p), tr = MAGNA.tierOf(md); tk.style.setProperty('--kc', tr.color); tk.style.setProperty('--pc', Math.max(4, Math.min(100, md))); ring.appendChild(M.photo(h('span', 'ini2', p.name.slice(0, 2).toUpperCase()), p.id)); ring.appendChild(h('span', 'mdl', String(md))); tk.appendChild(ring); tk.appendChild(h('b', null, p.name)); tk.appendChild(h('small', null, (t.coach === p.id ? 'DT · ' : '') + tr.name));
         tk.setAttribute('aria-label', p.name + ', media ' + md + '. Ver su carta'); (function (pid) { tk.onclick = function () { showCard(pid); }; })(p.id); }
       else { ring.appendChild(h('span', 'ini2', '+')); tk.appendChild(ring); tk.appendChild(h('small', null, 'Puesto libre')); tk.disabled = true; }
       slots.appendChild(tk); }
     pitch.appendChild(slots); sA.appendChild(pitch);
     var bn = h('div', 'bench'); bn.appendChild(h('small', null, 'Banquillo'));
     if (!bench.length) bn.appendChild(h('span', 'em', 'Sin suplentes'));
-    bench.forEach(function (p) { var b = h('button'); b.type = 'button'; b.appendChild(M.tierAv(p.name, media(p), 30)); b.appendChild(document.createTextNode(p.name + ' · ' + media(p))); b.onclick = function () { showCard(p.id); }; bn.appendChild(b); });
+    bench.forEach(function (p) { var b = h('button'); b.type = 'button'; b.appendChild(M.tierAv(p.name, media(p), 30, p.id)); b.appendChild(document.createTextNode(p.name + ' · ' + media(p))); b.onclick = function () { showCard(p.id); }; bn.appendChild(b); });
     sA.appendChild(bn);
     var nxt = live || S.matches.filter(function (m) { return m.status === 'scheduled' && (m.home === t.id || m.away === t.id); }).sort(function (a, b) { return String(a.at || '9').localeCompare(String(b.at || '9')); })[0];
     if (nxt) { var nm = h('div', 'nextm'), op = nxt.home === t.id ? nxt.away : nxt.home, cp = MAGNA.compOf(nxt); nm.appendChild(h('span', live ? 'lvb' : 'em', live ? '● En vivo' : 'Próximo partido')); var oa = h('a'); oa.href = link(op); oa.appendChild(crest(op, 34)); nm.appendChild(oa);
@@ -165,7 +165,7 @@
     var sQ = feat('Plantilla', 'Cada jugador es una carta de su nivel. <b>Tócala para voltearla</b> y ver sus números.'), grid = h('div', 'squad');
     if (!squad.length) grid.appendChild(h('p', 'em', 'Este equipo todavía no tiene jugadores.'));
     squad.forEach(function (p) { var x = PS[p.id] || {}, md = media(p), tr = MAGNA.tierOf(md), b = h('button', 'pcd'); b.type = 'button'; b.id = 'pc-' + p.id; b.style.setProperty('--t1', tr.color); b.style.setProperty('--t2', shade(tr.color, -110)); b.setAttribute('aria-label', p.name + ', media ' + md + ', toca para ver sus números');
-      var f = h('div', 'fr' + (tr.id === 'elite' ? ' elite' : '')); f.appendChild(h('span', 'mv', String(md))); f.appendChild(h('span', 'tl', tr.name)); f.appendChild(h('span', 'ini', p.name.slice(0, 2).toUpperCase())); f.appendChild(h('span', 'nm', p.name)); f.appendChild(h('span', 'rl', (p.slot === 'reserve' ? 'Suplente' : 'Titular') + (t.coach === p.id ? ' · DT' : ''))); b.appendChild(f);
+      var f = h('div', 'fr' + (tr.id === 'elite' ? ' elite' : '')); f.appendChild(h('span', 'mv', String(md))); f.appendChild(h('span', 'tl', tr.name)); f.appendChild(M.photo(h('span', 'ini', p.name.slice(0, 2).toUpperCase()), p.id)); f.appendChild(h('span', 'nm', p.name)); f.appendChild(h('span', 'rl', (p.slot === 'reserve' ? 'Suplente' : 'Titular') + (t.coach === p.id ? ' · DT' : ''))); b.appendChild(f);
       var bk = h('div', 'bk'); bk.appendChild(h('div', 't', p.name)); [[x.pj || 0, 'Partidos'], [(x.w || 0) + '-' + (x.l || 0), 'V-D'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length, 'Trofeos'], [x.nota != null ? Number(x.nota).toFixed(1) : '—', 'Nota']].forEach(function (v) { var d = h('div'); d.appendChild(h('b', null, String(v[0]))); d.appendChild(h('small', null, v[1])); bk.appendChild(d); }); b.appendChild(bk);
       b.onclick = function () { b.classList.toggle('f'); }; grid.appendChild(b); });
     sQ.appendChild(grid); if (squad.length) sQ.appendChild(h('p', 'hint', 'Toca otra vez para volver al frente.'));

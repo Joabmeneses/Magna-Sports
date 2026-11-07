@@ -101,3 +101,7 @@ table.rt td:first-child::before,table.rt td[data-l=""]::before{display:none}
 table.rt td:last-child{justify-content:flex-start;padding-top:8px;gap:6px}
 table.rt td[colspan]{display:block;text-align:left}
 }
+
+/* foto de perfil (avatar de Magna) sobre cualquier avatar con data-pid */
+.has-pav{background-size:cover!important;background-position:center!important;color:transparent!important}.has-pav>span,.has-pav>i:not([class]){color:transparent!important;background:none!important}
+.tav.has-pav{background-color:#1b1d57}

@@ -18,6 +18,9 @@
     ['mundial.html', 'Mundial', 'globe', 'Competiciones', 'Grupos y eliminatoria'], ['champions.html', 'Champions', 'star', 'Competiciones', 'Liga, play-off y cuadro'],
     ['noticias.html', 'Noticias', 'news', 'Comunidad', 'Lo último de la comunidad'], ['equipos.html', 'Equipos', 'shield', 'Comunidad', 'Plantillas, fotos y trofeos'], ['mercado.html', 'Fichajes', 'swap', 'Comunidad', 'Medias, goleadores y mercado'], ['ranking.html', 'Ranking', 'rank', 'Comunidad', 'Equipos, jugadores y Bits'], ['apuestas.html', 'Apuestas', 'coin', 'Comunidad', 'Pronósticos en vivo']
   ];
+  // avatares de Magna para la foto de perfil (avatars/a01.webp … a31.webp)
+  window.MAGNA_AVATARS = ['Vaquero', 'Navidad', 'Rey en el trono', 'Halloween', 'Playa', 'Gamer', 'Ninja', 'Astronauta', 'Detective', 'Pirata', 'Morado eléctrico', 'Rojo fuego', 'Blanco y negro', 'Dorado', 'Azul', 'Verde gamer', 'Gafas pixel', 'Orbe mágico', 'Dorado con abrigo', 'Neón', 'Noche de luna', 'Relajado', 'Trono dorado', 'Gamer rojo', 'Paz y gafas', 'Brazos cruzados', 'Chicle', 'Ángel', 'Lava', 'Tóxico', 'Corona de luz'];
+  window.MAGNA_AVATAR_URL = function (id) { return /^a\d\d$/.test(id || '') ? 'avatars/' + id + '.webp' : null; };
   function svg(k) { return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + I[k] + '</svg>'; }
   var css = '' +
     '.mn{position:sticky;top:0;z-index:60;background:rgba(10,13,24,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);font-family:Archivo,system-ui,sans-serif;color:#f1f3fb;padding:0!important;margin:0!important}' +
@@ -180,13 +183,13 @@
   function ini(n) { var p = String(n || '?').trim().split(/\s+/); return ((p[0] || '?')[0] + (p[1] ? p[1][0] : (p[0] || '').slice(1, 2))).toUpperCase(); }
   function fmt(n) { return String(Math.round(Number(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function stats() { try { if (!me || !me.player_id || !window.MAGNA) return null; var p = MAGNA.by(MAGNA.S.players, me.player_id); if (!p) return null; var x = MAGNA.playerStats()[p.id] || {}, dt = MAGNA.S.teams.filter(function (q) { return q.coach === p.id; })[0], t = MAGNA.by(MAGNA.S.teams, p.teamId) || dt, md = x.media == null ? 10 : x.media; return { p: p, t: t, dt: dt, role: MAGNA.roleName(p), plays: MAGNA.plays(p), media: md, tier: MAGNA.tierOf(md), pj: x.pj || 0, w: x.w || 0, l: x.l || 0, g: x.g || 0, mvp: x.mvp || 0, titles: (x.titles || []).length }; } catch (e) { return null; } }
-  function avatar(pc, color) { var a = el('span', 'mn-av'), i = el('i', null, ini(me.display_name)); a.appendChild(i); a.style.setProperty('--pc', pc); a.style.setProperty('--tc', color); return a; }
+  function avatar(pc, color) { var a = el('span', 'mn-av'), i = el('i', null, me.avatar ? '' : ini(me.display_name)); if (me.avatar) { i.style.background = 'url("' + MAGNA_AVATAR_URL(me.avatar) + '") center/cover'; a.classList.add('img'); } a.appendChild(i); a.style.setProperty('--pc', pc); a.style.setProperty('--tc', color); return a; }
   function drawChip() {
     hd.classList.toggle('has-me', !!me); if (!me) { chip.innerHTML = ''; return; }
     var s = stats(); chip.innerHTML = ''; chip.title = 'Tu perfil'; chip.setAttribute('aria-label', 'Tu perfil: ' + me.display_name + ', ' + fmt(me.bits) + ' Bits');
     chip.appendChild(avatar(s ? s.media : 100, s ? s.tier.color : '#ffd23f')); chip.appendChild(el('span', 'nm', me.display_name)); chip.appendChild(el('span', 'bt', fmt(me.bits))); fitNav();
   }
-  function save(a) { var prevId = me && me.id; me = a ? { id: a.id, display_name: a.display_name, username: a.username, bits: a.bits, player_id: a.player_id, role: a.role } : null; ntfBoot(); try { if (me) localStorage.setItem(ME_KEY, JSON.stringify(me)); else localStorage.removeItem(ME_KEY); } catch (e) {} drawChip(); }
+  function save(a) { var prevId = me && me.id; me = a ? { id: a.id, display_name: a.display_name, username: a.username, bits: a.bits, player_id: a.player_id, role: a.role, avatar: a.avatar || null } : null; ntfBoot(); try { if (me) localStorage.setItem(ME_KEY, JSON.stringify(me)); else localStorage.removeItem(ME_KEY); } catch (e) {} drawChip(); }
   function client() { return window.MAGNA_SB ? window.MAGNA_SB() : Promise.reject(new Error('sin conexión')); }
   function refresh() {
     if (!window.MAGNA_SB) return drawChip();
@@ -278,7 +281,7 @@
   }
   bell.addEventListener('click', openNtf);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && NT.pop) { closeNtf(); bell.focus(); } });
-  window.MAGNA_ME = { refresh: refresh, get: function () { return me; } };
+  window.MAGNA_ME = { refresh: refresh, get: function () { return me; }, setAvatar: function (v) { if (!me) return; me.avatar = v || null; save(me); } };
   drawChip();
   function boot() { drawChip(); setTimeout(refresh, 50); }
   if (me && me.id) setTimeout(ntfBoot, 0);

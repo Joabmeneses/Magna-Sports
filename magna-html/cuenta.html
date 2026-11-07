@@ -26,6 +26,15 @@
 .chip2{display:inline-block;border-radius:999px;padding:4px 10px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
 .chip2.open{background:rgba(255,90,54,.16);color:var(--orange)}.chip2.won{background:rgba(46,229,157,.16);color:var(--green)}.chip2.lost{background:rgba(255,77,109,.14);color:var(--red)}.chip2.refund,.chip2.cash{background:rgba(255,255,255,.08);color:#c9cde0}
 .em2{color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:22px;text-align:center}
+
+.pp{margin:14px 0 18px;border-radius:24px;padding:16px;border:1px solid rgba(139,92,246,.45);background:radial-gradient(70% 120% at 0 0,rgba(139,92,246,.3),transparent 70%),var(--card)}
+.pp-t{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.pp-t>div{display:grid;gap:4px;justify-items:start}.pp-t b{font:900 18px Archivo,sans-serif}.pp-t small{color:var(--muted);font-size:13px}.pp-t .btn2{margin-top:6px}
+.pp-big{position:relative;width:96px;height:96px;border-radius:50%;padding:0;border:3px solid var(--yellow);background:linear-gradient(135deg,#8b5cf6,#3b4bff);cursor:pointer;display:grid;place-items:center;font:900 30px Archivo,sans-serif;color:#fff;box-shadow:0 0 0 6px rgba(255,210,63,.15),0 14px 30px rgba(0,0,0,.4);flex:none}
+.pp-big img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}.pp-big i{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;background:var(--orange);color:#fff;font-style:normal;font-size:14px;display:grid;place-items:center;border:2px solid #0a0d18}
+.pp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;margin-top:16px}.pp-g[hidden]{display:none}
+.pp-g button{aspect-ratio:1;border-radius:50%;padding:0;border:3px solid transparent;background:none;cursor:pointer;transition:transform .15s,border-color .15s}.pp-g button:hover{transform:scale(1.08)}.pp-g button.on{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,210,63,.25)}.pp-g img{width:100%;height:100%;border-radius:50%;display:block}
+.pp-g .pp-none{border:2px dashed var(--line);color:var(--muted);font:700 12px Archivo,sans-serif}.pp-g .pp-none.on{border-color:var(--yellow);color:var(--fg)}
+.pp-m{margin:10px 0 0;font-size:14px;color:var(--muted);min-height:1em}.pp-m.ok{color:var(--green)}.pp-m.bad{color:#ff8aa0}
 </style></head>
 <body><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap acw"><div class="eyebrow mono">Comunidad</div><h1 class="x">Mi cuenta</h1><div id="app"><div class="skel" role="status" aria-label="Cargando" style="margin-top:24px"><div class="skel-card" style="height:120px"></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div></div></div>
@@ -45,11 +54,28 @@
       go.disabled = true; m.className = 'msg ok'; m.textContent = 'Entrando…'; A.login(u, k).then(show, function (er) { go.disabled = false; m.className = 'msg'; m.textContent = er.message || 'No se pudo entrar.'; }); };
     us.focus();
   }
+  // Foto de perfil: el usuario elige uno de los avatares de Magna
+  function photo(acc) {
+    var cur = acc.avatar || null, box = h('div', 'pp'), top = h('div', 'pp-t'), big = h('button', 'pp-big'); big.type = 'button'; big.setAttribute('aria-label', 'Cambiar foto de perfil');
+    function paint() { big.innerHTML = ''; var u = MAGNA_AVATAR_URL(cur); if (u) { var im = h('img'); im.src = u; im.alt = 'Tu foto de perfil'; big.appendChild(im); } else big.appendChild(h('span', null, (acc.display_name || '?').slice(0, 2).toUpperCase())); big.appendChild(h('i', null, '✎')); }
+    paint(); top.appendChild(big); var tx = h('div'); tx.appendChild(h('b', null, 'Foto de perfil')); var st = h('small', null, cur ? MAGNA_AVATARS[Number(cur.slice(1)) - 1] : 'Elige un avatar de Magna para tu perfil'); tx.appendChild(st);
+    var tg = h('button', 'btn2', cur ? 'Cambiar foto' : 'Elegir foto'); tg.type = 'button'; tx.appendChild(tg); top.appendChild(tx); box.appendChild(top);
+    var grid = h('div', 'pp-g'); grid.hidden = true; box.appendChild(grid); var msg = h('p', 'pp-m'); box.appendChild(msg);
+    function toggle() { grid.hidden = !grid.hidden; tg.textContent = grid.hidden ? (cur ? 'Cambiar foto' : 'Elegir foto') : 'Cerrar'; if (!grid.hidden) { var on = grid.querySelector('.on') || grid.firstChild; if (on) on.focus(); } }
+    big.onclick = toggle; tg.onclick = toggle;
+    function save(v) { var prev = cur; cur = v; paint(); mark(); st.textContent = v ? MAGNA_AVATARS[Number(v.slice(1)) - 1] : 'Sin foto'; msg.textContent = 'Guardando…'; msg.className = 'pp-m';
+      window.MAGNA_SB().then(function (c) { return c.rpc('set_my_avatar', { p_avatar: v }); }).then(function (r) { if (r && r.error) throw r.error; msg.textContent = v ? '¡Listo! Ya es tu foto de perfil.' : 'Foto quitada.'; msg.className = 'pp-m ok'; if (window.MAGNA_ME && MAGNA_ME.setAvatar) MAGNA_ME.setAvatar(v); acc.avatar = v; },
+        function (e) { cur = prev; paint(); mark(); msg.textContent = 'No se pudo guardar: ' + (e.message || 'inténtalo de nuevo'); msg.className = 'pp-m bad'; }); }
+    function mark() { [].forEach.call(grid.children, function (b) { var on = b.dataset.a === (cur || ''); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); }
+    MAGNA_AVATARS.forEach(function (n, i) { var id = 'a' + String(i + 1).padStart(2, '0'), b = h('button'); b.type = 'button'; b.dataset.a = id; b.title = n; b.setAttribute('aria-label', n); var im = h('img'); im.src = MAGNA_AVATAR_URL(id); im.alt = ''; im.loading = 'lazy'; b.appendChild(im); b.onclick = function () { save(id); }; grid.appendChild(b); });
+    var none = h('button', 'pp-none', 'Sin foto'); none.type = 'button'; none.dataset.a = ''; none.onclick = function () { save(null); }; grid.appendChild(none); mark();
+    return box;
+  }
   function show() {
     Promise.all([A.me(), A.myBets().catch(function () { return []; })]).then(function (r) { var acc = r[0], bets = r[1]; if (!acc) return login(); draw(acc, bets); sub(acc); });
   }
   function draw(acc, bets) {
-    app.innerHTML = ''; var tp = h('div', 'top2'); tp.appendChild(h('p', 'sub', 'Hola, ' + acc.display_name + ' · usuario ' + acc.username)); var out = h('button', 'btn2', 'Salir'); out.type = 'button'; out.onclick = function () { A.logout().then(login); }; tp.appendChild(out); app.appendChild(tp);
+    app.innerHTML = ''; var tp = h('div', 'top2'); tp.appendChild(h('p', 'sub', 'Hola, ' + acc.display_name + ' · usuario ' + acc.username)); var out = h('button', 'btn2', 'Salir'); out.type = 'button'; out.onclick = function () { A.logout().then(login); }; tp.appendChild(out); app.appendChild(tp); app.appendChild(photo(acc));
     var bl = h('div', 'bal'); bl.appendChild(h('small', null, 'Tu saldo')); var b = h('b'); b.appendChild(h('i')); b.appendChild(document.createTextNode(fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Bits'));
     var ac = h('div', 'acts'), ap = h('a', 'btn2 o', 'Ir a Apuestas'); ap.href = 'apuestas.html'; ac.appendChild(ap); if (acc.role === 'admin') { var pn = h('a', 'btn2', 'Ir al panel'); pn.href = 'admin.html'; ac.appendChild(pn); } if (acc.player_id && MAGNA.S.teams.some(function (q) { return q.coach === acc.player_id; })) { var ce = h('a', 'btn2 o', 'Gestionar mi equipo'); ce.href = 'mi-equipo.html'; ac.insertBefore(ce, ac.firstChild); } bl.appendChild(ac); app.appendChild(bl);
     if (acc.player_id) { var p = MAGNA.by(MAGNA.S.players, acc.player_id); if (p) { var x = MAGNA.playerStats()[p.id] || {}, tr = MAGNA.tierOf(x.media), t = MAGNA.by(MAGNA.S.teams, p.teamId), pl = h('div', 'pl'), md = h('div', 'md', x.media == null ? '—' : x.media); md.style.setProperty('--c', tr.color); pl.appendChild(md);

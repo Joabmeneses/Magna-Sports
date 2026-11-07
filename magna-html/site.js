@@ -30,6 +30,13 @@ var M = (function () {
   function tierCls(media) { var t = window.MAGNA ? MAGNA.tierOf(media) : { id: 'bronce' }; return ' t-' + (t.id === 'nuevo' ? 'bronce' : t.id); }
   function ini(name) { return String(name || '?').slice(0, 2).toUpperCase(); }
   function tierCard(name, media, width) { var t = window.MAGNA ? MAGNA.tierOf(media) : { name: '' }, c = h('div', 'tcard' + tierCls(media)); if (width) c.style.setProperty('--w', width + 'px'); c.appendChild(h('span', 'm', media == null ? '—' : String(media))); c.appendChild(h('span', 'tl', t.name)); c.appendChild(h('span', 'ini', ini(name))); c.appendChild(h('span', 'nm', name)); return c; }
-  function tierAv(name, media, size) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return a; }
-  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, tint: function (i) { return TINTS[i % TINTS.length]; } };
+  // fotos de perfil de los jugadores con cuenta (avatares de Magna): se cargan una vez y se aplican a todos los [data-pid]
+  var PAV = {}; try { PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {}
+  function pav(pid) { var id = pid != null && PAV[pid]; return id && /^a\d\d$/.test(id) ? 'avatars/' + id + '.webp' : null; }
+  function paint(el) { var u = pav(el.dataset.pid); if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has-pav'); } else { el.style.backgroundImage = ''; el.classList.remove('has-pav'); } }
+  function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_avatars'); }).then(function (r) { if (!r || r.error) return; var m = {}; (r.data || []).forEach(function (x) { m[x.player_id] = x.avatar; }); PAV = m; try { localStorage.setItem('magna_pav', JSON.stringify(m)); } catch (e) {} [].forEach.call(document.querySelectorAll('[data-pid]'), paint); }, function () {}); }
+  if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
+  function photo(el, pid) { if (pid == null) return el; el.dataset.pid = pid; paint(el); return el; }
+  function tierAv(name, media, size, pid) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return photo(a, pid); }
+  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, pav: pav, photo: photo, tint: function (i) { return TINTS[i % TINTS.length]; } };
 })();
