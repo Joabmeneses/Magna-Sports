@@ -87,7 +87,7 @@ var MAGNA = (function () {
     if (/champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'tournament'; }
   function histKind(e) { if (e.mundial || /mundial/i.test(e.name)) return 'mundial'; if (e.cat === 'champions' || /champions/i.test(e.name)) return 'champions'; if (e.cat === 'liga') return 'league'; return 'tournament'; }
   function teamPoints() {
-    var P = {}; S.teams.forEach(function (t) { P[t.id] = { pts: 0, league: 0, champions: 0, mundial: 0, tournament: 0, friendly: 0 }; });
+    var P = {}; S.teams.forEach(function (t) { var b = Math.max(0, Math.round(Number(t.basePts) || 0)); P[t.id] = { pts: b, base: b, league: 0, champions: 0, mundial: 0, tournament: 0, friendly: 0 }; });
     function add(tid, k) { var x = P[tid]; if (!x) return; x.pts += PTS[k]; x[k] += PTS[k]; }
     S.matches.forEach(function (m) { if (m.status !== 'finished' || m.hs == null || m.as == null || m.hs === m.as) return; var k = compKind(m);
       if (k === 'friendly') { add(m.home, k); add(m.away, k); } else add(m.hs > m.as ? m.home : m.away, k); });

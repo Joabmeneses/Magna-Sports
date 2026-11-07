@@ -99,7 +99,8 @@
   if (['index.html', 'calendario.html', 'apuestas.html', 'mundial.html', 'competiciones.html'].indexOf(here) >= 0) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tzChip); else tzChip(); }
   // enlaces legales al final de todas las páginas
   function legal() { if (document.querySelector('.mn-legal')) return; var f = document.createElement('div'); f.className = 'mn-legal';
-    f.innerHTML = '<a href="terminos.html">Términos y condiciones</a><span>·</span><a href="privacidad.html">Privacidad</a><span>·</span><span>Magna Sports no está afiliada a Supercell</span>';
+    f.innerHTML = '<a href="terminos.html">Términos y condiciones</a><span>·</span><a href="privacidad.html">Privacidad</a><span>·</span><span>Magna Sports es una comunidad independiente y gratuita, no afiliada a Supercell. Los Bits no tienen valor real.</span>';
+    [].forEach.call(document.querySelectorAll('main p.foot, main p.note'), function (p) { if (/^\s*Magna Sports es una comunidad independiente/.test(p.textContent)) p.remove(); });
     f.style.cssText = 'display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;padding:22px 16px 90px;color:#9aa0b8;font:500 13px Archivo,system-ui,sans-serif;border-top:1px solid rgba(255,255,255,.08);margin-top:30px;position:relative;z-index:1';
     [].forEach.call(f.querySelectorAll('a'), function (a) { a.style.cssText = 'color:#c9cde0;text-decoration:underline;text-underline-offset:3px'; }); document.body.appendChild(f); }
   if (here !== 'admin.html') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', legal); else legal(); }
@@ -137,7 +138,8 @@
     '.mn-pop .mpac a:hover,.mn-pop .mpac button:hover{border-color:#8b5cf6}.mn-pop .mpac svg{width:16px;height:16px;flex:none;color:#c9b8ff}.mn-pop .mpac .mpout{grid-column:1/-1;justify-content:center;color:#ff8aa0;border-color:rgba(255,77,109,.3)}.mn-pop .mpac .mpout svg{color:#ff8aa0}' +
     '.mn-pop .mpx{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:transparent;color:#f1f3fb;cursor:pointer;display:grid;place-items:center}.mn-pop .mpx svg{width:16px;height:16px}' +
     '@media(max-width:600px){.mn-pop{top:auto;bottom:0;right:0;left:0;width:auto;border-radius:26px 26px 0 0;max-height:85vh;padding-bottom:max(18px,env(safe-area-inset-bottom));transform:translateY(30px);transform-origin:bottom}}' +
-    '@media(prefers-reduced-motion:reduce){.mn-pop,.mn-pop .mpmd .mpbr i{transition:none}}';
+    '.mn-pop .skel{display:grid;gap:8px}.mn-pop .skel-row{display:flex;gap:10px;align-items:center;padding:8px 0}.mn-pop .skel-row>div{flex:1}.mn-pop .skel i{display:block;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.13),rgba(255,255,255,.05));background-size:200% 100%;animation:mnSk 1.4s infinite linear}.mn-pop .skel .l1{height:11px;width:70%}.mn-pop .skel .l2{height:9px;width:40%;margin-top:6px}.mn-pop .skel .s{height:16px;width:54px}@keyframes mnSk{from{background-position:200% 0}to{background-position:-200% 0}}' +
+    '@media(prefers-reduced-motion:reduce){.mn-pop,.mn-pop .mpmd .mpbr i{transition:none}.mn-pop .skel i{animation:none}}';
   var pst = document.createElement('style'); pst.textContent = pcss; document.head.appendChild(pst);
   I.logout = '<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>'; I.bet = '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1.3-1.8 3-1.8s3 .8 3 1.8-1.3 1.6-3 2-3 1-3 2 1.3 1.8 3 1.8 3-.8 3-1.8"/>';
   var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'mn-me'; chip.setAttribute('aria-haspopup', 'dialog'); chip.setAttribute('aria-expanded', 'false');
@@ -178,7 +180,7 @@
       requestAnimationFrame(function () { requestAnimationFrame(function () { bi.style.width = s.media + '%'; }); });
       var st = el('div', 'mpst'); [[s.pj, 'Partidos'], [s.w + '-' + s.l, 'Récord'], [s.g, 'Goles'], [s.titles, 'Trofeos']].forEach(function (v) { var d = el('div'); d.appendChild(el('b', null, String(v[0]))); d.appendChild(el('small', null, v[1])); st.appendChild(d); }); box.appendChild(st);
     }
-    box.appendChild(el('h4', null, 'Últimas apuestas')); var bl = el('div'); bl.appendChild(el('div', 'mpbet', 'Cargando…')); box.appendChild(bl);
+    box.appendChild(el('h4', null, 'Últimas apuestas')); var bl = el('div'), sk = el('div', 'skel'); for (var q = 0; q < 2; q++) { var sr = el('div', 'skel-row'), sm = el('div'); sm.appendChild(el('i', 'l1')); sm.appendChild(el('i', 'l2')); sr.appendChild(sm); sr.appendChild(el('i', 's')); sk.appendChild(sr); } bl.appendChild(sk); box.appendChild(bl);
     var ac = el('div', 'mpac'); ac.appendChild(link('cuenta.html', 'user', 'Mi cuenta')); ac.appendChild(link('apuestas.html', 'bet', 'Apostar')); ac.appendChild(link('ranking.html' + (s ? '#jugadores' : '#bits'), 'rank', 'Ranking'));
     if (s && s.t) ac.appendChild(link('equipo.html?id=' + s.t.id, 'shield', 'Mi equipo')); else ac.appendChild(link('mercado.html', 'swap', 'Fichajes'));
     if (s && s.dt) { var ce = link('mi-equipo.html', 'shield', 'Gestionar mi equipo (DT)'); ce.style.cssText = 'grid-column:1/-1;border-color:rgba(255,210,63,.45);color:#ffd23f'; ac.insertBefore(ce, ac.firstChild); }

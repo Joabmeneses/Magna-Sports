@@ -38,7 +38,7 @@
   function comp(m) { var c = MAGNA.compOf(m); return c ? c.name : ''; }
   var bar = el('div', 'mlv'); bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Partidos en vivo');
   function pills() {
-    bar.innerHTML = '';
+    bar.innerHTML = ''; document.body.style.paddingBottom = live.length ? '84px' : '';
     live.forEach(function (m) { var i = info(m), b = el('button'); b.type = 'button';
       b.appendChild(el('span', 'd', 'VIVO' + (i.min ? ' ' + i.min : '')));
       b.appendChild(document.createTextNode(MAGNA.teamName(m.home))); b.appendChild(el('span', 's', (m.hs || 0) + '-' + (m.as || 0))); b.appendChild(document.createTextNode(MAGNA.teamName(m.away)));

@@ -17,7 +17,7 @@
     ov.onclick = function (e) { if (e.target === ov) ov.remove(); }; document.body.appendChild(ov); i.focus(); i.select(); }
   function confirmIt(title, sub, label, cb) { var ov = h('div', 'ov'), d = h('div', 'dlg'); ov.appendChild(d); d.appendChild(h('h3', 'x', title)); d.appendChild(h('p', 'em', sub));
     var r = h('div', 'r'), no = h('button', 'btn', 'Cancelar'), go = h('button', 'btn o', label); no.onclick = function () { ov.remove(); }; go.onclick = function () { ov.remove(); cb(); }; r.appendChild(no); r.appendChild(go); d.appendChild(r); ov.onclick = function (e) { if (e.target === ov) ov.remove(); }; document.body.appendChild(ov); }
-  function av(p) { var tr = MAGNA.tierOf(media(p)), a = h('span', 'av', p.name.slice(0, 2).toUpperCase()); a.style.setProperty('--kc', tr.color); a.style.boxShadow = '0 0 0 3px ' + tr.color; return a; }
+  function av(p) { return M.tierAv(p.name, media(p), 46); }
 
   function gate(title, text, href, label) { app.innerHTML = ''; var g = h('div', 'gate'); g.appendChild(h('h1', 'x', title)); g.appendChild(h('p', 'sub', text)); g.querySelector('p').style.margin = '12px auto 0'; if (href) { var a = h('a', 'btn o', label); a.href = href; g.appendChild(a); } app.appendChild(g); }
 

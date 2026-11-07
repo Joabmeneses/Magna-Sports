@@ -69,3 +69,19 @@ label.f{display:block;margin:16px 0;color:var(--muted);font-size:13px}label.f in
 .hero .cr{width:clamp(72px,20vw,150px)!important;height:clamp(72px,20vw,150px)!important;font-size:clamp(24px,6vw,48px)!important}
 .duel>*{min-width:0}.duel .t b{text-align:center;overflow-wrap:anywhere}
 @media(max-width:600px){.enter{padding:8px 12px;font-size:10px;order:2}.logo{order:1}.top .wrap{gap:4px 12px}.hero .tags{justify-content:flex-start}}
+/* ---- carga con silueta ---- */
+.skel{display:grid;gap:10px}.skel-row{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line)}.skel-row>div{flex:1;min-width:0}
+.skel i{display:block;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.13) 50%,rgba(255,255,255,.05) 100%);background-size:200% 100%;animation:skelSh 1.4s infinite linear}
+.skel .c{width:40px;height:40px;border-radius:50%;flex:none}.skel .l1{height:12px;width:55%}.skel .l2{height:10px;width:35%;margin-top:7px}.skel .s{height:22px;width:52px;flex:none}
+.skel-card{height:170px;border-radius:22px;background:var(--card);border:1px solid var(--line);overflow:hidden;position:relative}.skel-card:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:skelSw 1.4s infinite}
+@keyframes skelSh{from{background-position:200% 0}to{background-position:-200% 0}}@keyframes skelSw{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+/* ---- cartas y avatares de jugador por nivel ---- */
+.tcard{--t1:#c08457;--t2:#5a3a22;width:var(--w,120px);margin:0 auto;border-radius:18px;padding:12px 8px 10px;text-align:center;position:relative;background:linear-gradient(170deg,var(--t1),var(--t2) 60%,#0b0e1c);border:2px solid var(--t1);overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.tcard>*{position:relative;z-index:1}.tcard .m{display:block;font:900 30px/1 Archivo,sans-serif;font-stretch:120%;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}.tcard .tl{display:block;margin-top:2px;font:700 10px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.88)}
+.tcard .ini{width:52px;height:52px;margin:8px auto 6px;border-radius:50%;display:grid;place-items:center;font:900 18px Archivo,sans-serif;color:#fff;background:rgba(10,13,24,.45);border:2px solid rgba(255,255,255,.55)}.tcard .nm{display:block;font:800 13px/1.2 Archivo,sans-serif;color:#fff;overflow-wrap:anywhere}
+.tav{--t1:#c08457;--t2:#5a3a22;width:var(--s,40px);height:var(--s,40px);border-radius:50%;flex:none;display:grid;place-items:center;position:relative;overflow:hidden;background:linear-gradient(150deg,var(--t1),var(--t2));box-shadow:0 0 0 2px var(--t1);color:#fff;font:900 calc(var(--s,40px)*.34) Archivo,sans-serif}.tav>span{position:relative;z-index:1;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.t-plata{--t1:#c9cfdc;--t2:#4a5064}.t-oro{--t1:#ffd23f;--t2:#6a5212}.t-elite{--t1:#8b5cf6;--t2:#3b2a8a}
+.tcard.t-elite:after,.tav.t-elite:after{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,transparent 0 70%,rgba(255,255,255,.38) 80%,transparent 90%);animation:tierSpin 3.5s linear infinite;z-index:0}
+.tcard.t-oro{box-shadow:0 10px 26px rgba(0,0,0,.35),0 0 18px rgba(255,210,63,.25)}
+@keyframes tierSpin{to{transform:rotate(1turn)}}
+@media(prefers-reduced-motion:reduce){.skel i,.skel-card:after,.tcard.t-elite:after,.tav.t-elite:after{animation:none}}

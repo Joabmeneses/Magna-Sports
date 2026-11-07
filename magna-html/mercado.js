@@ -39,9 +39,9 @@
     l.forEach(function (p, i) {
       var c = h('article', 'tc'); c.style.animationDelay = Math.min(i, 12) * 35 + 'ms'; c.style.setProperty('--bar', p.tier.color); c.style.setProperty('--tint', M.tint(p.id));
       var lg = h('div', 'lg mono'); lg.appendChild(h('span', null, p.team ? (p.slot === 'reserve' ? 'Suplente' : 'Titular') : 'Agente libre')); lg.appendChild(badge(p.tier)); c.appendChild(lg);
-      var av = h('div', 'cr'); av.style.cssText = 'width:84px;height:84px;font-size:28px;margin:0 auto 12px'; av.textContent = p.name.slice(0, 2).toUpperCase(); c.appendChild(av);
-      c.appendChild(h('h3', 'x', p.name)); c.appendChild(h('p', 'sub', p.team || 'Sin equipo')).style.margin = '0 0 12px';
-      var rk = h('div', 'ranks'); [[p.avg_rating == null ? '—' : p.avg_rating, 'Media'], [p.goals, 'Goles'], [p.mvp, 'MVP']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
+      var card = M.tierCard(p.name, p.avg_rating, 118); card.style.marginBottom = '12px'; c.appendChild(card);
+      c.appendChild(h('p', 'sub', p.team || 'Sin equipo')).style.margin = '0 0 12px';
+      var rk = h('div', 'ranks'); [[p.matches, 'PJ'], [p.goals, 'Goles'], [p.mvp, 'MVP']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
       c.onclick = function () { profile(p); }; g.appendChild(c);
     });
   }

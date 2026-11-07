@@ -27,7 +27,7 @@ window.ADMIN_NEWS = function (b, U) {
   bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Crear noticia', function () { editor(null); }, 'o')); b.appendChild(bar); b.appendChild(box);
   var all = [], tot = {};
   function stInfo(a) { var fut = new Date(a.publish_at) > new Date(); if (a.status === 'draft') return ['dr', 'Borrador']; if (a.status === 'scheduled' && fut) return ['sch', 'Programada · ' + new Date(a.publish_at).toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })]; return ['pub', 'Publicada']; }
-  function load() { box.innerHTML = ''; box.appendChild(h('p', 'hint', 'Cargando noticias…'));
+  function load() { box.innerHTML = ''; box.appendChild(window.M && M.skel ? M.skel(4) : h('p', 'hint', 'Cargando noticias…'));
     N.listAll().then(function (r) { all = r.data || []; return N.totals(all.map(function (a) { return a.id; })); }).then(function (r) { tot = {}; (r.data || []).forEach(function (x) { tot[x.article_id] = (tot[x.article_id] || 0) + x.total; }); draw(); }, function (e) { box.innerHTML = ''; box.appendChild(h('p', 'err', 'No se pudieron cargar las noticias: ' + (e && e.message || 'sin conexión'))); }); }
   function draw() {
     box.innerHTML = ''; var l = all.filter(function (a) { if (filt === 'all') return true; if (filt === 'featured') return a.featured; var s = stInfo(a)[0]; return filt === 'published' ? s === 'pub' : filt === 'scheduled' ? s === 'sch' : s === 'dr'; });

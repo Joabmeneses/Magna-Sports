@@ -66,8 +66,8 @@
     [[rec.pj, 'Partidos'], [rec.w, 'Victorias'], [rec.l, 'Derrotas'], [(rec.gf - rec.gc > 0 ? '+' : '') + (rec.gf - rec.gc), 'Dif. goles']].forEach(function (x) { var d = h('div'); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); pe.appendChild(d); }); pf.appendChild(pe);
     var fr = h('div', 'frm'); fr.appendChild(h('span', null, 'Últimos 5 · ' + (rec.pj ? Math.round(rec.w / rec.pj * 100) + '% de victorias' : 'sin partidos'))); var dd = h('div', 'd');
     for (var i = 0; i < 5; i++) { var m = rec.ms[i], w = m && ((m.home === t.id) ? m.hs > m.as : m.as > m.hs), it = h('i', m ? (w ? 'w' : 'l') : 'e', m ? (w ? 'V' : 'D') : ''); dd.appendChild(it); } fr.appendChild(dd); pf.appendChild(fr);
-    var pp = h('div', 'box'); pp.appendChild(h('h3', 'x', 'Puntos de ranking')); var pb = h('div', 'pbd'), mx = Math.max(1, me.bd.league || 0, me.bd.champions || 0, me.bd.mundial || 0, me.bd.tournament || 0, me.bd.friendly || 0), bars = [];
-    [['Liga', 'league', '#8b5cf6'], ['Champions', 'champions', '#22d3ee'], ['Mundial', 'mundial', '#2ee59d'], ['Otros torneos', 'tournament', '#ffd23f'], ['Amistosos', 'friendly', '#ff8a3d']].forEach(function (x) { var r = h('div', 'r'); r.style.setProperty('--cc', x[2]); r.appendChild(h('span', null, x[1] === 'friendly' ? x[0] : x[0])); var br = h('div', 'br'), bi = h('i'); br.appendChild(bi); r.appendChild(br); r.appendChild(h('b', null, fmt(me.bd[x[1]] || 0))); pb.appendChild(r); bars.push([bi, (me.bd[x[1]] || 0) / mx * 100]); });
+    var pp = h('div', 'box'); pp.appendChild(h('h3', 'x', 'Puntos de ranking')); var pb = h('div', 'pbd'), mx = Math.max(1, me.bd.base || 0, me.bd.league || 0, me.bd.champions || 0, me.bd.mundial || 0, me.bd.tournament || 0, me.bd.friendly || 0), bars = [];
+    [['Liga', 'league', '#8b5cf6'], ['Champions', 'champions', '#22d3ee'], ['Mundial', 'mundial', '#2ee59d'], ['Otros torneos', 'tournament', '#ffd23f'], ['Amistosos', 'friendly', '#ff8a3d']].concat(me.bd.base ? [['Anteriores', 'base', '#c9cfdc']] : []).forEach(function (x) { var r = h('div', 'r'); r.style.setProperty('--cc', x[2]); r.appendChild(h('span', null, x[1] === 'friendly' ? x[0] : x[0])); var br = h('div', 'br'), bi = h('i'); br.appendChild(bi); r.appendChild(br); r.appendChild(h('b', null, fmt(me.bd[x[1]] || 0))); pb.appendChild(r); bars.push([bi, (me.bd[x[1]] || 0) / mx * 100]); });
     pp.appendChild(pb); var nt = h('p', 'em', 'Victoria: liga 15.000 · Champions 35.000 · Mundial 50.000 · otro torneo 25.000. Amistoso: 5.000 gane o pierda.'); nt.style.cssText = 'font-size:12px;margin:14px 0 0'; pp.appendChild(nt);
     two.appendChild(pf); two.appendChild(pp); var sp2 = section('Temporada'); sp2.appendChild(two); root.appendChild(sp2);
     requestAnimationFrame(function () { requestAnimationFrame(function () { bars.forEach(function (b) { b[0].style.width = b[1] + '%'; }); }); });
@@ -77,7 +77,7 @@
     if (!squad.length) grid.appendChild(h('p', 'em', 'Este equipo todavía no tiene jugadores.'));
     squad.forEach(function (p, k) { var x = PS[p.id] || {}, md = x.media == null ? 10 : x.media, tr = MAGNA.tierOf(md), c = h('a', 'pc2'); c.href = 'mercado.html'; c.style.animationDelay = k * 70 + 'ms'; c.style.setProperty('--kc', tr.color); c.title = 'Ver en Fichajes';
       var bd = h('div', 'pbg'); if (t.coach === p.id) bd.appendChild(h('span', 'dt', 'DT')); bd.appendChild(h('span', null, p.slot === 'reserve' ? 'Suplente' : 'Titular')); c.appendChild(bd);
-      var tp = h('div', 'top'), av = h('span', 'av'); av.style.setProperty('--pc', md); av.appendChild(h('i', null, p.name.slice(0, 2).toUpperCase())); tp.appendChild(av); var nm = h('div'); nm.appendChild(h('b', 'n', p.name)); nm.appendChild(h('span', 'rl', tr.name)); tp.appendChild(nm);
+      var tp = h('div', 'ptop'), av = M.tierAv(p.name, md, 54); tp.appendChild(av); var nm = h('div'); nm.appendChild(h('b', 'n', p.name)); nm.appendChild(h('span', 'rl', tr.name)); tp.appendChild(nm);
       var mm = h('div', 'pmd'); mm.appendChild(h('b', null, String(md))); mm.appendChild(h('small', null, 'Media')); tp.appendChild(mm); c.appendChild(tp);
       var ps = h('div', 'pst'); [[x.pj || 0, 'PJ'], [(x.w || 0) + '-' + (x.l || 0), 'V-D'], [x.g || 0, 'Goles'], [(x.titles || []).length, 'Trofeos']].forEach(function (v) { var d = h('div'); d.appendChild(h('b', null, String(v[0]))); d.appendChild(h('small', null, v[1])); ps.appendChild(d); }); c.appendChild(ps);
       if ((x.titles || []).length) { var tl = h('div', 'tl'); x.titles.slice(0, 4).forEach(function (n) { tl.appendChild(h('span', null, '🏆 ' + n)); }); if (x.titles.length > 4) tl.appendChild(h('span', null, '+' + (x.titles.length - 4))); c.appendChild(tl); }
@@ -117,7 +117,6 @@
     // ---- otros equipos ----
     var oth = S.teams.filter(function (x) { return x.id !== t.id; });
     if (oth.length) { var so = section('Otros equipos'), ol = h('div', 'others'); oth.forEach(function (x) { var a = h('a'); a.href = link(x.id); a.appendChild(crest(x.id, 32)); a.appendChild(document.createTextNode(x.name)); ol.appendChild(a); }); so.appendChild(ol); root.appendChild(so); }
-    root.appendChild(h('p', 'foot', 'Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.'));
   }
   render();
   window.addEventListener('magna:update', render);

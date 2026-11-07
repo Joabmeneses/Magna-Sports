@@ -34,7 +34,7 @@
     M.modal(function (b) {
       b.appendChild(h('h3', 'x', r.t.name)); b.appendChild(h('p', 'sub', fmt(r.pts) + ' puntos en el ranking'));
       var w = h('div', 'pn tw'), tb = h('table'), th = h('tr'); ['Competición', 'Por partido', 'Puntos'].forEach(function (c) { th.appendChild(h('th', null, c)); }); tb.appendChild(th);
-      [['Liga', 'league', 'victoria'], ['Champions', 'champions', 'victoria'], ['Mundial', 'mundial', 'victoria'], ['Otros torneos', 'tournament', 'victoria'], ['Amistosos', 'friendly', 'partido']].forEach(function (x) { var tr = h('tr'); tr.appendChild(h('td', null, x[0])); tr.appendChild(h('td', 'n', fmt(MAGNA.PTS[x[1]]) + ' por ' + x[2])); tr.appendChild(h('td', 'n', fmt(r.bd[x[1]] || 0))); tb.appendChild(tr); });
+      [['Liga', 'league', 'victoria'], ['Champions', 'champions', 'victoria'], ['Mundial', 'mundial', 'victoria'], ['Otros torneos', 'tournament', 'victoria'], ['Amistosos', 'friendly', 'partido']].concat(r.bd.base ? [['Puntos anteriores', 'base', '']] : []).forEach(function (x) { var tr = h('tr'); tr.appendChild(h('td', null, x[0])); tr.appendChild(h('td', 'n', x[1] === 'base' ? 'De tus registros' : fmt(MAGNA.PTS[x[1]]) + ' por ' + x[2])); tr.appendChild(h('td', 'n', fmt(r.bd[x[1]] || 0))); tb.appendChild(tr); });
       w.appendChild(tb); b.appendChild(w);
     });
   }
@@ -48,11 +48,11 @@
   function initials(n) { var a = h('div', 'av'); a.textContent = String(n).slice(0, 2).toUpperCase(); return a; }
   function drawPlayers(pod, list, note) {
     var R = playerRows(); if (!R.length) { list.appendChild(h('p', 'em', 'Todavía no hay jugadores.')); return; }
-    podium(pod, R.slice(0, 3).map(function (r) { var t = team(r.p.teamId); return { av: initials(r.p.name), name: r.p.name, sub: pSub(r.p, t) + ' · ' + MAGNA.tierOf(r.media).name, big: r.media, unit: 'media' }; }));
+    podium(pod, R.slice(0, 3).map(function (r) { var t = team(r.p.teamId); return { av: M.tierAv(r.p.name, r.media), name: r.p.name, sub: pSub(r.p, t) + ' · ' + MAGNA.tierOf(r.media).name, big: r.media, unit: 'media' }; }));
     list.appendChild(table(['#', 'Jugador', 'Media', 'Nivel', 'PJ', 'V-D', 'Goles', 'MVP', 'Trofeos'], R.map(function (r, i) {
       var t = team(r.p.teamId), tr = MAGNA.tierOf(r.media), tg = h('span', 'tier', tr.name); tg.style.setProperty('--c', tr.color);
       var md = h('div'); md.appendChild(h('b', null, String(r.media))); var bar = h('div', 'bar2'), fill = h('i'); fill.style.width = r.media + '%'; bar.appendChild(fill); md.appendChild(bar);
-      return [i + 1, who(initials(r.p.name), r.p.name, pSub(r.p, t)), md, tg, r.pj, r.w + '-' + r.l, r.g, r.mvp, r.titles || '—']; }), [3, 4, 5, 6, 7]));
+      return [i + 1, who(M.tierAv(r.p.name, r.media, 36), r.p.name, pSub(r.p, t)), md, tg, r.pj, r.w + '-' + r.l, r.g, r.mvp, r.titles || '—']; }), [3, 4, 5, 6, 7]));
     note.textContent = 'La media va de 10 a 100. Sale de los resultados contra rivales de distinto nivel y de las valoraciones de cada partido. Los títulos aseguran un mínimo de media.';
   }
 
@@ -64,7 +64,7 @@
   function drawBits(pod, list, note) {
     note.textContent = 'Saldo de Bits de cada miembro con cuenta. Los Bits se ganan con pronósticos acertados en Apuestas y son una moneda ficticia sin valor real.';
     if (bitsErr) { list.appendChild(h('p', 'em', bitsErr)); return; }
-    if (bitsRows === null) { list.appendChild(h('p', 'em', 'Cargando…')); return; }
+    if (bitsRows === null) { list.appendChild(M.skel(6)); return; }
     if (!bitsRows.length) { list.appendChild(h('p', 'em', 'Todavía no hay cuentas de miembros.')); return; }
     var top = bitsRows[0].bits || 1;
     podium(pod, bitsRows.slice(0, 3).map(function (r) { var p = r.player_id && MAGNA.by(S().players, r.player_id), t = p && team(p.teamId); return { av: initials(r.display_name), name: r.display_name, sub: t ? t.name : p ? 'Agente libre' : 'Miembro', big: fmt(r.bits), unit: 'Bits' }; }));

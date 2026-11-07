@@ -24,5 +24,12 @@ var M = (function () {
     var e = h('a', 'enter', 'Administración'); e.href = 'admin.html'; w.appendChild(e); hd.appendChild(w);
   }
   var TINTS = ['#3b2a8a', '#14507a', '#7a2a4a', '#6a5212', '#1b6a55', '#5a2a8a'];
-  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, tint: function (i) { return TINTS[i % TINTS.length]; } };
+  // Silueta de carga: filas (lista) o tarjetas
+  function skel(n, kind) { var w = h('div', 'skel'); w.setAttribute('aria-label', 'Cargando'); w.setAttribute('role', 'status'); for (var i = 0; i < (n || 3); i++) { if (kind === 'card') { w.appendChild(h('div', 'skel-card')); continue; } var r = h('div', 'skel-row'), mid = h('div'); r.appendChild(h('i', 'c')); mid.appendChild(h('i', 'l1')); mid.appendChild(h('i', 'l2')); r.appendChild(mid); r.appendChild(h('i', 's')); w.appendChild(r); } if (kind === 'card') w.style.gridTemplateColumns = 'repeat(auto-fill,minmax(220px,1fr))'; return w; }
+  // Carta y avatar de jugador con el color de su nivel (bronce, plata, oro, élite)
+  function tierCls(media) { var t = window.MAGNA ? MAGNA.tierOf(media) : { id: 'bronce' }; return ' t-' + (t.id === 'nuevo' ? 'bronce' : t.id); }
+  function ini(name) { return String(name || '?').slice(0, 2).toUpperCase(); }
+  function tierCard(name, media, width) { var t = window.MAGNA ? MAGNA.tierOf(media) : { name: '' }, c = h('div', 'tcard' + tierCls(media)); if (width) c.style.setProperty('--w', width + 'px'); c.appendChild(h('span', 'm', media == null ? '—' : String(media))); c.appendChild(h('span', 'tl', t.name)); c.appendChild(h('span', 'ini', ini(name))); c.appendChild(h('span', 'nm', name)); return c; }
+  function tierAv(name, media, size) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return a; }
+  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, tint: function (i) { return TINTS[i % TINTS.length]; } };
 })();
