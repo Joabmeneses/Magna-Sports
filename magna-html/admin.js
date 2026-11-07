@@ -838,13 +838,31 @@
   function liveAct(m, fn, msg) { snap(m); var e = fn(); if (e) { UNDO[m.id].pop(); return toast(e, true); } MAGNA.save(); if (msg) toast(msg); render(); banner(); }
   function lineup(tid) { var sq = squadOf(tid), st = sq.filter(function (p) { return p.slot === 'starter'; }); return (st.length ? st : sq).map(function (p) { return p.id; }); }
   function squadOf(tid) { return S().players.filter(function (p) { return p.teamId === tid; }).sort(function (a, b) { return (a.slot === 'starter' ? 0 : 1) - (b.slot === 'starter' ? 0 : 1); }); }
+  // Jugadores en cancha (alineación del partido + los que entraron de cambio), luego el resto de la plantilla.
+  function onField(m, side) { var L = m.live || {}, ids = ((L.lineup && L.lineup[side]) || []).slice(); (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.side === side) { if (e.in && ids.indexOf(e.in) < 0) ids.push(e.in); if (e.out) ids = ids.filter(function (x) { return x !== e.out; }); } }); return ids; }
+  function scorerPick(m, side, cur, onPick, noneLabel) {
+    var tid = side === 'a' ? m.away : m.home, sq = squadOf(tid), on = onField(m, side), L = m.live || {}, goals = {};
+    (L.ev || []).forEach(function (e) { if (e.k === 'goal' && e.side === side && e.player) goals[e.player] = (goals[e.player] || 0) + 1; });
+    var list = sq.slice().sort(function (a, b) { return (on.indexOf(b.id) >= 0) - (on.indexOf(a.id) >= 0); }), pk = h('div', 'pick gpick');
+    if (!list.length) pk.appendChild(h('p', 'hint', MAGNA.teamName(tid) + ' no tiene jugadores registrados. Agrégalos en Jugadores para poder elegir goleador.'));
+    list.forEach(function (p) { var x = h('button', cur === p.id ? 'on' : ''); x.type = 'button'; var av = h('span', 'gav', p.name.slice(0, 2).toUpperCase()); x.appendChild(av);
+      var tx = h('span', 'gtx'); tx.appendChild(h('b', null, p.name)); tx.appendChild(h('em', null, on.indexOf(p.id) >= 0 ? 'En cancha' : p.slot === 'reserve' ? 'Suplente' : 'Plantilla')); x.appendChild(tx);
+      if (goals[p.id]) x.appendChild(h('small', null, '⚽ ' + goals[p.id])); x.onclick = function () { onPick(p.id); }; pk.appendChild(x); });
+    var nb = h('button', 'gnone' + (cur === null ? ' on' : '')); nb.type = 'button'; nb.textContent = noneLabel; nb.onclick = function () { onPick(null); }; pk.appendChild(nb);
+    return pk;
+  }
   function goalDlg(m, side) {
-    var tid = side === 'a' ? m.away : m.home, sq = squadOf(tid);
-    dialog('Gol de ' + MAGNA.teamName(tid), function (b, close) {
-      b.appendChild(h('p', 'sub', '¿Quién anotó? Es opcional.'));
-      var pk = h('div', 'pick'); function score(pid) { close(); liveAct(m, function () { if (side === 'a') m.as = (m.as || 0) + 1; else m.hs = (m.hs || 0) + 1; addEv(m, { k: 'goal', side: side, player: pid || null, score: m.hs + '-' + m.as }); }, '¡Gol registrado!'); }
-      sq.forEach(function (p) { var x = h('button'); x.type = 'button'; x.appendChild(document.createTextNode(p.name)); x.appendChild(h('small', null, p.slot === 'starter' ? 'Titular' : 'Suplente')); x.onclick = function () { score(p.id); }; pk.appendChild(x); });
-      var nb = h('button'); nb.type = 'button'; nb.appendChild(document.createTextNode('Sin indicar goleador')); nb.onclick = function () { score(null); }; pk.appendChild(nb); b.appendChild(pk);
+    var tid = side === 'a' ? m.away : m.home;
+    dialog('⚽ Gol de ' + MAGNA.teamName(tid), function (b, close) {
+      b.appendChild(h('p', 'sub', '¿Quién anotó? Toca al goleador: suma el gol al marcador y a sus estadísticas.'));
+      b.appendChild(scorerPick(m, side, undefined, function (pid) { close(); liveAct(m, function () { if (side === 'a') m.as = (m.as || 0) + 1; else m.hs = (m.hs || 0) + 1; addEv(m, { k: 'goal', side: side, player: pid || null, score: m.hs + '-' + m.as }); }, pid ? '¡Gol de ' + MAGNA.playerName(pid) + '!' : '¡Gol registrado!'); }, 'Gol sin goleador (lo eliges después)'));
+    });
+  }
+  // Cambiar el goleador de un gol ya registrado (desde el minuto a minuto).
+  function scorerEdit(m, ev) {
+    dialog('Cambiar goleador', function (b, close) {
+      b.appendChild(h('p', 'sub', 'Gol de ' + MAGNA.teamName(ev.side === 'a' ? m.away : m.home) + (ev.min ? ' al ' + ev.min + "'" : '') + (ev.score ? ' (' + ev.score + ')' : '') + '. El marcador no cambia.'));
+      b.appendChild(scorerPick(m, ev.side, ev.player || null, function (pid) { close(); liveAct(m, function () { ev.player = pid || null; }, 'Goleador actualizado'); }, 'Sin goleador'));
     });
   }
   function subDlg(m) {
@@ -955,7 +973,7 @@
     // línea de tiempo
     var tlw = h('div', 'cg'); tlw.appendChild(h('h4', null, 'Minuto a minuto')); var tl = h('div', 'tl');
     var ICO = { start: '▶', goal: '⚽', mode: '🎮', set: '✔', sub: '⇄', ht: '⏸', resume: '▶', end: '🏁' };
-    (L.ev || []).slice().reverse().forEach(function (e) { var r = h('div', 'ev' + (e.k === 'goal' ? ' goal' : '')); r.appendChild(h('span', 'mn', e.min ? e.min + "'" : '')); r.appendChild(h('span', 'ic', ICO[e.k] || '•')); r.appendChild(h('span', null, MAGNA.eventText(m, e))); r.appendChild(h('time', null, (e.at || '').slice(11, 16))); tl.appendChild(r); });
+    (L.ev || []).slice().reverse().forEach(function (e) { var r = h('div', 'ev' + (e.k === 'goal' ? ' goal' : '')); r.appendChild(h('span', 'mn', e.min ? e.min + "'" : '')); r.appendChild(h('span', 'ic', ICO[e.k] || '•')); var et = h('span', null, MAGNA.eventText(m, e)); r.appendChild(et); r.appendChild(h('time', null, (e.at || '').slice(11, 16))); if (e.k === 'goal') { var eb = h('button', 'evx', e.player ? '✎ Goleador' : '+ Elegir goleador'); eb.type = 'button'; eb.title = 'Elegir o cambiar quién anotó'; eb.onclick = function () { scorerEdit(m, e); }; et.appendChild(eb); } tl.appendChild(r); });
     if (!(L.ev || []).length) tl.appendChild(h('p', 'hint', 'Aquí aparecerá cada acción del partido.'));
     tlw.appendChild(tl); con.appendChild(tlw); wrap.appendChild(con); b.appendChild(wrap);
   }
@@ -976,6 +994,7 @@
     { id: 'datos', g: 'Sitio', l: 'Datos y accesos', i: 'up', f: dataV, d: 'Copias de seguridad y administradores. Tus cambios ya se publican solos.' }
   ];
   function go(t) { tab = t; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  window.ADMIN_GO = go;
   function render() {
     if (TICK) { clearInterval(TICK); TICK = null; }
     var sd = document.getElementById('side'); sd.innerHTML = ''; var grp = null, cur = null;

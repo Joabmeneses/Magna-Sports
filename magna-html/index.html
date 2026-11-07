@@ -65,7 +65,7 @@ h1 span{display:block}h1 .b{color:var(--blue)}
 .feed{display:flex;gap:30px;overflow:hidden;white-space:nowrap;border-top:1px solid var(--line);padding-top:18px;margin-top:22px;color:var(--muted);font-size:13px}
 .feed span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--orange);margin-right:8px}
 .feed .bl::before{background:var(--blue)}
-.demo{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:18px;color:var(--muted)}
+.demo{display:none;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:18px;color:var(--muted)}
 .demo .pill{color:var(--fg);padding:9px 16px;font-size:11px}
 .chev{display:grid;place-items:center;margin:18px auto 0;width:40px;height:40px;border-radius:50%;border:2px solid var(--orange);background:transparent;color:var(--fg);cursor:pointer}
 .others{display:flex;gap:14px;overflow-x:auto;padding:8px 0 20px;scroll-snap-type:x mandatory}
@@ -365,7 +365,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <div class="team a"><div class="crest"><span class="im v"></span></div><div class="tn x">Venture</div><small class="mono">Visitante</small><span class="pill p mono dpos" style="padding:8px 14px;font-size:11px">Posición [#]</span><div class="form" id="dF2"></div></div>
 </div>
 <div class="feed"><div class="track"></div></div>
-<div class="demo mono"><span>Probar animaciones</span><button class="pill b mono" data-act="gh">Gol local</button><button class="pill o mono" data-act="ga">Gol visitante</button><button class="pill p mono" data-act="intro">Intro del partido</button></div>
+<div class="demo mono"><span>🔒 Solo administración · Probar animaciones (no cambia el marcador real)</span><button class="pill b mono" data-act="gh">Gol local</button><button class="pill o mono" data-act="ga">Gol visitante</button><button class="pill p mono" data-act="intro">Intro del partido</button></div>
 <button class="chev" aria-label="Ver más"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 9l7 7 7-7"/></svg></button>
 </div>
 </section>
@@ -380,7 +380,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <div class="bt"><div class="dc"><span class="im v"></span></div><b class="x" id="bN2"></b><span class="bn-pos mono" id="bP2"></span><div class="form" id="bF2"></div><button class="rx"><span class="av"><span class="stk"></span><em>+</em></span><span>Reaccionar</span></button></div>
 </div>
 <div class="bn-time"><span class="ch" id="clk"></span></div>
-<div class="demo mono bn-demo"><span>Probar animaciones</span><button class="pill mono" data-act="gh">Gol local</button><button class="pill mono" data-act="ga">Gol visitante</button><button class="pill mono" data-act="intro">Intro</button></div>
+<div class="demo mono bn-demo"><span>🔒 Solo admin · Probar</span><button class="pill mono" data-act="gh">Gol local</button><button class="pill mono" data-act="ga">Gol visitante</button><button class="pill mono" data-act="intro">Intro</button></div>
 <button class="mbtn" id="mbtn" aria-expanded="false" aria-controls="mpanel"><i class="mdot"></i><span id="mbn">Modo de juego</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 9l7 7 7-7"/></svg></button>
 <div class="mp" id="mpanel"><div class="mpi"><div class="mpc">
 <div class="mtag mono" id="mtag">Modo actual</div>
@@ -402,7 +402,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <p class="maphint mono">Toca el mapa para interactuar</p></div></div>
 <div class="pk" id="pk" hidden><div class="pkc" role="dialog" aria-modal="true" aria-label="Elegir reacción"><div class="pkh"><b class="x" id="pkt"></b><button id="pkx" aria-label="Cerrar">×</button></div><div class="pkb" id="pkb"></div><div class="pkg" id="pkg"></div></div></div>
 <div id="fx"></div><div id="ov"></div><div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script><script src="home-hub.js" defer></script>
 <script>
 (function(){
 if(!window.__HOME_N){document.body.classList.add('vacio');return}
@@ -575,5 +575,5 @@ if(!RM&&'IntersectionObserver' in window){var io=new IntersectionObserver(functi
  $$('.hero .meta,.hero h1,.hero p,.hero .cta,.hero .vs,.banner,.desk .card,.mc,.note').forEach(function(e,i){if(e.offsetParent===null)return;e.classList.add('rv');e.style.transitionDelay=(i%5)*70+'ms';io.observe(e)})}
 })();
 </script>
-</body>
+<style>body.is-adm .demo{display:flex}</style><script>(function(){/* los botones de prueba solo los ve la administración */function go(){if(!window.MAGNA_SB)return;MAGNA_SB().then(function(c){return c.auth.getSession().then(function(r){var s=r.data&&r.data.session;if(!s||s.user.is_anonymous)return;return c.rpc('is_admin').then(function(x){if(x&&x.data===true)document.body.classList.add('is-adm')})})}).catch(function(){})}if(document.readyState==='complete')go();else addEventListener('load',go)})();</script></body>
 </html>
