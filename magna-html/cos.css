@@ -1,0 +1,46 @@
+/* ===== Cosméticos: nombre (color y placa), marco del avatar y título ===== */
+a.mpn{color:inherit;text-decoration:none}a.mpn:hover .mpn-n{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.mpn{display:inline-flex;flex-direction:column;align-items:flex-start;max-width:100%;vertical-align:baseline}.mpn .mpn-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.mpn-t{display:block;font:700 .62em "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#ffd23f;-webkit-text-fill-color:#ffd23f;opacity:.9;margin-top:1px}
+.c-oro .mpn-n{background:linear-gradient(180deg,#fff3b0,#ffc400 60%,#c98a00);-webkit-background-clip:text;background-clip:text;color:transparent}
+.c-neon-rosa .mpn-n{color:#ff6ad5;text-shadow:0 0 6px rgba(255,64,200,.9),0 0 16px rgba(255,64,200,.55)}
+.c-neon-cian .mpn-n{color:#6ff7ff;text-shadow:0 0 6px rgba(0,230,255,.9),0 0 16px rgba(0,230,255,.5)}
+.c-neon-verde .mpn-n{color:#7dff9a;text-shadow:0 0 6px rgba(46,229,120,.9),0 0 16px rgba(46,229,120,.5)}
+.c-fuego .mpn-n{background:linear-gradient(90deg,#ffde59,#ff7a18,#ff2d55,#ff7a18,#ffde59);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 3s linear infinite}
+.c-hielo .mpn-n{background:linear-gradient(180deg,#ffffff,#a8e6ff 55%,#4fb3ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 12px rgba(120,200,255,.35)}
+.c-galaxia .mpn-n{background:linear-gradient(90deg,#a78bfa,#f472b6,#60a5fa,#a78bfa);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 5s linear infinite}
+.c-arcoiris .mpn-n{background:linear-gradient(90deg,#ff4d4d,#ffb84d,#fff04d,#4dff88,#4dd2ff,#a64dff,#ff4d4d);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 4s linear infinite}
+.c-sangre .mpn-n{color:#ff3b55;text-shadow:0 0 10px rgba(255,30,60,.45)}.c-menta .mpn-n{color:#5effc8}
+@keyframes cosSlide{to{background-position:200% 0}}
+[class*=" pl-"].mpn,[class^="pl-"].mpn{padding:.12em .6em;border-radius:.5em;border:1px solid rgba(255,255,255,.18)}
+.pl-magna.mpn{background:linear-gradient(90deg,#5b21b6,#ff5a36);border-color:#ff8a6a}
+.pl-oro.mpn{background:linear-gradient(180deg,#6b4a00,#2e2000);border-color:#ffd23f;box-shadow:inset 0 0 10px rgba(255,210,63,.35)}
+.pl-plata.mpn{background:linear-gradient(180deg,#4b5563,#1f2937);border-color:#d1d5db}
+.pl-galaxia.mpn{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.6) 0 1px,transparent 2px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.5) 0 1px,transparent 2px),linear-gradient(90deg,#1e1b4b,#581c87,#1e3a8a);border-color:#a78bfa}
+.pl-fuego.mpn{background:linear-gradient(90deg,#7c2d12,#dc2626,#f59e0b);border-color:#fdba74}
+.pl-neon.mpn{background:rgba(10,13,24,.7);border-color:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.7),inset 0 0 8px rgba(34,211,238,.4)}
+.pl-selva.mpn{background:linear-gradient(90deg,#064e3b,#15803d);border-color:#4ade80}.pl-noche.mpn{background:linear-gradient(90deg,#020617,#1e293b);border-color:#475569}
+.tav.fr-oro,.fr-oro{box-shadow:0 0 0 3px #ffd23f,0 0 0 5px #7a5200,0 0 14px rgba(255,196,0,.6)!important}
+.tav.fr-neon,.fr-neon{box-shadow:0 0 0 2px #fff,0 0 0 4px #22d3ee,0 0 16px #22d3ee,0 0 28px rgba(255,64,200,.5)!important}
+.tav.fr-fuego,.fr-fuego{animation:frFire 1.6s ease-in-out infinite!important}
+@keyframes frFire{0%,100%{box-shadow:0 0 0 3px #ff7a18,0 0 12px #ff2d55,0 -4px 18px rgba(255,180,0,.6)}50%{box-shadow:0 0 0 3px #ffde59,0 0 18px #ff7a18,0 -8px 24px rgba(255,45,85,.6)}}
+.tav.fr-hielo,.fr-hielo{box-shadow:0 0 0 3px #e0f7ff,0 0 0 5px #4fb3ff,0 0 16px rgba(120,200,255,.7)!important}
+.tav.fr-arcoiris,.fr-arcoiris{animation:frRb 3s linear infinite!important}
+@keyframes frRb{0%{box-shadow:0 0 0 3px #ff4d4d,0 0 14px #ff4d4d}25%{box-shadow:0 0 0 3px #fff04d,0 0 14px #fff04d}50%{box-shadow:0 0 0 3px #4dff88,0 0 14px #4dff88}75%{box-shadow:0 0 0 3px #4dd2ff,0 0 14px #4dd2ff}100%{box-shadow:0 0 0 3px #ff4d4d,0 0 14px #ff4d4d}}
+.tav.fr-corona,.fr-corona{box-shadow:0 0 0 3px #ffd23f,0 0 12px rgba(255,196,0,.5)!important;overflow:visible!important}.fr-corona:before{content:"👑";position:absolute;top:-.62em;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:calc(var(--s,40px)*.42);z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5));color:initial!important;-webkit-text-fill-color:initial}
+.tav.fr-elite,.fr-elite{box-shadow:0 0 0 2px #fff,0 0 0 4px #8b5cf6,0 0 0 6px #ff5a36,0 0 20px rgba(139,92,246,.7)!important}
+.tav.fr-toxico,.fr-toxico{box-shadow:0 0 0 3px #a3ff12,0 0 16px rgba(163,255,18,.75),0 0 30px rgba(163,255,18,.3)!important}
+body:not(.adm-body) .tav[data-pid]{cursor:pointer}
+@media(prefers-reduced-motion:reduce){.c-fuego .mpn-n,.c-galaxia .mpn-n,.c-arcoiris .mpn-n,.fr-fuego,.fr-arcoiris{animation:none!important}}
+/* --- exclusivos (no se compran, se ganan) --- */
+.c-estrella .mpn-n{background:linear-gradient(100deg,#fff 0%,#ffe27a 25%,#fff 45%,#7ad7ff 60%,#fff 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 6px rgba(255,226,122,.6));animation:cosSlide 2.6s linear infinite}
+.pl-campeon.mpn{background:linear-gradient(90deg,#4c1d95,#b45309);border-color:#ffd23f;box-shadow:0 0 10px rgba(255,210,63,.45),inset 0 0 8px rgba(255,210,63,.3)}.pl-campeon.mpn:before{content:"🏆";margin-right:.35em}
+.pl-campeon.mpn,.pl-dinastia.mpn{flex-direction:row;align-items:center;flex-wrap:wrap}
+.pl-dinastia.mpn{background:linear-gradient(90deg,#0f172a,#7c2d12 40%,#a16207 60%,#0f172a);background-size:200% 100%;border-color:#fde68a;box-shadow:0 0 14px rgba(253,230,138,.55);animation:cosSlide 4s linear infinite}.pl-dinastia.mpn:before{content:"👑";margin-right:.35em}
+.tav.fr-balon,.fr-balon{overflow:visible!important;animation:frBalon 2.2s ease-in-out infinite!important}
+@keyframes frBalon{0%,100%{box-shadow:0 0 0 3px #ffd23f,0 0 0 6px #7a5200,0 0 18px rgba(255,196,0,.7)}50%{box-shadow:0 0 0 3px #fff3b0,0 0 0 6px #c08400,0 0 30px rgba(255,196,0,.95)}}
+.fr-balon:after{content:"";position:absolute;right:-6%;bottom:-6%;width:34%;height:34%;border-radius:50%;z-index:3;background:radial-gradient(circle at 32% 28%,#fff8d6,#ffd23f 30%,#c08400 75%);box-shadow:0 0 0 2px #1a1200,0 2px 6px rgba(0,0,0,.5)}
+.tav.fr-leyenda,.fr-leyenda{box-shadow:0 0 0 2px #fff,0 0 0 5px #0ea5e9,0 0 0 8px #1e1b4b,0 0 0 10px #ffd23f,0 0 24px rgba(14,165,233,.6)!important}
+.tav.fr-fundador,.fr-fundador{overflow:visible!important;box-shadow:0 0 0 3px #ff5a36,0 0 0 6px #5b21b6,0 0 20px rgba(255,90,54,.6)!important}
+.fr-fundador:before{content:"★";position:absolute;top:-.45em;left:50%;transform:translateX(-50%);z-index:3;font:900 calc(var(--s,40px)*.36)/1 Archivo,sans-serif;color:#ffd23f;-webkit-text-fill-color:#ffd23f;text-shadow:0 0 6px #ff5a36,0 2px 3px rgba(0,0,0,.6)}
+@media(prefers-reduced-motion:reduce){.c-estrella .mpn-n,.pl-dinastia.mpn,.fr-balon{animation:none!important}}

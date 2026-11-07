@@ -21,6 +21,8 @@
   // el partido que acaba de terminar (últimas 24 h) se queda en el banner para ver el rendimiento de los jugadores
   var nowMs = Date.parse(now.replace(' ', 'T') + 'Z'), recent = done.filter(function (m) { var t = Date.parse(String(m.ended || m.at || '').replace(' ', 'T') + 'Z'); return !isNaN(t) && nowMs - t < 24 * 3600e3; }).slice(0, 1);
   var pick = live.concat(recent, next, done.filter(function (m) { return recent.indexOf(m) < 0; })).slice(0, 4);
+  // enlace directo a un partido (index.html?m=ID): ese partido va primero en el banner
+  var want = Number((/[?&]m=(\d+)/.exec(location.search) || [])[1]), wm = want ? by(S.matches, want) : null; if (wm) pick = [wm].concat(pick.filter(function (m) { return m !== wm; })).slice(0, 4);
   var out = pick.map(function (m) {
     var c = comp(m), isL = m.status === 'live', fin = m.status === 'finished', el = m.at ? Math.floor((Date.parse(now.replace(' ', 'T') + 'Z') - Date.parse(m.at.replace(' ', 'T') + 'Z')) / 1000) : 0;
     var p = pos(m);

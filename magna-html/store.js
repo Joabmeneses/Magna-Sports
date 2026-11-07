@@ -51,12 +51,53 @@ var MAGNA = (function () {
   // Se suman solos: campeón de un torneo, primero de una liga finalizada y campeón del historial. Más los que la administración agregue a mano.
   function compYear(type, cid) { var ds = S.matches.filter(function (m) { return m.type === type && m.cid === cid && m.at; }).map(function (m) { return m.at; }).sort(); return ds.length ? ds[ds.length - 1].slice(0, 4) : null; }
   function trnKind(c) { if (c.format === 'champions' || /champions/i.test(c.name)) return 'champions'; if (c.format === 'groups_knockout' || /mundial/i.test(c.name)) return 'mundial'; return 'torneo'; }
+  // Ediciones: torneos con el mismo nombre son ediciones del mismo torneo, numeradas en romano ("OmegaCup VI").
+  // También se entiende el formato anterior "Champions · 2.ª edición".
+  var ED_RX = /\s*·\s*(\d+)\.ª edición$|\s+([IVXLC]+)$/;
+  function baseName(n) { return String(n || '').replace(ED_RX, '').trim(); }
+  function editionNo(n) { var m = ED_RX.exec(String(n || '')); return !m ? null : m[1] ? Number(m[1]) : romanNo(m[2]); }
+  function toRoman(n) { var R = [[100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']], o = ''; n = Math.max(1, Math.floor(n)); R.forEach(function (x) { while (n >= x[0]) { o += x[1]; n -= x[0]; } }); return o; }
+  // temporada/edición escrita como número romano (IV) o número (4) → 4
+  function romanNo(x) { x = String(x || '').trim().toUpperCase(); if (/^\d{1,3}$/.test(x)) return Number(x); if (!/^[IVXLC]+$/.test(x)) return null; var V = { I: 1, V: 5, X: 10, L: 50, C: 100 }, n = 0; for (var i = 0; i < x.length; i++) { var a = V[x[i]], b = V[x[i + 1]] || 0; n += a < b ? -a : a; } return n || null; }
+  // Balón de Oro: S.ballon = [{id, ed:'IV', season, winner(id)|wname, team(id)|tname, second, third, votes, source}]
+  function ballonList() { return (S.ballon || []).slice().sort(function (a, b) { return (romanNo(b.ed) || 0) - (romanNo(a.ed) || 0) || b.id - a.id; }); }
+  function ballonWho(b, k) { var id = b[k], p = id != null ? by(S.players, id) : null; return p ? p.name : (b[k + 'Name'] || (k === 'winner' ? b.wname : '') || null); }
+  function ballonCount(pid) { return (S.ballon || []).filter(function (b) { return b.winner === pid; }).length; }
+  // Catálogo inicial de la tienda de cosméticos (la administración lo carga y luego lo edita en S.shop)
+  var SHOP_DEFAULT = [
+    ['c-sangre', 'color', 'Carmesí', 'comun', 200, 'sangre'], ['c-menta', 'color', 'Menta', 'comun', 200, 'menta'], ['c-oro', 'color', 'Nombre dorado', 'rara', 400, 'oro'], ['c-hielo', 'color', 'Hielo', 'rara', 450, 'hielo'],
+    ['c-neon-rosa', 'color', 'Neón rosa', 'epica', 900, 'neon-rosa'], ['c-neon-cian', 'color', 'Neón cian', 'epica', 900, 'neon-cian'], ['c-neon-verde', 'color', 'Neón verde', 'epica', 900, 'neon-verde'],
+    ['c-galaxia', 'color', 'Galaxia', 'legendaria', 1800, 'galaxia'], ['c-fuego', 'color', 'Fuego vivo', 'legendaria', 2000, 'fuego'], ['c-arcoiris', 'color', 'Arcoíris', 'legendaria', 2500, 'arcoiris'],
+    ['p-noche', 'plate', 'Placa Medianoche', 'comun', 200, 'noche'], ['p-plata', 'plate', 'Placa de plata', 'comun', 250, 'plata'], ['p-selva', 'plate', 'Placa Selva', 'comun', 250, 'selva'], ['p-magna', 'plate', 'Placa Magna', 'rara', 500, 'magna'],
+    ['p-fuego', 'plate', 'Placa de fuego', 'epica', 1000, 'fuego'], ['p-neon', 'plate', 'Placa neón', 'epica', 1100, 'neon'], ['p-oro', 'plate', 'Placa de oro', 'epica', 1200, 'oro'], ['p-galaxia', 'plate', 'Placa Galaxia', 'legendaria', 2000, 'galaxia'],
+    ['f-oro', 'frame', 'Marco dorado', 'rara', 600, 'oro'], ['f-hielo', 'frame', 'Marco de hielo', 'rara', 600, 'hielo'], ['f-toxico', 'frame', 'Marco tóxico', 'rara', 700, 'toxico'], ['f-neon', 'frame', 'Marco neón', 'epica', 1200, 'neon'],
+    ['f-elite', 'frame', 'Marco Élite', 'epica', 1500, 'elite'], ['f-fuego', 'frame', 'Marco de fuego', 'legendaria', 2200, 'fuego'], ['f-arcoiris', 'frame', 'Marco arcoíris', 'legendaria', 2400, 'arcoiris'], ['f-corona', 'frame', 'Corona real', 'legendaria', 3000, 'corona'],
+    ['t-novato', 'title', 'Novato', 'comun', 100, ''], ['t-muro', 'title', 'El Muro', 'comun', 150, ''], ['t-goleador', 'title', 'Goleador', 'rara', 300, ''], ['t-mago', 'title', 'El Mago', 'rara', 300, ''], ['t-capitan', 'title', 'Capitán', 'rara', 350, ''],
+    ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'legendaria', 1500, '']
+  ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
+  // Partidos narrados de un jugador con su nota, goles, MVP y resultado (para su perfil)
+  function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
+      ['h', 'a'].forEach(function (k) { if (((L.lineup && L.lineup[k]) || []).indexOf(pid) >= 0) sd = k; }); (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in === pid) sd = e.side || 'h'; }); if (!sd) return;
+      var g = (L.ev || []).filter(function (e) { return e.k === 'goal' && e.player === pid; }).length, my = sd === 'h' ? m.hs : m.as, op = sd === 'h' ? m.as : m.hs;
+      out.push({ m: m, side: sd, team: sd === 'h' ? m.home : m.away, rival: sd === 'h' ? m.away : m.home, g: g, r: (L.ratings || {})[pid], mvp: String(L.mvp) === String(pid), res: my > op ? 'W' : my < op ? 'L' : 'D', score: my + '-' + op }); });
+    return out.reverse(); }
+  // Insignias que se ganan jugando. Cada una: {id, i (icono), n (nombre), d (cómo), v (valor), goal (meta), ok}
+  function playerBadges(pid) { var x = playerStats()[pid] || {}, G = playerGames(pid), bo = ballonCount(pid), tt = (x.titles || []).length, hat = G.some(function (g) { return g.g >= 3; }), best = G.reduce(function (a, g) { return g.r != null && g.r > a ? g.r : a; }, 0);
+    var D = [['debut', '👟', 'Debut', 'Juega tu primer partido', x.pj, 1], ['veterano', '🎖️', 'Veterano', 'Juega 25 partidos', x.pj, 25], ['leyenda', '🏛️', 'Leyenda', 'Juega 75 partidos', x.pj, 75],
+      ['gol', '⚽', 'Primer gol', 'Marca tu primer gol', x.g, 1], ['goleador', '🎯', 'Goleador', 'Marca 10 goles', x.g, 10], ['canonero', '💥', 'Cañonero', 'Marca 50 goles', x.g, 50], ['hattrick', '🎩', 'Hat-trick', 'Marca 3 goles en un partido', hat ? 1 : 0, 1],
+      ['ganador', '✊', 'Ganador', 'Gana 20 partidos', x.w, 20], ['mvp', '⭐', 'MVP', 'Sé el MVP de un partido', x.mvp, 1], ['estrella', '🌟', 'Estrella', 'Sé MVP 10 veces', x.mvp, 10], ['perfecto', '💯', 'Partido perfecto', 'Saca un 10 de nota', best >= 10 ? 1 : 0, 1],
+      ['campeon', '🏆', 'Campeón', 'Gana un título', tt, 1], ['dinastia', '👑', 'Dinastía', 'Gana 5 títulos', tt, 5], ['balon', '🥇', 'Balón de Oro', 'Gana el Balón de Oro', bo, 1], ['elite', '💎', 'Élite', 'Llega a media 80', x.media, 80]];
+    return D.map(function (b) { var v = Number(b[4]) || 0; return { id: b[0], i: b[1], n: b[2], d: b[3], v: Math.min(v, b[5]), goal: b[5], ok: v >= b[5] }; }); }
+  function editionName(base, n) { return base + ' ' + toRoman(n); }
+  // Agrupa trofeos del mismo torneo (todas sus ediciones) en uno con contador
+  function groupTrophies(list) { var g = [], ix = {}; (list || []).forEach(function (x) { var k = hnk(baseName(x.name)); if (ix[k] == null) { ix[k] = g.length; g.push({ name: baseName(x.name), cat: x.cat, n: 0, items: [] }); } var o = g[ix[k]]; o.n++; o.items.push(x); }); return g; }
   function teamTrophies(tid) {
     var t = by(S.teams, tid); if (!t) return []; var out = [], seen = {}, key = function (n, y) { return hnk(n) + '|' + (y || ''); };
     function push(x) { var k = key(x.name, x.season); if (seen[k] || seen[key(x.name, '')]) return; seen[k] = 1; out.push(x); }
+    function pushH(x) { var k = 'h' + x.hist; if (seen[k]) return; seen[k] = 1; seen[key(x.name, x.season)] = 1; out.push(x); }
     S.tournaments.forEach(function (c) { if (c.state && c.state.phase === 'done' && c.state.champion === tid) push({ name: c.name, cat: trnKind(c), season: compYear('tournament', c.id), auto: 'tournament' }); });
     S.leagues.forEach(function (c) { if (c.status !== 'finished') return; var r = standings(Object.assign({ kind: 'league' }, c))[0]; if (r && r.pj && r.team_id === tid) push({ name: c.name, cat: 'liga', season: compYear('league', c.id), auto: 'league' }); });
-    (S.history || []).forEach(function (e) { if (!e.champion || histTeam(e.champion) !== tid) return; push({ name: e.name, cat: e.mundial ? 'mundial' : e.cat === 'liga' ? 'liga' : e.cat === 'champions' ? 'champions' : e.cat === 'otro' ? 'otro' : 'torneo', season: e.date ? String(e.date).slice(0, 4) : null, auto: 'history', hist: e.id }); });
+    (S.history || []).forEach(function (e) { if (!e.champion || histTeam(e.champion) !== tid) return; pushH({ name: e.name, cat: e.mundial ? 'mundial' : e.cat === 'liga' ? 'liga' : e.cat === 'champions' ? 'champions' : e.cat === 'otro' ? 'otro' : 'torneo', season: e.date ? String(e.date).slice(0, 4) : null, auto: 'history', hist: e.id }); });
     (t.trophies || []).forEach(function (x) { if (x.hist && out.some(function (o) { return o.hist === x.hist; })) return; push({ id: x.id, name: x.name, cat: x.cat || 'otro', season: x.season || null }); });
     var ORD = { mundial: 0, champions: 1, liga: 2, torneo: 3, otro: 4 };
     var yr = function (x) { return (String(x.season || '').match(/\d{4}/) || [''])[0]; };
@@ -276,7 +317,7 @@ var MAGNA = (function () {
     MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
-    groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
+    SHOP_DEFAULT: SHOP_DEFAULT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },

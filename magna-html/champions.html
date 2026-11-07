@@ -172,10 +172,14 @@ nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transfo
 #fx{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
 span.p{position:absolute;width:9px;height:14px;border-radius:2px}
 @media (min-width:1100px){.bg{--bw:minmax(0,1fr);width:100%}.bch{display:none}.bar2{justify-content:flex-end}}
+
+.lockko{text-align:center;padding:34px 18px 28px;border-radius:24px;border:1px dashed rgba(255,255,255,.22);background:radial-gradient(70% 90% at 50% 0,rgba(34,211,238,.16),transparent 70%),rgba(255,255,255,.03);display:grid;gap:12px;justify-items:center}.lockko h3{margin:0;font-size:clamp(20px,3vw,26px)}.lockko p{margin:0;color:var(--muted);max-width:52ch}.lk-i{font-size:42px}
+.lk-p{width:min(420px,100%);height:10px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden}.lk-p i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#8b5cf6)}.lockko small{color:var(--muted);font-size:13px}
+.lk-s{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}.lk-s span{display:grid;gap:2px;padding:8px 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:12px;color:var(--muted)}.lk-s b{color:var(--fg);font-size:14px}
 </style>
 <style>nav{gap:16px!important}@media(min-width:900px){.logo{font-size:22px!important}}
 @media(max-width:420px){.tb:not(.full){--cols:minmax(0,1fr) 40px 38px 58px}.tb:not(.full) .c.pj,.tb:not(.full) .hc[data-k="pj"]{display:none}.c1{gap:6px;padding-left:10px}.cr{width:26px;height:26px}.nm{font-size:14px}.form{gap:3px}.form i{width:10px;height:10px}.pos{width:16px}.lgd{display:none}}
-</style></head>
+</style><link rel="stylesheet" href="cos.css"></head>
 <body>
 <header>
 <div class="wrap hd">
@@ -210,7 +214,7 @@ span.p{position:absolute;width:9px;height:14px;border-radius:2px}
 </main>
 <div id="fx"></div>
 <div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="champions-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="champions-data.js"></script>
 <script>
 (function(){
 var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
@@ -303,6 +307,15 @@ var bs=$('#bs');
 RT.slice(0,-1).forEach(function(r,i){var b=document.createElement('button');b.textContent=r[0];if(!i)b.className='on';b.addEventListener('click',function(){bs.scrollTo({left:$$('.rt')[i].offsetLeft-4,behavior:RM?'auto':'smooth'})});$('#bch').appendChild(b)});
 bs.addEventListener('scroll',function(){var x=bs.scrollLeft,best=0,bd=1e9;$$('.rt').slice(0,-1).forEach(function(h,i){var dd=Math.abs(h.offsetLeft-4-x);if(dd<bd){bd=dd;best=i}});$$('#bch button').forEach(function(b,i){b.classList.toggle('on',i===best)})});
 real();render();
+/* la eliminatoria solo se muestra cuando la administración cierra la fase de liga */
+(function(){var open=CFG&&CFG.phase&&CFG.phase!=='groups';if(open)return;var p2=$('#p2');[].forEach.call(p2.children,function(x){x.hidden=true});
+ var ms=CFG?MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}):[],fin=ms.filter(function(m){return m.status==='finished'}).length;
+ var c=document.createElement('div');c.className='lockko';var RN=[];for(var n=D*2;n>=2;n/=2)RN.push(MAGNA.koName(n));
+ c.innerHTML='<div class="lk-i">🔒</div><h3 class="x">La eliminatoria aún no está definida</h3><p>Se arma cuando la administración cierre la fase de liga. Hasta entonces la tabla puede cambiar en cualquier jornada.</p>'+
+  (ms.length?'<div class="lk-p"><i style="width:'+Math.round(fin/ms.length*100)+'%"></i></div><small>'+fin+' de '+ms.length+' partidos de la fase de liga jugados</small>':'')+
+  (K?'<div class="lk-s"><span><b>'+(D===1?'1.º':'1.º–'+D+'.º')+'</b>Directo a '+KL+'</span><span><b>'+(D+1)+'.º–'+(D+K)+'.º</b>Play-off</span>'+RN.map(function(r){return'<span><b>'+r+'</b>Partido único</span>'}).join('')+'</div>':'');
+ p2.appendChild(c);var b=document.createElement('button');b.className='pb';b.textContent='Ver la fase de liga';b.onclick=function(){$('.tabs button[data-p="1"]').click()};c.appendChild(b);
+ $('.tabs button[data-p="2"]').innerHTML='🔒 Eliminatorias'})();
 if(CFG&&CFG.phase&&CFG.phase!=='groups'){$('.sub2').textContent='Cuadro oficial de '+CFG.name+': los cruces jugados muestran su resultado real. Los que faltan son proyección: toca un equipo para avanzarlo.'}
 /* --- pestañas --- */
 $$('.tabs button').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.p;$$('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('#p1').hidden=p!=='1';$('#p2').hidden=p!=='2';$('#ctag').textContent=p==='1'?'Champions · Fase de liga':'Champions · Eliminatorias'})});

@@ -18,7 +18,7 @@
     var lr = ranks(lg ? lg.teamIds : [t.id], cms, win), u = MAGNA.crestUrl(t.id), c = by(S.players, t.coach), name = lg ? lg.name : 'Sin competición';
     if (!lg) LGC[name] = '#9aa0b8';
     COL[t.name] = TC[i % TC.length];
-    SQ[t.name] = S.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return (a.slot === 'starter' ? 0 : 1) - (b.slot === 'starter' ? 0 : 1); }).map(function (p) { return { n: p.name, slot: p.slot, coach: t.coach === p.id }; });
+    SQ[t.name] = S.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return (a.slot === 'starter' ? 0 : 1) - (b.slot === 'starter' ? 0 : 1); }).map(function (p) { return { id: p.id, n: p.name, slot: p.slot, coach: t.coach === p.id }; });
     return { n: t.name, i: u ? 'url:' + u : null, lg: name, lp: lr[t.id], lr: rec(t.id, cms, win), ln: lg ? lg.teamIds.length : 1, cp: gRank[t.id], cr: rec(t.id, done, 3), coach: c ? c.name : null, tr: MAGNA.teamTrophies(t.id).map(function (x) { return { n: x.name, c: x.cat, y: x.season || '' }; }), id: t.id };
   });
   var FX = [], order = 0, now = Date.now();

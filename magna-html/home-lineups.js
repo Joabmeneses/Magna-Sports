@@ -11,7 +11,7 @@
   function rc(v) { return v == null ? 'na' : v >= 8 ? 'top' : v >= 6.5 ? 'good' : v >= 6 ? 'mid' : 'low'; }
   function rt(v) { return v == null ? '–' : Number(v).toFixed(1).replace('.', ','); }
   var PAV = {}; try { PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {}
-  function pav(el, pid) { var id = PAV[pid]; if (id && /^a\d\d$/.test(id)) { el.style.background = 'url("avatars/' + id + '.webp") center/cover'; el.style.color = 'transparent'; } return el; }
+  function pav(el, pid) { var eq0 = MAGNA_COS.eqOf ? MAGNA_COS.eqOf(pid) : {}, fr0 = eq0.frame && MAGNA_COS.item(eq0.frame); if (fr0 && fr0.type === 'frame') el.classList.add('fr-' + fr0.style); var id = PAV[pid]; if (id && /^a\d\d$/.test(id)) { el.style.background = 'url("avatars/' + id + '.webp") center/cover'; el.style.color = 'transparent'; } return el; }
   if (window.MAGNA_SB) window.MAGNA_SB().then(function (c) { return c.rpc('player_avatars'); }).then(function (r) { if (!r || r.error) return; var m = {}; (r.data || []).forEach(function (x) { m[x.player_id] = x.avatar; }); PAV = m; try { localStorage.setItem('magna_pav', JSON.stringify(m)); } catch (e) {} lastKey = ''; draw(); }, function () {});
   function col(tid) { return MAGNA.teamColor ? MAGNA.teamColor(tid) : '#8b5cf6'; }
   var CSS = '' +
@@ -32,7 +32,7 @@
     '.hl-bn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}.hl-bn>div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}.hl-bn>div:last-child{justify-content:flex-end}.hl-bn small{color:var(--muted);font:600 10px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}' +
     '.hl-bn button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--fg);border-radius:999px;padding:5px 10px;font:600 12px Archivo,sans-serif;cursor:pointer}.hl-bn button:hover{border-color:var(--tc)}.hl-bn .dt{border-color:rgba(255,210,63,.5);color:#ffd23f}' +
     '.hl-pop{position:absolute;z-index:5;width:210px;transform:translate(-50%,calc(-100% - 34px));background:#14183f;border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:12px;box-shadow:0 18px 40px rgba(0,0,0,.5);color:#f1f3fb;font-size:13px;animation:hlP .2s both}@keyframes hlP{from{opacity:0;transform:translate(-50%,calc(-100% - 24px))}}' +
-    '.hl-pop b{display:block;font-size:15px}.hl-pop small{color:#b9bed6}.hl-pop .st{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;text-align:center}.hl-pop .st div{background:rgba(255,255,255,.07);border-radius:10px;padding:6px 2px}.hl-pop .st b{font-size:16px}.hl-pop .st small{display:block;font:500 9px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}.hl-pop a{display:block;margin-top:10px;color:#c9b8ff;font-weight:700;text-decoration:none}' +
+    '.hl-pop b{display:block;font-size:15px}.hl-lk{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.hl-pop small{color:#b9bed6}.hl-pop .st{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;text-align:center}.hl-pop .st div{background:rgba(255,255,255,.07);border-radius:10px;padding:6px 2px}.hl-pop .st b{font-size:16px}.hl-pop .st small{display:block;font:500 9px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase}.hl-pop a{display:block;margin-top:10px;color:#c9b8ff;font-weight:700;text-decoration:none}' +
     // rendimiento en el banner
     '.pf{margin-top:24px;border-radius:24px;background:rgba(10,13,24,.28);border:1px solid rgba(255,255,255,.18);padding:14px 14px 12px;position:relative;overflow:hidden}' +
     '.pf-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.pf-h b{font:900 15px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.02em}.pf-h .sp{flex:1}' +
@@ -80,16 +80,16 @@
     var av = pav(h('span', 'av', ini(p.name)), pid), r = D.R[pid]; av.appendChild(h('span', 'hl-r ' + rc(r), rt(r)));
     if (D.goals[pid]) { var g = h('span', 'hl-g'); for (var j = 0; j < Math.min(D.goals[pid], 4); j++) g.appendChild(h('i', null, '⚽')); g.title = D.goals[pid] + (D.goals[pid] === 1 ? ' gol' : ' goles'); av.appendChild(g); }
     if (D.mvp === pid) av.appendChild(h('span', 'hl-m', '⭐')); if (D.subIn[pid]) av.appendChild(h('span', 'hl-sub', '⇄'));
-    k.appendChild(av); k.appendChild(h('b', null, p.name));
+    k.appendChild(av); var kb = h('b'); kb.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true })); k.appendChild(kb);
     k.setAttribute('aria-label', p.name + (r != null ? ', nota ' + rt(r) : '') + (D.goals[pid] ? ', ' + D.goals[pid] + ' goles' : ''));
     return k;
   }
   function pop(pitch, k, pid, D) {
     var old = pitch.querySelector('.hl-pop'); [].forEach.call(pitch.querySelectorAll('.hl-k.on'), function (x) { x.classList.remove('on'); }); if (old) { var same = old.dataset.p == pid; old.remove(); if (same) return; }
     var p = by(S().players, pid), ps = (MAGNA.playerStats ? MAGNA.playerStats()[pid] : null) || {}, b = h('div', 'hl-pop'); b.dataset.p = pid; k.classList.add('on');
-    b.appendChild(h('b', null, p.name + (D.mvp === pid ? ' ⭐' : ''))); b.appendChild(h('small', null, MAGNA.teamName(p.teamId) + ' · media ' + (ps.media != null ? ps.media : p.media != null ? p.media : 10)));
+    var nb = h('b'); nb.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true, title: true })); if (D.mvp === pid) nb.appendChild(document.createTextNode(' ⭐')); b.appendChild(nb); b.appendChild(h('small', null, MAGNA.teamName(p.teamId) + ' · media ' + (ps.media != null ? ps.media : p.media != null ? p.media : 10)));
     var g = h('div', 'st'); [[rt(D.R[pid]), 'Nota'], [String(D.goals[pid] || 0), 'Goles'], [String(ps.pj || 0), 'Partidos']].forEach(function (x) { var d = h('div'); d.appendChild(h('b', null, x[0])); d.appendChild(h('small', null, x[1])); g.appendChild(d); }); b.appendChild(g);
-    var a = h('a', null, 'Ver ' + MAGNA.teamName(p.teamId) + ' →'); a.href = 'equipo.html?id=' + p.teamId; b.appendChild(a);
+    var lk = h('div', 'hl-lk'), a0 = h('a', null, 'Ver perfil →'); a0.href = MAGNA_COS.profileUrl(pid); lk.appendChild(a0); var a = h('a', null, MAGNA.teamName(p.teamId) + ' →'); a.href = 'equipo.html?id=' + p.teamId; lk.appendChild(a); b.appendChild(lk);
     var pr = pitch.getBoundingClientRect(), kr = k.getBoundingClientRect(), x = kr.left - pr.left + kr.width / 2; b.style.left = Math.max(110, Math.min(pr.width - 110, x)) + 'px'; b.style.top = (kr.top - pr.top + 34) + 'px';
     if (kr.top - pr.top < 170) { b.style.transform = 'translate(-50%, 50px)'; b.style.animation = 'none'; }
     pitch.appendChild(b);
@@ -127,7 +127,7 @@
       if (!list.length) s.appendChild(h('p', 'pf-e', 'Sin jugadores registrados para ' + MAGNA.teamName(X.tid) + '.'));
       list.forEach(function (pid, i) { var p = by(S().players, pid), c = h('div', 'pf-c' + (pid === best ? ' best' : '')); c.style.setProperty('--tc', col(X.tid)); c.style.animationDelay = i * 80 + 'ms';
         var av = pav(h('span', 'av', ini(p.name)), pid); if (D.goals[pid]) { var gg = h('span', 'hl-g'); for (var j = 0; j < Math.min(D.goals[pid], 4); j++) gg.appendChild(h('i', null, '⚽')); av.appendChild(gg); } c.appendChild(av);
-        c.appendChild(h('span', 'hl-r ' + rc(D.R[pid]), rt(D.R[pid]))); c.appendChild(h('b', null, p.name)); c.appendChild(h('small', null, (pid === D.mvp ? '⭐ MVP' : pid === best ? '🔥 Mejor de su equipo' : D.subIn[pid] ? '⇄ Entró de cambio' : 'Titular'))); g.appendChild(c); });
+        c.appendChild(h('span', 'hl-r ' + rc(D.R[pid]), rt(D.R[pid]))); var cb2 = h('b'); cb2.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true })); c.appendChild(cb2); c.appendChild(h('small', null, (pid === D.mvp ? '⭐ MVP' : pid === best ? '🔥 Mejor de su equipo' : D.subIn[pid] ? '⇄ Entró de cambio' : 'Titular'))); g.appendChild(c); });
       s.appendChild(g); slides.push([s, MAGNA.teamName(X.tid).slice(0, 8)]); });
     var mv = D.mvp ? by(S().players, D.mvp) : null;
     if (!mv) { var all = D.h.played.concat(D.a.played).filter(function (id) { return D.R[id] != null; }).sort(function (x, y) { return D.R[y] - D.R[x]; }); if (all.length) mv = by(S().players, all[0]); }

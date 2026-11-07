@@ -116,9 +116,9 @@
     var pb = h('div', 'hh-box'), ph2 = h('h3'); ph2.appendChild(document.createTextNode('⭐ Jugadores por media')); pb.appendChild(ph2);
     var pr = players.map(function (p) { var x = PS[p.id] || {}; return { p: p, m: p.media != null ? p.media : x.media != null ? x.media : 10 }; }).sort(function (x, y) { return y.m - x.m || x.p.name.localeCompare(y.p.name); }).slice(0, 5);
     if (!pr.length) pb.appendChild(h('div', 'hh-empty', 'Aún no hay jugadores.'));
-    pr.forEach(function (x, i) { var tier = MAGNA.tierOf ? MAGNA.tierOf(x.m) : { color: '#8b5cf6', name: '' }, r = a(x.p.teamId ? 'equipo.html?id=' + x.p.teamId : 'mercado.html', 'hh-rk'); r.style.animationDelay = i * 60 + 'ms'; r.appendChild(h('span', 'hh-p', String(i + 1)));
+    pr.forEach(function (x, i) { var tier = MAGNA.tierOf ? MAGNA.tierOf(x.m) : { color: '#8b5cf6', name: '' }, r = a(MAGNA_COS.profileUrl(x.p.id), 'hh-rk'); r.style.animationDelay = i * 60 + 'ms'; r.appendChild(h('span', 'hh-p', String(i + 1)));
       var av = h('span', 'hh-pav'); av.style.setProperty('--kc', tier.color); av.style.setProperty('--pc', Math.max(4, Math.min(100, x.m))); av.appendChild(h('i', null, x.p.name.slice(0, 2).toUpperCase())); r.appendChild(av);
-      var d = h('div'); d.appendChild(h('b', null, x.p.name)); d.appendChild(h('small', null, (x.p.teamId ? MAGNA.teamName(x.p.teamId) : 'Agente libre') + (tier.name ? ' · ' + tier.name : ''))); r.appendChild(d); var v = h('span', 'hh-v', String(x.m)); v.style.color = tier.color; r.appendChild(v); pb.appendChild(r); });
+      var d = h('div'), nb = h('b'); nb.appendChild(MAGNA_COS.pn(x.p.name, x.p.id, { plain: true })); d.appendChild(nb); d.appendChild(h('small', null, (x.p.teamId ? MAGNA.teamName(x.p.teamId) : 'Agente libre') + (tier.name ? ' · ' + tier.name : ''))); r.appendChild(d); var v = h('span', 'hh-v', String(x.m)); v.style.color = tier.color; r.appendChild(v); pb.appendChild(r); });
     two.appendChild(tb); two.appendChild(pb); rs.appendChild(two);
 
     // 6) noticias (artículos publicados) o, si no hay, la actividad reciente

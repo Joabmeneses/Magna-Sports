@@ -16,10 +16,10 @@
   function profile(p) {
     M.modal(function (b) {
       var hd = h('div'); hd.style.cssText = 'display:flex;gap:18px;align-items:center;flex-wrap:wrap'; var md = h('div', 'big', p.avg_rating == null ? '—' : p.avg_rating); md.style.setProperty('--c', p.tier.color); hd.appendChild(md);
-      var x = h('div'); x.appendChild(h('h3', 'x', p.name)); var sub = h('p', 'sub', (p.team || 'Agente libre') + (p.slot === 'reserve' ? ' · Suplente' : p.team ? ' · Titular' : '') + '  '); sub.style.margin = '4px 0'; sub.appendChild(badge(p.tier)); x.appendChild(sub); hd.appendChild(x); b.appendChild(hd);
+      var x = h('div'), h3 = h('h3', 'x'); h3.appendChild(M.pn(p.name, p.id, { plain: true, title: true })); x.appendChild(h3); var sub = h('p', 'sub', (p.team || 'Agente libre') + (p.slot === 'reserve' ? ' · Suplente' : p.team ? ' · Titular' : '') + '  '); sub.style.margin = '4px 0'; sub.appendChild(badge(p.tier)); x.appendChild(sub); hd.appendChild(x); b.appendChild(hd);
       var st = h('div', 'pst'); if (window.ACCOUNTS) ACCOUNTS.playerBits().then(function (o) { if (o[p.id] == null) return; var d = h('div'); d.appendChild(h('b', null, Number(o[p.id]).toLocaleString('es'))); d.appendChild(h('span', null, 'Bits')); st.appendChild(d); });
       [[p.matches, 'Partidos'], [p.titles.length, p.titles.length === 1 ? 'Trofeo' : 'Trofeos'], [p.wins + 'V · ' + p.losses + 'D', 'Récord'], [p.top_wins, 'Victorias vs fuertes'], [p.nota == null ? '—' : String(p.nota).replace('.', ','), 'Nota media'], [p.goals, 'Goles'], [p.mvp, 'MVP']].forEach(function (k) { var d = h('div'); d.appendChild(h('b', null, k[0])); d.appendChild(h('span', null, k[1])); st.appendChild(d); }); b.appendChild(st);
-      if (p.titles.length) b.appendChild(h('p', 'sub', '🏆 Campeón de ' + p.titles.join(', ') + '. Sus títulos le aseguran una media de al menos ' + p.floor + '.'));
+      var pl = h('a', 'btn2 o', 'Ver perfil completo →'); pl.href = M.profileUrl(p.id); pl.style.margin = '6px 0 10px'; b.appendChild(pl); if (p.titles.length) b.appendChild(h('p', 'sub', '🏆 Campeón de ' + p.titles.join(', ') + '. Sus títulos le aseguran una media de al menos ' + p.floor + '.'));
       if (p.salary_bits != null) b.appendChild(h('p', 'sub', 'Contrato: ' + p.salary_bits + ' Bits'));
       var games = (MAGNA.playerStats()[p.id] || {}).games || [];
       b.appendChild(h('h2', 'x', 'Últimos partidos'));
@@ -30,7 +30,7 @@
   function top() {
     var t = document.getElementById('scorers'); t.innerHTML = ''; var l = all.filter(function (p) { return p.goals > 0; }).sort(function (a, b) { return b.goals - a.goals || a.matches - b.matches; }).slice(0, 10);
     if (!l.length) { t.appendChild(h('p', 'em', 'Aún no hay goles registrados. Aparecerán cuando se narren partidos en vivo.')); return; }
-    var g = h('div', 'gl'); l.forEach(function (p, i) { var r = h('div', 'gr'); r.style.animationDelay = i * 40 + 'ms'; r.appendChild(h('span', 'n', i + 1)); var w = h('div'); w.appendChild(h('b', null, p.name)); w.appendChild(h('small', null, (p.team || 'Agente libre') + ' · ' + p.matches + ' PJ')); r.appendChild(w); r.appendChild(badge(p.tier)); var gg = h('div', 'g', p.goals); gg.appendChild(h('small', null, 'GOLES')); r.appendChild(gg); r.onclick = function () { profile(p); }; g.appendChild(r); }); t.appendChild(g);
+    var g = h('div', 'gl'); l.forEach(function (p, i) { var r = h('div', 'gr'); r.style.animationDelay = i * 40 + 'ms'; r.appendChild(h('span', 'n', i + 1)); var w = h('div'), wb = h('b'); wb.appendChild(M.pn(p.name, p.id)); w.appendChild(wb); w.appendChild(h('small', null, (p.team || 'Agente libre') + ' · ' + p.matches + ' PJ')); r.appendChild(w); r.appendChild(badge(p.tier)); var gg = h('div', 'g', p.goals); gg.appendChild(h('small', null, 'GOLES')); r.appendChild(gg); r.onclick = function () { profile(p); }; g.appendChild(r); }); t.appendChild(g);
   }
   function draw() {
     var g = document.getElementById('g'); g.innerHTML = '';

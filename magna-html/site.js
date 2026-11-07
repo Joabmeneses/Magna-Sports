@@ -31,12 +31,12 @@ var M = (function () {
   function ini(name) { return String(name || '?').slice(0, 2).toUpperCase(); }
   function tierCard(name, media, width) { var t = window.MAGNA ? MAGNA.tierOf(media) : { name: '' }, c = h('div', 'tcard' + tierCls(media)); if (width) c.style.setProperty('--w', width + 'px'); c.appendChild(h('span', 'm', media == null ? '—' : String(media))); c.appendChild(h('span', 'tl', t.name)); c.appendChild(h('span', 'ini', ini(name))); c.appendChild(h('span', 'nm', name)); return c; }
   // fotos de perfil de los jugadores con cuenta (avatares de Magna): se cargan una vez y se aplican a todos los [data-pid]
-  var PAV = {}; try { PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {}
-  function pav(pid) { var id = pid != null && PAV[pid]; return id && /^a\d\d$/.test(id) ? 'avatars/' + id + '.webp' : null; }
-  function paint(el) { var u = pav(el.dataset.pid); if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has-pav'); } else { el.style.backgroundImage = ''; el.classList.remove('has-pav'); } }
-  function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_avatars'); }).then(function (r) { if (!r || r.error) return; var m = {}; (r.data || []).forEach(function (x) { m[x.player_id] = x.avatar; }); PAV = m; try { localStorage.setItem('magna_pav', JSON.stringify(m)); } catch (e) {} [].forEach.call(document.querySelectorAll('[data-pid]'), paint); }, function () {}); }
-  if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
+  var C = window.MAGNA_COS, pav = C.pav, paint = C.paint, pn = C.pn, nameStyle = C.nameStyle, profileUrl = C.profileUrl, item = C.item, eqOf = C.eqOf, repaint = C.repaint, loadPav = C.reload, STY = C.STY, KIND = C.KIND, RAR = C.RAR;
+  function cosPreview(it, name, pid) { var w = h('div', 'cos-prev'), nm = name || 'Tu nombre';
+    if (it.type === 'frame') { var a = tierAv(nm, 60, 58); if (pid != null) { a.dataset.pid = pid; var u = pav(pid); if (u) { a.style.backgroundImage = 'url("' + u + '")'; a.classList.add('has-pav'); } } a.classList.add('fr-' + it.style); w.appendChild(a); }
+    else { var eq = {}; eq[it.type] = it.id; var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); if (it.type === 'title') n.appendChild(h('small', 'mpn-t', it.name)); else nameStyle(n, eq); w.appendChild(n); }
+    return w; }
   function photo(el, pid) { if (pid == null) return el; el.dataset.pid = pid; paint(el); return el; }
   function tierAv(name, media, size, pid) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return photo(a, pid); }
-  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, pav: pav, photo: photo, tint: function (i) { return TINTS[i % TINTS.length]; } };
+  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, pav: pav, photo: photo, pn: pn, cosPreview: cosPreview, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reloadCos: loadPav, STY: STY, KIND: KIND, RAR: RAR, tint: function (i) { return TINTS[i % TINTS.length]; } };
 })();

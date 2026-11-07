@@ -67,7 +67,7 @@ body.eqp:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
 .tro>div{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;border:1px solid color-mix(in srgb,var(--cc) 55%,transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;text-align:center}
 .tro .fr{background:radial-gradient(70% 60% at 50% 30%,color-mix(in srgb,var(--cc) 55%,transparent),transparent 72%),color-mix(in srgb,var(--cc) 18%,#1b1d57)}.tro .fr span{font-size:46px;line-height:1}.tro .fr b{font-size:14px;overflow-wrap:anywhere}.tro .fr small{color:#c9cde0;font:500 10px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
 .tro .bk{transform:rotateY(180deg);background:color-mix(in srgb,var(--cc) 30%,#1b1d57);font-size:12px;color:#d9dcf0}.tro .bk b{font-size:13px;color:#fff}
-.tro.hide{display:none}
+.tro.hide{display:none}.tro.art{height:250px}.tro.art .fr{justify-content:flex-end;padding-bottom:14px;background:radial-gradient(70% 55% at 50% 38%,rgba(255,196,0,.32),transparent 70%),radial-gradient(60% 50% at 50% 60%,rgba(139,92,246,.35),transparent 70%),color-mix(in srgb,var(--cc) 14%,#14123f)}.tro.art .fr .tart{margin-bottom:4px}.tro.art:hover .tart{filter:drop-shadow(0 10px 16px rgba(0,0,0,.45)) drop-shadow(0 0 18px rgba(255,196,0,.6))}
 .vempty{text-align:center;padding:26px 10px;color:#c9cde0}.vempty span{display:block;font-size:46px;opacity:.6;margin-bottom:8px}
 @keyframes trIn{from{opacity:0;transform:translateY(14px) scale(.96)}}
 /* plantilla en cartas */
@@ -96,7 +96,15 @@ body.eqp:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 @media(max-width:480px){.pitch{min-height:300px;padding:14px}.pitch .lbl{top:auto;bottom:12px;left:14px}.pitch .dt{top:10px;right:10px}.slots{height:280px}.tok .ring{width:66px;height:66px}.tok .ring>.ini2{width:56px;height:56px;font-size:17px}.tok b{font-size:13px}.fh h2{font-size:22px}.mrw{grid-template-columns:96px 1fr 70px}}
+.tro .fr .cnt{position:absolute;top:10px;right:12px;font:900 15px Archivo,sans-serif;font-style:normal;color:#0a0d18;background:var(--cc);border-radius:999px;padding:2px 9px}.tro.multi .fr{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--cc) 60%,transparent)}
+
+/* volteo de cartas y trofeos: se gira cada cara (más fiable que preserve-3d en todos los navegadores) */
+.tro,.pcd{transform:none!important;transform-style:flat;perspective:900px}
+.tro>div,.pcd>div{transition:transform .6s cubic-bezier(.2,.9,.2,1)}
+.pcd .bk .pf-go{grid-column:1/-1;text-align:center;font:800 12px Archivo,sans-serif;color:#fff;background:rgba(255,255,255,.14);border-radius:999px;padding:6px;cursor:pointer}.pcd .bk .pf-go:hover{background:#fff;color:#14113a}.pcd .fr .nm{align-items:center;max-width:100%}
+.tro .fr,.pcd .fr{transform:rotateY(0)}.tro .bk,.pcd .bk{transform:rotateY(180deg)}
+.tro.f .fr,.pcd.f .fr{transform:rotateY(-180deg)}.tro.f .bk,.pcd.f .bk{transform:rotateY(0)}
 </style></head>
 <body class="eqp"><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap" id="eq"></main>
-<script src="data.js"></script><script src="store.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="equipo.js" defer></script></body></html>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="team-banner.js"></script><script src="equipo.js" defer></script></body></html>

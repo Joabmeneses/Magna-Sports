@@ -1,3 +1,4 @@
+@import url("cos.css");
 /* Sistema visual de Magna Arena (mismo lenguaje que los diseños originales) */
 :root{--bg:#0a0d18;--card:#0f1326;--card2:#131833;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--blue:#3b4bff;--orange:#ff5a36;--purple:#8b5cf6;--yellow:#ffd23f;--green:#2ee59d;--red:#ff4d6d;color-scheme:dark}
 *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}
@@ -105,3 +106,21 @@ table.rt td[colspan]{display:block;text-align:left}
 /* foto de perfil (avatar de Magna) sobre cualquier avatar con data-pid */
 .has-pav{background-size:cover!important;background-position:center!important;color:transparent!important}.has-pav>span,.has-pav>i:not([class]){color:transparent!important;background:none!important}
 .tav.has-pav{background-color:#1b1d57}
+/* artículo de la tienda / inventario */
+.cos-prev{display:grid;place-items:center;gap:8px;min-height:92px;padding:14px;border-radius:16px;background:radial-gradient(80% 80% at 50% 30%,rgba(139,92,246,.22),rgba(10,13,24,.5));border:1px solid rgba(255,255,255,.08);font:900 19px Archivo,sans-serif}
+.rar{display:inline-block;border-radius:999px;padding:2px 9px;font:700 10px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase}
+.rar-comun{background:rgba(255,255,255,.12);color:#e5e7eb}.rar-rara{background:rgba(59,130,246,.25);color:#93c5fd}.rar-epica{background:rgba(168,85,247,.28);color:#e9d5ff}.rar-legendaria{background:linear-gradient(90deg,#f59e0b,#ff5a36);color:#1a0f00}
+/* inventario (Mi cuenta y Tienda) */
+.inv-card{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:22px;background:rgba(10,13,24,.42);border:1px solid rgba(255,255,255,.14);min-width:0}.inv-card>div{min-width:0}.inv-card .mpn{font:900 24px Archivo,sans-serif;text-transform:uppercase;font-stretch:112%;max-width:100%}.inv-card .inv-h{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.inv{margin-top:28px}.inv-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px}.inv-top h2{margin:0;flex:1 1 200px;font-size:clamp(22px,3.4vw,30px)}.inv-lk{display:flex;gap:8px;flex-wrap:wrap}
+.inv-sl{margin-top:14px;padding:14px;border-radius:20px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}.inv-slh{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:10px}.inv-slh small{color:var(--muted);font-size:12px}
+.inv-row{display:flex;gap:10px;overflow-x:auto;padding:3px 2px 6px;scroll-snap-type:x proximity}
+.inv-it{flex:0 0 156px;scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(10,13,24,.35);color:#fff;cursor:pointer;text-align:left;font:inherit;transition:border-color .15s,transform .15s}
+.inv-it:hover{transform:translateY(-2px)}.inv-it.on{border-color:#2ee59d;box-shadow:0 0 0 2px #2ee59d inset}.inv-it .cos-prev{min-height:70px;font-size:15px}.inv-it:disabled{opacity:.6;cursor:wait}
+.inv-lb{display:flex;flex-direction:column;gap:4px;font:700 13px Archivo,sans-serif}.inv-lb .rar{align-self:flex-start}
+.inv-off{flex-basis:96px;align-items:center;justify-content:center}.inv-x{font:700 13px Archivo,sans-serif;color:var(--muted)}
+.inv-shop{align-self:center;color:#ff8a65;font-weight:700;text-decoration:none;white-space:nowrap}
+.inv-emp{margin-top:14px;padding:22px;border-radius:20px;border:1px dashed rgba(255,255,255,.22);text-align:center}.inv-emp p{color:var(--muted);margin:6px 0 14px}
+@media(max-width:560px){.inv-card{gap:12px;padding:12px}.inv-card .mpn{font-size:18px}.inv-it{flex-basis:138px}}
+.btn2{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 18px;font:700 14px Archivo,sans-serif;text-decoration:none;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--fg);cursor:pointer}
+.btn2.o{background:var(--orange);border-color:var(--orange);color:#fff}.btn2:hover{border-color:var(--purple)}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Tienda</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+body.tn{background:#0e0b2c}
+body.tn:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(45% 40% at 0 0,rgba(255,64,200,.25),transparent 70%),radial-gradient(45% 40% at 100% 10%,rgba(34,211,238,.22),transparent 70%),radial-gradient(50% 40% at 50% 100%,rgba(255,196,0,.16),transparent 70%)}
+.tn-h{position:relative;margin-top:26px;border-radius:32px;overflow:hidden;padding:clamp(22px,4.5vw,44px);border:1px solid rgba(255,255,255,.14);background:linear-gradient(120deg,#3a0f5c,#13205a 55%,#0b3a4a);display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;isolation:isolate}
+.tn-h:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 2px,transparent 2px 26px)}
+.tn-h .ey{font:700 12px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#ff9ce6}
+.tn-h h1{margin:8px 0;font-size:clamp(40px,7.5vw,80px);line-height:1;padding-top:.06em;background:linear-gradient(90deg,#ff6ad5,#ffd23f,#6ff7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tn-h p{margin:0;color:#e3defa;max-width:52ch}
+.tn-bal{display:flex;flex-direction:column;gap:6px;align-items:flex-end}.tn-bal .b{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:20px;background:rgba(10,13,24,.45);border:1px solid rgba(255,210,63,.4);font:900 28px Archivo,sans-serif;color:#ffd23f}.tn-bal small{color:#cfc8ee;font-size:12px}
+.tn-bal a{color:#fff;font-weight:700;font-size:13px}
+.tn-me{margin-top:16px}
+.tn-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 16px;position:sticky;top:64px;z-index:5;padding:8px 0;background:linear-gradient(180deg,#0e0b2c 70%,transparent)}
+.tn-tabs button{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#fff;border-radius:999px;padding:9px 16px;font:700 14px Archivo,sans-serif;cursor:pointer}.tn-tabs button.on{background:#fff;color:#14113a;border-color:#fff}
+.tn-tabs .own{margin-left:auto}
+.tn-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.tn-it{position:relative;display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:24px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);animation:tnIn .45s both;transition:transform .18s,border-color .18s}
+.tn-it:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.3)}
+.tn-it.r-rara{border-color:rgba(59,130,246,.35)}.tn-it.r-epica{border-color:rgba(168,85,247,.45)}.tn-it.r-legendaria{border-color:rgba(245,158,11,.6);background:linear-gradient(180deg,rgba(245,158,11,.12),rgba(255,255,255,.03))}
+.tn-it .cos-prev{min-height:104px}.tn-it b{font:800 16px Archivo,sans-serif}.tn-it .mt{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+.tn-it button{border:0;border-radius:999px;padding:11px;font:800 14px Archivo,sans-serif;cursor:pointer;background:linear-gradient(90deg,#ff5a36,#ff2d95);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
+.tn-it button .co{display:inline-block;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7c2,#ffc400 60%,#a86f00)}
+.tn-it button.own{background:rgba(46,229,157,.16);color:#2ee59d;border:1px solid rgba(46,229,157,.5)}.tn-it button.eqp{background:#2ee59d;color:#0a0d18}.tn-it button:disabled{opacity:.5;cursor:not-allowed}
+.tn-it .new{position:absolute;top:10px;left:10px;z-index:2;font:700 10px "JetBrains Mono",monospace;background:#ff2d95;color:#fff;border-radius:999px;padding:3px 8px}
+@keyframes tnIn{from{opacity:0;transform:translateY(10px) scale(.97)}}
+.tn-emp{padding:30px;border-radius:24px;border:1px dashed rgba(255,255,255,.22);text-align:center;color:var(--muted)}
+.cf{display:grid;gap:12px;justify-items:center;text-align:center}.cf .cos-prev{width:100%;min-height:120px}.cf .r{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.cf .r button{border-radius:999px;padding:11px 18px;font:800 14px Archivo,sans-serif;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff}.cf .r .go{background:linear-gradient(90deg,#ff5a36,#ff2d95);border:0}
+.cf .sum{display:grid;grid-template-columns:1fr auto;gap:6px 16px;width:100%;max-width:300px;font-size:14px;text-align:left}.cf .sum b{text-align:right}
+@media(max-width:640px){.tn-h{grid-template-columns:1fr}.tn-bal{align-items:flex-start}.tn-tabs{top:56px}.tn-tabs .own{margin-left:0}.tn-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tn-it{padding:9px;border-radius:18px}.tn-it .cos-prev{min-height:84px;font-size:15px}.tn-it b{font-size:14px}.inv-card .mpn{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.tn-it{animation:none}}
+</style><link rel="stylesheet" href="arena.css"></head>
+<body class="tn"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="tn"></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="arena.js"></script><script src="inventario.js" defer></script><script src="tienda.js" defer></script></body></html>

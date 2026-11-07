@@ -41,11 +41,12 @@
   function drawHist(g) {
     var L = ((window.MAGNA && MAGNA.S.history) || []).slice().sort(function (a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
     if (!L.length) { g.appendChild(h('p', 'em', 'Todavía no hay torneos en el historial.')); return; }
+    var EDN = {}, EDC = {}; L.slice().reverse().forEach(function (e) { var k = MAGNA.baseName(e.name).toLowerCase(); EDC[k] = (EDC[k] || 0) + 1; EDN[e.id] = EDC[k]; });
     L.forEach(function (e, i) {
       var c = h('button', 'tc'); c.style.animationDelay = i * 50 + 'ms'; c.style.setProperty('--bar', COL[i % COL.length]); c.style.setProperty('--tint', M.tint(i));
       var lg = h('div', 'lg mono'); lg.appendChild(h('span', null, e.mundial ? 'Mundial' : CATN[e.cat] || 'Torneo')); lg.appendChild(h('span', 'badge', e.date ? e.date.slice(0, 4) : 'Historial')); c.appendChild(lg);
-      var cr = h('div', 'cr'); cr.style.width = cr.style.height = '88px'; cr.style.fontSize = '34px'; cr.textContent = '🏆'; c.appendChild(cr);
-      c.appendChild(h('h3', 'x', e.name)); var rk = h('div', 'ranks'); [[e.champion || '—', 'Campeón'], [(e.matches || []).length, 'Partidos']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
+      var art = MAGNA.trophyArt(e.name, e.mundial ? 'mundial' : e.cat); if (art) c.appendChild(M.trophyImg(e.name, e.mundial ? 'mundial' : e.cat, 120)); else { var cr = h('div', 'cr'); cr.style.width = cr.style.height = '88px'; cr.style.fontSize = '34px'; cr.textContent = '🏆'; c.appendChild(cr); }
+      c.appendChild(h('h3', 'x', e.name)); var ek = MAGNA.baseName(e.name).toLowerCase(); if (EDC[ek] > 1 && MAGNA.editionNo(e.name) == null) c.appendChild(h('div', 'mono', 'Edición ' + MAGNA.toRoman(EDN[e.id]))); var rk = h('div', 'ranks'); [[e.champion || '—', 'Campeón'], [(e.matches || []).length, 'Partidos']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
       c.onclick = function () { histDetail(e); }; g.appendChild(c);
     });
   }

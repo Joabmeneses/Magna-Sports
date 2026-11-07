@@ -32,6 +32,7 @@
     var comps = S.leagues.filter(function (c) { return c.teamIds.indexOf(t.id) >= 0; }).map(function (c) { return { c: c, k: 'league' }; }).concat(S.tournaments.filter(function (c) { return c.teamIds.indexOf(t.id) >= 0 && c.status !== 'draft'; }).map(function (c) { return { c: c, k: 'tournament' }; }));
     var media = function (p) { var x = PS[p.id] || {}; return x.media == null ? 10 : x.media; };
 
+    // ---------- banner animado del equipo (si la administración subió uno) ----------
     // ---------- portada viva ----------
     var hero = h('div', 'eqh'); hero.appendChild(h('div', 'wm', t.name));
     var tilt = h('div', 'tilt'), cr = crest(t.id, 150); tilt.appendChild(cr); tilt.setAttribute('aria-hidden', 'true'); hero.appendChild(tilt);
@@ -53,7 +54,7 @@
     id.appendChild(act); hero.appendChild(id);
     var kp = h('div', 'kp'), cnt = [];
     [[bd.pts || 0, 'Puntos de ranking', 'g', 1], [tro.length, tro.length === 1 ? 'Trofeo' : 'Trofeos', 'g'], [w, 'Victorias'], [lvl, 'Nivel', '', 1]].forEach(function (x) { var d = h('div', x[2] || ''), b = h('b', 'tn', '0'); d.appendChild(b); d.appendChild(h('small', null, x[1])); kp.appendChild(d); cnt.push([b, x[0], x[3]]); });
-    hero.appendChild(kp); root.appendChild(hero); cnt.forEach(function (c) { countUp(c[0], c[1], c[2]); });
+    hero.appendChild(kp); if (window.TEAM_BANNER) TEAM_BANNER.cover(hero, t); root.appendChild(hero); cnt.forEach(function (c) { countUp(c[0], c[1], c[2]); });
 
     // ---------- alineación ----------
     var lv = live && live.live && live.live.lineup, side = live ? (live.home === t.id ? 'h' : 'a') : null, liveIds = lv && lv[side] ? (Array.isArray(lv[side]) ? lv[side] : lv[side].starters || []) : null;
@@ -154,9 +155,14 @@
       cats.forEach(function (c, ix) { var n = c === 'all' ? tro.length : tro.filter(function (x) { return x.cat === c; }).length, b = h('button', 'chip2', (c === 'all' ? 'Todos' : (MAGNA.TROPHY_ICON[c] || '🏆') + ' ' + (CATN[c] || c)) + ' · ' + n); b.type = 'button'; b.setAttribute('aria-pressed', !ix);
         b.onclick = function () { [].forEach.call(tf.children, function (x) { x.setAttribute('aria-pressed', x === b); }); [].forEach.call(shelf.children, function (x) { x.classList.toggle('hide', c !== 'all' && x.dataset.c !== c); }); }; tf.appendChild(b); });
       if (cats.length > 2) sV.appendChild(tf);
-      tro.forEach(function (x, ix) { var b = h('button', 'tro'); b.type = 'button'; b.dataset.c = x.cat; b.style.setProperty('--cc', CATC[x.cat] || '#ffd23f'); b.style.animationDelay = Math.min(ix, 12) * 60 + 'ms'; b.setAttribute('aria-label', x.name + ', toca para ver detalles');
-        var f = h('div', 'fr'); f.appendChild(h('span', null, MAGNA.TROPHY_ICON[x.cat] || '🏆')); f.appendChild(h('b', null, x.name)); f.appendChild(h('small', null, (CATN[x.cat] || 'Trofeo') + (x.season ? ' · ' + x.season : ''))); b.appendChild(f);
-        var bk = h('div', 'bk'); bk.appendChild(h('b', null, x.name)); trophyInfo(x, t.id).forEach(function (line) { bk.appendChild(h('div', null, line)); }); bk.appendChild(h('small', 'em', 'Toca para volver')); b.appendChild(bk);
+      // las ediciones del mismo torneo se agrupan en un solo trofeo con contador (×N)
+      MAGNA.groupTrophies(tro).sort(function (a, c) { return MAGNA.trophyOrd(a.name, a.cat) - MAGNA.trophyOrd(c.name, c.cat); }).forEach(function (g, ix) { var x = g.items[0], art = MAGNA.trophyArt(g.name, g.cat), b = h('button', 'tro' + (g.n > 1 ? ' multi' : '') + (art ? ' art' : '')); b.type = 'button'; b.dataset.c = g.cat; b.style.setProperty('--cc', CATC[g.cat] || '#ffd23f'); b.style.animationDelay = Math.min(ix, 12) * 60 + 'ms'; b.setAttribute('aria-label', g.name + (g.n > 1 ? ', ' + g.n + ' veces campeón' : '') + ', toca para ver detalles');
+        var f = h('div', 'fr'); f.appendChild(art ? M.trophyImg(g.name, g.cat, 128) : h('span', null, MAGNA.TROPHY_ICON[g.cat] || '🏆')); if (g.n > 1) f.appendChild(h('em', 'cnt', '×' + g.n)); f.appendChild(h('b', null, g.name));
+        var yrs = g.items.map(function (y) { return y.season; }).filter(Boolean); f.appendChild(h('small', null, (CATN[g.cat] || 'Trofeo') + (yrs.length ? ' · ' + yrs.slice(0, 3).join(', ') + (yrs.length > 3 ? '…' : '') : ''))); b.appendChild(f);
+        var bk = h('div', 'bk'); bk.appendChild(h('b', null, g.n > 1 ? g.name + ' · ' + g.n + ' títulos' : g.name));
+        if (g.n > 1) g.items.slice(0, 5).forEach(function (y) { var ed = MAGNA.editionNo(y.name); var rn = !ed && MAGNA.romanNo(y.season); bk.appendChild(h('div', null, '🏆 ' + (ed ? 'Edición ' + MAGNA.toRoman(ed) + (y.season && !MAGNA.romanNo(y.season) ? ' · ' + y.season : '') : rn ? 'Edición ' + MAGNA.toRoman(rn) : (y.season ? 'Temporada ' + y.season : 'Edición')))); });
+        else trophyInfo(x, t.id).forEach(function (line) { bk.appendChild(h('div', null, line)); });
+        if (g.n > 5) bk.appendChild(h('div', null, '…y ' + (g.n - 5) + ' más')); bk.appendChild(h('small', 'em', 'Toca para volver')); b.appendChild(bk);
         b.onclick = function () { b.classList.toggle('f'); }; shelf.appendChild(b); });
       sV.appendChild(shelf);
     }
@@ -165,9 +171,9 @@
     var sQ = feat('Plantilla', 'Cada jugador es una carta de su nivel. <b>Tócala para voltearla</b> y ver sus números.'), grid = h('div', 'squad');
     if (!squad.length) grid.appendChild(h('p', 'em', 'Este equipo todavía no tiene jugadores.'));
     squad.forEach(function (p) { var x = PS[p.id] || {}, md = media(p), tr = MAGNA.tierOf(md), b = h('button', 'pcd'); b.type = 'button'; b.id = 'pc-' + p.id; b.style.setProperty('--t1', tr.color); b.style.setProperty('--t2', shade(tr.color, -110)); b.setAttribute('aria-label', p.name + ', media ' + md + ', toca para ver sus números');
-      var f = h('div', 'fr' + (tr.id === 'elite' ? ' elite' : '')); f.appendChild(h('span', 'mv', String(md))); f.appendChild(h('span', 'tl', tr.name)); f.appendChild(M.photo(h('span', 'ini', p.name.slice(0, 2).toUpperCase()), p.id)); f.appendChild(h('span', 'nm', p.name)); f.appendChild(h('span', 'rl', (p.slot === 'reserve' ? 'Suplente' : 'Titular') + (t.coach === p.id ? ' · DT' : ''))); b.appendChild(f);
-      var bk = h('div', 'bk'); bk.appendChild(h('div', 't', p.name)); [[x.pj || 0, 'Partidos'], [(x.w || 0) + '-' + (x.l || 0), 'V-D'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length, 'Trofeos'], [x.nota != null ? Number(x.nota).toFixed(1) : '—', 'Nota']].forEach(function (v) { var d = h('div'); d.appendChild(h('b', null, String(v[0]))); d.appendChild(h('small', null, v[1])); bk.appendChild(d); }); b.appendChild(bk);
-      b.onclick = function () { b.classList.toggle('f'); }; grid.appendChild(b); });
+      var f = h('div', 'fr' + (tr.id === 'elite' ? ' elite' : '')); f.appendChild(h('span', 'mv', String(md))); f.appendChild(h('span', 'tl', tr.name)); f.appendChild(M.photo(h('span', 'ini', p.name.slice(0, 2).toUpperCase()), p.id)); var nm0 = M.pn(p.name, p.id, { plain: true }); nm0.classList.add('nm'); f.appendChild(nm0); f.appendChild(h('span', 'rl', (p.slot === 'reserve' ? 'Suplente' : 'Titular') + (t.coach === p.id ? ' · DT' : ''))); b.appendChild(f);
+      var bk = h('div', 'bk'); bk.appendChild(h('div', 't', p.name)); [[x.pj || 0, 'Partidos'], [(x.w || 0) + '-' + (x.l || 0), 'V-D'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length, 'Trofeos'], [x.nota != null ? Number(x.nota).toFixed(1) : '—', 'Nota']].forEach(function (v) { var d = h('div'); d.appendChild(h('b', null, String(v[0]))); d.appendChild(h('small', null, v[1])); bk.appendChild(d); }); var go = h('span', 'pf-go', 'Ver perfil →'); bk.appendChild(go); b.appendChild(bk);
+      b.onclick = function (e) { if (e.target.closest && e.target.closest('.pf-go')) { location.href = M.profileUrl(p.id); return; } b.classList.toggle('f'); }; grid.appendChild(b); });
     sQ.appendChild(grid); if (squad.length) sQ.appendChild(h('p', 'hint', 'Toca otra vez para volver al frente.'));
     if (coach && !MAGNA.plays(coach)) { var cp2 = h('p', 'hint', 'DT: ' + coach.name + ' (solo coach).'); sQ.appendChild(cp2); }
 
