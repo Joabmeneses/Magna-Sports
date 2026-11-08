@@ -61,9 +61,9 @@
     el.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); setTimeout(upd, 60);
     // arrastre con mouse + inercia
     if (FINE) { var down = false, sx = 0, sl = 0, v = 0, lx = 0, moved = false, raf = null;
-      el.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse' || e.button) return; down = true; moved = false; sx = lx = e.clientX; sl = el.scrollLeft; v = 0; cancelAnimationFrame(raf); el.classList.add('drag'); });
-      addEventListener('pointermove', function (e) { if (!down) return; var d = e.clientX - sx; if (Math.abs(d) > 5) moved = true; v = e.clientX - lx; lx = e.clientX; el.scrollLeft = sl - d; });
-      addEventListener('pointerup', function () { if (!down) return; down = false; el.classList.remove('drag'); (function glide() { v *= .93; el.scrollLeft -= v; if (Math.abs(v) > .4) raf = requestAnimationFrame(glide); else el.classList.remove('drag'); })(); });
+      el.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse' || e.button) return; down = true; moved = false; sx = lx = e.clientX; sl = el.scrollLeft; v = 0; cancelAnimationFrame(raf); });
+      addEventListener('pointermove', function (e) { if (!down) return; var d = e.clientX - sx; if (Math.abs(d) > 5 && !moved) { moved = true; el.classList.add('drag'); } v = e.clientX - lx; lx = e.clientX; el.scrollLeft = sl - d; });
+      addEventListener('pointerup', function () { if (!down) return; down = false; el.classList.remove('drag'); if (!moved) return; (function glide() { v *= .93; el.scrollLeft -= v; if (Math.abs(v) > .4) raf = requestAnimationFrame(glide); else el.classList.remove('drag'); })(); });
       el.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true); }
   }
   // ---------- 4. inclinación 3D con brillo ----------
