@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0d18">
+<title>Magna Arena · Sin conexión</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(60% 50% at 50% 30%,rgba(255,106,0,.25),transparent 70%),#0a0d18;color:#f1f3fb;font-family:Archivo,system-ui,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
+.c{max-width:380px}.b{width:110px;height:110px;margin:0 auto 18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffd23f 35%,#ff6a00 75%);box-shadow:0 0 40px rgba(255,140,0,.5);animation:bo 1.2s ease-in-out infinite alternate}
+@keyframes bo{to{transform:translateY(-16px) rotate(30deg)}}
+h1{margin:0 0 8px;font-size:28px}p{margin:0 0 20px;color:#b9bdcc;line-height:1.5}
+button{border:0;border-radius:14px;padding:13px 22px;background:#ff6a00;color:#fff;font:800 16px Archivo,system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 0 #a33f00}button:active{transform:translateY(3px);box-shadow:0 1px 0 #a33f00}
+@media(prefers-reduced-motion:reduce){.b{animation:none}}
+</style></head><body><div class="c"><div class="b"></div><h1>Sin conexión</h1><p>Parece que te quedaste sin internet. Cuando vuelva la señal, Magna Arena sigue donde lo dejaste.</p><button onclick="location.reload()">Reintentar</button></div>
+<script>addEventListener('online',function(){location.reload()})</script></body></html>

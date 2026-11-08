@@ -292,3 +292,14 @@ body.fw-open{overflow:hidden}
 .pp-ft{display:flex;gap:6px;flex-wrap:nowrap;align-items:center;margin-top:2px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.1)}.pp-ft .sp{flex:1}
 @media(max-width:700px){.pp-sum{grid-template-columns:1fr 1fr}.pp-grid{grid-template-columns:1fr}.pp-acts{width:100%}.pp-acts .b{flex:1}}
 @media(prefers-reduced-motion:reduce){.pp-c{animation:none}}
+
+/* ===== carga de secciones (módulos) ===== */
+.mod-ld{display:grid;justify-items:center;gap:12px;padding:56px 16px;text-align:center;animation:ppIn .3s both}
+.mod-ld b{font:900 18px Archivo,sans-serif;color:#e8e8ef}
+.mod-ball{position:relative;width:46px;height:70px}.mod-ball i{position:absolute;left:50%;bottom:0;width:38px;height:38px;margin-left:-19px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#ffd23f 35%,#ff6a00 75%);box-shadow:0 0 18px rgba(255,154,31,.6);animation:modBo .7s cubic-bezier(.3,0,.7,1) infinite alternate}
+.mod-ball:after{content:"";position:absolute;left:50%;bottom:-6px;width:34px;height:7px;margin-left:-17px;border-radius:50%;background:rgba(0,0,0,.45);animation:modSh .7s cubic-bezier(.3,0,.7,1) infinite alternate}
+@keyframes modBo{from{transform:translateY(-30px) rotate(0)}to{transform:translateY(0) rotate(200deg) scale(1.05,.92)}}@keyframes modSh{from{transform:scale(.55);opacity:.5}to{transform:scale(1);opacity:1}}
+.mod-bar{width:min(260px,70vw);height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.mod-bar i{display:block;width:40%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff6a00,#c6ff1a);animation:modBar 1s ease-in-out infinite}
+@keyframes modBar{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+.mod-ld.err b{color:#ff6b74}
+@media(prefers-reduced-motion:reduce){.mod-ball i,.mod-ball:after,.mod-bar i{animation:none}}
