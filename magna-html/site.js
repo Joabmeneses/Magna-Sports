@@ -31,6 +31,9 @@ var M = (function () {
   function ini(name) { return String(name || '?').slice(0, 2).toUpperCase(); }
   function tierCard(name, media, width) { var t = window.MAGNA ? MAGNA.tierOf(media) : { name: '' }, c = h('div', 'tcard' + tierCls(media)); if (width) c.style.setProperty('--w', width + 'px'); c.appendChild(h('span', 'm', media == null ? '—' : String(media))); c.appendChild(h('span', 'tl', t.name)); c.appendChild(h('span', 'ini', ini(name))); c.appendChild(h('span', 'nm', name)); return c; }
   // fotos de perfil de los jugadores con cuenta (avatares de Magna): se cargan una vez y se aplican a todos los [data-pid]
+  // imagen oficial del trofeo (o el emoji si no hay arte para ese nombre)
+  function trophyImg(name, cat, size, emoji) { var a = MAGNA.trophyArt && MAGNA.trophyArt(name, cat); if (!a) { var sp = h('span', 'tart-e', emoji || '🏆'); sp.style.fontSize = Math.round((size || 80) * .55) + 'px'; return sp; }
+    var im = h('img', 'tart'); im.src = a.src; im.alt = a.label; im.loading = 'lazy'; im.decoding = 'async'; im.style.height = (size || 80) + 'px'; im.title = a.label; return im; }
   var C = window.MAGNA_COS, pav = C.pav, paint = C.paint, pn = C.pn, nameStyle = C.nameStyle, profileUrl = C.profileUrl, item = C.item, eqOf = C.eqOf, repaint = C.repaint, loadPav = C.reload, STY = C.STY, KIND = C.KIND, RAR = C.RAR;
   function cosPreview(it, name, pid) { var w = h('div', 'cos-prev'), nm = name || 'Tu nombre';
     if (it.type === 'frame') { var a = tierAv(nm, 60, 58); if (pid != null) { a.dataset.pid = pid; var u = pav(pid); if (u) { a.style.backgroundImage = 'url("' + u + '")'; a.classList.add('has-pav'); } } a.classList.add('fr-' + it.style); w.appendChild(a); }
@@ -38,5 +41,5 @@ var M = (function () {
     return w; }
   function photo(el, pid) { if (pid == null) return el; el.dataset.pid = pid; paint(el); return el; }
   function tierAv(name, media, size, pid) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return photo(a, pid); }
-  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, pav: pav, photo: photo, pn: pn, cosPreview: cosPreview, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reloadCos: loadPav, STY: STY, KIND: KIND, RAR: RAR, tint: function (i) { return TINTS[i % TINTS.length]; } };
+  return { h: h, get: get, crest: crest, fdt: fdt, modal: modal, skel: skel, tierCard: tierCard, tierAv: tierAv, pav: pav, photo: photo, trophyImg: trophyImg, pn: pn, cosPreview: cosPreview, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reloadCos: loadPav, STY: STY, KIND: KIND, RAR: RAR, tint: function (i) { return TINTS[i % TINTS.length]; } };
 })();

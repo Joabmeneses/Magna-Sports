@@ -75,6 +75,25 @@ var MAGNA = (function () {
     ['t-novato', 'title', 'Novato', 'comun', 100, ''], ['t-muro', 'title', 'El Muro', 'comun', 150, ''], ['t-goleador', 'title', 'Goleador', 'rara', 300, ''], ['t-mago', 'title', 'El Mago', 'rara', 300, ''], ['t-capitan', 'title', 'Capitán', 'rara', 350, ''],
     ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'legendaria', 1500, '']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
+  // Cosméticos exclusivos: no se compran; se entregan solos al desbloquear la insignia indicada en "award" (o los da la administración si es "manual")
+  var SHOP_EXCL = [
+    ['x-balon-marco', 'frame', 'Marco Balón de Oro', 'legendaria', 'balon', 'balon'], ['x-balon-titulo', 'title', 'Balón de Oro', 'legendaria', '', 'balon'],
+    ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'legendaria', 'dinastia', 'dinastia'],
+    ['x-estrella', 'color', 'Estrella fugaz', 'legendaria', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'legendaria', 'leyenda', 'leyenda'],
+    ['x-hattrick', 'title', 'Rey del hat-trick', 'epica', '', 'hattrick'], ['x-perfecto', 'title', 'Partido perfecto', 'rara', '', 'perfecto'],
+    ['x-fundador', 'frame', 'Fundador de Magna', 'legendaria', 'fundador', 'manual']
+  ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }; });
+  var AWARD_TXT = { balon: 'Gana el Balón de Oro', campeon: 'Gana un título', dinastia: 'Gana 5 títulos', estrella: 'Sé MVP 10 veces', leyenda: 'Juega 75 partidos', hattrick: 'Marca 3 goles en un partido', perfecto: 'Saca un 10 de nota en un partido', manual: 'Lo entrega la administración', ganador: 'Gana 20 partidos', goleador: 'Marca 10 goles', canonero: 'Marca 50 goles', veterano: 'Juega 25 partidos', mvp: 'Sé MVP de un partido', elite: 'Llega a media 80' };
+  // Arte oficial de los trofeos (carpeta trofeos/), en el orden de importancia de Magna
+  var TROPHY_ART = [['omegacup', /omega/i, 'OmegaCup'], ['mundial', /mundial|world/i, 'Mundial'], ['champions', /champions/i, 'Champions'], ['liga', /\bliga\b|divisi[oó]n|league/i, 'Liga'],
+    ['supernova', /supernova/i, 'Supernova'], ['centerium', /centerium/i, 'Centerium'], ['magnacup', /magna\s*cup|copa\s+magna|^\s*magna\b/i, 'MagnaCup'], ['copa-del-rey', /copa\s+del\s+rey|\brey\b/i, 'Copa del Rey'],
+    ['copa-de-oro', /copa\s+de\s+oro|gold\s*cup/i, 'Copa de Oro'], ['balon-de-oro', /bal[oó]n\s+de\s+oro|ballon/i, 'Balón de Oro']];
+  var ART_CAT = { liga: 'liga', champions: 'champions', mundial: 'mundial' };
+  function trophyArt(name, cat) { var n = String(name || ''), k = null;
+    if (/bal[oó]n\s+de\s+oro/i.test(n)) k = 'balon-de-oro'; else for (var i = 0; i < TROPHY_ART.length && !k; i++) if (TROPHY_ART[i][1].test(n)) k = TROPHY_ART[i][0];
+    if (!k && cat && ART_CAT[cat]) k = ART_CAT[cat]; if (!k) return null;
+    var o = 0; TROPHY_ART.forEach(function (x, j) { if (x[0] === k) o = j; }); return { key: k, src: 'trofeos/' + k + '.webp', label: TROPHY_ART[o][2], ord: o }; }
+  function trophyOrd(name, cat) { var a = trophyArt(name, cat); return a ? a.ord : 99; }
   // Partidos narrados de un jugador con su nota, goles, MVP y resultado (para su perfil)
   function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
       ['h', 'a'].forEach(function (k) { if (((L.lineup && L.lineup[k]) || []).indexOf(pid) >= 0) sd = k; }); (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in === pid) sd = e.side || 'h'; }); if (!sd) return;
@@ -317,7 +336,7 @@ var MAGNA = (function () {
     MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
-    SHOP_DEFAULT: SHOP_DEFAULT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
+    trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },
