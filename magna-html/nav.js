@@ -53,6 +53,7 @@
     '@media(max-width:900px){.mn-links,.mn-r .mn-adm,.mn-r .mn-acc,.mn-r .mn-shop{display:none}.mn-btn{display:inline-flex}.mn-in{height:60px;gap:12px}}' +
     '@media(max-width:480px){.mn.has-ex .mn-wm{display:none}.mn-ex .coins{padding:8px 12px!important}}' +
     '@media(max-width:380px){.mn-ex .coins{padding:7px 10px!important;font-size:10px!important;letter-spacing:.06em!important}.mn-in{gap:8px}}' +
+    '.mn.m-nobits .mn-me .bt{display:none}.mn.m-nobits .mn-me{padding:3px}.mn.m-nowm .mn-wm{display:none}@media(max-width:900px){.mn-in>*{min-width:0}.mn-r{flex:none}}' +
     '@media(max-width:480px){.mn-logo{font-size:20px}.mn-btn span{display:none}.mn-btn{padding:10px}.mn-in{padding:0 14px}}' +
     // panel del menú móvil
     '.mn-ov{position:fixed;inset:0;z-index:100;background:rgba(5,7,14,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .25s;font-family:Archivo,system-ui,sans-serif}' +
@@ -141,8 +142,12 @@
   if (here !== 'admin.html') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', legal); else legal(); }
   // modo compacto automático cuando las secciones no caben
   var links = hd.querySelector('.mn-links');
+  var inn = hd.querySelector('.mn-in');
   function over() { return links.scrollWidth > links.clientWidth + 1; }
-  function fitNav() { hd.classList.remove('compact', 'tight', 'tight2'); if (innerWidth <= 900) return; if (over()) { hd.classList.add('tight'); if (over()) { hd.classList.add('tight2'); if (over()) { hd.classList.remove('tight2'); hd.classList.add('compact'); } } } if (!hd.classList.contains('compact') && ov) close(); }
+  // en celular: si el logo, la campana, tu perfil y el menú no caben, se ocultan primero los Bits del botón de perfil y luego el texto "Magna Arena" (el menú siempre queda visible)
+  function mOver() { var r = hd.querySelector('.mn-r'), b = r && r.getBoundingClientRect(); return !!b && (b.right > document.documentElement.clientWidth - 6 || inn.scrollWidth > inn.clientWidth + 1); }
+  function fitMobile() { hd.classList.remove('m-nobits', 'm-nowm'); if (innerWidth > 900) return; if (mOver()) { hd.classList.add('m-nobits'); if (mOver()) hd.classList.add('m-nowm'); } }
+  function fitNav() { hd.classList.remove('compact', 'tight', 'tight2'); fitMobile(); if (innerWidth <= 900) return; if (over()) { hd.classList.add('tight'); if (over()) { hd.classList.add('tight2'); if (over()) { hd.classList.remove('tight2'); hd.classList.add('compact'); } } } if (!hd.classList.contains('compact') && ov) close(); }
   fitNav(); addEventListener('resize', fitNav); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNav); addEventListener('load', fitNav);
 
   // ---------- mini perfil: cuando la persona entró con su usuario y código ----------
