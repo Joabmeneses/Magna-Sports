@@ -47,7 +47,7 @@
     var tt = h('span', 'hx-cur'); tt.appendChild(h('i', null, '🏆')); tt.appendChild(h('b', null, String((x.titles || []).length))); tt.title = 'Títulos'; tb.appendChild(tt); hd.appendChild(tb);
     var gr = h('div', 'hx-g');
     // izquierda: nombre, equipo y accesos
-    var lf = h('div', 'hx-l'), nm = h('h1', 'hx-nm'), pn = M.pn(p.name, p.id, { plain: true, title: true }); if (prof) { M.nameStyle(pn, eq); var ti = eq.title && M.item(eq.title); var old = pn.querySelector('.mpn-t'); if (old) old.remove(); if (ti && ti.type === 'title') pn.appendChild(h('small', 'mpn-t', ti.name)); pn.removeAttribute('data-pn'); } nm.appendChild(pn); lf.appendChild(nm);
+    var lf = h('div', 'hx-l'), nm = h('h1', 'hx-nm'), pn = M.pn(p.name, p.id, { plain: true, title: true }); if (prof) { M.nameStyle(pn, eq); var ti = eq.title && M.item(eq.title); var old = pn.querySelector('.mpn-t'); if (old) old.remove(); if (ti && ti.type === 'title') pn.appendChild(h('small', 'mpn-t tr-' + (ti.rarity || 'comun'), ti.name)); pn.removeAttribute('data-pn'); } nm.appendChild(pn); lf.appendChild(nm);
     lf.appendChild(h('div', 'hx-sub', (MAGNA.roleOf(p) === 'coach' ? 'Director técnico' : MAGNA.roleOf(p) === 'both' ? 'Jugador y DT' : 'Jugador') + ' · Magna Sports'));
     if (tm) { var ta = h('a', 'hx-tm'); ta.href = 'equipo.html?id=' + tm.id; ta.appendChild(M.crest(tm.id, tm.name, 30)); ta.appendChild(h('span', null, (coachOf && !t ? 'DT de ' : '') + tm.name)); lf.appendChild(ta); } else lf.appendChild(h('span', 'hx-tm free', '🆓 Agente libre'));
     if (prof && prof.member_since) lf.appendChild(h('div', 'hx-since', 'En Magna desde ' + new Date(prof.member_since).toLocaleDateString('es', { month: 'long', year: 'numeric' })));

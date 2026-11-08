@@ -37,7 +37,7 @@ var M = (function () {
   var C = window.MAGNA_COS, pav = C.pav, paint = C.paint, pn = C.pn, nameStyle = C.nameStyle, profileUrl = C.profileUrl, item = C.item, eqOf = C.eqOf, repaint = C.repaint, loadPav = C.reload, STY = C.STY, KIND = C.KIND, RAR = C.RAR;
   function cosPreview(it, name, pid) { var w = h('div', 'cos-prev'), nm = name || 'Tu nombre';
     if (it.type === 'frame') { var a = tierAv(nm, 60, 58); if (pid != null) { a.dataset.pid = pid; var u = pav(pid); if (u) { a.style.backgroundImage = 'url("' + u + '")'; a.classList.add('has-pav'); } } a.classList.add('fr-' + it.style); w.appendChild(a); }
-    else { var eq = {}; eq[it.type] = it.id; var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); if (it.type === 'title') n.appendChild(h('small', 'mpn-t', it.name)); else nameStyle(n, eq); w.appendChild(n); }
+    else { var eq = {}; eq[it.type] = it.id; var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); if (it.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (it.rarity || 'comun'), it.name)); else nameStyle(n, eq); w.appendChild(n); }
     return w; }
   function photo(el, pid) { if (pid == null) return el; el.dataset.pid = pid; paint(el); return el; }
   function tierAv(name, media, size, pid) { var a = h('span', 'tav' + tierCls(media)); if (size) a.style.setProperty('--s', size + 'px'); a.appendChild(h('span', null, ini(name))); a.title = (window.MAGNA ? MAGNA.tierOf(media).name : ''); return photo(a, pid); }

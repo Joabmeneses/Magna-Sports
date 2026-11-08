@@ -1,46 +1,105 @@
-/* ===== Cosméticos: nombre (color y placa), marco del avatar y título ===== */
+/* ===== Cosméticos de Magna Arena: color del nombre, placa, marco del avatar y título =====
+   Todo se mide en "em" para verse igual en una tabla pequeña y en el perfil grande. */
 a.mpn{color:inherit;text-decoration:none}a.mpn:hover .mpn-n{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
-.mpn{display:inline-flex;flex-direction:column;align-items:flex-start;max-width:100%;vertical-align:baseline}.mpn .mpn-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.mpn-t{display:block;font:700 .62em "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#ffd23f;-webkit-text-fill-color:#ffd23f;opacity:.9;margin-top:1px}
-.c-oro .mpn-n{background:linear-gradient(180deg,#fff3b0,#ffc400 60%,#c98a00);-webkit-background-clip:text;background-clip:text;color:transparent}
-.c-neon-rosa .mpn-n{color:#ff6ad5;text-shadow:0 0 6px rgba(255,64,200,.9),0 0 16px rgba(255,64,200,.55)}
-.c-neon-cian .mpn-n{color:#6ff7ff;text-shadow:0 0 6px rgba(0,230,255,.9),0 0 16px rgba(0,230,255,.5)}
-.c-neon-verde .mpn-n{color:#7dff9a;text-shadow:0 0 6px rgba(46,229,120,.9),0 0 16px rgba(46,229,120,.5)}
-.c-fuego .mpn-n{background:linear-gradient(90deg,#ffde59,#ff7a18,#ff2d55,#ff7a18,#ffde59);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 3s linear infinite}
-.c-hielo .mpn-n{background:linear-gradient(180deg,#ffffff,#a8e6ff 55%,#4fb3ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 12px rgba(120,200,255,.35)}
-.c-galaxia .mpn-n{background:linear-gradient(90deg,#a78bfa,#f472b6,#60a5fa,#a78bfa);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 5s linear infinite}
-.c-arcoiris .mpn-n{background:linear-gradient(90deg,#ff4d4d,#ffb84d,#fff04d,#4dff88,#4dd2ff,#a64dff,#ff4d4d);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 4s linear infinite}
-.c-sangre .mpn-n{color:#ff3b55;text-shadow:0 0 10px rgba(255,30,60,.45)}.c-menta .mpn-n{color:#5effc8}
+.mpn{display:inline-flex;flex-direction:column;align-items:flex-start;max-width:100%;vertical-align:baseline;transition:transform .18s,filter .18s}
+.mpn .mpn-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+a.mpn:hover{filter:brightness(1.15)}
 @keyframes cosSlide{to{background-position:200% 0}}
-[class*=" pl-"].mpn,[class^="pl-"].mpn{padding:.12em .6em;border-radius:.5em;border:1px solid rgba(255,255,255,.18)}
-.pl-magna.mpn{background:linear-gradient(90deg,#5b21b6,#ff5a36);border-color:#ff8a6a}
-.pl-oro.mpn{background:linear-gradient(180deg,#6b4a00,#2e2000);border-color:#ffd23f;box-shadow:inset 0 0 10px rgba(255,210,63,.35)}
-.pl-plata.mpn{background:linear-gradient(180deg,#4b5563,#1f2937);border-color:#d1d5db}
-.pl-galaxia.mpn{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.6) 0 1px,transparent 2px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.5) 0 1px,transparent 2px),linear-gradient(90deg,#1e1b4b,#581c87,#1e3a8a);border-color:#a78bfa}
-.pl-fuego.mpn{background:linear-gradient(90deg,#7c2d12,#dc2626,#f59e0b);border-color:#fdba74}
-.pl-neon.mpn{background:rgba(10,13,24,.7);border-color:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.7),inset 0 0 8px rgba(34,211,238,.4)}
-.pl-selva.mpn{background:linear-gradient(90deg,#064e3b,#15803d);border-color:#4ade80}.pl-noche.mpn{background:linear-gradient(90deg,#020617,#1e293b);border-color:#475569}
-.tav.fr-oro,.fr-oro{box-shadow:0 0 0 3px #ffd23f,0 0 0 5px #7a5200,0 0 14px rgba(255,196,0,.6)!important}
-.tav.fr-neon,.fr-neon{box-shadow:0 0 0 2px #fff,0 0 0 4px #22d3ee,0 0 16px #22d3ee,0 0 28px rgba(255,64,200,.5)!important}
-.tav.fr-fuego,.fr-fuego{animation:frFire 1.6s ease-in-out infinite!important}
-@keyframes frFire{0%,100%{box-shadow:0 0 0 3px #ff7a18,0 0 12px #ff2d55,0 -4px 18px rgba(255,180,0,.6)}50%{box-shadow:0 0 0 3px #ffde59,0 0 18px #ff7a18,0 -8px 24px rgba(255,45,85,.6)}}
-.tav.fr-hielo,.fr-hielo{box-shadow:0 0 0 3px #e0f7ff,0 0 0 5px #4fb3ff,0 0 16px rgba(120,200,255,.7)!important}
-.tav.fr-arcoiris,.fr-arcoiris{animation:frRb 3s linear infinite!important}
-@keyframes frRb{0%{box-shadow:0 0 0 3px #ff4d4d,0 0 14px #ff4d4d}25%{box-shadow:0 0 0 3px #fff04d,0 0 14px #fff04d}50%{box-shadow:0 0 0 3px #4dff88,0 0 14px #4dff88}75%{box-shadow:0 0 0 3px #4dd2ff,0 0 14px #4dd2ff}100%{box-shadow:0 0 0 3px #ff4d4d,0 0 14px #ff4d4d}}
-.tav.fr-corona,.fr-corona{box-shadow:0 0 0 3px #ffd23f,0 0 12px rgba(255,196,0,.5)!important;overflow:visible!important}.fr-corona:before{content:"👑";position:absolute;top:-.62em;left:50%;transform:translateX(-50%) rotate(-8deg);font-size:calc(var(--s,40px)*.42);z-index:3;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5));color:initial!important;-webkit-text-fill-color:initial}
-.tav.fr-elite,.fr-elite{box-shadow:0 0 0 2px #fff,0 0 0 4px #8b5cf6,0 0 0 6px #ff5a36,0 0 20px rgba(139,92,246,.7)!important}
-.tav.fr-toxico,.fr-toxico{box-shadow:0 0 0 3px #a3ff12,0 0 16px rgba(163,255,18,.75),0 0 30px rgba(163,255,18,.3)!important}
-body:not(.adm-body) .tav[data-pid]{cursor:pointer}
-@media(prefers-reduced-motion:reduce){.c-fuego .mpn-n,.c-galaxia .mpn-n,.c-arcoiris .mpn-n,.fr-fuego,.fr-arcoiris{animation:none!important}}
-/* --- exclusivos (no se compran, se ganan) --- */
-.c-estrella .mpn-n{background:linear-gradient(100deg,#fff 0%,#ffe27a 25%,#fff 45%,#7ad7ff 60%,#fff 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 6px rgba(255,226,122,.6));animation:cosSlide 2.6s linear infinite}
-.pl-campeon.mpn{background:linear-gradient(90deg,#4c1d95,#b45309);border-color:#ffd23f;box-shadow:0 0 10px rgba(255,210,63,.45),inset 0 0 8px rgba(255,210,63,.3)}.pl-campeon.mpn:before{content:"🏆";margin-right:.35em}
+@keyframes cosShine{0%{background-position:150% 0}55%,100%{background-position:-50% 0}}
+
+/* ---------- TÍTULOS (debajo del nombre) ---------- */
+.mpn-t{display:inline-flex;align-items:center;gap:.3em;margin-top:.18em;padding:.12em .5em .1em;border-radius:.35em;font:800 .56em/1.2 "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;color:#ffd23f;-webkit-text-fill-color:currentColor;background:rgba(255,210,63,.12);border:1px solid rgba(255,210,63,.35)}
+.mpn-t.tr-comun{color:#cbd5e1;background:rgba(203,213,225,.08);border-color:rgba(203,213,225,.25)}.mpn-t.tr-comun:before{content:"◆";font-size:.8em;opacity:.7}
+.mpn-t.tr-rara{color:#7dd3fc;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.45)}.mpn-t.tr-rara:before{content:"✦";font-size:.9em}
+.mpn-t.tr-epica{color:#f0abfc;background:linear-gradient(90deg,rgba(192,38,211,.28),rgba(124,58,237,.28));border-color:rgba(232,121,249,.6);box-shadow:0 0 .6em rgba(217,70,239,.35)}.mpn-t.tr-epica:before{content:"★";color:#fde047}
+.mpn-t.tr-legendaria{position:relative;overflow:hidden;color:#1a1200;-webkit-text-fill-color:#1a1200;background:linear-gradient(100deg,#b8860b,#ffe27a 30%,#fff7d1 45%,#ffd23f 60%,#b8860b);background-size:250% 100%;border-color:#fff3b0;box-shadow:0 0 .8em rgba(255,196,0,.55);animation:cosShine 3.2s ease-in-out infinite}.mpn-t.tr-legendaria:before{content:"👑";-webkit-text-fill-color:initial}
+
+/* ---------- COLORES DEL NOMBRE ---------- */
+/* Comunes: sólidos con carácter */
+.c-sangre .mpn-n{color:#ff2e4d;filter:drop-shadow(0 .06em 0 #6b0014) drop-shadow(0 0 .35em rgba(255,30,60,.45))}
+.c-menta .mpn-n{background:linear-gradient(180deg,#f0fff9 0%,#5effc8 45%,#00b386 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #00523d) drop-shadow(0 0 .3em rgba(94,255,200,.35))}
+/* Raras: metal y hielo con destello que cruza */
+.c-oro .mpn-n{background:linear-gradient(100deg,#a87300 0%,#ffd23f 20%,#fff8dc 30%,#ffd23f 40%,#a87300 60%,#ffe27a 80%,#a87300 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .06em 0 #4a3000) drop-shadow(0 0 .3em rgba(255,196,0,.45));animation:cosShine 3.5s ease-in-out infinite}
+.c-hielo .mpn-n{background:linear-gradient(100deg,#4fb3ff 0%,#dff6ff 25%,#ffffff 32%,#a8e6ff 45%,#3b9dff 70%,#e6f8ff 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #0b3c6b) drop-shadow(0 0 .4em rgba(150,220,255,.7));animation:cosShine 4.5s ease-in-out infinite}
+/* Épicas: tubos de neón reales, con parpadeo */
+.c-neon-rosa .mpn-n{color:#ffe1f7;filter:drop-shadow(0 0 .08em #ff2bd6) drop-shadow(0 0 .25em #ff2bd6) drop-shadow(0 0 .6em rgba(255,43,214,.7));animation:cosNeon 5s linear infinite}
+.c-neon-cian .mpn-n{color:#e0fdff;filter:drop-shadow(0 0 .08em #00e5ff) drop-shadow(0 0 .25em #00e5ff) drop-shadow(0 0 .6em rgba(0,229,255,.7));animation:cosNeon 6s linear infinite .8s}
+.c-neon-verde .mpn-n{color:#e3ffe9;filter:drop-shadow(0 0 .08em #2bff6a) drop-shadow(0 0 .25em #2bff6a) drop-shadow(0 0 .6em rgba(43,255,106,.7));animation:cosNeon 5.5s linear infinite 1.6s}
+@keyframes cosNeon{0%,17%,21%,24%,60%,63%,100%{opacity:1}19%,22.5%,61.5%{opacity:.45}}
+/* Legendarias: animadas, cada una con su propio movimiento */
+.c-fuego .mpn-n{background:linear-gradient(0deg,#ff2d00 0%,#ff7a18 25%,#ffd23f 45%,#fff6c2 55%,#ffd23f 65%,#ff7a18 80%,#ff2d00 100%);background-size:100% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 -.05em .12em rgba(255,122,24,.9)) drop-shadow(0 0 .45em rgba(255,45,0,.55));animation:cosRise 1.6s linear infinite}
+@keyframes cosRise{to{background-position:0 -200%}}
+.c-galaxia .mpn-n{background:radial-gradient(circle,#fff 0 .035em,transparent .06em) 0 0/1.1em .9em,linear-gradient(90deg,#c4b5fd,#f472b6,#60a5fa,#a78bfa,#f9a8d4,#c4b5fd);background-size:1.1em .9em,300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .3em rgba(167,139,250,.75));animation:cosGal 7s linear infinite}
+@keyframes cosGal{to{background-position:1.1em 1.8em,300% 0}}
+.c-arcoiris .mpn-n{background:linear-gradient(90deg,#ff3d3d,#ffb23d,#fff23d,#3dff7a,#3dcfff,#9b3dff,#ff3dd2,#ff3d3d);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 3s linear infinite,cosHue 3s linear infinite;filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em rgba(255,61,210,.6))}
+@keyframes cosHue{0%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #ff3dd2)}33%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #3dcfff)}66%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #fff23d)}100%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #ff3dd2)}}
+/* Exclusiva: estrella fugaz (destello blanco-dorado que cruza rápido) */
+.c-estrella .mpn-n{background:linear-gradient(100deg,#ffe27a 0%,#ffe27a 38%,#fff 46%,#7ad7ff 50%,#fff 54%,#ffe27a 62%,#ffe27a 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .2em rgba(255,226,122,.8)) drop-shadow(0 0 .5em rgba(122,215,255,.45));animation:cosShine 2.2s ease-in-out infinite}
+
+/* ---------- PLACAS (fondo detrás del nombre) ---------- */
+.mpn[class*="pl-"]{position:relative;isolation:isolate;overflow:hidden;padding:.16em .7em .14em;border-radius:.45em;border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 .15em .4em rgba(0,0,0,.35)}
+a.mpn[class*="pl-"]:hover{transform:translateY(-1px)}
+.mpn[class*="pl-"]:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+/* brillo que cruza (placas épicas y legendarias) */
+.pl-oro.mpn:before,.pl-neon.mpn:before,.pl-fuego.mpn:before,.pl-galaxia.mpn:before,.pl-dinastia.mpn:after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;z-index:1;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);animation:plSweep 4s ease-in-out infinite}
+@keyframes plSweep{0%,60%{left:-40%}100%{left:140%}}
+.pl-noche.mpn{padding-right:1.15em;background:radial-gradient(circle at calc(100% - .5em) 32%,#16204a 0 .15em,transparent .17em),radial-gradient(circle at calc(100% - .58em) 38%,#fdf6c3 0 .17em,transparent .19em),radial-gradient(circle,rgba(255,255,255,.7) 0 .03em,transparent .05em) 0 0/1.1em .8em,linear-gradient(90deg,#050816,#16204a);border-color:#3b4a7a}
+.pl-plata.mpn{background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px),linear-gradient(180deg,#9ca3af,#4b5563 45%,#1f2937);border-color:#e5e7eb;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.4),0 .15em .4em rgba(0,0,0,.35)}
+.pl-selva.mpn{background:radial-gradient(ellipse at 10% 120%,#22c55e 0 30%,transparent 31%),radial-gradient(ellipse at 95% -20%,#16a34a 0 28%,transparent 29%),repeating-linear-gradient(-35deg,rgba(255,255,255,.05) 0 .2em,transparent .2em .5em),linear-gradient(90deg,#052e16,#14532d);border-color:#4ade80}
+.pl-magna.mpn{background:linear-gradient(100deg,#4c1d95 0%,#7c3aed 40%,#ff5a36 100%);border-color:#ff8a6a;clip-path:polygon(.45em 0,100% 0,calc(100% - .45em) 100%,0 100%);padding-left:.9em;padding-right:.9em;border:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.pl-fuego.mpn{background:radial-gradient(ellipse at 50% 140%,#ffd23f 0 25%,transparent 55%),linear-gradient(90deg,#450a0a,#b91c1c 40%,#ea580c 75%,#f59e0b);background-size:200% 100%,100% 100%;border-color:#fdba74;animation:plLava 3s ease-in-out infinite alternate}
+@keyframes plLava{to{background-position:100% 0,0 0}}
+.pl-neon.mpn{background:rgba(6,8,18,.85);border:1px solid #22d3ee;animation:plNeon 2.4s ease-in-out infinite}
+@keyframes plNeon{0%,100%{box-shadow:0 0 .3em #22d3ee,inset 0 0 .3em rgba(34,211,238,.5)}50%{box-shadow:0 0 .7em #ff2bd6,0 0 .25em #22d3ee,inset 0 0 .45em rgba(255,43,214,.45);border-color:#ff7ae6}}
+.pl-oro.mpn{background:linear-gradient(180deg,#3d2a00,#1a1200);border:2px solid transparent;background-clip:padding-box;box-shadow:0 0 0 1px #ffd23f,inset 0 0 0 1px #8a6200,inset 0 0 .7em rgba(255,210,63,.35),0 0 .6em rgba(255,196,0,.35)}
+.pl-galaxia.mpn{background:radial-gradient(circle,#fff 0 .03em,transparent .05em) 0 0/.8em .6em,radial-gradient(circle,rgba(255,255,255,.6) 0 .02em,transparent .04em) .3em .2em/1.2em .9em,radial-gradient(ellipse at 20% 50%,rgba(219,39,119,.55),transparent 55%),radial-gradient(ellipse at 80% 50%,rgba(37,99,235,.6),transparent 55%),linear-gradient(90deg,#0f0a2e,#2e1065);border-color:#a78bfa;box-shadow:0 0 .6em rgba(167,139,250,.5),inset 0 1px 0 rgba(255,255,255,.2);animation:plStars 12s linear infinite}
+@keyframes plStars{to{background-position:.8em -1.2em,1.5em .9em,0 0,0 0,0 0}}
+/* exclusivas */
 .pl-campeon.mpn,.pl-dinastia.mpn{flex-direction:row;align-items:center;flex-wrap:wrap}
-.pl-dinastia.mpn{background:linear-gradient(90deg,#0f172a,#7c2d12 40%,#a16207 60%,#0f172a);background-size:200% 100%;border-color:#fde68a;box-shadow:0 0 14px rgba(253,230,138,.55);animation:cosSlide 4s linear infinite}.pl-dinastia.mpn:before{content:"👑";margin-right:.35em}
-.tav.fr-balon,.fr-balon{overflow:visible!important;animation:frBalon 2.2s ease-in-out infinite!important}
-@keyframes frBalon{0%,100%{box-shadow:0 0 0 3px #ffd23f,0 0 0 6px #7a5200,0 0 18px rgba(255,196,0,.7)}50%{box-shadow:0 0 0 3px #fff3b0,0 0 0 6px #c08400,0 0 30px rgba(255,196,0,.95)}}
-.fr-balon:after{content:"";position:absolute;right:-6%;bottom:-6%;width:34%;height:34%;border-radius:50%;z-index:3;background:radial-gradient(circle at 32% 28%,#fff8d6,#ffd23f 30%,#c08400 75%);box-shadow:0 0 0 2px #1a1200,0 2px 6px rgba(0,0,0,.5)}
-.tav.fr-leyenda,.fr-leyenda{box-shadow:0 0 0 2px #fff,0 0 0 5px #0ea5e9,0 0 0 8px #1e1b4b,0 0 0 10px #ffd23f,0 0 24px rgba(14,165,233,.6)!important}
-.tav.fr-fundador,.fr-fundador{overflow:visible!important;box-shadow:0 0 0 3px #ff5a36,0 0 0 6px #5b21b6,0 0 20px rgba(255,90,54,.6)!important}
-.fr-fundador:before{content:"★";position:absolute;top:-.45em;left:50%;transform:translateX(-50%);z-index:3;font:900 calc(var(--s,40px)*.36)/1 Archivo,sans-serif;color:#ffd23f;-webkit-text-fill-color:#ffd23f;text-shadow:0 0 6px #ff5a36,0 2px 3px rgba(0,0,0,.6)}
-@media(prefers-reduced-motion:reduce){.c-estrella .mpn-n,.pl-dinastia.mpn,.fr-balon{animation:none!important}}
+.pl-campeon.mpn{background:linear-gradient(90deg,#3b0764,#7c2d12 60%,#b45309);border-color:#ffd23f;box-shadow:0 0 .6em rgba(255,210,63,.45),inset 0 0 .5em rgba(255,210,63,.3)}.pl-campeon.mpn:before{content:"🏆";margin-right:.35em;animation:plBob 2s ease-in-out infinite}
+.pl-dinastia.mpn{background:linear-gradient(90deg,#0f172a,#7c2d12 35%,#ca8a04 50%,#7c2d12 65%,#0f172a);background-size:200% 100%;border-color:#fde68a;box-shadow:0 0 .8em rgba(253,230,138,.55);animation:cosSlide 4s linear infinite}.pl-dinastia.mpn:before{content:"👑";margin-right:.35em;animation:plBob 2s ease-in-out infinite}
+@keyframes plBob{50%{transform:translateY(-.12em) rotate(-8deg)}}
+
+/* ---------- MARCOS DEL AVATAR ---------- */
+/* Anillo propio (::after) que gira alrededor de la foto; el emblema va en ::before */
+.tav[class*="fr-"]{overflow:visible!important}
+.tav[class*="fr-"]:after{content:""!important;position:absolute!important;inset:-14%!important;border-radius:50%!important;z-index:2!important;pointer-events:none;-webkit-mask:radial-gradient(closest-side,transparent 78%,#000 80.5%,#000 97%,transparent 99%);mask:radial-gradient(closest-side,transparent 78%,#000 80.5%,#000 97%,transparent 99%);animation:frSpin 6s linear infinite!important;opacity:1!important}
+.tav[class*="fr-"]:hover:after{animation-duration:1.4s!important}
+@keyframes frSpin{to{transform:rotate(360deg)}}
+.tav[class*="fr-"]:before{position:absolute;z-index:3;pointer-events:none;color:initial;-webkit-text-fill-color:initial;line-height:1}
+/* raros */
+.tav.fr-oro{box-shadow:0 0 .7em rgba(255,196,0,.55)!important}.tav.fr-oro:after{background:conic-gradient(#8a6200,#ffd23f,#fff8dc,#ffd23f,#8a6200,#ffd23f,#fff8dc,#ffd23f,#8a6200)!important}
+.tav.fr-hielo{box-shadow:0 0 .8em rgba(120,200,255,.7)!important}.tav.fr-hielo:after{background:conic-gradient(#e0f7ff,#4fb3ff,#ffffff,#93c5fd,#e0f7ff)!important;animation-duration:9s!important}
+.tav.fr-hielo:before{content:"❄";top:-6%;right:-8%;font-size:calc(var(--s,40px)*.3);color:#e0f7ff;-webkit-text-fill-color:#e0f7ff;text-shadow:0 0 6px #4fb3ff;animation:frTwk 3s ease-in-out infinite}
+.tav.fr-toxico{animation:frTox 2s ease-in-out infinite!important}.tav.fr-toxico:after{background:conic-gradient(#a3ff12,#1a2e05 20%,#a3ff12 40%,#65a30d 60%,#a3ff12 80%,#1a2e05)!important;animation-duration:4s!important}
+.tav.fr-toxico:before{content:"☢";bottom:-8%;right:-8%;width:calc(var(--s,40px)*.36);height:calc(var(--s,40px)*.36);display:grid;place-items:center;border-radius:50%;background:#1a2e05;font-size:calc(var(--s,40px)*.26);color:#a3ff12;-webkit-text-fill-color:#a3ff12;box-shadow:0 0 0 2px #a3ff12}
+@keyframes frTox{0%,100%{box-shadow:0 0 .5em rgba(163,255,18,.5)}50%{box-shadow:0 0 1.1em rgba(163,255,18,.95)}}
+/* épicos */
+.tav.fr-neon{box-shadow:0 0 .6em #ff2bd6,0 0 1.2em rgba(34,211,238,.6)!important}.tav.fr-neon:after{background:conic-gradient(#22d3ee,#ff2bd6,#22d3ee,#ff2bd6,#22d3ee)!important;animation-duration:3s!important;filter:drop-shadow(0 0 3px #ff2bd6)}
+.tav.fr-elite{box-shadow:0 0 0 2px #fff,0 0 1em rgba(139,92,246,.7)!important}.tav.fr-elite:after{background:repeating-conic-gradient(#8b5cf6 0 12deg,#ff5a36 12deg 24deg,#fff 24deg 26deg)!important;animation-duration:10s!important}
+.tav.fr-elite:before{content:"◆";top:-14%;left:50%;transform:translateX(-50%);font-size:calc(var(--s,40px)*.3);color:#ff5a36;-webkit-text-fill-color:#ff5a36;text-shadow:0 0 4px #fff}
+/* legendarios */
+.tav.fr-fuego{animation:frFire 1.4s ease-in-out infinite!important}.tav.fr-fuego:after{background:conic-gradient(#ff2d00,#ffd23f,#ff7a18,#fff6c2,#ff2d00,#ff7a18,#ffd23f,#ff2d00)!important;animation-duration:2s!important;filter:blur(.5px)}
+.tav.fr-fuego:before{content:"🔥";bottom:-14%;left:50%;transform:translateX(-50%);font-size:calc(var(--s,40px)*.38);animation:frFlick .5s ease-in-out infinite alternate}
+@keyframes frFire{0%,100%{box-shadow:0 0 .6em #ff2d00,0 -.3em 1em rgba(255,180,0,.6)}50%{box-shadow:0 0 1em #ff7a18,0 -.6em 1.4em rgba(255,45,0,.7)}}
+@keyframes frFlick{to{transform:translateX(-50%) scale(1.15,1.25)}}
+.tav.fr-arcoiris{animation:frRbG 3s linear infinite!important}.tav.fr-arcoiris:after{background:conic-gradient(#ff3d3d,#ffb23d,#fff23d,#3dff7a,#3dcfff,#9b3dff,#ff3dd2,#ff3d3d)!important;animation-duration:2.5s!important}
+@keyframes frRbG{0%,100%{box-shadow:0 0 .9em #ff3dd2}33%{box-shadow:0 0 .9em #3dcfff}66%{box-shadow:0 0 .9em #fff23d}}
+.tav.fr-corona{box-shadow:0 0 .9em rgba(255,196,0,.6)!important}.tav.fr-corona:after{background:conic-gradient(#8a6200,#ffd23f,#fff8dc,#ffd23f,#8a6200,#ffd23f,#fff8dc,#ffd23f,#8a6200)!important;animation-duration:8s!important}
+.tav.fr-corona:before{content:"👑";top:-38%;left:50%;font-size:calc(var(--s,40px)*.48);filter:drop-shadow(0 2px 2px rgba(0,0,0,.6)) drop-shadow(0 0 6px rgba(255,210,63,.8));animation:frCrown 2.4s ease-in-out infinite}
+@keyframes frCrown{0%,100%{transform:translateX(-50%) rotate(-8deg)}50%{transform:translateX(-50%) translateY(-8%) rotate(6deg)}}
+/* exclusivos */
+.tav.fr-balon{animation:frBalon 2.2s ease-in-out infinite!important}.tav.fr-balon:after{background:conic-gradient(#ffd23f,#7a5200,#fff3b0,#c08400,#ffd23f)!important;animation-duration:5s!important}
+@keyframes frBalon{0%,100%{box-shadow:0 0 .8em rgba(255,196,0,.7)}50%{box-shadow:0 0 1.5em rgba(255,196,0,1)}}
+.tav.fr-balon:before{content:"";top:50%;left:50%;width:30%;height:30%;margin:-15% 0 0 -15%;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff8d6,#ffd23f 30%,#c08400 75%);box-shadow:0 0 0 2px #1a1200,0 0 8px #ffd23f;animation:frOrbit 3s linear infinite}
+@keyframes frOrbit{from{transform:rotate(0) translateX(calc(var(--s,40px)*.62)) rotate(0)}to{transform:rotate(360deg) translateX(calc(var(--s,40px)*.62)) rotate(-360deg)}}
+.tav.fr-leyenda{box-shadow:0 0 0 2px #fff,0 0 1.2em rgba(14,165,233,.7)!important}.tav.fr-leyenda:after{background:conic-gradient(#0ea5e9,#1e1b4b,#ffd23f,#0ea5e9,#1e1b4b,#ffd23f,#0ea5e9)!important;animation-duration:4s!important}
+.tav.fr-leyenda:before{content:"✦";top:50%;left:50%;margin:-.5em 0 0 -.5em;width:1em;height:1em;text-align:center;font-size:calc(var(--s,40px)*.28);color:#ffd23f;-webkit-text-fill-color:#ffd23f;text-shadow:0 0 6px #0ea5e9,0 0 10px #ffd23f;animation:frOrbit 2.4s linear infinite reverse}
+.tav.fr-fundador{box-shadow:0 0 1em rgba(255,90,54,.6)!important}.tav.fr-fundador:after{background:conic-gradient(#ff5a36,#5b21b6,#ff5a36,#5b21b6,#ff5a36)!important;animation-duration:5s!important}
+.tav.fr-fundador:before{content:"★";top:-24%;left:50%;transform:translateX(-50%);font:900 calc(var(--s,40px)*.4)/1 Archivo,sans-serif;color:#ffd23f;-webkit-text-fill-color:#ffd23f;text-shadow:0 0 6px #ff5a36,0 2px 3px rgba(0,0,0,.6);animation:frTwk 2.4s ease-in-out infinite}
+@keyframes frTwk{0%,100%{opacity:1;scale:1}50%{opacity:.6;scale:.8}}
+/* marcos fuera de un avatar (p. ej. vistas previas) */
+.fr-oro:not(.tav),.fr-neon:not(.tav),.fr-hielo:not(.tav),.fr-elite:not(.tav),.fr-toxico:not(.tav),.fr-corona:not(.tav),.fr-leyenda:not(.tav),.fr-fundador:not(.tav),.fr-fuego:not(.tav),.fr-arcoiris:not(.tav),.fr-balon:not(.tav){box-shadow:0 0 0 3px #ffd23f,0 0 14px rgba(255,196,0,.5)}
+
+body:not(.adm-body) .tav[data-pid]{cursor:pointer}
+@media(prefers-reduced-motion:reduce){.mpn-t,.mpn-n,.mpn[class*="pl-"],.mpn[class*="pl-"]:before,.mpn[class*="pl-"]:after,.tav[class*="fr-"],.tav[class*="fr-"]:before,.tav[class*="fr-"]:after{animation:none!important}}

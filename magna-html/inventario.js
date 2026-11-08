@@ -17,7 +17,7 @@ window.MAGNA_INV = (function () {
   function card(acc, eq) { var w = h('div', 'inv-card'), pid = acc.player_id, p = pid != null && MAGNA.by(MAGNA.S.players, pid), x = p ? (MAGNA.playerStats()[pid] || {}) : {};
     var av = M.tierAv(acc.display_name, x.media, 72); if (acc.avatar && /^a\d\d$/.test(acc.avatar)) { av.style.backgroundImage = 'url("avatars/' + acc.avatar + '.webp")'; av.classList.add('has-pav'); }
     var fr = eq.frame && M.item(eq.frame); if (fr && fr.type === 'frame') av.classList.add('fr-' + fr.style); w.appendChild(av);
-    var d = h('div'), n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', acc.display_name)); M.nameStyle(n, eq); var ti = eq.title && M.item(eq.title); if (ti && ti.type === 'title') n.appendChild(h('small', 'mpn-t', ti.name)); d.appendChild(n);
+    var d = h('div'), n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', acc.display_name)); M.nameStyle(n, eq); var ti = eq.title && M.item(eq.title); if (ti && ti.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (ti.rarity || 'comun'), ti.name)); d.appendChild(n);
     d.appendChild(h('small', 'inv-h', 'Así te ven en rankings, alineaciones y tu perfil.')); w.appendChild(d); return w; }
 
   // sección "Mi inventario" (Mi cuenta)

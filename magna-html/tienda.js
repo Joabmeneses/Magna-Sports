@@ -146,7 +146,7 @@
   function view(it) {
     M.modal(function (b, close) { var w = h('div', 'cf r-' + (it.rarity || 'comun')), own = owned(it.id), on = own && equipped(it), W = wearMap()[it.id] || [];
       var tp = h('div', 'cf-t'); tp.appendChild(h('span', 'rr', M.RAR[it.rarity] || 'Común')); tp.appendChild(h('span', null, ICO[it.type] + ' ' + M.KIND[it.type])); w.appendChild(tp);
-      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); w.appendChild(h('p', 'sub', acc ? 'Así se verá tu nombre en todo Magna Arena.' : 'Así se vería un nombre con este cosmético.'));
+      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); w.appendChild(ctx(it));
       if (W.length) { var wr = h('div', 'cf-w'), av = h('div', 'avs'); W.slice(0, 5).forEach(function (pid) { av.appendChild(M.tierAv(pname(pid), null, 30, pid)); }); wr.appendChild(av); wr.appendChild(h('span', null, W.length === 1 ? 'Lo lleva ' + pname(W[0]) : 'Lo llevan ' + W.length + ' jugadores')); w.appendChild(wr); }
       if (it.exclusive) w.appendChild(h('p', 'sub', '🔒 ' + (MAGNA.AWARD_TXT[it.award] || 'Exclusivo: lo entrega la administración.')));
       var r2 = h('div', 'r'), no = btn('ghost', own || it.exclusive ? 'Cerrar' : 'Cancelar', close); r2.appendChild(no);
@@ -162,6 +162,24 @@
       else if (on) { var eb = btn('eqp', '✓ Ya lo llevas puesto'); eb.disabled = true; r2.appendChild(eb); }
       var hb = heart(it); hb.classList.add('in'); r2.appendChild(hb);
       w.appendChild(r2); b.appendChild(w); });
+  }
+  // mini escenas: el cosmético dentro del ranking, una alineación y el perfil; se puede combinar con lo que ya llevas
+  var combo = true;
+  function ctx(it) {
+    var box = h('div', 'cx'), nm = acc ? acc.display_name : 'Tu nombre', pid = acc && acc.player_id, x = pid != null ? (MAGNA.playerStats()[pid] || {}) : {};
+    var tabs = h('div', 'cx-t'), stage = h('div', 'cx-s'), cur = 'rank', hasEq = !!(inv && Object.keys(inv.eq || {}).some(function (k) { return inv.eq[k] && k !== it.type; }));
+    function eqNow() { var e = {}; if (combo && inv) Object.keys(inv.eq || {}).forEach(function (k) { if (inv.eq[k]) e[k] = inv.eq[k]; }); e[it.type] = it.id; return e; }
+    function av(size, e) { var a = M.tierAv(nm, x.media != null ? x.media : 70, size, pid); var f = e.frame && M.item(e.frame); if (f && f.type === 'frame') a.classList.add('fr-' + f.style); return a; }
+    function name(e, big) { var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); M.nameStyle(n, e); var t = e.title && M.item(e.title); if (t && t.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (t.rarity || 'comun'), t.name)); if (big) n.style.fontSize = '26px'; return n; }
+    function draw() { stage.innerHTML = ''; var e = eqNow(), sc;
+      if (cur === 'rank') { sc = h('div', 'cx-rk'); [['2', 'Zirma', 84], ['1', null, 0], ['3', 'Gowther', 81]].sort(function (a, b) { return a[0] - b[0]; }).forEach(function (r) { var row = h('div', 'cx-row' + (r[1] ? '' : ' me')); row.appendChild(h('b', 'n', r[0])); if (r[1]) { row.appendChild(M.tierAv(r[1], r[2], 30)); row.appendChild(h('span', 'o', r[1])); } else { row.appendChild(av(30, e)); row.appendChild(name(e)); } row.appendChild(h('em', null, r[1] ? String(r[2]) : 'TÚ')); sc.appendChild(row); }); }
+      else if (cur === 'pitch') { sc = h('div', 'cx-pt'); ['Zirma', null, 'Gowther'].forEach(function (n2, i) { var tk = h('div', 'tk' + (n2 ? '' : ' me')); tk.style.left = [20, 50, 80][i] + '%'; tk.style.top = [62, 36, 62][i] + '%'; tk.appendChild(n2 ? M.tierAv(n2, 75, 40) : av(46, e)); var nn = n2 ? h('span', 'o', n2) : name(e); tk.appendChild(nn); sc.appendChild(tk); }); }
+      else { sc = h('div', 'cx-pf'); sc.appendChild(av(84, e)); var d = h('div'); d.appendChild(name(e, true)); d.appendChild(h('small', null, 'Perfil público · Magna Arena')); sc.appendChild(d); }
+      stage.appendChild(sc); }
+    [['rank', '🏆 Ranking'], ['pitch', '⚽ Alineación'], ['prof', '👤 Perfil']].forEach(function (t) { var b = h('button', t[0] === cur ? 'on' : '', t[1]); b.type = 'button'; b.onclick = function () { cur = t[0]; [].forEach.call(tabs.children, function (c) { c.classList.toggle('on', c === b); }); draw(); }; tabs.appendChild(b); });
+    box.appendChild(h('small', 'cx-l', 'Así se ve en…')); box.appendChild(tabs); box.appendChild(stage);
+    if (hasEq) { var tg = h('button', 'ts-tg cx-c' + (combo ? ' on' : '')); tg.type = 'button'; tg.setAttribute('aria-pressed', combo); tg.appendChild(h('i')); tg.appendChild(document.createTextNode('Combinar con lo que llevas puesto')); tg.onclick = function () { combo = !combo; tg.classList.toggle('on', combo); tg.setAttribute('aria-pressed', combo); draw(); }; box.appendChild(tg); }
+    draw(); return box;
   }
   function celebrate(it) { render(); I.toast('🎉 ¡' + it.name + ' es tuyo y ya lo llevas puesto!');
     var bal = document.querySelector('.ts-bal'); if (bal) MAGNA_BIT.burst(bal, 18);
