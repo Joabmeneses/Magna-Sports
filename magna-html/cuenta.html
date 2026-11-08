@@ -35,6 +35,42 @@
 .pp-g button{aspect-ratio:1;border-radius:50%;padding:0;border:3px solid transparent;background:none;cursor:pointer;transition:transform .15s,border-color .15s}.pp-g button:hover{transform:scale(1.08)}.pp-g button.on{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,210,63,.25)}.pp-g img{width:100%;height:100%;border-radius:50%;display:block}
 .pp-g .pp-none{border:2px dashed var(--line);color:var(--muted);font:700 12px Archivo,sans-serif}.pp-g .pp-none.on{border-color:var(--yellow);color:var(--fg)}
 .pp-m{margin:10px 0 0;font-size:14px;color:var(--muted);min-height:1em}.pp-m.ok{color:var(--green)}.pp-m.bad{color:#ff8aa0}
+
+/* ===== Entrar: tarjeta dividida (mascota + formulario) ===== */
+body.lgp{background:linear-gradient(180deg,#9cc7ea 0%,#c4def3 45%,#e7f1fa 100%)}
+body.lgp:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(28% 14% at 80% 18%,rgba(255,255,255,.95),transparent 70%),radial-gradient(22% 10% at 18% 70%,rgba(255,255,255,.9),transparent 70%),radial-gradient(30% 12% at 60% 92%,rgba(255,255,255,.85),transparent 70%),radial-gradient(18% 9% at 30% 12%,rgba(255,255,255,.7),transparent 70%);animation:lgCl 30s ease-in-out infinite alternate}
+@keyframes lgCl{to{transform:translateX(3%)}}
+body.lgp main>.eyebrow,body.lgp main>h1{display:none}body.lgp .mn-legal,body.lgp .mn-legal span{color:#475569!important}body.lgp .mn-legal a{color:#1e293b!important}body.lgp .acw{max-width:1020px}
+.lg2{display:grid;grid-template-columns:1fr 1.05fr;gap:10px;margin:34px auto 40px;padding:10px;border-radius:28px;background:#fff;box-shadow:0 30px 70px -24px rgba(30,64,110,.45);color:#111827;animation:lgIn .5s cubic-bezier(.2,1,.3,1)}
+@keyframes lgIn{from{opacity:0;transform:translateY(16px) scale(.98)}}
+.lg2.shake{animation:lgSh .4s}@keyframes lgSh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.lg2-art{position:relative;min-height:440px;border-radius:20px;overflow:hidden;background:#2a1430}
+.lg2-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 6s ease-out}.lg2:hover .lg2-art img{transform:scale(1.05)}
+.lg2-art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(10,6,20,.75))}
+.lg2-mot{position:absolute;left:22px;bottom:20px;z-index:1;display:grid;gap:2px}
+.lg2-mot span{font:900 clamp(30px,4.2vw,46px)/.95 Archivo,sans-serif;font-stretch:118%;color:#fff;letter-spacing:.01em;text-shadow:0 4px 18px rgba(0,0,0,.45);animation:lgW .6s both}
+@keyframes lgW{from{opacity:0;transform:translateX(-14px)}}
+.lg2-f{display:flex;flex-direction:column;justify-content:center;padding:clamp(18px,4vw,44px) clamp(18px,5vw,64px)}
+.lg2-lo{display:grid;justify-items:center;gap:4px;margin-bottom:10px}.lg2-lo img{height:38px;width:auto}.lg2-lo small{font:800 10px "JetBrains Mono",monospace;letter-spacing:.18em;color:#374151}
+.lg2-f h2{margin:4px 0 6px;text-align:center;font:900 clamp(22px,2.4vw,28px) Archivo,sans-serif;font-stretch:108%;white-space:nowrap;letter-spacing:.01em;color:#0b0f1a}
+.lg2-sub{margin:0 0 20px;text-align:center;color:#4b5563;font-size:13.5px}
+.lg2-l{display:grid;gap:6px;margin-bottom:14px;font:700 13px Archivo,sans-serif;color:#111827}
+.lg2-in{width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:10px;padding:11px 12px;background:#f3f6fa;color:#111827;font:500 14px Archivo,sans-serif;transition:border-color .15s,box-shadow .15s,background-color .15s}
+.lg2-in::placeholder{color:#9ca3af}.lg2-in:focus{outline:0;border-color:#111827;background:#fff;box-shadow:0 0 0 3px rgba(17,24,39,.1)}
+.lg2-cw{position:relative}.lg2-code{padding-right:44px;font:700 16px "JetBrains Mono",monospace;letter-spacing:.3em}.lg2-code::placeholder{font:500 14px Archivo,sans-serif;letter-spacing:0}
+.lg2-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:8px;border:0;background:none;color:#6b7280;cursor:pointer;display:grid;place-items:center}.lg2-eye:hover,.lg2-eye.on{color:#111827;background:#e5e7eb}
+.lg2-dots{display:flex;gap:6px}.lg2-dots i{flex:1;height:4px;border-radius:999px;background:#e5e7eb;transition:background-color .2s,transform .2s}.lg2-dots i.on{background:#111827;transform:scaleY(1.4)}
+.lg2-rw{display:flex;justify-content:space-between;align-items:center;margin:-2px 0 6px}.lg2-lnk{border:0;background:none;padding:4px 0;font:700 13px Archivo,sans-serif;color:#111827;cursor:pointer}.lg2-lnk:hover{text-decoration:underline}
+.lg2-hint{margin:0 0 8px;padding:10px 12px;border-radius:10px;background:#fff7e6;color:#7a4a10;font-size:13px}
+.lg2 .msg{min-height:1.2em;margin:4px 0 8px;color:#dc2626;font-size:13.5px;font-weight:600}.lg2 .msg.ok{color:#16a34a}
+.lg2-go{position:relative;width:100%;border:0;border-radius:10px;padding:13px;background:#0b0f1a;color:#fff;font:800 15px Archivo,sans-serif;cursor:pointer;transition:transform .12s,background-color .15s,box-shadow .15s;box-shadow:0 8px 18px -8px rgba(11,15,26,.6)}
+.lg2-go:hover{background:#1f2937;transform:translateY(-1px)}.lg2-go:active{transform:translateY(1px)}.lg2-go:disabled{opacity:.75;cursor:wait}
+.lg2-go.ld:after{content:"";position:absolute;right:16px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:lgSp .7s linear infinite}@keyframes lgSp{to{transform:rotate(360deg)}}
+.lg2-alt{display:block;margin-top:10px;padding:11px;border-radius:10px;border:1px solid #e5e7eb;text-align:center;color:#111827;text-decoration:none;font:700 14px Archivo,sans-serif;transition:background-color .15s}.lg2-alt:hover{background:#f3f6fa}
+.lg2-ft{margin:18px 0 0;text-align:center;color:#6b7280;font-size:13px}.lg2-ft b{color:#111827}
+.lg2-tc{margin:6px 0 0;text-align:center;color:#9ca3af;font-size:11.5px}.lg2-tc a{color:#6b7280}
+@media(max-width:760px){.lg2{grid-template-columns:1fr;margin-top:16px}.lg2-art{min-height:220px}.lg2-mot span{font-size:30px}}
+@media(prefers-reduced-motion:reduce){.lg2,.lg2-mot span,body.lgp:before{animation:none}}
 </style><link rel="stylesheet" href="arena.css"></head>
 <body><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap acw"><div class="eyebrow mono">Comunidad</div><h1 class="x">Mi cuenta</h1><div id="app"><div class="skel" role="status" aria-label="Cargando" style="margin-top:24px"><div class="skel-card" style="height:120px"></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div><div class="skel-row"><i class="c"></i><div><i class="l1"></i><i class="l2"></i></div><i class="s"></i></div></div></div>
@@ -46,12 +82,34 @@
   var ST = { open: 'En juego', won: 'Ganada', lost: 'Perdida', refund: 'Devuelta', cash: 'Retirada' };
   function fmt(n) { return Number(n || 0).toLocaleString('es'); }
   function login() {
-    app.innerHTML = ''; var c = h('div', 'lg'), im = h('img'); im.src = 'logo.webp'; im.alt = ''; c.appendChild(im); c.appendChild(h('h2', 'x', 'Entrar')); c.appendChild(h('p', 'sub', 'Usa el usuario y el código de 6 dígitos que te dio la administración.'));
-    var f = h('form'), l1 = h('label', 'f', 'Usuario'), us = h('input', 'in'); us.autocomplete = 'username'; us.autocapitalize = 'none'; us.spellcheck = false; us.id = 'u'; l1.appendChild(us); f.appendChild(l1);
-    var l2 = h('label', 'f', 'Código'), cd = h('input', 'in code'); cd.type = 'password'; cd.inputMode = 'numeric'; cd.maxLength = 6; cd.autocomplete = 'one-time-code'; cd.id = 'c'; cd.placeholder = '••••••'; l2.appendChild(cd); f.appendChild(l2);
-    var m = h('p', 'msg'), go = h('button', 'btn', 'Entrar'); go.type = 'submit'; f.appendChild(m); f.appendChild(go); c.appendChild(f); var tc = h('p', 'sub'); tc.style.cssText = 'font-size:13px;margin-top:14px'; tc.innerHTML = 'Al entrar aceptas los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.'; c.appendChild(tc); app.appendChild(c);
-    f.onsubmit = function (e) { e.preventDefault(); var u = us.value.trim().toLowerCase(), k = cd.value.replace(/\D/g, ''); if (u.length < 3) { m.textContent = 'Escribe tu usuario.'; return; } if (k.length !== 6) { m.textContent = 'El código tiene 6 dígitos.'; return; }
-      go.disabled = true; m.className = 'msg ok'; m.textContent = 'Entrando…'; A.login(u, k).then(show, function (er) { go.disabled = false; m.className = 'msg'; m.textContent = er.message || 'No se pudo entrar.'; }); };
+    document.body.classList.add('lgp'); app.innerHTML = '';
+    var c = h('div', 'lg2');
+    // izquierda: la mascota de Magna con el lema
+    var art = h('div', 'lg2-art'), mi = h('img'); mi.src = 'mascota/celebrando.webp'; mi.alt = ''; mi.decoding = 'async'; art.appendChild(mi);
+    var mot = h('div', 'lg2-mot'); ['EXPLORA.', 'COMPITE.', 'GANA.'].forEach(function (w, i) { var sp = h('span', null, w); sp.style.animationDelay = (.15 + i * .12) + 's'; mot.appendChild(sp); }); art.appendChild(mot); c.appendChild(art);
+    // derecha: formulario con usuario y código
+    var fm = h('div', 'lg2-f'), lo = h('div', 'lg2-lo'), li = h('img'); li.src = 'logo-nav.webp'; li.alt = ''; lo.appendChild(li); lo.appendChild(h('small', null, 'MAGNA ARENA')); fm.appendChild(lo);
+    fm.appendChild(h('h2', null, 'BIENVENIDO DE NUEVO')); fm.appendChild(h('p', 'lg2-sub', 'Entra con el usuario y el código de 6 dígitos que te dio la administración.'));
+    var f = h('form'); f.noValidate = true;
+    var l1 = h('label', 'lg2-l', 'Usuario'), us = h('input', 'lg2-in'); us.autocomplete = 'username'; us.autocapitalize = 'none'; us.spellcheck = false; us.id = 'u'; us.placeholder = 'Escribe tu usuario'; l1.appendChild(us); f.appendChild(l1);
+    var l2 = h('label', 'lg2-l', 'Código'), cw = h('div', 'lg2-cw'), cd = h('input', 'lg2-in lg2-code'); cd.type = 'password'; cd.inputMode = 'numeric'; cd.maxLength = 6; cd.autocomplete = 'one-time-code'; cd.id = 'c'; cd.placeholder = 'Tu código de 6 dígitos';
+    var eye = h('button', 'lg2-eye'); eye.type = 'button'; eye.setAttribute('aria-label', 'Mostrar código'); eye.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>';
+    eye.onclick = function () { var on = cd.type === 'password'; cd.type = on ? 'text' : 'password'; eye.classList.toggle('on', on); eye.setAttribute('aria-label', on ? 'Ocultar código' : 'Mostrar código'); cd.focus(); };
+    var dots = h('div', 'lg2-dots'); for (var i = 0; i < 6; i++) dots.appendChild(h('i'));
+    cd.oninput = function () { cd.value = cd.value.replace(/\D/g, '').slice(0, 6); [].forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k < cd.value.length); }); if (cd.value.length === 6 && us.value.trim().length >= 3) go.focus(); };
+    cw.appendChild(cd); cw.appendChild(eye); l2.appendChild(cw); l2.appendChild(dots); f.appendChild(l2);
+    var rw = h('div', 'lg2-rw'), hl = h('button', 'lg2-lnk', '¿Olvidaste tu código?'); hl.type = 'button'; var hint = h('p', 'lg2-hint', 'Pídeselo a la administración de Magna Sports: ellos te dan uno nuevo en segundos.'); hint.hidden = true; hl.onclick = function () { hint.hidden = !hint.hidden; };
+    rw.appendChild(h('span')); rw.appendChild(hl); f.appendChild(rw); f.appendChild(hint);
+    var m = h('p', 'msg'), go = h('button', 'lg2-go', 'Entrar'); go.type = 'submit'; f.appendChild(m); f.appendChild(go);
+    var gu = h('a', 'lg2-alt', 'Ver la página sin entrar'); gu.href = 'index.html'; f.appendChild(gu); fm.appendChild(f);
+    var ft = h('p', 'lg2-ft'); ft.innerHTML = '¿No tienes cuenta? <b>Pídela a la administración</b>'; fm.appendChild(ft);
+    var tc = h('p', 'lg2-tc'); tc.innerHTML = 'Al entrar aceptas los <a href="terminos.html">términos</a> y la <a href="privacidad.html">privacidad</a>.'; fm.appendChild(tc);
+    c.appendChild(fm); app.appendChild(c);
+    f.onsubmit = function (e) { e.preventDefault(); var u = us.value.trim().toLowerCase(), k = cd.value.replace(/\D/g, ''); m.className = 'msg';
+      if (u.length < 3) { m.textContent = 'Escribe tu usuario.'; us.focus(); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); return; }
+      if (k.length !== 6) { m.textContent = 'El código tiene 6 dígitos.'; cd.focus(); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); return; }
+      go.disabled = true; go.classList.add('ld'); m.className = 'msg ok'; m.textContent = 'Entrando…';
+      A.login(u, k).then(function () { document.body.classList.remove('lgp'); show(); }, function (er) { go.disabled = false; go.classList.remove('ld'); m.className = 'msg'; m.textContent = er.message || 'No se pudo entrar.'; c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }); };
     us.focus();
   }
   // Foto de perfil: el usuario elige uno de los avatares de Magna
