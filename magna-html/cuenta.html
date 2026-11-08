@@ -46,7 +46,7 @@
   var ST = { open: 'En juego', won: 'Ganada', lost: 'Perdida', refund: 'Devuelta', cash: 'Retirada' };
   function fmt(n) { return Number(n || 0).toLocaleString('es'); }
   function login() {
-    app.innerHTML = ''; var c = h('div', 'lg'), im = h('img'); im.src = 'logo.png'; im.alt = ''; c.appendChild(im); c.appendChild(h('h2', 'x', 'Entrar')); c.appendChild(h('p', 'sub', 'Usa el usuario y el código de 6 dígitos que te dio la administración.'));
+    app.innerHTML = ''; var c = h('div', 'lg'), im = h('img'); im.src = 'logo.webp'; im.alt = ''; c.appendChild(im); c.appendChild(h('h2', 'x', 'Entrar')); c.appendChild(h('p', 'sub', 'Usa el usuario y el código de 6 dígitos que te dio la administración.'));
     var f = h('form'), l1 = h('label', 'f', 'Usuario'), us = h('input', 'in'); us.autocomplete = 'username'; us.autocapitalize = 'none'; us.spellcheck = false; us.id = 'u'; l1.appendChild(us); f.appendChild(l1);
     var l2 = h('label', 'f', 'Código'), cd = h('input', 'in code'); cd.type = 'password'; cd.inputMode = 'numeric'; cd.maxLength = 6; cd.autocomplete = 'one-time-code'; cd.id = 'c'; cd.placeholder = '••••••'; l2.appendChild(cd); f.appendChild(l2);
     var m = h('p', 'msg'), go = h('button', 'btn', 'Entrar'); go.type = 'submit'; f.appendChild(m); f.appendChild(go); c.appendChild(f); var tc = h('p', 'sub'); tc.style.cssText = 'font-size:13px;margin-top:14px'; tc.innerHTML = 'Al entrar aceptas los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.'; c.appendChild(tc); app.appendChild(c);
