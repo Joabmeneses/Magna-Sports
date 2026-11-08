@@ -52,6 +52,12 @@ window.MAGNA_COS = (function () {
       f('mgf-dustin', [[.42, 0], [.54, 1], [.66, 1], [.69, 0]], '.2', 2, '.14', '.004', 6) + '</svg>';
     (document.body || document.documentElement).appendChild(d); }
   if (document.body) fx(); else document.addEventListener('DOMContentLoaded', fx);
+  // Más liviano: los cosméticos animados que no están en pantalla se pausan (y se reanudan al volver a verse)
+  var io = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('cos-off', !e.isIntersecting); }); }, { rootMargin: '120px' }) : null, seen = window.WeakSet ? new WeakSet() : null, wT = null;
+  var SEL = '[class*="fr-"],.mpn[class*="c-"],.mpn[class*="pl-"],.mpn-t.tr-legendaria,.mpn-t.tr-epica';
+  function watch() { wT = null; if (!io || !seen) return; [].forEach.call(document.querySelectorAll(SEL), function (el) { if (!seen.has(el)) { seen.add(el); io.observe(el); } }); }
+  function soon() { if (!wT) wT = setTimeout(watch, 350); }
+  if (io && window.MutationObserver) { var startW = function () { watch(); new MutationObserver(soon).observe(document.body, { childList: true, subtree: true }); }; if (document.body) startW(); else document.addEventListener('DOMContentLoaded', startW); }
   window.addEventListener('magna:update', function () { setTimeout(repaint, 0); });
   window.addEventListener('magna:cos', function () { try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {} repaint(); });
   // tocar un avatar de jugador abre su perfil (fuera del panel de administración)

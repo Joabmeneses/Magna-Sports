@@ -71,7 +71,7 @@
       tx.appendChild(h('p', null, 'Ligas, torneos, Champions y Mundial de la comunidad, con ranking de equipos, fichajes y pronósticos con Bits. Todo se actualiza en vivo con cada resultado.'));
       var cta = h('div', 'hh-cta'); cta.appendChild(a('calendario.html', 'o', '📅 Ver calendario')); cta.appendChild(a('equipos.html', null, '🛡️ Conocer equipos')); cta.appendChild(a('ranking.html', null, '🏆 Ranking'));
       var me = window.MAGNA_ME && MAGNA_ME.get(); if (!me) cta.appendChild(a('cuenta.html', null, '👤 Entrar'));
-      tx.appendChild(cta); inn.appendChild(tx); var lg = h('img', 'hh-lg'); lg.src = 'logo.png'; lg.alt = ''; inn.appendChild(lg); hero.appendChild(inn);
+      tx.appendChild(cta); inn.appendChild(tx); var lg = h('img', 'hh-lg'); lg.src = 'logo.webp'; lg.alt = ''; inn.appendChild(lg); hero.appendChild(inn);
       var kp = h('div', 'hh-kp'), cnt = [];
       [[S.teams.length, 'Equipos'], [players.length, 'Jugadores'], [comps.length, 'Competiciones'], [fin.length + (S.history || []).reduce(function (n, e) { return n + ((e.matches || []).length); }, 0), 'Partidos jugados']].forEach(function (x) { var d = h('div'), b = h('b', null, '0'); d.appendChild(b); d.appendChild(h('small', null, x[1])); kp.appendChild(d); cnt.push([b, x[0]]); });
       hero.appendChild(kp); root.appendChild(hero); setTimeout(function () { cnt.forEach(function (c) { countUp(c[0], c[1]); }); }, 150);

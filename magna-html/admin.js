@@ -1343,7 +1343,7 @@
     if (T.p) { var a = h('a', 'lk', 'Ver en el sitio ↗'); a.href = T.p; a.target = '_blank'; a.rel = 'noopener'; hd.appendChild(a); }
     hd.classList.toggle('hide', tab === 'resumen'); document.body.classList.toggle('on-dash', tab === 'resumen');
     var ql = h('div', 'sg sq'); ql.appendChild(h('h4', null, 'Enlaces rápidos')); [['index.html', 'Ver el sitio', 'home'], ['eventos.html', 'Eventos', 'cal'], ['tienda.html', 'Tienda', 'star']].forEach(function (x) { var a = h('a', 'si'); a.href = x[0]; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(icon(x[2])); a.appendChild(h('span', null, x[1])); a.appendChild(h('em', null, '↗')); ql.appendChild(a); }); sd.appendChild(ql);
-    var brd = h('div', 'sbrand'), bi = h('img'); bi.src = 'logo-sm.png'; bi.alt = ''; brd.appendChild(bi); brd.appendChild(h('b', null, 'MAGNA ARENA')); brd.appendChild(h('small', null, 'Competencia · Comunidad · Diversión')); sd.appendChild(brd);
+    var brd = h('div', 'sbrand'), bi = h('img'); bi.src = 'logo-sm.webp'; bi.alt = ''; brd.appendChild(bi); brd.appendChild(h('b', null, 'MAGNA ARENA')); brd.appendChild(h('small', null, 'Competencia · Comunidad · Diversión')); sd.appendChild(brd);
     view.classList.remove('dash'); view.innerHTML = ''; T.f(view);
   }
   function banner() {

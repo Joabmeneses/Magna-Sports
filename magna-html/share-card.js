@@ -61,7 +61,7 @@ window.SHARE_CARD = (function () {
 
   // d: { name, team, teamCrest, avatar, media, tier:{name,color}, role, stats:[[valor,etiqueta]…], trophies:[{name,n,art,emoji}], ballon }
   function player(d) { var c = canvas(), x = c.getContext('2d'), col = (d.tier && d.tier.color) || '#ffd23f';
-    return fonts().then(function () { return Promise.all([img('logo-sm.png'), img(d.avatar), img(d.teamCrest)]); }).then(function (I) {
+    return fonts().then(function () { return Promise.all([img('logo-sm.webp'), img(d.avatar), img(d.teamCrest)]); }).then(function (I) {
       bg(x, col); head(x, I[0], 'TARJETA DE JUGADOR');
       avatar(x, I[1], d.name, W / 2, 380, 165, col);
       if (d.media != null) { x.save(); x.fillStyle = col; x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 20; rr(x, W / 2 + 92, 210, 150, 96, 30); x.fill(); x.restore(); x.fillStyle = '#0a0d18'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = '900 60px ' + F; x.fillText(String(d.media), W / 2 + 167, 262); x.textAlign = 'left'; }
@@ -73,7 +73,7 @@ window.SHARE_CARD = (function () {
 
   // d: { name, color, crest, pos, pts, level, record:[w,l], trophies:[…], coach, squad:[nombres] }
   function team(d) { var c = canvas(), x = c.getContext('2d'), col = d.color || '#8b5cf6';
-    return fonts().then(function () { return Promise.all([img('logo-sm.png'), img(d.crest)]); }).then(function (I) {
+    return fonts().then(function () { return Promise.all([img('logo-sm.webp'), img(d.crest)]); }).then(function (I) {
       bg(x, col); head(x, I[0], 'TARJETA DE EQUIPO');
       x.save(); x.globalAlpha = .07; x.fillStyle = '#fff'; x.textAlign = 'center'; fit(x, d.name.toUpperCase(), W * 1.6, 300); x.fillText(d.name.toUpperCase(), W / 2, 470); x.restore();
       if (I[1]) { x.save(); x.shadowColor = rgba(col, .9); x.shadowBlur = 70; var s = 300 / Math.max(I[1].width, I[1].height); x.drawImage(I[1], W / 2 - I[1].width * s / 2, 390 - I[1].height * s / 2, I[1].width * s, I[1].height * s); x.restore(); }

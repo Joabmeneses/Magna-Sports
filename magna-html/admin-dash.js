@@ -31,7 +31,7 @@ window.ADMIN_DASH = function (b, A) {
   var gr = h('section', 'dgreet'), hr = new Date().getHours(), who = (window.MAGNA_ADMIN && MAGNA_ADMIN.email || 'admin').split('@')[0];
   var d0 = h('div', 'dg-d'); d0.appendChild(A.icon('cal')); d0.appendChild(h('span', null, new Date().toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }))); gr.appendChild(d0);
   gr.appendChild(h('p', null, hr < 12 ? 'Buenos días,' : hr < 19 ? 'Buenas tardes,' : 'Buenas noches,')); gr.appendChild(h('b', 'dg-n', who.charAt(0).toUpperCase() + who.slice(1)));
-  gr.appendChild(h('small', null, 'Administrador · Magna Sports')); var lg = h('div', 'dg-lg'), li = h('img'); li.src = 'logo-sm.png'; li.alt = ''; lg.appendChild(li); lg.appendChild(h('span', null, 'Juntos competimos')); gr.appendChild(lg);
+  gr.appendChild(h('small', null, 'Administrador · Magna Sports')); var lg = h('div', 'dg-lg'), li = h('img'); li.src = 'logo-sm.webp'; li.alt = ''; lg.appendChild(li); lg.appendChild(h('span', null, 'Juntos competimos')); gr.appendChild(lg);
   top.appendChild(gr); b.appendChild(top);
 
   // ---------- noticias en movimiento ----------

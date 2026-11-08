@@ -9,7 +9,7 @@ window.MAGNA_CARD = function (m) {
   function fit(text, max, size, weight) { var s = size; do { x.font = weight + ' ' + s + 'px ' + F; s -= 2; } while (x.measureText(text).width > max && s > 18); return x.font; }
   var L = m.live || {}, ev = L.ev || [], hn = MAGNA.teamName(m.home), an = MAGNA.teamName(m.away), hw = m.hs > m.as;
   var cmp = MAGNA.compOf(m), cname = cmp ? cmp.name : '';
-  function draw(useLogo) { return fonts().then(function () { return Promise.all([img(MAGNA.crestUrl(m.home)), img(MAGNA.crestUrl(m.away)), useLogo ? img('logo.png') : null]); }).then(function (ims) {
+  function draw(useLogo) { return fonts().then(function () { return Promise.all([img(MAGNA.crestUrl(m.home)), img(MAGNA.crestUrl(m.away)), useLogo ? img('logo.webp') : null]); }).then(function (ims) {
     // fondo
     x.fillStyle = '#0a0d18'; x.fillRect(0, 0, W, H);
     var g = x.createRadialGradient(W / 2, 330, 40, W / 2, 330, 720); g.addColorStop(0, 'rgba(59,75,255,.55)'); g.addColorStop(.45, 'rgba(139,92,246,.22)'); g.addColorStop(1, 'rgba(10,13,24,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);

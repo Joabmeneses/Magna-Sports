@@ -60,7 +60,7 @@ window.NEWS = (function () {
   // Portada combinada 1600x900: fondo (diseño de marca o foto) + mascota opcional + título opcional. La mascota no se altera: solo se coloca y se funde con el fondo.
   function compose(o) {
     var W = 1600, H = 900, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d'), cc = cat(o.category), F = 'Archivo, "Arial Narrow", Arial, sans-serif';
-    var jobs = [o.photo ? loadImg(o.photo) : null, o.mascot ? loadImg(mascotUrl(o.mascot)) : null, loadImg('logo.png').catch(function () { return null; })];
+    var jobs = [o.photo ? loadImg(o.photo) : null, o.mascot ? loadImg(mascotUrl(o.mascot)) : null, loadImg('logo.webp').catch(function () { return null; })];
     return Promise.all(jobs).then(function (ims) {
       var ph = ims[0], ms = ims[1], lg = ims[2];
       if (ph) { var k = Math.max(W / ph.width, H / ph.height); x.drawImage(ph, (W - ph.width * k) / 2, (H - ph.height * k) / 2, ph.width * k, ph.height * k); var sh = x.createLinearGradient(0, 0, W, 0); sh.addColorStop(0, 'rgba(10,13,24,.88)'); sh.addColorStop(.6, 'rgba(10,13,24,.35)'); sh.addColorStop(1, 'rgba(10,13,24,.1)'); if (o.title || ms) { x.fillStyle = sh; x.fillRect(0, 0, W, H); } }

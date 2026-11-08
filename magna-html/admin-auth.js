@@ -3,7 +3,7 @@
 (function () {
   var h = M.h, root = document.querySelector('.adm'), gate = h('div', 'gate');
   document.body.insertBefore(gate, root); root.hidden = true;
-  function card(title, sub) { gate.innerHTML = ''; var c = h('div', 'gcard'), lg = h('img', 'glogo'); lg.src = 'logo.png'; lg.alt = 'Magna Arena'; c.appendChild(lg); c.appendChild(h('div', 'eb mono', 'Panel de administración')); c.appendChild(h('h1', 'x', title)); if (sub) c.appendChild(h('p', 'sub', sub)); gate.appendChild(c); return c; }
+  function card(title, sub) { gate.innerHTML = ''; var c = h('div', 'gcard'), lg = h('img', 'glogo'); lg.src = 'logo.webp'; lg.alt = 'Magna Arena'; c.appendChild(lg); c.appendChild(h('div', 'eb mono', 'Panel de administración')); c.appendChild(h('h1', 'x', title)); if (sub) c.appendChild(h('p', 'sub', sub)); gate.appendChild(c); return c; }
   function field(c, label, type, ph) { var l = h('label', 'f', label), i = h('input', 'in'); i.type = type; if (ph) i.placeholder = ph; i.autocomplete = type === 'password' ? 'current-password' : 'email'; l.appendChild(i); c.appendChild(l); return i; }
   function msg(c) { var m = h('p', 'gm'); c.appendChild(m); return function (t, ok) { m.textContent = t || ''; m.className = 'gm' + (ok ? ' ok' : ''); }; }
   var sb = null;
