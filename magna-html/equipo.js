@@ -179,7 +179,7 @@
       var bk = h('div', 'bk'); bk.appendChild(h('div', 't', p.name)); [[x.pj || 0, 'Partidos'], [(x.w || 0) + '-' + (x.l || 0), 'V-D'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length, 'Trofeos'], [x.nota != null ? Number(x.nota).toFixed(1) : '—', 'Nota']].forEach(function (v) { var d = h('div'); d.appendChild(h('b', null, String(v[0]))); d.appendChild(h('small', null, v[1])); bk.appendChild(d); }); var go = h('span', 'pf-go', 'Ver perfil →'); bk.appendChild(go); b.appendChild(bk);
       b.onclick = function (e) { if (e.target.closest && e.target.closest('.pf-go')) { location.href = M.profileUrl(p.id); return; } b.classList.toggle('f'); }; grid.appendChild(b); });
     sQ.appendChild(grid); if (squad.length) sQ.appendChild(h('p', 'hint', 'Toca otra vez para volver al frente.'));
-    if (coach && !MAGNA.plays(coach)) { var cp2 = h('p', 'hint', 'DT: ' + coach.name + ' (solo coach).'); sQ.appendChild(cp2); }
+    if (coach && !MAGNA.plays(coach)) { var cp2 = h('p', 'hint', 'DT: '), ca = h('a', null, coach.name); ca.href = M.profileUrl(coach.id); ca.style.color = 'inherit'; ca.style.fontWeight = '800'; cp2.appendChild(ca); cp2.appendChild(document.createTextNode(' (solo coach).')); sQ.appendChild(cp2); }
 
     // ---------- partidos ----------
     function mrow(m) {

@@ -149,7 +149,7 @@ nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transfo
 <div class="wrap hd">
 <div class="logo x"><i></i>Magna Arena</div>
 <nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html" class="on">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
-<div class="act"><div class="coins mono" title="Saldo de Bits"><i></i><span id="coins">1.000</span> Bits</div>
+<div class="act"><div class="coins mono" title="Saldo de Bits"><span class="bit-ic" id="coinic" style="--bs:20px" aria-hidden="true"><img src="bits.webp" alt="" width="160" height="160"></span><span id="coins">1.000</span> Bits</div>
 <a class="pill o mono enter" href="admin.html" style="padding:9px 14px">Administración</a></div>
 </div>
 </header><script src="nav.js"></script>
@@ -215,7 +215,7 @@ function goalFx(m,k){var a=cards[m.i];if(RM)return;$$('.sc',a)[k].animate([{tran
  var g=document.createElement('span');g.className='gtag x';g.textContent='¡Gol!';$$('.tm',a)[k].appendChild(g);g.animate([{opacity:0,transform:'translateY(-50%) scale(.5)'},{opacity:1,transform:'translateY(-50%) scale(1)',offset:.2},{opacity:1,offset:.8},{opacity:0}],{duration:1600}).onfinish=function(){g.remove()};
  var r=a.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,[GL[k],'#fff','#ffd23f'],18)}
 function settle(m){var w=m.s[0]>m.s[1]?0:1;upd(m);if(ACC){SL=SL.filter(function(x){return x.mi!==m.i});sync();setTimeout(accRefresh,1200);return}
- B.forEach(function(b){if(b.mi!==m.i||b.st!=='open')return;if(b.side===w){b.st='won';b.pay=Math.round(b.stake*b.odds);setBal(bal+b.pay);burst(innerWidth/2,innerHeight*.4,['#2ee59d','#ffd23f','#fff'],40);toast('¡Ganaste '+fmt(b.pay-b.stake)+' Bits!')}else{b.st='lost';b.pay=0;toast('Apuesta perdida · '+(w?m.a:m.h)+' ganó')}});
+ B.forEach(function(b){if(b.mi!==m.i||b.st!=='open')return;if(b.side===w){b.st='won';b.pay=Math.round(b.stake*b.odds);setBal(bal+b.pay);window.MAGNA_BIT&&MAGNA_BIT.burst(document.getElementById('coinic'),18);burst(innerWidth/2,innerHeight*.4,['#2ee59d','#ffd23f','#fff'],40);toast('¡Ganaste '+fmt(b.pay-b.stake)+' Bits!')}else{b.st='lost';b.pay=0;toast('Apuesta perdida · '+(w?m.a:m.h)+' ganó')}});
  SL=SL.filter(function(x){return x.mi!==m.i});sync();mineR()}
 function tick(){MS.forEach(function(m){if(m.live&&!m.fin&&m.run){var x=window.MAGNA_BET_STATE(m.id);if(x){m.t=x.t;m.min=x.min;upd(m)}}});slTick();mineT()}
 function refund(m){if(ACC){setTimeout(accRefresh,1200);SL=SL.filter(function(x){return x.mi!==m.i});sync();return}B.forEach(function(b){if(b.mi===m.i&&b.st==='open'){b.st='cash';b.pay=b.stake;setBal(bal+b.pay);toast('Partido cancelado · te devolvimos '+fmt(b.stake)+' Bits')}});SL=SL.filter(function(x){return x.mi!==m.i});sync();mineR()}

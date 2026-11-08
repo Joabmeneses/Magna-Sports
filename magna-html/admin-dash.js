@@ -149,7 +149,7 @@ window.ADMIN_DASH = function (b, A) {
   // cuentas: completan el indicador de jugadores y la tendencia de cuentas nuevas
   if (window.ACCOUNTS && window.MAGNA_ADMIN) ACCOUNTS.list().then(function (L) { ACC = L || [];
     var mo = ACC.filter(function (x) { return Date.parse(x.created_at) > NOW - 30 * DAY; }).length, bits = ACC.reduce(function (s, x) { return s + (Number(x.bits) || 0); }, 0);
-    var ft = kP.querySelector('.dk-f'); ft.innerHTML = ''; ft.appendChild(h('span', 'dk-d ' + (mo ? 'up' : ''), (mo ? '↗ +' : '→ ') + mo)); ft.appendChild(h('span', null, 'cuentas este mes · 🪙 ' + fmt(bits) + ' Bits'));
+    var ft = kP.querySelector('.dk-f'); ft.innerHTML = ''; ft.appendChild(h('span', 'dk-d ' + (mo ? 'up' : ''), (mo ? '↗ +' : '→ ') + mo)); var fbs = h('span', null, 'cuentas este mes · '); fbs.appendChild(MAGNA_BIT(16)); fbs.appendChild(document.createTextNode(' ' + fmt(bits) + ' Bits')); ft.appendChild(fbs);
     var sp2 = kP.querySelector('.dk-sp'), wv = weekly(function (a, z) { return ACC.filter(function (x) { var t = Date.parse(x.created_at); return t > a && t <= z; }).length; }, 8); if (sp2) sp2.replaceWith(spark(wv, '#c6ff1a'));
     var cur = tr.querySelector('.dseg .on'); if (cur && /Cuentas/.test(cur.textContent)) drawLine('ac'); }, function () { ACC = false; });
 };

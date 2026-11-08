@@ -8,7 +8,7 @@
     root.innerHTML = ''; var L = I.shop();
     var hd = h('section', 'tn-h'), tx = h('div'); tx.appendChild(h('div', 'ey', 'Cosméticos · Magna Arena')); tx.appendChild(h('h1', 'x', 'Tienda')); tx.appendChild(h('p', null, 'Dale estilo a tu nombre: colores neón, placas, marcos para tu foto y títulos. Se compran con Bits y se ven en todo el sitio.')); hd.appendChild(tx);
     var bl = h('div', 'tn-bal');
-    if (acc) { var b = h('div', 'b'); b.appendChild(h('span', null, '🪙')); b.appendChild(document.createTextNode(I.fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Tus Bits')); var a = h('a', null, '🎒 Mi inventario →'); a.href = 'cuenta.html#inventario'; bl.appendChild(a); }
+    if (acc) { var b = h('div', 'b'); var bi = MAGNA_BIT(38); b.appendChild(bi); setTimeout(function () { MAGNA_BIT.burst(bi); }, 400); b.appendChild(document.createTextNode(I.fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Tus Bits')); var a = h('a', null, '🎒 Mi inventario →'); a.href = 'cuenta.html#inventario'; bl.appendChild(a); }
     else if (ready) { var a2 = h('a', 'btn2 o', 'Entra para comprar'); a2.href = 'cuenta.html'; bl.appendChild(a2); bl.appendChild(h('small', null, 'Necesitas tu cuenta de Magna')); }
     hd.appendChild(bl); root.appendChild(hd);
     if (acc && inv) { var me = h('div', 'tn-me'); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }

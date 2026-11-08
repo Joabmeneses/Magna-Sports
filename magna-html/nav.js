@@ -70,6 +70,24 @@
     '@media(max-width:520px){.mn-grid{grid-template-columns:1fr 1fr}.mn-it{padding:10px;gap:10px}.mn-it .ic{width:34px;height:34px}.mn-it small{display:none}.mn-it b{font-size:15px}}' +
     '@media(prefers-reduced-motion:reduce){.mn-ov,.mn-sh{transition:none}}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  // Ícono de Bits (orbe de lava) con aura, giro lento, chispa en órbita y estallido
+  var bcss = '.bit-ic{--bs:1.3em;position:relative;display:inline-grid;place-items:center;width:var(--bs);height:var(--bs);flex:none;vertical-align:-.28em;isolation:isolate;line-height:0}' +
+    '.bit-ic:before{content:"";position:absolute;inset:-34%;border-radius:50%;z-index:-1;background:radial-gradient(circle,rgba(255,140,30,.6),rgba(168,85,247,.38) 42%,transparent 68%);animation:bitAura 2.6s ease-in-out infinite;pointer-events:none}' +
+    '.bit-ic img{width:100%;height:100%;display:block;animation:bitSpin 16s linear infinite;filter:drop-shadow(0 0 3px rgba(255,120,30,.7));pointer-events:none}' +
+    '.bit-ic:after{content:"";position:absolute;left:43%;top:43%;width:14%;height:14%;min-width:3px;min-height:3px;border-radius:50%;background:#ffe08a;box-shadow:0 0 6px 1px #ff8a00,0 0 10px #a855f7;animation:bitOrb 3.4s linear infinite;pointer-events:none}' +
+    '.bit-ic:hover img,a:hover>.bit-ic img,button:hover>.bit-ic img,.bit-ic.pop img{animation-duration:1.4s}' +
+    '.bit-ic.pop{animation:bitPop .7s cubic-bezier(.3,1.6,.5,1)}' +
+    '@keyframes bitSpin{to{transform:rotate(360deg)}}' +
+    '@keyframes bitAura{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.12)}}' +
+    '@keyframes bitOrb{from{transform:rotate(0) translateX(calc(var(--bs) * .62)) scale(.7)}50%{opacity:.4}to{transform:rotate(360deg) translateX(calc(var(--bs) * .62)) scale(.7)}}' +
+    '@keyframes bitPop{0%{transform:scale(1)}35%{transform:scale(1.5) rotate(-14deg)}65%{transform:scale(.9) rotate(6deg)}100%{transform:scale(1)}}' +
+    '.bit-sp{position:fixed;z-index:9999;width:7px;height:7px;border-radius:50%;pointer-events:none;animation:bitSp .8s cubic-bezier(.2,.7,.3,1) forwards}' +
+    '@keyframes bitSp{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}' +
+    '@media(prefers-reduced-motion:reduce){.bit-ic:before,.bit-ic:after,.bit-ic img,.bit-ic.pop{animation:none}.bit-sp{display:none}}';
+  var bst = document.createElement('style'); bst.textContent = bcss; document.head.appendChild(bst);
+  window.MAGNA_BIT = function (size) { var s = document.createElement('span'); s.className = 'bit-ic'; if (size) s.style.setProperty('--bs', typeof size === 'number' ? size + 'px' : size); var i = document.createElement('img'); i.src = 'bits.webp'; i.alt = ''; i.width = i.height = 160; i.decoding = 'async'; s.appendChild(i); s.setAttribute('aria-hidden', 'true'); return s; };
+  window.MAGNA_BIT.burst = function (el, n) { if (!el || !el.getBoundingClientRect) return; var ic = el.classList && el.classList.contains('bit-ic') ? el : el.querySelector && el.querySelector('.bit-ic'); if (ic) { ic.classList.remove('pop'); void ic.offsetWidth; ic.classList.add('pop'); } var r = (ic || el).getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, C = ['#ffd23f', '#ff8a00', '#ff4d1a', '#a855f7', '#fff3b0'];
+    for (var k = 0; k < (n || 14); k++) { var p = document.createElement('i'), a = Math.random() * Math.PI * 2, d = 26 + Math.random() * 46; p.className = 'bit-sp'; p.style.left = (cx - 3) + 'px'; p.style.top = (cy - 3) + 'px'; p.style.background = C[k % C.length]; p.style.boxShadow = '0 0 8px ' + C[k % C.length]; p.style.setProperty('--dx', Math.cos(a) * d + 'px'); p.style.setProperty('--dy', Math.sin(a) * d + 'px'); p.style.animationDelay = (Math.random() * 120) + 'ms'; document.body.appendChild(p); setTimeout(p.remove.bind(p), 1100); } };
   if (!document.querySelector('link[rel~="icon"]')) { var fi = document.createElement('link'); fi.rel = 'icon'; fi.type = 'image/png'; fi.href = 'favicon.png'; document.head.appendChild(fi); var ap = document.createElement('link'); ap.rel = 'apple-touch-icon'; ap.href = 'favicon.png'; document.head.appendChild(ap); }
   var hd = document.createElement('header'); hd.className = 'mn'; hd.dataset.mn = '1';
   var ex = old.querySelector('.coins'); // saldo de Apuestas
@@ -159,7 +177,7 @@
     '.mn-me:hover,.mn-me[aria-expanded="true"]{border-color:#ffd23f;background:rgba(255,210,63,.12)}.mn-me:active{transform:scale(.97)}' +
     '.mn-av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none;font:900 12px/1 Archivo,sans-serif;color:#0a0d18;background:conic-gradient(var(--tc,#ffd23f) calc(var(--pc,0)*1%),rgba(255,255,255,.14) 0);position:relative}' +
     '.mn-av i{position:absolute;inset:3px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#3b4bff);display:grid;place-items:center;color:#fff;font-style:normal}' +
-    '.mn-me .nm{overflow:hidden;text-overflow:ellipsis;max-width:110px}.mn-me .bt{display:inline-flex;align-items:center;gap:5px;color:#ffd23f;font:700 12px "JetBrains Mono",monospace}.mn-me .bt:before{content:"";width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3b0,#ffd23f 45%,#d99a00)}' +
+    '.mn-me .nm{overflow:hidden;text-overflow:ellipsis;max-width:110px}.mn-me .bt{display:inline-flex;align-items:center;gap:6px;color:#ffd23f;font:700 12px "JetBrains Mono",monospace}' +
     '.mn.tight .mn-me .nm,.mn.tight2 .mn-me .nm{display:none}' +
     '@media(max-width:900px){.mn-me .nm{display:none}.mn-me{padding:3px 10px 3px 3px}}@media(max-width:420px){.mn-me .bt{display:none}.mn-me{padding:3px}}' +
     // tarjeta
@@ -192,7 +210,7 @@
   function drawChip() {
     hd.classList.toggle('has-me', !!me); if (!me) { chip.innerHTML = ''; return; }
     var s = stats(); chip.innerHTML = ''; chip.title = 'Tu perfil'; chip.setAttribute('aria-label', 'Tu perfil: ' + me.display_name + ', ' + fmt(me.bits) + ' Bits');
-    chip.appendChild(avatar(s ? s.media : 100, s ? s.tier.color : '#ffd23f')); chip.appendChild(el('span', 'nm', me.display_name)); chip.appendChild(el('span', 'bt', fmt(me.bits))); fitNav();
+    chip.appendChild(avatar(s ? s.media : 100, s ? s.tier.color : '#ffd23f')); chip.appendChild(el('span', 'nm', me.display_name)); var btc = el('span', 'bt'); btc.appendChild(MAGNA_BIT(16)); btc.appendChild(document.createTextNode(fmt(me.bits))); chip.appendChild(btc); fitNav();
   }
   function save(a) { var prevId = me && me.id; me = a ? { id: a.id, display_name: a.display_name, username: a.username, bits: a.bits, player_id: a.player_id, role: a.role, avatar: a.avatar || null } : null; ntfBoot(); try { if (me) localStorage.setItem(ME_KEY, JSON.stringify(me)); else localStorage.removeItem(ME_KEY); } catch (e) {} drawChip(); }
   function client() { return window.MAGNA_SB ? window.MAGNA_SB() : Promise.reject(new Error('sin conexión')); }
@@ -213,7 +231,7 @@
     var tg = el('div', 'mptg'); tg.appendChild(el('span', null, me.role === 'admin' ? 'Administrador' : 'Miembro'));
     if (s) { tg.appendChild(el('span', null, s.role)); if (s.plays) { var tr = el('span', null, s.tier.name); tr.style.cssText = 'border-color:' + s.tier.color + ';color:' + s.tier.color; tg.appendChild(tr); } tg.appendChild(el('span', null, s.dt ? 'DT de ' + s.dt.name : s.t ? s.t.name + (s.p.slot === 'reserve' ? ' · suplente' : '') : 'Agente libre')); }
     tt.appendChild(tg); top.appendChild(tt); box.appendChild(top);
-    var bal = el('div', 'mpbal'), l = el('div'), bn = el('b', null, '0'); l.appendChild(bn); l.appendChild(el('small', null, 'Bits disponibles')); bal.appendChild(l);
+    var bal = el('div', 'mpbal'), l = el('div'), bn = el('b', null, '0'), bwr = el('div'); bwr.style.cssText = 'display:flex;align-items:center;gap:10px'; var bic = MAGNA_BIT(34); bwr.appendChild(bic); bwr.appendChild(bn); l.appendChild(bwr); setTimeout(function () { MAGNA_BIT.burst(bic, 12); }, 260); l.appendChild(el('small', null, 'Bits disponibles')); bal.appendChild(l);
     var rk = el('div', 'mprk'), rb = el('b', null, '—'); rk.appendChild(rb); rk.appendChild(el('small', null, 'Ranking de Bits')); bal.appendChild(rk); box.appendChild(bal); countUp(bn, me.bits);
     if (s && s.plays) {
       var md = el('div', 'mpmd'), ln = el('div', 'mpln'); ln.appendChild(el('span', null, 'Media del jugador')); ln.appendChild(el('b', null, s.media + ' / 100')); md.appendChild(ln); var br = el('div', 'mpbr'), bi = el('i'); bi.style.setProperty('--tc', s.tier.color); br.appendChild(bi); md.appendChild(br); box.appendChild(md);
