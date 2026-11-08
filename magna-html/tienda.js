@@ -119,7 +119,18 @@
     infoEl.textContent = tab === 'excl' ? '🔒 Estos no se compran: se ganan en la cancha. Cuando desbloqueas la insignia, llegan solos a tu inventario.' : tab === 'wish' ? '❤️ Tus deseos se guardan en este dispositivo. Toca el corazón de cualquier cosmético para añadirlo.' : (items.length + (items.length === 1 ? ' cosmético' : ' cosméticos') + (q ? ' para “' + q + '”' : '') + (afford ? ' que te alcanzan' : ''));
     if (!items.length) { var e = h('div', 'tn-emp'); e.appendChild(h('b', null, tab === 'own' ? '🎒 Todavía no tienes cosméticos' : tab === 'wish' ? '♡ Tu lista de deseos está vacía' : '🔎 Nada por aquí')); e.appendChild(h('p', null, tab === 'own' ? '¡Elige el primero!' : tab === 'wish' ? 'Toca el corazón de los que te gusten.' : 'Prueba con otro filtro o búsqueda.'));
       if (q || afford || tab !== 'all') e.appendChild(btn('ghost', 'Ver todo', function () { q = ''; afford = false; tab = 'all'; render(); })); gridEl.appendChild(e); return; }
-    items.forEach(function (it, i) { gridEl.appendChild(card(it, i, W)); });
+    // una fila deslizable por categoría (se dibuja al acercarse a la pantalla: menos trabajo para el celular)
+    var G = [['color', 'Colores de nombre'], ['plate', 'Placas'], ['frame', 'Marcos'], ['title', 'Títulos']];
+    G.forEach(function (g) { var L = items.filter(function (x) { return x.type === g[0]; }); if (!L.length) return;
+      var row = h('div', 'ts-rw'), hd = h('div', 'ts-rwh'), tl = h('h3'); tl.appendChild(h('span', 'i', ICO[g[0]])); tl.appendChild(document.createTextNode(g[1])); tl.appendChild(h('small', null, String(L.length))); hd.appendChild(tl);
+      var tr = h('div', 'ts-row'); tr.setAttribute('role', 'list');
+      var ar = h('div', 'ts-rwa'); ['‹', '›'].forEach(function (a, k) { var b = h('button', null, a); b.type = 'button'; b.setAttribute('aria-label', (k ? 'Siguiente: ' : 'Anterior: ') + g[1]); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.max(240, tr.clientWidth * .85), behavior: 'smooth' }); }; ar.appendChild(b); }); hd.appendChild(ar);
+      var bar = h('div', 'ts-rwp'), bi = h('i'); bar.appendChild(bi);
+      tr.addEventListener('scroll', function () { var m = tr.scrollWidth - tr.clientWidth; bi.style.width = (m > 0 ? Math.max(12, (tr.scrollLeft + tr.clientWidth) / tr.scrollWidth * 100) : 100) + '%'; ar.classList.toggle('st', tr.scrollLeft < 4); ar.classList.toggle('en', tr.scrollLeft > m - 4); }, { passive: true });
+      for (var k = 0; k < Math.min(L.length, 4); k++) tr.appendChild(h('div', 'ts-ph'));
+      row.appendChild(hd); row.appendChild(tr); row.appendChild(bar); gridEl.appendChild(row);
+      function fill() { if (row.dataset.ok) return; row.dataset.ok = '1'; tr.innerHTML = ''; L.forEach(function (it, i) { var c = card(it, i, W); c.setAttribute('role', 'listitem'); tr.appendChild(c); }); tr.dispatchEvent(new Event('scroll')); }
+      if (window.IntersectionObserver) { var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); fill(); } }, { rootMargin: '300px 0px' }); io.observe(row); } else fill(); });
   }
 
   // ---------- lo más usado + tendencia + banner ----------
