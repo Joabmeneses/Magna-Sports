@@ -297,35 +297,94 @@
         if (prev) confirmBox('¿Cambiar el DT de ' + team.name + '?', prev.name + ' deja de ser DT y ' + p.name + ' juega y dirige el equipo.', 'Cambiar DT', go); else go(); }, isDt ? 'o' : ''); db.title = isDt ? 'Quitar como DT' : 'Jugador y DT de su equipo'; w.appendChild(db); }
     return w;
   }
-  function roleSel(p) {
-    var s = h('select', 'in'); s.style.cssText = 'margin:0;padding:6px 10px;min-width:175px'; MAGNA.ROLES.forEach(function (r) { var o = h('option', null, r[1]); o.value = r[0]; s.appendChild(o); }); s.value = MAGNA.roleOf(p);
-    s.onchange = function () { var k = s.value, old = MAGNA.roleOf(p), team = by(S().teams, p.teamId), dt = S().teams.filter(function (t) { return t.coach === p.id; })[0], warn = [];
-      if (k === 'coach' && team) warn.push('Sale de la plantilla de ' + team.name + ' (los "Solo coach" no juegan).');
-      if (k === 'player' && dt) warn.push('Deja de ser DT de ' + dt.name + ' (los "Jugador" no dirigen).');
-      function apply() { p.kind = k; if (k === 'coach' && team) { p.teamId = null; p.slot = null; } if (k === 'player' && dt) dt.coach = null; MAGNA.addNews('role', p.name + ' ahora es ' + MAGNA.roleName(p) + '.'); commit('Rol actualizado: ' + MAGNA.roleName(p)); }
-      if (warn.length) { s.value = old; confirmBox('¿Cambiar el rol de ' + p.name + '?', warn.join(' '), 'Cambiar rol', apply); } else apply(); };
-    return s;
-  }
+  // rol como botones (más rápido que una lista): misma lógica y avisos que antes
+  function roleSeg(p) { var w = h('div', 'pp-role'), cur = MAGNA.roleOf(p);
+    MAGNA.ROLES.forEach(function (r) { var b = h('button', r[0] === cur ? 'on' : '', r[1]); b.type = 'button'; b.setAttribute('aria-pressed', r[0] === cur);
+      b.onclick = function () { var k = r[0]; if (k === cur) return; var team = by(S().teams, p.teamId), dt = S().teams.filter(function (t) { return t.coach === p.id; })[0], warn = [];
+        if (k === 'coach' && team) warn.push('Sale de la plantilla de ' + team.name + ' (los "Solo coach" no juegan).');
+        if (k === 'player' && dt) warn.push('Deja de ser DT de ' + dt.name + ' (los "Jugador" no dirigen).');
+        function apply() { p.kind = k; if (k === 'coach' && team) { p.teamId = null; p.slot = null; } if (k === 'player' && dt) dt.coach = null; MAGNA.addNews('role', p.name + ' ahora es ' + MAGNA.roleName(p) + '.'); commit('Rol actualizado: ' + MAGNA.roleName(p)); }
+        if (warn.length) confirmBox('¿Cambiar el rol de ' + p.name + '?', warn.join(' '), 'Cambiar rol', apply); else apply(); }; w.appendChild(b); });
+    return w; }
+  var PQ = '', PSORT = 'media', PFLAG = '';
+  var PICO = { copy: '<rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" fill="none" stroke="currentColor" stroke-width="2"/>',
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
+    gift: '<rect x="3" y="9" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 .5 6-1.5S14 5 12 9z" fill="none" stroke="currentColor" stroke-width="2"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    trophy: '<path d="M7 4h10v4a5 5 0 01-10 0V4zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 13v4M8 21h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+    user: '<circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6" fill="none" stroke="currentColor" stroke-width="2"/>',
+    open: '<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' };
+  function ibtn(ic, label, fn, cls) { var b = h('button', 'pp-ib ' + (cls || '')); b.type = 'button'; b.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">' + PICO[ic] + '</svg>'; if (label) b.appendChild(h('span', null, label)); b.title = label || ''; b.setAttribute('aria-label', label || ic); b.onclick = fn; return b; }
   function playersV(b) {
-    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('🎁 Regalar Bits', function () { giftDlg(); })); bar.appendChild(btn('Importar jugadores', importDlg)); bar.appendChild(btn('+ Nueva persona', function () {
+    var PS = MAGNA.playerStats(), all = S().players;
+    // resumen arriba
+    var sum = h('div', 'pp-sum'), withAcc = ACCS ? all.filter(function (p) { return accOf(p.id); }).length : null, free = all.filter(function (p) { return MAGNA.plays(p) && !p.teamId; }).length;
+    [[all.length, 'Personas', '#8b5cf6'], [withAcc == null ? '…' : withAcc, 'Con cuenta', '#22d3ee'], [free, 'Agentes libres', '#ffd23f'], [S().teams.filter(function (t) { return t.coach; }).length + '/' + S().teams.length, 'Equipos con DT', '#2ee59d']].forEach(function (x) { var d = h('div'); d.style.setProperty('--c', x[2]); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); sum.appendChild(d); });
+    b.appendChild(sum);
+    // barra: buscar, filtros y acciones
+    var bar = h('div', 'pp-bar'), q = h('label', 'pp-q'); q.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    var qi = h('input'); qi.type = 'search'; qi.placeholder = 'Buscar por nombre, usuario o equipo…'; qi.value = PQ; q.appendChild(qi); bar.appendChild(q);
+    var so = h('select', 'pp-so'); [['media', 'Orden: media'], ['name', 'Orden: nombre'], ['id', 'Orden: ID'], ['team', 'Orden: equipo']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; so.appendChild(o); }); so.value = PSORT; so.onchange = function () { PSORT = so.value; render(); }; bar.appendChild(so);
+    var acts = h('div', 'pp-acts'); acts.appendChild(btn('🎁 Regalar Bits', function () { giftDlg(); })); acts.appendChild(btn('Importar', importDlg));
+    acts.appendChild(btn('+ Nueva persona', function () {
       if (formsApi()) return ADMIN_FORMS.player();
-      ask('Registrar persona', [{ k: 'n', label: 'Nombre en Brawl Stars', maxlength: 24 }, { k: 'k', label: 'Rol', type: 'select', value: 'player', options: MAGNA.ROLES }, { k: 't', label: 'Torneos que ya ganó (opcional, uno por línea; si dice "Mundial" cuenta como Mundial)', type: 'textarea' }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido (2 a 24 caracteres).'; if (S().players.some(function (p) { return nk(p.name) === nk(n); })) return 'Ya existe un jugador con ese nombre.';
-        var p = { id: MAGNA.id(), name: n, teamId: null, slot: null }; if (v.k && v.k !== 'player') p.kind = v.k; var tt = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (tt.length) p.prevTitles = tt; S().players.push(p); commit('Jugador registrado'); MAGNA.cloud.flush(); setTimeout(function () { createAcc(p); }, 500); }, 'Registrar', 'Se crea su ficha y su cuenta con un código de 6 dígitos para entrar y apostar con sus Bits. Rol: Jugador (juega en un equipo), Coach y jugador (juega y puede ser DT) o Solo coach (solo dirige, no ocupa lugar en la plantilla). Los torneos ganados suben el mínimo de su media: +10 cada uno y +15 cada Mundial (hasta 60).'); }, 'o')); b.appendChild(bar);
-    var rf = h('select', 'in'); rf.style.cssText = 'max-width:220px;margin:0'; [['all', 'Todos los roles']].concat(MAGNA.ROLES).forEach(function (r) { var o = h('option', null, r[1]); o.value = r[0]; rf.appendChild(o); }); rf.value = PROLE; rf.onchange = function () { PROLE = rf.value; render(); }; bar.insertBefore(rf, bar.firstChild);
-    var PS = MAGNA.playerStats(); b.appendChild(h('p', 'hint', 'La media va de 10 a 100 y todos empiezan en 10. Sale de los partidos narrados en vivo: ganarle a un equipo fuerte suma mucho y perder con uno más débil resta mucho; la valoración (1 a 10) de cada partido también sube o baja. El nivel de cada equipo se calcula solo con sus resultados. Los títulos aseguran un mínimo: cada liga o torneo ganado sube el piso de la media 10 puntos (el Mundial, 15), hasta 60.'));
+      ask('Registrar persona', [{ k: 'n', label: 'Nombre en Brawl Stars', maxlength: 24 }, { k: 'k', label: 'Rol', type: 'select', value: 'player', options: MAGNA.ROLES }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido (2 a 24 caracteres).'; if (S().players.some(function (p) { return nk(p.name) === nk(n); })) return 'Ya existe un jugador con ese nombre.';
+        var p = { id: MAGNA.id(), name: n, teamId: null, slot: null }; if (v.k && v.k !== 'player') p.kind = v.k; S().players.push(p); commit('Jugador registrado'); MAGNA.cloud.flush(); setTimeout(function () { createAcc(p); }, 500); }, 'Registrar'); }, 'o'));
+    bar.appendChild(acts); b.appendChild(bar);
+    var cnt = function (f) { return all.filter(f).length; };
+    var chips = h('div', 'pp-chips'), F = [['all', 'Todos', function () { return true; }]].concat(MAGNA.ROLES.map(function (r) { return [r[0], r[1], function (p) { return MAGNA.roleOf(p) === r[0]; }]; }));
+    F.forEach(function (f) { var c = h('button', 'pp-ch' + (PROLE === f[0] ? ' on' : '')); c.type = 'button'; c.appendChild(document.createTextNode(f[1])); c.appendChild(h('small', null, String(cnt(f[2])))); c.onclick = function () { PROLE = f[0]; render(); }; chips.appendChild(c); });
+    [['free', 'Sin equipo', function (p) { return MAGNA.plays(p) && !p.teamId; }], ['noacc', 'Sin cuenta', function (p) { return ACCS && !accOf(p.id); }]].forEach(function (f) { var c = h('button', 'pp-ch fl' + (PFLAG === f[0] ? ' on' : '')); c.type = 'button'; c.appendChild(document.createTextNode(f[1])); c.appendChild(h('small', null, String(cnt(f[2])))); c.onclick = function () { PFLAG = PFLAG === f[0] ? '' : f[0]; render(); }; chips.appendChild(c); });
+    b.appendChild(chips);
+    var hl = h('details', 'pp-help'); hl.appendChild(h('summary', null, '¿Cómo se calcula la media?')); hl.appendChild(h('p', null, 'Va de 10 a 100 y todos empiezan en 10. Sale de los partidos narrados en vivo: ganarle a un equipo fuerte suma mucho y perder con uno más débil resta mucho; la nota (1 a 10) de cada partido también sube o baja. Los títulos aseguran un mínimo: cada liga o torneo ganado sube el piso 10 puntos (el Mundial, 15), hasta 60.')); b.appendChild(hl);
     if (ACCS === null) { b.appendChild(M.skel(4)); loadAccs(function () { if (tab === 'jugadores') render(); }); }
-    b.appendChild(table(['ID', 'Nombre', 'Rol', 'Equipo', 'PJ', 'Goles', 'Media', 'Cuenta', 'Bits', ''], S().players.filter(function (p) { return PROLE === 'all' || MAGNA.roleOf(p) === PROLE; }).map(function (p) { var t = by(S().teams, p.teamId), x = PS[p.id] || {}, tr = MAGNA.tierOf(x.media), md = h('span', 'tier', (x.media == null ? '—' : x.media) + ' · ' + tr.name); md.style.setProperty('--c', tr.color);
-      var a = accOf(p.id), ac = h('span', 'acc');
-      if (a) { ac.appendChild(h('code', null, a.username)); var cp = btn('Copiar código', function () { ACCOUNTS.copy('Magna Arena · Usuario: ' + a.username + ' · Código: ' + a.code, cp); }, 'sm'); ac.appendChild(cp); ac.appendChild(btn('Ver', function () { showCode('Cuenta de ' + p.name, a); }, 'sm')); ac.appendChild(btn('🎁', function () { giftDlg([a.id]); }, 'sm')); if (a.locked) { ac.appendChild(h('span', 'lk', 'Bloqueada')); ac.appendChild(btn('Desbloquear', function () { ACCOUNTS.manage('unlock', { id: a.id }).then(function () { toast('Cuenta desbloqueada'); loadAccs(render); }, function (e) { toast(e.message, true); }); }, 'sm')); } }
-      else if (ACCS !== null) ac.appendChild(btn('Crear cuenta', function () { createAcc(p); }, 'sm'));
-      var bits = a ? btn(String(a.bits), function () { ask('Bits de ' + p.name, [{ k: 'b', label: 'Bits disponibles', type: 'number', value: a.bits, min: 0 }], function (v) { var n = Number(v.b); if (!Number.isInteger(n) || n < 0 || n > 1e8) return 'Cantidad no válida.'; return ACCOUNTS.setBits(a.id, n).then(function () { toast('Bits actualizados'); loadAccs(render); }, function (e) { return e.message; }); }); }, 'sm') : '—';
-      var dtOf = S().teams.filter(function (tm) { return tm.coach === p.id; })[0];
-      return ['#' + p.id, h('b', null, p.name), roleSel(p), teamCtl(p), x.pj || 0, x.g || 0, md, ac, bits, [
-      btn('Renombrar', function () { ask('Renombrar', [{ k: 'n', label: 'Nombre', value: p.name, maxlength: 24 }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido.'; if (S().players.some(function (x) { return x.id !== p.id && nk(x.name) === nk(n); })) return 'Ya existe ese nombre.'; p.name = n; commit('Nombre actualizado'); }); }),
-      btn('Historial' + (p.prevTitles && p.prevTitles.length ? ' 🏆' + p.prevTitles.length : '') + (p.prevStats && p.prevStats.mvp ? ' ⭐' + p.prevStats.mvp : ''), function () { titlesDlg(p); }),
-      btn('Eliminar para siempre', function () { confirmBox('¿Eliminar a ' + p.name + ' para siempre?', 'Se borran su ficha' + (a ? ', su cuenta (' + a.username + '), sus Bits y sus apuestas' : '') + '. No se puede deshacer.', 'Eliminar para siempre', function () {
-        if (!a) return wipePlayer(p);
-        ACCOUNTS.manage('delete', { id: a.id }).then(function () { loadAccs(); wipePlayer(p); }, function (e) { toast('No se pudo eliminar la cuenta: ' + e.message, true); }); }); }, 'd')]]; })));
+    var L = all.filter(function (p) { return (PROLE === 'all' || MAGNA.roleOf(p) === PROLE) && (PFLAG !== 'free' || (MAGNA.plays(p) && !p.teamId)) && (PFLAG !== 'noacc' || (ACCS && !accOf(p.id))); });
+    var SO = { media: function (a, c) { return ((PS[c.id] || {}).media || 0) - ((PS[a.id] || {}).media || 0); }, name: function (a, c) { return a.name.localeCompare(c.name); }, id: function (a, c) { return a.id - c.id; }, team: function (a, c) { return MAGNA.teamName(a.teamId || 0).localeCompare(MAGNA.teamName(c.teamId || 0)) || a.name.localeCompare(c.name); } };
+    L.sort(SO[PSORT] || SO.media);
+    var grid = h('div', 'pp-grid'), info = h('p', 'pp-inf'); b.appendChild(info); b.appendChild(grid);
+    L.forEach(function (p, i) { grid.appendChild(pcard(p, PS[p.id] || {}, i)); });
+    function filt() { var k = PQ.trim().toLowerCase(), n = 0; [].forEach.call(grid.children, function (c) { var ok = !k || c.dataset.k.indexOf(k) >= 0; c.hidden = !ok; if (ok) n++; }); info.textContent = n + (n === 1 ? ' persona' : ' personas') + (k ? ' para «' + PQ + '»' : ''); if (!n) { info.textContent = 'Nadie coincide con tu búsqueda o filtros.'; } }
+    qi.oninput = function () { PQ = qi.value; filt(); }; filt();
+  }
+  // tarjeta de una persona
+  function pcard(p, x, i) {
+    var t = by(S().teams, p.teamId), dtOf = S().teams.filter(function (tm) { return tm.coach === p.id; })[0], tr = MAGNA.tierOf(x.media), a = accOf(p.id), role = MAGNA.roleOf(p);
+    var c = h('article', 'pp-c'); c.style.setProperty('--tc', tr.color); c.style.animationDelay = Math.min(i, 12) * 30 + 'ms';
+    c.dataset.k = (p.name + ' ' + (a ? a.username : '') + ' ' + (t ? t.name : '') + ' ' + (dtOf ? dtOf.name : '') + ' #' + p.id).toLowerCase();
+    // cabecera
+    var hd = h('div', 'pp-hd'); hd.appendChild(M.tierAv(p.name, x.media, 52, p.id));
+    var nm = h('div', 'pp-nm'), nb = h('b', null, p.name); nm.appendChild(nb); var sub = h('small'); sub.appendChild(h('span', 'id', '#' + p.id)); sub.appendChild(document.createTextNode(' ' + (t ? t.name + (p.slot === 'reserve' ? ' · suplente' : ' · titular') : dtOf ? 'DT de ' + dtOf.name : role === 'coach' ? 'Sin equipo' : 'Agente libre'))); nm.appendChild(sub); hd.appendChild(nm);
+    var md = h('div', 'pp-md'); md.appendChild(h('b', null, x.media == null ? '—' : String(x.media))); md.appendChild(h('small', null, tr.name)); hd.appendChild(md); c.appendChild(hd);
+    // rol
+    c.appendChild(h('div', 'pp-lb', 'Rol')); c.appendChild(roleSeg(p));
+    // equipo
+    c.appendChild(h('div', 'pp-lb', role === 'coach' ? 'Equipo que dirige' : 'Equipo y puesto')); var tc = teamCtl(p); tc.className = 'pp-team'; tc.removeAttribute('style'); c.appendChild(tc);
+    // números
+    var st = h('div', 'pp-st'); [[x.pj || 0, 'PJ'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length, 'Títulos']].forEach(function (k) { var d = h('div'); d.appendChild(h('b', null, String(k[0]))); d.appendChild(h('small', null, k[1])); st.appendChild(d); }); c.appendChild(st);
+    // cuenta
+    var ac = h('div', 'pp-acc');
+    if (a) { var u = h('div', 'pp-u'); u.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">' + PICO.user + '</svg>'; u.appendChild(h('code', null, a.username)); if (a.locked) u.appendChild(h('span', 'lk', 'Bloqueada')); ac.appendChild(u);
+      var bits = h('button', 'pp-bits'); bits.type = 'button'; bits.title = 'Cambiar Bits'; if (window.MAGNA_BIT) bits.appendChild(MAGNA_BIT(16)); bits.appendChild(h('b', null, String(a.bits).replace(/\B(?=(\d{3})+(?!\d))/g, '.')));
+      bits.onclick = function () { ask('Bits de ' + p.name, [{ k: 'b', label: 'Bits disponibles', type: 'number', value: a.bits, min: 0 }], function (v) { var n = Number(v.b); if (!Number.isInteger(n) || n < 0 || n > 1e8) return 'Cantidad no válida.'; return ACCOUNTS.setBits(a.id, n).then(function () { toast('Bits actualizados'); loadAccs(render); }, function (e) { return e.message; }); }); }; ac.appendChild(bits);
+      var ib = h('div', 'pp-ibs'), cp = ibtn('copy', 'Copiar', function () { ACCOUNTS.copy('Magna Arena · Usuario: ' + a.username + ' · Código: ' + a.code, cp); cp.classList.add('ok'); setTimeout(function () { cp.classList.remove('ok'); }, 1400); });
+      ib.appendChild(cp); ib.appendChild(ibtn('eye', 'Código', function () { showCode('Cuenta de ' + p.name, a); })); ib.appendChild(ibtn('gift', 'Regalar', function () { giftDlg([a.id]); }));
+      if (a.locked) ib.appendChild(ibtn('user', 'Desbloquear', function () { ACCOUNTS.manage('unlock', { id: a.id }).then(function () { toast('Cuenta desbloqueada'); loadAccs(render); }, function (e) { toast(e.message, true); }); }, 'warn'));
+      ac.appendChild(ib); }
+    else if (ACCS !== null) { ac.classList.add('none'); ac.appendChild(h('span', 'pp-no', 'Sin cuenta todavía')); var cb = btn('Crear cuenta', function () { createAcc(p); }, 'o'); ac.appendChild(cb); }
+    else ac.appendChild(h('span', 'pp-no', 'Cargando cuenta…'));
+    c.appendChild(ac);
+    // pie
+    var ft = h('div', 'pp-ft'), hs = (p.prevTitles && p.prevTitles.length ? p.prevTitles.length : 0);
+    ft.appendChild(ibtn('edit', 'Renombrar', function () { ask('Renombrar', [{ k: 'n', label: 'Nombre', value: p.name, maxlength: 24 }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido.'; if (S().players.some(function (y) { return y.id !== p.id && nk(y.name) === nk(n); })) return 'Ya existe ese nombre.'; p.name = n; commit('Nombre actualizado'); }); }));
+    ft.appendChild(ibtn('trophy', 'Historial' + (hs ? ' · ' + hs : ''), function () { titlesDlg(p); }));
+    var pr = ibtn('open', '', function () { window.open(M.profileUrl(p.id), '_blank'); }); pr.title = 'Ver su perfil'; pr.setAttribute('aria-label', 'Ver el perfil de ' + p.name); ft.appendChild(pr);
+    ft.appendChild(h('span', 'sp'));
+    ft.appendChild(ibtn('trash', '', function () { confirmBox('¿Eliminar a ' + p.name + ' para siempre?', 'Se borran su ficha' + (a ? ', su cuenta (' + a.username + '), sus Bits y sus apuestas' : '') + '. No se puede deshacer.', 'Eliminar para siempre', function () {
+      if (!a) return wipePlayer(p);
+      ACCOUNTS.manage('delete', { id: a.id }).then(function () { loadAccs(); wipePlayer(p); }, function (e) { toast('No se pudo eliminar la cuenta: ' + e.message, true); }); }); }, 'del'));
+    ft.lastChild.title = 'Eliminar para siempre'; ft.lastChild.setAttribute('aria-label', 'Eliminar a ' + p.name);
+    c.appendChild(ft); return c;
   }
   // ---------- historial: torneos jugados antes del sitio ----------
   // Partidos: una línea por partido. "Galaxy 3-1 Realty", o columnas Local / Goles / Goles / Visitante (opcional Fecha al inicio).

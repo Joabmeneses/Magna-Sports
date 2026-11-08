@@ -52,7 +52,7 @@
     var cnt = {}; L.forEach(function (b) { var k = b.winner != null ? 'p' + b.winner : 'n' + String(MAGNA.ballonWho(b, 'winner') || '').toLowerCase(); if (!cnt[k]) cnt[k] = { n: 0, name: MAGNA.ballonWho(b, 'winner'), pid: b.winner, eds: [] }; cnt[k].n++; cnt[k].eds.push(b.ed); });
     var top = Object.keys(cnt).map(function (k) { return cnt[k]; }).filter(function (x) { return x.name; }).sort(function (a, b) { return b.n - a.n || a.name.localeCompare(b.name); });
     if (top.length) { var sm = h('section', 'sec'); sm.appendChild(h('h2', 'x', 'Más ganadores')); var mg = h('div', 'most');
-      top.slice(0, 12).forEach(function (x) { var m = h('div', 'mo'); m.appendChild(av(x.name, x.pid, 44)); var d = h('div'), xb = h('b'); xb.appendChild(x.pid != null && by(S().players, x.pid) ? M.pn(x.name, x.pid) : M.pn(x.name)); d.appendChild(xb); d.appendChild(h('small', null, 'Ediciones ' + x.eds.join(', '))); m.appendChild(d); m.appendChild(h('span', 'n', '🏆 ' + x.n)); mg.appendChild(m); });
+      top.slice(0, 12).forEach(function (x) { var m = h('div', 'mo'); m.appendChild(av(x.name, x.pid, 44)); var d = h('div'), xb = h('b'); xb.appendChild(x.pid != null && by(S().players, x.pid) ? M.pn(x.name, x.pid) : M.pn(x.name)); d.appendChild(xb); d.appendChild(h('small', null, 'Ediciones ' + x.eds.join(', '))); m.appendChild(d); m.appendChild(h('span', 'n', '🏆 ' + x.n)); if (x.pid != null && by(S().players, x.pid) && window.MAGNA_COS) { m.dataset.plh = x.pid; MAGNA_COS.host(m); } mg.appendChild(m); });
       sm.appendChild(mg); root.appendChild(sm); }
   }
   function vote(id, pid, name) { if (busy) return; busy = true; render();
