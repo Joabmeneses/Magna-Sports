@@ -312,3 +312,5 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { refresh(); loadNtf(); } });
   setInterval(function () { if (!document.hidden) refresh(); }, 60000);
 })();
+// App instalable y avisos de partidos (no en el panel de administración)
+(function () { if (/admin(\.html)?$/.test(location.pathname)) return; var s = document.createElement('script'); s.src = 'pwa.js'; s.async = true; document.head.appendChild(s); })();
