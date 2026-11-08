@@ -68,16 +68,39 @@
         close(); commit('Puntos de ranking guardados'); }, 'o')); b.appendChild(rr);
     });
   }
+  var TQ = '', TSORT = 'pts', TFL = '';
   function teamsV(b) {
-    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('Cargar puntos de ranking', basePtsDlg)); bar.appendChild(btn('+ Nuevo equipo', function () {
+    var T = S().teams, PT = MAGNA.teamPoints(), PSx = MAGNA.playerStats(), sq = function (t) { return S().players.filter(function (p) { return p.teamId === t.id; }); };
+    var noDt = T.filter(function (t) { return !t.coach; }).length, inc = T.filter(function (t) { return sq(t).length < 4; }).length, troT = T.reduce(function (n, t) { return n + MAGNA.teamTrophies(t.id).length; }, 0);
+    ppSum(b, [[T.length, 'Equipos', '#8b5cf6'], [T.length - noDt + '/' + T.length, 'Con DT', '#2ee59d', function () { TFL = TFL === 'nodt' ? '' : 'nodt'; render(); }, TFL === 'nodt'], [inc, 'Plantillas incompletas', '#ffd23f', function () { TFL = TFL === 'inc' ? '' : 'inc'; render(); }, TFL === 'inc'], [troT, 'Trofeos repartidos', '#ff9a1f']]);
+    var bar = h('div', 'pp-bar'); bar.appendChild(ppSearch('Buscar equipo o DT…', TQ, function (v) { TQ = v; filt(); }));
+    var so = h('select', 'pp-so'); [['pts', 'Orden: ranking'], ['name', 'Orden: nombre'], ['tro', 'Orden: trofeos'], ['sq', 'Orden: plantilla']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; so.appendChild(o); }); so.value = TSORT; so.onchange = function () { TSORT = so.value; render(); }; bar.appendChild(so);
+    var acts = h('div', 'pp-acts'); acts.appendChild(btn('Cargar puntos de ranking', basePtsDlg)); acts.appendChild(btn('+ Nuevo equipo', function () {
       if (formsApi()) return ADMIN_FORMS.team();
       ask('Nuevo equipo', [{ k: 'n', label: 'Nombre', maxlength: 30 }, { k: 'i', label: 'Descripción (opcional)', type: 'textarea' }, { k: 'f', label: 'Foto o escudo (opcional; se reduce sola)', type: 'file' }], function (v) {
         var n = okName(v.n, 2, 30); if (!n) return 'Nombre no válido (2 a 30 caracteres).'; if (S().teams.some(function (t) { return nk(t.name) === nk(n); })) return 'Ya existe un equipo con ese nombre.';
         return readImg(v.f).then(function (img) { var e = imgErr(img); if (e) return e;
           var t = { id: MAGNA.id(), name: n, info: (v.i || '').slice(0, 300), crest: img || null, budget: 0, coach: null }; S().teams.push(t); MAGNA.addNews('team_created', 'Nace un nuevo equipo: ' + n + '.'); commit('Equipo creado'); }); }, 'Crear');
-    }, 'o')); b.appendChild(bar);
-    b.appendChild(table(['Equipo', 'DT', 'Plantilla', 'Trofeos', 'Bits', ''], S().teams.map(function (t) { var c = by(S().players, t.coach), n = S().players.filter(function (p) { return p.teamId === t.id; }).length;
-      return [[M.crest(t.id, t.name, 34), ' ', h('b', null, t.name)], c ? c.name : 'por asignar', n + '/4', String(MAGNA.teamTrophies(t.id).length), t.budget, [btn('Plantilla', function () { squadDlg(t.id); }), btn('Trofeos', function () { trophyDlg(t.id); }), btn('Página ↗', function () { window.open('equipo.html?id=' + t.id, '_blank'); }), btn('🖼️ Banner', function () { bannerDlg(t); }), btn('Editar', function () { editTeam(t); }), btn('Eliminar', function () { delTeam(t); }, 'd')]]; })));
+    }, 'o')); bar.appendChild(acts); b.appendChild(bar);
+    b.appendChild(ppChips([['', 'Todos', T.length], ['nodt', 'Sin DT', noDt, '#ff6b74'], ['inc', 'Plantilla incompleta', inc, '#ffd23f']], TFL, function (k) { TFL = k; render(); }));
+    var info = h('p', 'pp-inf'); b.appendChild(info);
+    var rk = T.slice().sort(function (x, y) { return ((PT[y.id] || {}).pts || 0) - ((PT[x.id] || {}).pts || 0); }).map(function (x) { return x.id; });
+    var list = T.slice().sort(function (x, y) { return TSORT === 'name' ? x.name.localeCompare(y.name) : TSORT === 'tro' ? MAGNA.teamTrophies(y.id).length - MAGNA.teamTrophies(x.id).length : TSORT === 'sq' ? sq(y).length - sq(x).length : rk.indexOf(x.id) - rk.indexOf(y.id); });
+    var grid = h('div', 'pp-grid tm-grid'), cards = [];
+    list.forEach(function (t, i) {
+      var c = by(S().players, t.coach), pl = sq(t), tro = MAGNA.teamTrophies(t.id).length, tc = MAGNA.teamColor(t.id), pos = rk.indexOf(t.id) + 1;
+      var cd = h('div', 'pp-c tm-c'); cd.style.setProperty('--tc', tc); cd.style.animationDelay = Math.min(i, 12) * 30 + 'ms';
+      var hd = h('div', 'tm-hd'); hd.appendChild(h('span', 'tm-wm', t.name)); hd.appendChild(M.crest(t.id, t.name, 58)); var nm = h('div', 'pp-nm'); nm.appendChild(h('b', null, t.name));
+      nm.appendChild(c ? h('small', null, 'DT: ' + c.name) : h('small', 'tm-warn', '⚠ Sin DT asignado')); hd.appendChild(nm);
+      var rkb = h('div', 'tm-rk'); rkb.appendChild(h('b', null, '#' + pos)); rkb.appendChild(h('small', null, String((PT[t.id] || {}).pts || 0).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' pts')); hd.appendChild(rkb); cd.appendChild(hd);
+      var sl = h('div', 'tm-sq'); for (var k = 0; k < 4; k++) { var p = pl[k], d = h('span', 'tm-sl' + (p ? ' on' : '')); if (p) { d.appendChild(M.tierAv(p.name, (PSx[p.id] || {}).media == null ? 10 : PSx[p.id].media, 26, p.id)); d.appendChild(h('em', null, p.name)); d.title = p.name; } else d.appendChild(h('em', null, 'Libre')); sl.appendChild(d); } cd.appendChild(sl);
+      var st = h('div', 'pp-st'); [[pl.length + '/4', 'Plantilla'], [tro, 'Trofeos'], [t.budget || 0, 'Bits'], [t.level ? ((MAGNA.TIERS[MAGNA.tierRank(t.level)] || [])[1] || t.level) : '—', 'Fichajes']].forEach(function (x) { var dd = h('div'); dd.appendChild(h('b', null, String(x[0]))); dd.appendChild(h('small', null, x[1])); st.appendChild(dd); }); cd.appendChild(st);
+      var ft = h('div', 'pp-ft tm-ft'); ft.appendChild(ibtn('users', 'Plantilla', function () { squadDlg(t.id); })); ft.appendChild(ibtn('trophy', 'Trofeos', function () { trophyDlg(t.id); })); ft.appendChild(ibtn('img', 'Banner', function () { bannerDlg(t); })); ft.appendChild(ibtn('edit', 'Editar', function () { editTeam(t); }));
+      ft.appendChild(h('span', 'sp')); ft.appendChild(ibtn('open', null, function () { window.open('equipo.html?id=' + t.id, '_blank'); })); ft.lastChild.title = 'Ver página'; ft.lastChild.setAttribute('aria-label', 'Ver página de ' + t.name); ft.appendChild(ibtn('trash', null, function () { delTeam(t); }, 'del')); ft.lastChild.title = 'Eliminar equipo'; cd.appendChild(ft);
+      cd._k = nk(t.name + ' ' + (c ? c.name : '')); cd._f = { nodt: !t.coach, inc: pl.length < 4 }; cards.push(cd); grid.appendChild(cd); });
+    b.appendChild(grid);
+    function filt() { var q = nk(TQ), n = 0; cards.forEach(function (cd) { var on = (!q || cd._k.indexOf(q) >= 0) && (!TFL || cd._f[TFL]); cd.hidden = !on; if (on) n++; }); info.textContent = n === cards.length ? n + ' equipos' : 'Mostrando ' + n + ' de ' + cards.length + ' equipos'; }
+    filt();
   }
   // ---------- trofeos (palmarés) ----------
   function trophyDlg(tid) {
@@ -314,7 +337,22 @@
     trophy: '<path d="M7 4h10v4a5 5 0 01-10 0V4zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4M12 13v4M8 21h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
     trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
     user: '<circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6" fill="none" stroke="currentColor" stroke-width="2"/>',
-    open: '<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' };
+    open: '<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    score: '<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 5v14M7 10v4M15.5 10h2v4h-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    sets: '<path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="19" cy="18" r="2" fill="currentColor"/>',
+    img: '<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 16l5-5 4 4 3-3 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="9" r="1.6" fill="currentColor"/>',
+    play: '<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>',
+    ban: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 6l12 12" stroke="currentColor" stroke-width="2"/>',
+    undo: '<path d="M9 7H5V3M5 7a8 8 0 11-1 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    users: '<circle cx="9" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 20c.7-3.5 3-5 6-5s5.3 1.5 6 5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="9" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 14c2.2 0 3.6 1.2 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>',
+    gear: '<circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    plus: '<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>' };
+  function ppSum(b, rows) { var sum = h('div', 'pp-sum'); rows.forEach(function (x) { var d = h(x[3] ? 'button' : 'div', x[4] ? 'on' : null); if (x[3]) { d.type = 'button'; d.onclick = x[3]; } d.style.setProperty('--c', x[2]); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); sum.appendChild(d); }); b.appendChild(sum); return sum; }
+  function ppSearch(ph, val, on) { var q = h('label', 'pp-q'); q.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'; var qi = h('input'); qi.type = 'search'; qi.placeholder = ph; qi.value = val || ''; qi.oninput = function () { on(qi.value); }; q.appendChild(qi); return q; }
+  function ppChips(list, cur, on) { var w = h('div', 'pp-chips'); list.forEach(function (x) { var c = h('button', 'pp-ch' + (x[0] === cur ? ' on' : '')); c.type = 'button'; if (x[3]) c.style.setProperty('--cc', x[3]); c.appendChild(document.createTextNode(x[1])); if (x[2] != null) c.appendChild(h('small', null, String(x[2]))); c.onclick = function () { on(x[0]); }; w.appendChild(c); }); return w; }
+  function stack(ids, n) { var w = h('div', 'cx-stack'); ids.slice(0, n || 6).forEach(function (id) { w.appendChild(M.crest(id, MAGNA.teamName(id), 30)); }); if (ids.length > (n || 6)) w.appendChild(h('span', 'more', '+' + (ids.length - (n || 6)))); return w; }
   function ibtn(ic, label, fn, cls) { var b = h('button', 'pp-ib ' + (cls || '')); b.type = 'button'; b.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">' + PICO[ic] + '</svg>'; if (label) b.appendChild(h('span', null, label)); b.title = label || ''; b.setAttribute('aria-label', label || ic); b.onclick = fn; return b; }
   function playersV(b) {
     var PS = MAGNA.playerStats(), all = S().players;
@@ -451,16 +489,53 @@
     b.appendChild(box);
   }
   (function () { var st = document.createElement('style'); st.textContent = '.frq{border:1px solid rgba(255,210,63,.45);background:linear-gradient(135deg,rgba(255,210,63,.12),rgba(255,90,54,.08));border-radius:22px;padding:16px 18px;margin:0 0 18px}.frq h2{margin:0 0 4px}.frq-r{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.frq-r>div:first-child{min-width:0;flex:1 1 240px}.frq-r b{display:block;font-size:16px}.frq-r small{color:var(--muted);font-size:13px}.frq-n{margin:6px 0 0;font-style:italic;color:#d9dcf0;font-size:14px}.frq-a{display:flex;gap:8px;flex-wrap:wrap}'; document.head.appendChild(st); })();
+  var MST = 'up', MQ = '', MMORE = {};
   function matchesV(b) {
     reqCard(b);
     var comps = S().leagues.map(function (c) { return ['league:' + c.id, 'Liga · ' + c.name]; }).concat(S().tournaments.map(function (c) { return ['tournament:' + c.id, 'Torneo · ' + c.name]; })).concat([['friendly:0', 'Amistosos']]);
-    var bar = h('div', 'bar2'), sel = h('select', 'in'); sel.style.maxWidth = '320px'; [['', 'Todas las competiciones']].concat(comps).forEach(function (o) { var op = h('option', null, o[1]); op.value = o[0]; if (o[0] === MF) op.selected = true; sel.appendChild(op); }); sel.onchange = function () { MF = sel.value; render(); };
-    bar.appendChild(sel); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Programar partido', function () { matchDlg(null); }, 'o')); b.appendChild(bar);
-    var ms = S().matches.filter(function (m) { return !MF || (m.type + ':' + m.cid) === MF; }).sort(function (a, c) { return String(a.at || '9').localeCompare(String(c.at || '9')); });
-    b.appendChild(table(['Competición', 'Ronda', 'Partido', 'Fecha', 'Estado', ''], ms.map(function (m) { var c = MAGNA.compOf(m);
-      return [c ? c.name : '—', m.round, MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), m.at ? new Date(m.at.replace(' ', 'T') + 'Z').toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha',
-        m.status === 'finished' ? m.hs + ' - ' + m.as : m.status === 'live' ? 'En vivo' : m.status === 'cancelled' ? 'Cancelado' : 'Programado',
-        m.status === 'cancelled' ? [] : [btn('Resultado', function () { resultDlg(m); }), btn('Fecha', function () { matchDlg(m); }), btn('Sets' + (m.sets && m.sets.length ? ' (' + m.sets.length + ')' : ''), function () { setsDlg(m); }), m.status === 'finished' ? btn('📸 Imagen', function () { shareDlg(m); }) : '', (m.status !== 'finished' || m.live) ? btn(m.status === 'live' ? '● Consola en vivo' : m.status === 'scheduled' ? '▶ En vivo' : 'Minuto a minuto', function () { LIVE = m.id; go('vivo'); }, m.status === 'live' ? 'o' : '') : '', btn('Cancelar', function () { confirmBox('¿Cancelar el partido?', MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), 'Cancelar partido', function () { m.status = 'cancelled'; commit('Partido cancelado'); }); }, 'd')]]; })));
+    var base = S().matches.filter(function (m) { return !MF || (m.type + ':' + m.cid) === MF; }), cnt = { live: 0, scheduled: 0, finished: 0, cancelled: 0 }, nod = 0;
+    base.forEach(function (m) { cnt[m.status] = (cnt[m.status] || 0) + 1; if (m.status === 'scheduled' && !m.at) nod++; });
+    var stf = function (k) { return function () { MST = MST === k ? 'all' : k; render(); }; };
+    ppSum(b, [[cnt.live, 'En vivo', '#ff3b47', stf('live'), MST === 'live'], [cnt.scheduled, 'Próximos', '#22d3ee', stf('up'), MST === 'up'], [cnt.finished, 'Terminados', '#2ee59d', stf('fin'), MST === 'fin'], [nod, 'Sin fecha', '#ffd23f', stf('nod'), MST === 'nod']]);
+    var bar = h('div', 'pp-bar'); bar.appendChild(ppSearch('Buscar equipo…', MQ, function (v) { MQ = v; filt(); }));
+    var sel = h('select', 'pp-so'); [['', 'Todas las competiciones']].concat(comps).forEach(function (o) { var op = h('option', null, o[1]); op.value = o[0]; if (o[0] === MF) op.selected = true; sel.appendChild(op); }); sel.onchange = function () { MF = sel.value; render(); }; bar.appendChild(sel);
+    var acts = h('div', 'pp-acts'); acts.appendChild(btn('+ Programar partido', function () { matchDlg(null); }, 'o')); bar.appendChild(acts); b.appendChild(bar);
+    b.appendChild(ppChips([['all', 'Todos', base.length], ['live', '● En vivo', cnt.live, '#ff3b47'], ['up', 'Próximos', cnt.scheduled, '#22d3ee'], ['nod', 'Sin fecha', nod, '#ffd23f'], ['fin', 'Terminados', cnt.finished, '#2ee59d'], ['can', 'Cancelados', cnt.cancelled, '#8c8c9c']], MST, function (k) { MST = k; render(); }));
+    var info = h('p', 'pp-inf'); b.appendChild(info);
+    var T = function (m) { return m.at ? new Date(m.at.replace(' ', 'T') + 'Z').getTime() : Infinity; }, now = Date.now();
+    var groups = [['live', '● En vivo', function (m) { return m.status === 'live'; }, function (a, c) { return T(a) - T(c); }], ['up', 'Próximos', function (m) { return m.status === 'scheduled' && m.at; }, function (a, c) { return T(a) - T(c); }], ['nod', 'Sin fecha', function (m) { return m.status === 'scheduled' && !m.at; }, function (a, c) { return a.id - c.id; }], ['fin', 'Terminados', function (m) { return m.status === 'finished'; }, function (a, c) { return String(c.ended || c.at || '').localeCompare(String(a.ended || a.at || '')); }], ['can', 'Cancelados', function (m) { return m.status === 'cancelled'; }, function (a, c) { return T(c) - T(a); }]];
+    var show = MST === 'all' ? groups : groups.filter(function (g) { return g[0] === MST || (MST === 'up' && g[0] === 'live'); }), cards = [];
+    function rel(m) { var d = T(m) - now; if (!isFinite(d)) return ''; var a = Math.abs(d), u = a < 3600e3 ? Math.round(a / 60e3) + ' min' : a < 864e5 ? Math.round(a / 3600e3) + ' h' : Math.round(a / 864e5) + ' d'; return d > 0 ? 'en ' + u : 'hace ' + u; }
+    function card(m, i) { var c = MAGNA.compOf(m), cc = m.type === 'friendly' ? '#ff8a3d' : m.type === 'league' ? '#8b5cf6' : (c && c.format === 'champions') ? '#22d3ee' : (c && c.format === 'groups_knockout') ? '#2ee59d' : '#ffd23f';
+      var cd = h('div', 'mc mc-' + m.status); cd.style.setProperty('--cc', cc); cd.style.setProperty('--hc', MAGNA.teamColor(m.home)); cd.style.setProperty('--ac', MAGNA.teamColor(m.away)); cd.style.animationDelay = Math.min(i, 14) * 25 + 'ms';
+      var tp = h('div', 'mc-tp'); tp.appendChild(h('span', 'mc-cp', c ? c.name : 'Amistoso')); if (m.round && m.round !== 'Amistoso') tp.appendChild(h('span', 'mc-rd', m.round)); tp.appendChild(h('span', 'sp'));
+      var late = m.status === 'scheduled' && T(m) < now; tp.appendChild(h('span', 'mc-st' + (late ? ' late' : ''), m.status === 'live' ? 'EN VIVO' : m.status === 'finished' ? 'FINAL' : m.status === 'cancelled' ? 'CANCELADO' : m.at ? (late ? '⚠ Atrasado · ' : '') + rel(m) : 'SIN FECHA')); cd.appendChild(tp);
+      var vs = h('div', 'mc-vs'); [m.home, null, m.away].forEach(function (tid, k) {
+        if (tid == null) { var mid = h('div', 'mc-mid'); if (m.status === 'finished' || m.status === 'live') { var sc = h('b', 'mc-sc'); sc.appendChild(h('span', m.hs > m.as ? 'w' : null, String(m.hs || 0))); sc.appendChild(h('i')); sc.appendChild(h('span', m.as > m.hs ? 'w' : null, String(m.as || 0))); mid.appendChild(sc); } else mid.appendChild(h('b', 'mc-vsx', 'VS'));
+          mid.appendChild(h('small', null, m.at ? new Date(m.at.replace(' ', 'T') + 'Z').toLocaleString('es', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Elige una fecha')); vs.appendChild(mid); return; }
+        var tm = h('div', 'mc-t' + (k ? ' a' : '')), won = m.status === 'finished' && (k ? m.as > m.hs : m.hs > m.as); if (won) tm.classList.add('won'); tm.appendChild(M.crest(tid, MAGNA.teamName(tid), 44)); tm.appendChild(h('b', null, MAGNA.teamName(tid))); vs.appendChild(tm); });
+      cd.appendChild(vs);
+      var ft = h('div', 'mc-ft');
+      if (m.status === 'cancelled') { ft.appendChild(ibtn('undo', 'Reactivar', function () { confirmBox('¿Reactivar el partido?', MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) + ' vuelve a estar programado.', 'Reactivar', function () { m.status = 'scheduled'; commit('Partido reactivado'); }); })); }
+      else {
+        if (m.status !== 'finished' || m.live) { var lv = ibtn('play', m.status === 'live' ? 'Consola en vivo' : m.status === 'scheduled' ? 'Narrar en vivo' : 'Minuto a minuto', function () { LIVE = m.id; go('vivo'); }, 'go' + (m.status === 'live' ? ' hot' : '')); ft.appendChild(lv); }
+        ft.appendChild(ibtn('score', 'Resultado', function () { resultDlg(m); }));
+        ft.appendChild(ibtn('cal', m.at ? 'Fecha' : 'Poner fecha', function () { matchDlg(m); }, m.at ? '' : 'warn'));
+        ft.appendChild(ibtn('sets', 'Sets' + (m.sets && m.sets.length ? ' · ' + m.sets.length : ''), function () { setsDlg(m); }));
+        if (m.status === 'finished') ft.appendChild(ibtn('img', 'Imagen', function () { shareDlg(m); }));
+        ft.appendChild(h('span', 'sp'));
+        if (m.status !== 'finished') { var cx = ibtn('ban', null, function () { confirmBox('¿Cancelar el partido?', MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), 'Cancelar partido', function () { m.status = 'cancelled'; commit('Partido cancelado'); }); }, 'del'); cx.title = 'Cancelar partido'; cx.setAttribute('aria-label', 'Cancelar partido'); ft.appendChild(cx); } }
+      cd.appendChild(ft); cd._k = nk(MAGNA.teamName(m.home) + ' ' + MAGNA.teamName(m.away) + ' ' + (c ? c.name : 'amistoso') + ' ' + (m.round || '')); return cd; }
+    var wrap = h('div', 'mc-wrap'), total = 0;
+    show.forEach(function (g) { var L = base.filter(g[2]).sort(g[3]); if (!L.length) return; total += L.length;
+      var sec = h('div', 'mc-sec mc-s-' + g[0]), hd = h('h3', 'mc-h'); hd.appendChild(document.createTextNode(g[1])); hd.appendChild(h('small', null, String(L.length))); sec.appendChild(hd);
+      var grid = h('div', 'mc-grid'), lim = MMORE[g[0]] || 24; L.slice(0, lim).forEach(function (m, i) { var cd = card(m, i); cards.push(cd); grid.appendChild(cd); }); sec.appendChild(grid);
+      if (L.length > lim) { var more = btn('Ver ' + Math.min(24, L.length - lim) + ' más (' + (L.length - lim) + ' restantes)', function () { MMORE[g[0]] = lim + 24; render(); }); more.classList.add('mc-more'); sec.appendChild(more); }
+      wrap.appendChild(sec); });
+    if (!total) { var em = h('div', 'mc-empty'); em.appendChild(h('b', null, MST === 'live' ? 'Ningún partido en juego ahora mismo' : 'No hay partidos aquí')); em.appendChild(h('small', null, 'Cambia el filtro o programa uno nuevo.')); em.appendChild(btn('+ Programar partido', function () { matchDlg(null); }, 'o')); wrap.appendChild(em); }
+    b.appendChild(wrap);
+    function filt() { var q = nk(MQ), n = 0; cards.forEach(function (cd) { var on = !q || cd._k.indexOf(q) >= 0; cd.hidden = !on; if (on) n++; }); [].forEach.call(wrap.querySelectorAll('.mc-sec'), function (sx) { sx.hidden = !sx.querySelector('.mc:not([hidden])'); }); info.textContent = q ? n + ' partido' + (n === 1 ? '' : 's') + ' con «' + MQ + '»' : ''; }
+    filt();
   }
   function conflict(m, at, home, away, round) {
     if (at) { var t0 = new Date(at.replace(' ', 'T') + 'Z').getTime(); var c = S().matches.filter(function (x) { return x.id !== m.id && x.status !== 'cancelled' && x.at && [home, away].some(function (t) { return x.home === t || x.away === t; }) && Math.abs(new Date(x.at.replace(' ', 'T') + 'Z').getTime() - t0) < 60 * 60000; })[0];
@@ -625,10 +700,10 @@
   function go(t) { tab = t; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   window.ADMIN_GO = go;
   // ---------- secciones que se cargan al abrirlas (admin-<módulo>.js): el panel abre más rápido ----------
-  var MODDEF = {}, MODS = {}, MODV = '2611080345', MODOF = { vivo: 'live', ligas: 'comp', torneos: 'comp', balon: 'balon', historial: 'hist', economia: 'econ', datos: 'data', eventos: 'events', tienda: 'shop' };
+  var MODDEF = {}, MODS = {}, MODV = '2611080500', MODOF = { vivo: 'live', ligas: 'comp', torneos: 'comp', balon: 'balon', historial: 'hist', economia: 'econ', datos: 'data', eventos: 'events', tienda: 'shop' };
   window.ADMIN_MOD = function (n, f) { MODDEF[n] = f; };
   var $ = {}; Object.defineProperties($, { ACCS: { get: function () { return ACCS; }, set: function (v) { ACCS = v; } }, BKK: { get: function () { return BKK; }, set: function (v) { BKK = v; } }, EVC: { get: function () { return EVC; }, set: function (v) { EVC = v; } }, EVK: { get: function () { return EVK; }, set: function (v) { EVK = v; } }, INV: { get: function () { return INV; }, set: function (v) { INV = v; } }, LIVE: { get: function () { return LIVE; }, set: function (v) { LIVE = v; } }, MF: { get: function () { return MF; }, set: function (v) { MF = v; } }, NEXT: { get: function () { return NEXT; }, set: function (v) { NEXT = v; } }, ST: { get: function () { return ST; }, set: function (v) { ST = v; } }, TF: { get: function () { return TF; }, set: function (v) { TF = v; } }, TICK: { get: function () { return TICK; }, set: function (v) { TICK = v; } }, UNDO: { get: function () { return UNDO; }, set: function (v) { UNDO = v; } }, exBusy: { get: function () { return exBusy; }, set: function (v) { exBusy = v; } }, tab: { get: function () { return tab; }, set: function (v) { tab = v; } } });
-  function modApi() { return { $: $, S: S, ask: ask, banner: banner, btn: btn, by: by, closesDlg: closesDlg, commit: commit, compName: compName, confirmBox: confirmBox, dialog: dialog, evRpc: evRpc, fdate: fdate, go: go, h: h, loadAccs: loadAccs, nk: nk, okName: okName, render: render, rr: rr, setsDlg: setsDlg, shareDlg: shareDlg, showCode: showCode, table: table, toLocal: toLocal, toUtc: toUtc, toast: toast }; }
+  function modApi() { return { $: $, S: S, ibtn: ibtn, ppSum: ppSum, ppChips: ppChips, ppSearch: ppSearch, stack: stack, ask: ask, banner: banner, btn: btn, by: by, closesDlg: closesDlg, commit: commit, compName: compName, confirmBox: confirmBox, dialog: dialog, evRpc: evRpc, fdate: fdate, go: go, h: h, loadAccs: loadAccs, nk: nk, okName: okName, render: render, rr: rr, setsDlg: setsDlg, shareDlg: shareDlg, showCode: showCode, table: table, toLocal: toLocal, toUtc: toUtc, toast: toast }; }
   function modLoad(n) { if (MODS[n]) return MODS[n];
     MODS[n] = new Promise(function (ok, ko) { var sc = document.createElement('script'); sc.src = 'admin-' + n + '.js?v=' + MODV; sc.async = true;
       sc.onload = function () { if (!MODDEF[n]) { delete MODS[n]; return ko(new Error('módulo vacío')); } try { ok(MODDEF[n](modApi())); } catch (e) { delete MODS[n]; ko(e); } };

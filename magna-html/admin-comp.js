@@ -1,7 +1,7 @@
 'use strict';
 // Panel de administración · módulo «comp»: se descarga solo al abrir su sección (lo carga admin.js).
 ADMIN_MOD('comp', function (A) {
-  var $ = A.$, S = A.S, ask = A.ask, banner = A.banner, btn = A.btn, by = A.by, commit = A.commit, confirmBox = A.confirmBox, dialog = A.dialog, evRpc = A.evRpc, go = A.go, h = A.h, nk = A.nk, okName = A.okName, render = A.render, rr = A.rr, table = A.table, toast = A.toast;
+  var $ = A.$, ibtn = A.ibtn, ppSum = A.ppSum, stack = A.stack, S = A.S, ask = A.ask, banner = A.banner, btn = A.btn, by = A.by, commit = A.commit, confirmBox = A.confirmBox, dialog = A.dialog, evRpc = A.evRpc, go = A.go, h = A.h, nk = A.nk, okName = A.okName, render = A.render, rr = A.rr, table = A.table, toast = A.toast;
   function predDlg(c) {
     dialog('🔮 Predicciones · ' + c.name, function (b, close) {
       b.appendChild(h('p', 'sub', 'Puntos: campeón +' + PRED.CHAMP + ', play-off +1, octavos +2, cuartos +3, semis +4, final +6. Los premios se entregan como regalo de Bits con notificación.'));
@@ -24,11 +24,34 @@ ADMIN_MOD('comp', function (A) {
     });
   }
   function compV(b, kind) {
-    var L = kind === 'leagues', list = S()[kind], word = L ? 'liga' : 'torneo';
-    var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('+ Crear ' + word, function () { L ? newComp(kind) : newTour(); }, 'o')); b.appendChild(bar);
-    if (!L) { if (!list.length) b.appendChild(h('p', 'sub', 'Aún no hay torneos. Pulsa "+ Crear torneo": eliges el formato (Champions, Mundial, eliminatoria o todos contra todos), los equipos y el calendario se genera solo.'));
-      else b.appendChild(table(['Nombre', 'Formato', 'Equipos', 'Fase', ''], list.map(function (c) { var F = $.TF[c.format] || $.TF.knockout; return [h('b', null, c.name), F.i + ' ' + F.n, String(c.teamIds.length), (c.status === 'paused' ? '⏸ ' : c.status === 'finished' && c.state ? '✓ ' : '') + phaseLabel(c), [btn('Gestionar', function () { tourDlg(c.id); }, c.state && c.state.phase === 'done' ? '' : 'o')]]; }))); return; }
-    b.appendChild(table(['Nombre', 'Estado', 'Equipos', L ? 'Puntos (V/D)' : 'Formato', ''], list.map(function (c) { return [h('b', null, c.name), $.ST[c.status], String(c.teamIds.length), L ? c.config.win + ' / ' + c.config.loss : (c.format === 'knockout' ? 'Eliminatoria · al mejor de ' + c.best_of : c.format === 'groups_knockout' ? 'Mundial · ' + c.gcfg.n + ' grupos, pasan ' + c.gcfg.q : c.format === 'champions' ? 'Champions · liga ida y vuelta + play-off' : 'Todos contra todos'), [btn('Gestionar', function () { compDlg(kind, c.id); })]]; })));
+    var L = kind === 'leagues', list = S()[kind], word = L ? 'liga' : 'torneo', typ = L ? 'league' : 'tournament';
+    var SC = { draft: '#8c8c9c', active: '#2ee59d', paused: '#ffd23f', finished: '#8b5cf6' };
+    var MS = function (c) { return S().matches.filter(function (m) { return m.type === typ && m.cid === c.id && m.status !== 'cancelled'; }); };
+    var act = list.filter(function (c) { return c.status === 'active'; }).length, done = list.filter(function (c) { return c.status === 'finished'; }).length, pend = 0, fin0 = 0;
+    list.forEach(function (c) { MS(c).forEach(function (m) { if (m.status === 'finished') fin0++; else pend++; }); });
+    ppSum(b, [[list.length, L ? 'Ligas' : 'Torneos', '#8b5cf6'], [act, 'En curso', '#2ee59d'], [pend, 'Partidos por jugar', '#22d3ee'], [done, 'Finalizad' + (L ? 'as' : 'os'), '#ffd23f']]);
+    var bar = h('div', 'pp-bar'); bar.appendChild(h('p', 'cp-hint', L ? 'Cada liga suma puntos por victoria y derrota. Entra a «Gestionar» para equipos, calendario y estado.' : 'Elige el formato y los equipos: el calendario y los cruces se generan solos.')); var acts = h('div', 'pp-acts'); acts.appendChild(btn('+ Crear ' + word, function () { L ? newComp(kind) : newTour(); }, 'o')); bar.appendChild(acts); b.appendChild(bar);
+    if (!list.length) { var em = h('div', 'mc-empty'); em.appendChild(h('b', null, L ? 'Aún no hay ligas' : 'Aún no hay torneos')); em.appendChild(h('small', null, L ? 'Crea la primera y añade los equipos.' : 'Pulsa «Crear torneo»: eliges el formato (Champions, Mundial, eliminatoria o todos contra todos), los equipos y el calendario se genera solo.')); em.appendChild(btn('+ Crear ' + word, function () { L ? newComp(kind) : newTour(); }, 'o')); b.appendChild(em); return; }
+    var grid = h('div', 'cp-grid');
+    list.slice().sort(function (x, y) { var o = { active: 0, paused: 1, draft: 2, finished: 3 }; return (o[x.status] - o[y.status]) || x.name.localeCompare(y.name); }).forEach(function (c, i) {
+      var F = !L && ($.TF[c.format] || $.TF.knockout), ms = MS(c), f = ms.filter(function (m) { return m.status === 'finished'; }).length, lv = ms.filter(function (m) { return m.status === 'live'; }).length, pc = ms.length ? Math.round(f / ms.length * 100) : 0;
+      var col = L ? '#8b5cf6' : c.format === 'champions' ? '#22d3ee' : c.format === 'groups_knockout' ? '#2ee59d' : c.format === 'round_robin' ? '#ff4fa3' : '#ffd23f';
+      var cd = h('div', 'cp-c cp-' + c.status); cd.style.setProperty('--cc', col); cd.style.setProperty('--sc', SC[c.status] || '#8c8c9c'); cd.style.animationDelay = i * 40 + 'ms';
+      var hd = h('div', 'cp-hd'); hd.appendChild(h('span', 'cp-ic', L ? '🏅' : F.i)); var nm = h('div', 'cp-nm'); nm.appendChild(h('b', null, c.name)); nm.appendChild(h('small', null, L ? 'Liga · victoria ' + c.config.win + ' pts · derrota ' + c.config.loss : F.n + (c.best_of > 1 ? ' · al mejor de ' + c.best_of : ''))); hd.appendChild(nm);
+      hd.appendChild(h('span', 'cp-st', (lv ? '● ' : '') + ($.ST[c.status] || c.status))); cd.appendChild(hd);
+      var mid = h('div', 'cp-mid'); mid.appendChild(stack(c.teamIds, 7)); mid.appendChild(h('small', null, c.teamIds.length + (c.teamIds.length === 1 ? ' equipo' : ' equipos'))); cd.appendChild(mid);
+      if (!L) { var sp = steps(c), ix = stepIx(c), stw = h('div', 'cp-steps'); sp.forEach(function (x, k) { var d = h('span', k < ix ? 'ok' : k === ix ? 'on' : null); d.title = x; d.appendChild(h('i')); d.appendChild(h('em', null, x)); stw.appendChild(d); }); cd.appendChild(stw); }
+      var pr = h('div', 'cp-pr'), pb = h('div', 'cp-bar'), pf = h('i'); pb.appendChild(pf); pr.appendChild(pb); pr.appendChild(h('small', null, ms.length ? f + ' de ' + ms.length + ' partidos jugados' + (lv ? ' · ' + lv + ' en vivo' : '') : 'Sin calendario todavía')); cd.appendChild(pr);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { pf.style.width = pc + '%'; }); });
+      var lead = null; if (L && f) { var tb = MAGNA.standings(Object.assign({ kind: 'league' }, c))[0]; if (tb) lead = [tb.team_id, tb.pts + ' pts · ' + tb.g + 'V ' + tb.p + 'D', c.status === 'finished' ? 'Campeón' : 'Líder']; }
+      if (!L && c.state && c.state.phase === 'done' && c.state.champion) lead = [c.state.champion, 'Ganó el torneo', 'Campeón'];
+      var ph = h('div', 'cp-ld'); if (lead) { ph.appendChild(M.crest(lead[0], MAGNA.teamName(lead[0]), 34)); var lt = h('div'); lt.appendChild(h('small', null, lead[2] === 'Campeón' ? '🏆 ' + lead[2] : '👑 ' + lead[2])); lt.appendChild(h('b', null, MAGNA.teamName(lead[0]))); ph.appendChild(lt); ph.appendChild(h('em', null, lead[1])); } else ph.appendChild(h('small', null, L ? (c.status === 'draft' ? 'Borrador: añade equipos y actívala' : 'Aún no hay resultados') : 'Fase: ' + phaseLabel(c))); cd.appendChild(ph);
+      var ft = h('div', 'cp-ft'), g = btn(c.status === 'draft' ? '⚙ Configurar' : '⚙ Gestionar', function () { L ? compDlg(kind, c.id) : tourDlg(c.id); }, 'o'); ft.appendChild(g);
+      if (!L && F.p) { var pg = ibtn('open', 'Ver página', function () { window.open(F.p, '_blank'); }); ft.appendChild(pg); }
+      if (L) ft.appendChild(ibtn('open', 'Ver tabla', function () { window.open('competiciones.html', '_blank'); }));
+      cd.appendChild(ft); cd.onclick = function (e) { if (e.target.closest('button')) return; L ? compDlg(kind, c.id) : tourDlg(c.id); };
+      grid.appendChild(cd); });
+    b.appendChild(grid);
   }
   function newComp(kind) {
     var L = kind === 'leagues', f = [{ k: 'n', label: 'Nombre', maxlength: 40 }, { k: 'd', label: 'Descripción (opcional)', type: 'textarea' }];

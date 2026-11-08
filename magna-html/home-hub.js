@@ -84,42 +84,7 @@
       var g = a(x[0], 'hh-g'); g.style.setProperty('--c', x[4]); g.appendChild(h('span', 'hh-ic', x[1])); g.appendChild(h('b', null, x[2])); g.appendChild(h('small', null, x[3])); g.appendChild(h('span', 'hh-bg', x[1])); if (x[5]) g.appendChild(h('span', 'hh-tag', x[5])); gg.appendChild(g); });
     go.appendChild(gg);
 
-    // 3) competiciones
-    var cs = sec(root, 'Competiciones', 'Ver todas', 'competiciones.html', '#22d3ee'), cg = h('div', 'hh-comp');
-    var FM = { champions: ['⭐', '#22d3ee', 'Champions'], groups_knockout: ['🌍', '#2ee59d', 'Mundial'], knockout: ['⚔️', '#ffd23f', 'Eliminatoria'], round_robin: ['🔁', '#ff9d00', 'Todos contra todos'] };
-    comps.sort(function (x, y) { return (y.c.status === 'active') - (x.c.status === 'active'); }).slice(0, 6).forEach(function (x) {
-      var c = x.c, f = x.k === 'league' ? ['📋', '#8b5cf6', 'Liga'] : FM[c.format] || ['🏆', '#ffd23f', 'Torneo'], href = x.k === 'league' ? 'ligas.html' : c.format === 'groups_knockout' ? 'mundial.html' : c.format === 'champions' ? 'champions.html?t=' + c.id : 'competiciones.html';
-      var card = a(href, 'hh-cc'); card.style.setProperty('--c', f[1]); card.appendChild(h('span', 'hh-ic', f[0])); card.appendChild(h('b', null, c.name));
-      var ph = c.state && c.state.phase === 'done' ? '🏆 ' + MAGNA.teamName(c.state.champion) : c.state && c.state.round && c.state.phase !== 'groups' ? c.state.round : f[2];
-      card.appendChild(h('small', null, ph + ' · ' + (c.teamIds || []).length + ' equipos'));
-      card.appendChild(h('span', 'hh-st' + (c.status === 'active' ? ' on' : ''), c.status === 'active' ? 'En juego' : c.status === 'finished' ? 'Finalizada' : c.status === 'paused' ? 'En pausa' : 'Próximamente'));
-      var row = h('div', 'hh-cs'); (c.teamIds || []).slice(0, 6).forEach(function (t) { row.appendChild(crest(t, 30)); }); if ((c.teamIds || []).length > 6) row.appendChild(h('em', null, '+' + ((c.teamIds || []).length - 6))); card.appendChild(row); cg.appendChild(card); });
-    if (!comps.length) cg.appendChild(h('div', 'hh-empty', 'Aún no hay competiciones. Cuando la administración cree una liga o un torneo, aparecerá aquí.'));
-    cs.appendChild(cg);
-
-    // 4) próximos partidos y resultados (si hay)
-    var up = S.matches.filter(function (m) { return m.status === 'scheduled' || m.status === 'live'; }).sort(function (x, y) { return (y.status === 'live') - (x.status === 'live') || String(x.at || '9').localeCompare(String(y.at || '9')); }).slice(0, 6);
-    var last = fin.slice().sort(function (x, y) { return String(y.at || '').localeCompare(String(x.at || '')); }).slice(0, 6);
-    if (up.length || last.length) {
-      var ms = sec(root, up.length ? 'Próximos partidos' : 'Últimos resultados', 'Calendario', 'calendario.html', '#ff4fa3'), mg = h('div', 'hh-ms');
-      (up.length ? up : last).forEach(function (m) { var r = a('calendario.html', 'hh-m'), cp = MAGNA.compOf(m); r.appendChild(crest(m.home, 34)); var t = h('div'); t.appendChild(h('b', null, MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away))); t.appendChild(h('small', null, (cp ? cp.name : '') + ' · ' + (m.status === 'finished' ? fdt(m.at) : fdt(m.at)))); r.appendChild(t);
-        r.appendChild(m.status === 'finished' ? h('span', 'hh-sc', m.hs + '-' + m.as) : m.status === 'live' ? h('span', 'hh-lv', '● VIVO') : crest(m.away, 34)); mg.appendChild(r); });
-      ms.appendChild(mg);
-    }
-
-    // 5) ranking
-    var rs = sec(root, 'Los mejores', 'Ranking completo', 'ranking.html', '#ffd23f'), two = h('div', 'hh-two');
-    var tb = h('div', 'hh-box'), th = h('h3'); th.appendChild(document.createTextNode('🛡️ Equipos por puntos')); tb.appendChild(th);
-    var tr = S.teams.map(function (t) { return { t: t, p: (PT[t.id] || {}).pts || 0 }; }).sort(function (x, y) { return y.p - x.p || x.t.name.localeCompare(y.t.name); }).slice(0, 5);
-    if (!tr.length) tb.appendChild(h('div', 'hh-empty', 'Aún no hay equipos.'));
-    tr.forEach(function (x, i) { var r = a('equipo.html?id=' + x.t.id, 'hh-rk'); r.style.animationDelay = i * 60 + 'ms'; r.appendChild(h('span', 'hh-p', String(i + 1))); r.appendChild(crest(x.t.id, 36)); var d = h('div'); d.appendChild(h('b', null, x.t.name)); d.appendChild(h('small', null, MAGNA.teamTrophies ? MAGNA.teamTrophies(x.t.id).length + ' trofeos' : '')); r.appendChild(d); r.appendChild(h('span', 'hh-v', fmt(x.p) + ' pts')); tb.appendChild(r); });
-    var pb = h('div', 'hh-box'), ph2 = h('h3'); ph2.appendChild(document.createTextNode('⭐ Jugadores por media')); pb.appendChild(ph2);
-    var pr = players.map(function (p) { var x = PS[p.id] || {}; return { p: p, m: p.media != null ? p.media : x.media != null ? x.media : 10 }; }).sort(function (x, y) { return y.m - x.m || x.p.name.localeCompare(y.p.name); }).slice(0, 5);
-    if (!pr.length) pb.appendChild(h('div', 'hh-empty', 'Aún no hay jugadores.'));
-    pr.forEach(function (x, i) { var tier = MAGNA.tierOf ? MAGNA.tierOf(x.m) : { color: '#8b5cf6', name: '' }, r = a(MAGNA_COS.profileUrl(x.p.id), 'hh-rk'); r.style.animationDelay = i * 60 + 'ms'; r.appendChild(h('span', 'hh-p', String(i + 1)));
-      var av = h('span', 'hh-pav'); av.style.setProperty('--kc', tier.color); av.style.setProperty('--pc', Math.max(4, Math.min(100, x.m))); av.appendChild(h('i', null, x.p.name.slice(0, 2).toUpperCase())); r.appendChild(av);
-      var d = h('div'), nb = h('b'); nb.appendChild(MAGNA_COS.pn(x.p.name, x.p.id, { plain: true })); d.appendChild(nb); d.appendChild(h('small', null, (x.p.teamId ? MAGNA.teamName(x.p.teamId) : 'Agente libre') + (tier.name ? ' · ' + tier.name : ''))); r.appendChild(d); var v = h('span', 'hh-v', String(x.m)); v.style.color = tier.color; r.appendChild(v); pb.appendChild(r); });
-    two.appendChild(tb); two.appendChild(pb); rs.appendChild(two);
+    // (competiciones, próximos partidos y ranking se quitaron del inicio a pedido)
 
     // 6) noticias (artículos publicados) o, si no hay, la actividad reciente
     var ns = sec(root, 'Noticias', 'Ver noticias', 'noticias.html', '#2ee59d'), nb = h('div'); ns.appendChild(nb);

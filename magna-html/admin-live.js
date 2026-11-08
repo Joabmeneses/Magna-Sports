@@ -60,20 +60,25 @@ ADMIN_MOD('live', function (A) {
     if (!all.length && !recent.length) { var e = h('div', 'box'); e.appendChild(h('h3', 'x', 'No hay partidos para manejar')); e.appendChild(h('p', 'hint', 'Programa un partido en "Partidos" y vuelve aquí para iniciarlo y narrarlo en vivo.')); e.appendChild(btn('+ Programar partido', function () { go('partidos'); }, 'o')); b.appendChild(e); return; }
     var m = by(S().matches, $.LIVE); if (!m || (m.status !== 'live' && m.status !== 'scheduled' && !(m.status === 'finished' && m.live))) { m = all[0] || recent[0]; $.LIVE = m.id; }
     var wrap = h('div', 'lv2'), ls = h('div', 'mlist');
-    function item(x) { var it = h('button', 'mi' + (x.id === m.id ? ' on' : '')); it.type = 'button'; if (x.status !== 'scheduled') it.appendChild(h('span', 'sc', (x.hs || 0) + '-' + (x.as || 0))); it.appendChild(h('b', null, MAGNA.teamName(x.home) + ' vs ' + MAGNA.teamName(x.away))); it.appendChild(h('small', null, x.status === 'live' ? '● En vivo · ' + compName(x) : x.status === 'finished' ? 'Finalizado · ' + compName(x) : fdate(x.at) + ' · ' + compName(x))); if (x.status === 'live') it.querySelector('small').style.color = 'var(--orange)'; it.onclick = function () { $.LIVE = x.id; render(); }; ls.appendChild(it); }
+    function item(x) { var it = h('button', 'mi mi-' + x.status + (x.id === m.id ? ' on' : '')); it.type = 'button'; it.style.setProperty('--hc', MAGNA.teamColor(x.home)); it.style.setProperty('--ac', MAGNA.teamColor(x.away));
+      var rw = h('span', 'mi-r'); rw.appendChild(M.crest(x.home, MAGNA.teamName(x.home), 28)); rw.appendChild(h('span', 'sc', x.status === 'scheduled' ? 'vs' : (x.hs || 0) + '-' + (x.as || 0))); rw.appendChild(M.crest(x.away, MAGNA.teamName(x.away), 28)); it.appendChild(rw);
+      it.appendChild(h('b', null, MAGNA.teamName(x.home) + ' vs ' + MAGNA.teamName(x.away))); it.appendChild(h('small', null, x.status === 'live' ? '● En vivo · ' + compName(x) : x.status === 'finished' ? 'Finalizado · ' + compName(x) : fdate(x.at) + ' · ' + compName(x))); it.onclick = function () { $.LIVE = x.id; render(); }; ls.appendChild(it); }
     var L1 = all.filter(function (x) { return x.status === 'live'; }), L2 = all.filter(function (x) { return x.status === 'scheduled'; });
     if (L1.length) { ls.appendChild(h('h4', null, 'En juego')); L1.forEach(item); }
     if (L2.length) { ls.appendChild(h('h4', null, 'Programados')); L2.slice(0, 12).forEach(item); }
     if (recent.length) { ls.appendChild(h('h4', null, 'Terminados hoy')); recent.forEach(item); }
     wrap.appendChild(ls);
-    var L = m.live || { phase: 'pre', ev: [] }, live = m.status === 'live', fin = m.status === 'finished', con = h('div', 'con' + (live ? ' is-live' : ''));
+    var L = m.live || { phase: 'pre', ev: [] }, live = m.status === 'live', fin = m.status === 'finished', con = h('div', 'con' + (live ? ' is-live' : '') + (fin ? ' is-fin' : '')); con.style.setProperty('--hc', MAGNA.teamColor(m.home)); con.style.setProperty('--ac', MAGNA.teamColor(m.away));
     var ch = h('div', 'ch'); ch.appendChild(h('span', null, compName(m) + (m.round ? ' · ' + m.round : ''))); var phc = { pre: '', '1T': ' l', HT: ' h', '2T': ' l', FT: ' f' }; ch.appendChild(h('span', 'ph' + (fin ? ' f' : phc[L.phase] || ''), fin ? 'Finalizado' : live ? (MAGNA.PHASES[L.phase] || 'En vivo') + (L.mode ? ' · ' + L.mode : '') : 'Por empezar')); con.appendChild(ch);
     var sb = h('div', 'sb'); [['h', m.home], null, ['a', m.away]].forEach(function (x) {
       if (!x) { var mid = h('div'), sc = h('div', 's'); sc.appendChild(document.createTextNode(m.status === 'scheduled' ? 0 : m.hs || 0)); sc.appendChild(h('i')); sc.appendChild(document.createTextNode(m.status === 'scheduled' ? 0 : m.as || 0)); mid.appendChild(sc); var ck = h('div', 'clk', live || fin ? MAGNA.liveClock(m) : '00:00'); ck.appendChild(h('small', null, live && L.clock && L.clock.run ? 'Minuto ' + MAGNA.liveMinute(m) : live ? 'Reloj detenido' : fin ? 'Tiempo jugado' : fdate(m.at))); mid.appendChild(ck); sb.appendChild(mid);
         if (live && L.clock && L.clock.run) $.TICK = setInterval(function () { if (!document.body.contains(ck)) { clearInterval($.TICK); $.TICK = null; return; } ck.firstChild.nodeValue = MAGNA.liveClock(m); ck.lastChild.textContent = 'Minuto ' + MAGNA.liveMinute(m); }, 1000);
         return; }
-      var t = h('div', 't'); t.appendChild(M.crest(x[1], MAGNA.teamName(x[1]), 80)); t.appendChild(h('b', null, MAGNA.teamName(x[1]))); var g = btn('+ Gol', function () { goalDlg(m, x[0]); }, 'g gb'); g.disabled = !live || L.phase === 'HT'; t.appendChild(g); sb.appendChild(t); });
+      var t = h('div', 't t-' + x[0]); t.appendChild(M.crest(x[1], MAGNA.teamName(x[1]), 80)); t.appendChild(h('b', null, MAGNA.teamName(x[1]))); var g = btn('+ Gol', function () { goalDlg(m, x[0]); }, 'g gb'); g.disabled = !live || L.phase === 'HT'; t.appendChild(g); sb.appendChild(t); });
     con.appendChild(sb);
+    // pasos del partido: dónde vamos y qué sigue
+    var PH = [['pre', 'Por empezar'], ['1T', '1.er tiempo'], ['HT', 'Entretiempo'], ['2T', '2.º tiempo'], ['FT', 'Final']], cur = fin ? 4 : !live ? 0 : Math.max(0, PH.map(function (x) { return x[0]; }).indexOf(L.phase)), stp = h('div', 'lv-steps');
+    PH.forEach(function (x, k) { var d = h('span', k < cur ? 'ok' : k === cur ? 'on' : null); d.appendChild(h('i', null, k < cur ? '✓' : String(k + 1))); d.appendChild(h('em', null, x[1])); stp.appendChild(d); }); con.appendChild(stp);
     // modo de juego
     var cg = h('div', 'cg');
     if (m.sets && m.sets.length) {
@@ -89,13 +94,14 @@ ADMIN_MOD('live', function (A) {
       cg.appendChild(sl); var eb = h('div', 'bar2'); eb.appendChild(btn('Editar sets', function () { setsDlg(m); }, 'sm')); cg.appendChild(eb);
     } else {
       cg.appendChild(h('h4', null, 'Modo de juego')); var md = h('div', 'modes');
-      MAGNA.MODES.forEach(function (mo) { var x = h('button', 'mo' + (L.mode === mo ? ' on' : ''), mo); x.type = 'button'; x.disabled = fin; x.onclick = function () { if (L.mode === mo) return; liveAct(m, function () { ensureLive(m).mode = mo; ensureLive(m).map = null; addEv(m, { k: 'mode', mode: mo }); }, 'Modo: ' + mo); }; md.appendChild(x); });
+      MAGNA.MODES.forEach(function (mo) { var x = h('button', 'mo' + (L.mode === mo ? ' on' : ''), mo); x.type = 'button'; x.style.setProperty('--mc', MAGNA.MODE_COLOR[mo] || '#8b5cf6'); x.disabled = fin; x.onclick = function () { if (L.mode === mo) return; liveAct(m, function () { ensureLive(m).mode = mo; ensureLive(m).map = null; addEv(m, { k: 'mode', mode: mo }); }, 'Modo: ' + mo); }; md.appendChild(x); });
       cg.appendChild(md); var eb2 = h('div', 'bar2'); eb2.appendChild(btn('Planear sets con modos y mapas', function () { setsDlg(m); }, 'sm')); cg.appendChild(eb2);
     }
     con.appendChild(cg);
     // controles
     var cc = h('div', 'cg'); cc.appendChild(h('h4', null, 'Control del partido')); var ct = h('div', 'ctrl');
-    function cbtn(txt, cls, dis, fn) { var x = h('button', 'cb ' + cls, txt); x.type = 'button'; x.disabled = dis; x.onclick = fn; ct.appendChild(x); }
+    var NX = m.status === 'scheduled' ? 'Iniciar' : live && L.phase === '1T' ? 'Entretiempo' : live && L.phase === 'HT' ? '2.º tiempo' : live && L.phase === '2T' ? 'Finalizar' : fin && !L.mvp ? 'MVP' : '';
+    function cbtn(txt, cls, dis, fn) { if (dis && !/Deshacer/.test(txt)) return; var x = h('button', 'cb ' + cls + (NX && txt.indexOf(NX) >= 0 ? ' nx' : ''), txt); x.type = 'button'; x.disabled = dis; x.onclick = fn; if (x.classList.contains('nx')) x.title = 'Siguiente paso'; ct.appendChild(x); }
     var comp = MAGNA.compOf(m);
     cbtn('▶ Iniciar partido', 'o', m.status !== 'scheduled', function () { if (comp && comp.status === 'finished') return toast('La competición ya finalizó.', true); liveAct(m, function () { var l = ensureLive(m); m.status = 'live'; m.hs = 0; m.as = 0; l.phase = '1T'; l.lineup = { h: lineup(m.home), a: lineup(m.away) }; l.clock = { acc: 0, since: Date.now(), run: true }; addEv(m, { k: 'start' }); MAGNA.addNews('match_live', 'En vivo: ' + MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) + '.'); }, '¡Partido en marcha!'); });
     cbtn('⏸ Entretiempo', 'y', !live || L.phase !== '1T', function () { liveAct(m, function () { var c = m.live.clock; c.acc += Date.now() - c.since; c.run = false; c.since = null; m.live.phase = 'HT'; addEv(m, { k: 'ht' }); }, 'Entretiempo'); });
