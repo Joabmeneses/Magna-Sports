@@ -75,7 +75,7 @@ window.ADMIN_DASH = function (b, A) {
   var dn = card('', 'Partidos por competición'), dnb = h('div', 'ddn'); dn.appendChild(dnb);
   dn.querySelector('.dc-h').appendChild(seg([['m', 'Este mes'], ['q', '3 meses'], ['a', 'Todo']], 'a', drawDonut));
   function drawDonut(per) { dnb.innerHTML = ''; var from = per === 'm' ? NOW - 30 * DAY : per === 'q' ? NOW - 90 * DAY : 0, cnt = {}, tot = 0;
-    fin.forEach(function (m) { var t = endT(m); if (from && (t == null || t < from)) return; var c = MAGNA.compOf(m), k = m.type === 'friendly' ? 'friendly' : c ? MAGNA.compKind(c) : 'tournament'; if (k === 'league' && m.type !== 'league') k = 'tournament'; cnt[k] = (cnt[k] || 0) + 1; tot++; });
+    fin.forEach(function (m) { var t = endT(m); if (from && (t == null || t < from)) return; var k = MAGNA.compKind(m); cnt[k] = (cnt[k] || 0) + 1; tot++; });
     var s = svg('svg', { viewBox: '0 0 120 120', class: 'dd-s' }), R = 46, C = 2 * Math.PI * R, off = 0; s.appendChild(svg('circle', { cx: 60, cy: 60, r: R, fill: 'none', stroke: 'rgba(255,255,255,.08)', 'stroke-width': 16 }));
     var lg = h('div', 'dd-l'), arcs = {};
     KC.forEach(function (k, ix) { var v = cnt[k[0]] || 0; if (v) { var len = v / tot * C, a = svg('circle', { cx: 60, cy: 60, r: R, fill: 'none', stroke: k[2], 'stroke-width': 16, 'stroke-dasharray': Math.max(0, len - 1.5) + ' ' + C, 'stroke-dashoffset': -off, transform: 'rotate(-90 60 60)', class: 'dd-a' }); a.style.animationDelay = ix * 90 + 'ms'; off += len; s.appendChild(a); arcs[k[0]] = a;
@@ -115,8 +115,8 @@ window.ADMIN_DASH = function (b, A) {
   if (!items.length) { ul.appendChild(h('p', 'dd-e', 'No hay nada programado.')); ul.appendChild(A.btn('+ Programar partido', function () { A.go('partidos'); }, 'o')); }
   up.appendChild(ul); row2.appendChild(up);
   var qa = card('', 'Acciones rápidas'), qg = h('div', 'dqa');
-  [['user', 'Registrar jugador', 'jugadores', '#3b82f6'], ['cal', 'Programar partido', 'partidos', '#10b981'], ['live', 'Narrar en vivo', 'vivo', '#ef4444'], ['news', 'Crear noticia', 'noticias', '#a855f7'], ['coin', 'Fichajes y Bits', 'economia', '#f59e0b'], ['star', 'Tienda', 'tienda', '#ec4899'], ['cup', 'Balón de Oro', 'balon', '#eab308'], ['up', 'Respaldos', 'datos', '#06b6d4']].forEach(function (x) {
-    var a = h('button', 'dq'); a.type = 'button'; var ic = h('span', 'dq-i'); ic.style.setProperty('--c', x[3]); ic.appendChild(A.icon(x[0])); a.appendChild(ic); a.appendChild(h('span', null, x[1])); a.onclick = function () { A.go(x[2]); }; qg.appendChild(a); });
+  [['user', 'Registrar jugador', 'form:player', '#3b82f6'], ['cal', 'Programar partido', 'form:match', '#10b981'], ['shield', 'Registrar equipo', 'form:team', '#f97316'], ['live', 'Narrar en vivo', 'vivo', '#ef4444'], ['news', 'Crear noticia', 'noticias', '#a855f7'], ['star', 'Tienda', 'tienda', '#ec4899'], ['cup', 'Balón de Oro', 'balon', '#eab308'], ['up', 'Respaldos', 'datos', '#06b6d4']].forEach(function (x) {
+    var a = h('button', 'dq'); a.type = 'button'; var ic = h('span', 'dq-i'); ic.style.setProperty('--c', x[3]); ic.appendChild(A.icon(x[0])); a.appendChild(ic); a.appendChild(h('span', null, x[1])); a.onclick = function () { if (/^form:/.test(x[2]) && A.form) A.form(x[2].slice(5)); else A.go(x[2]); }; qg.appendChild(a); });
   qa.appendChild(qg); row2.appendChild(qa);
   // tendencia: líneas por mes
   var tr = card('', 'Tendencia · 6 meses'), trb = h('div', 'dln'); tr.appendChild(trb);

@@ -70,6 +70,7 @@
   }
   function teamsV(b) {
     var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('Cargar puntos de ranking', basePtsDlg)); bar.appendChild(btn('+ Nuevo equipo', function () {
+      if (formsApi()) return ADMIN_FORMS.team();
       ask('Nuevo equipo', [{ k: 'n', label: 'Nombre', maxlength: 30 }, { k: 'i', label: 'Descripción (opcional)', type: 'textarea' }, { k: 'f', label: 'Foto o escudo (opcional; se reduce sola)', type: 'file' }], function (v) {
         var n = okName(v.n, 2, 30); if (!n) return 'Nombre no válido (2 a 30 caracteres).'; if (S().teams.some(function (t) { return nk(t.name) === nk(n); })) return 'Ya existe un equipo con ese nombre.';
         return readImg(v.f).then(function (img) { var e = imgErr(img); if (e) return e;
@@ -307,6 +308,7 @@
   }
   function playersV(b) {
     var bar = h('div', 'bar2'); bar.appendChild(h('div', 'sp')); bar.appendChild(btn('🎁 Regalar Bits', function () { giftDlg(); })); bar.appendChild(btn('Importar jugadores', importDlg)); bar.appendChild(btn('+ Nueva persona', function () {
+      if (formsApi()) return ADMIN_FORMS.player();
       ask('Registrar persona', [{ k: 'n', label: 'Nombre en Brawl Stars', maxlength: 24 }, { k: 'k', label: 'Rol', type: 'select', value: 'player', options: MAGNA.ROLES }, { k: 't', label: 'Torneos que ya ganó (opcional, uno por línea; si dice "Mundial" cuenta como Mundial)', type: 'textarea' }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido (2 a 24 caracteres).'; if (S().players.some(function (p) { return nk(p.name) === nk(n); })) return 'Ya existe un jugador con ese nombre.';
         var p = { id: MAGNA.id(), name: n, teamId: null, slot: null }; if (v.k && v.k !== 'player') p.kind = v.k; var tt = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (tt.length) p.prevTitles = tt; S().players.push(p); commit('Jugador registrado'); MAGNA.cloud.flush(); setTimeout(function () { createAcc(p); }, 500); }, 'Registrar', 'Se crea su ficha y su cuenta con un código de 6 dígitos para entrar y apostar con sus Bits. Rol: Jugador (juega en un equipo), Coach y jugador (juega y puede ser DT) o Solo coach (solo dirige, no ocupa lugar en la plantilla). Los torneos ganados suben el mínimo de su media: +10 cada uno y +15 cada Mundial (hasta 60).'); }, 'o')); b.appendChild(bar);
     var rf = h('select', 'in'); rf.style.cssText = 'max-width:220px;margin:0'; [['all', 'Todos los roles']].concat(MAGNA.ROLES).forEach(function (r) { var o = h('option', null, r[1]); o.value = r[0]; rf.appendChild(o); }); rf.value = PROLE; rf.onchange = function () { PROLE = rf.value; render(); }; bar.insertBefore(rf, bar.firstChild);
@@ -962,11 +964,13 @@
       var r = h('div', 'row'); r.appendChild(btn('Cancelar', close)); r.appendChild(btn('Guardar', function () { m.sets = ed.get(); close(); commit('Sets guardados'); }, 'o')); b.appendChild(r);
     });
   }
+  function formsApi() { if (!window.ADMIN_FORMS) return false; ADMIN_FORMS.init({ toast: toast, commit: commit, conflict: conflict, toUtc: toUtc, okName: okName, nk: nk, readImg: readImg, imgErr: imgErr, createAcc: createAcc }); return true; }
   function matchDlg(m) {
     if (m) return ask('Reprogramar partido', [{ k: 'a', label: 'Fecha y hora (hora de ' + ((window.MAGNA_TZ && MAGNA_TZ.label) || 'tu zona') + ')', type: 'datetime-local', value: toLocal(m.at) }, { k: 'r', label: 'Ronda / jornada', value: m.round || '' }], function (v) { var at = toUtc(v.a); if (at === undefined) return 'Fecha no válida.'; var e = conflict(m, at, m.home, m.away, v.r.trim()); if (e) return e; m.at = at; m.round = v.r.trim(); commit('Partido actualizado'); });
     var comps = S().leagues.filter(function (c) { return c.status !== 'finished' && c.teamIds.length >= 2; }).map(function (c) { return ['league:' + c.id, 'Liga · ' + c.name]; }).concat(S().tournaments.filter(function (c) { return c.status !== 'finished' && c.teamIds.length >= 2; }).map(function (c) { return ['tournament:' + c.id, 'Torneo · ' + c.name]; }));
     if (S().teams.length >= 2) comps.push(['friendly:0', 'Amistoso (cualquier equipo · 5.000 pts para ambos)']);
     if (!comps.length) return toast('Necesitas al menos 2 equipos registrados.', true);
+    if (formsApi()) return ADMIN_FORMS.match();
     dialog('Programar partido', function (b, close) {
       var cs = h('select', 'in'), hs = h('select', 'in'), as = h('select', 'in'), at = h('input', 'in'), rd = h('input', 'in'), err = h('p', 'err'); at.type = 'datetime-local'; rd.maxLength = 40; rd.placeholder = 'Jornada 1';
       comps.forEach(function (o) { var op = h('option', null, o[1]); op.value = o[0]; cs.appendChild(op); });
@@ -1135,7 +1139,7 @@
   var PAGES = [['noticias.html', 'Noticias', 'Noticias, destacadas y reacciones'], ['index.html', 'Partidos', 'Portada con el partido destacado'], ['ligas.html', 'Ligas', 'Tablas de cada liga'], ['competiciones.html', 'Torneos', 'Torneos y cruces'], ['mundial.html', 'Mundial', 'Grupos y eliminatoria'], ['champions.html', 'Champions', 'Tabla general'], ['apuestas.html', 'Apuestas', 'Coins y pronósticos'], ['calendario.html', 'Calendario', 'Agenda de partidos'], ['equipos.html', 'Equipos', 'Fotos, plantillas y trofeos'], ['mercado.html', 'Fichajes', 'Mercado y salarios']];
   function countUp(el, to) { var R = matchMedia('(prefers-reduced-motion: reduce)').matches, f = function (v) { return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }; if (R) { el.textContent = f(to); return; } var t0 = performance.now(); (function st(n) { var k = Math.min(1, (n - t0) / 1000); el.textContent = f(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(st); })(t0); }
   function homeV(b) {
-    if (window.ADMIN_DASH) { b.classList.add('dash'); return ADMIN_DASH(b, { h: h, btn: btn, icon: icon, go: go, toast: toast, compName: compName, countUp: countUp, setLive: function (id) { LIVE = id; } }); }
+    if (window.ADMIN_DASH) { b.classList.add('dash'); return ADMIN_DASH(b, { h: h, btn: btn, icon: icon, go: go, toast: toast, compName: compName, countUp: countUp, setLive: function (id) { LIVE = id; }, form: function (k) { if (k === 'match') return matchDlg(null); if (formsApi()) ADMIN_FORMS[k](); } }); }
     var s = S(), lv = liveMatches(), upc = s.matches.filter(function (m) { return m.status === 'scheduled'; }).sort(function (a, c) { return String(a.at || '9').localeCompare(String(c.at || '9')); });
     var k = h('div', 'kpis');
     [['live', 'En vivo ahora', lv.length, 'vivo', '#ff5a36'], ['shield', 'Equipos', s.teams.length, 'equipos', '#8b5cf6'], ['user', 'Jugadores', s.players.length, 'jugadores', '#22d3ee'], ['league', 'Ligas activas', s.leagues.filter(function (c) { return c.status === 'active'; }).length, 'ligas', '#2ee59d'], ['cup', 'Torneos activos', s.tournaments.filter(function (c) { return c.status === 'active'; }).length, 'torneos', '#ffd23f'], ['cal', 'Próximos partidos', upc.length, 'partidos', '#3b4bff']].forEach(function (x) {
