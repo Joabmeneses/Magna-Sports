@@ -197,8 +197,8 @@ body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d1
 .ac .st3-wm.a{right:10px!important;left:auto!important;flex-direction:row-reverse;padding:4px 4px 4px 12px}.ac .st3-wm.a:before{background:var(--ac)}
 /* fichas */
 .ac .st3 .al-k .cd{position:relative;animation:none!important}
-.ac .st3 .al-k .av{width:48px!important;height:48px!important;border-radius:14px!important;font:900 16px Archivo,sans-serif!important;font-style:normal!important;color:#fff!important;-webkit-text-stroke:0!important;text-shadow:none!important;
-  background:linear-gradient(150deg,var(--tc),color-mix(in srgb,var(--tc) 35%,#0b0e1c))!important;background-size:auto!important;border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 8px 18px rgba(0,0,0,.35)!important;transition:transform .2s}
+.ac .st3 .al-k .av{width:48px!important;height:48px!important;border-radius:14px!important;font:900 16px Archivo,sans-serif!important;font-style:normal!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+  border:2px solid rgba(255,255,255,.85)!important;box-shadow:0 8px 18px rgba(0,0,0,.35)!important;transition:transform .2s}
 .ac .st3 .al-k:hover .av,.ac .st3 .al-k.on .av{transform:scale(1.1)!important}
 .ac .st3 .al-k.on .av{border-color:#c6ff1a!important}
 .ac .st3 .al-k .rt{top:39px!important;bottom:auto!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important;min-width:0;padding:1px 7px!important;border:0!important;border-radius:999px!important;box-shadow:none!important;font:800 11px/16px Archivo,sans-serif!important;font-style:normal!important;z-index:3}
@@ -445,3 +445,6 @@ body.tvm{overflow:hidden}
 .ac .ts-tr>:first-child{color:#ff6a00!important}
 .ac .ts-lk{display:inline-block;border-radius:0}
 .ac .md .cf .cos-prev{background-color:#14172a!important}.ac .md .cf small,.ac .md .cf .mono{color:#5b574c!important}
+
+.ac .st3 .al-k .av:not([style*="url"]){color:#fff!important;background:linear-gradient(150deg,var(--tc),color-mix(in srgb,var(--tc) 35%,#0b0e1c))!important}
+.ac .st3 .al-k .av[style*="url"]{background-size:cover!important;background-position:center!important}

@@ -202,6 +202,7 @@
   document.head.appendChild(st3);
   var VIEW = 'arena'; try { VIEW = localStorage.getItem('magna_alv') || 'arena'; } catch (e) {}
   var POS2 = { 1: [[28, 50]], 2: [[24, 32], [24, 70]], 3: [[18, 50], [36, 26], [36, 74]], 4: [[16, 32], [16, 70], [36, 22], [36, 78]], 5: [[12, 50], [26, 24], [26, 76], [40, 38], [40, 64]] };
+  function pic(el, pid) { var id = PAV[pid]; if (id && /^a\d\d$/.test(id)) { el.style.background = 'url("avatars/' + id + '.webp") center/cover'; el.style.color = 'transparent'; el.classList.add('has-av'); } return el; }
   function hexAv(pid, cls) { var p = by(S().players, pid), d = pav(h('span', cls || 'av', ini(p ? p.name : '?')), pid); return d; }
   function teamAvg(X, D) { var L = X.played.map(function (id) { return D.R[id]; }).filter(function (v) { return v != null; }); return L.length ? L.reduce(function (a, b) { return a + b; }, 0) / L.length : null; }
   function teamGoals(X, D) { return X.played.reduce(function (a, id) { return a + (D.goals[id] || 0); }, 0); }
@@ -255,7 +256,7 @@
     function sorted(X) { var L = (m.status === 'scheduled' ? X.field : X.played).slice(); return L.sort(function (x, y) { return m.status === 'scheduled' ? ((PS[y] || {}).media || 0) - ((PS[x] || {}).media || 0) : (D.R[y] || 0) - (D.R[x] || 0); }); }
     var LH = sorted(H), LA = sorted(A2), n = Math.max(LH.length, LA.length);
     for (var i = 0; i < n; i++) { var pa = h('div', 'al-pa'), vh = LH[i], va = LA[i], sh = vh != null ? (m.status === 'scheduled' ? (PS[vh] || {}).media : D.R[vh]) : null, sa = va != null ? (m.status === 'scheduled' ? (PS[va] || {}).media : D.R[va]) : null;
-      [[vh, 'h', sh, sa], [va, 'a', sa, sh]].forEach(function (x, j) { if (x[0] == null) { pa.appendChild(h('span')); } else { var p = by(S().players, x[0]), el = h('a', 'al-pp ' + x[1] + (x[2] != null && x[3] != null && x[2] > x[3] ? ' win' : '')); el.href = MAGNA_COS.profileUrl(x[0]); el.style.setProperty('--tc', col(p.teamId)); el.appendChild(h('i', 'mini', ini(p.name))); el.appendChild(h('span', null, p.name + (D.goals[x[0]] ? ' ⚽' : '') + (D.mvp === x[0] ? ' 👑' : '')));
+      [[vh, 'h', sh, sa], [va, 'a', sa, sh]].forEach(function (x, j) { if (x[0] == null) { pa.appendChild(h('span')); } else { var p = by(S().players, x[0]), el = h('a', 'al-pp ' + x[1] + (x[2] != null && x[3] != null && x[2] > x[3] ? ' win' : '')); el.href = MAGNA_COS.profileUrl(x[0]); el.style.setProperty('--tc', col(p.teamId)); el.appendChild(pic(h('i', 'mini', ini(p.name)), x[0])); el.appendChild(h('span', null, p.name + (D.goals[x[0]] ? ' ⚽' : '') + (D.mvp === x[0] ? ' 👑' : '')));
           var rb = m.status === 'scheduled' ? h('span', 'al-rb ' + (x[2] >= 60 ? 'top' : x[2] >= 40 ? 'good' : x[2] >= 25 ? 'mid' : 'na'), String(x[2] == null ? 10 : x[2])) : h('span', 'al-rb ' + rc(x[2]), rt(x[2])); el.appendChild(rb); pa.appendChild(el); } if (!j) pa.appendChild(h('em', null, 'VS')); }); pr.appendChild(pa); }
     if (!n) pr.appendChild(h('div', 'al-e', 'Sin jugadores para comparar.')); du.appendChild(pr); return du;
   }
@@ -264,7 +265,7 @@
     var rated = L.filter(function (id) { return D.R[id] != null; }).sort(function (x, y) { return D.R[y] - D.R[x] || (D.goals[y] || 0) - (D.goals[x] || 0); });
     if (!rated.length) { nt.appendChild(h('div', 'al-e', m.status === 'scheduled' ? '⏳ Las notas aparecen cuando el partido empiece. Cada jugador recibe una nota de 1 a 10.' : '📝 Todavía no hay notas para este partido.')); return nt; }
     rated.forEach(function (id, i) { var p = by(S().players, id), r = D.R[id], a = h('a', 'al-nr'); a.dataset.p = id; a.href = MAGNA_COS.profileUrl(id); a.style.setProperty('--tc', col(p.teamId)); a.style.animationDelay = i * 50 + 'ms';
-      a.appendChild(h('span', 'ps', String(i + 1))); a.appendChild(h('i', 'mini', ini(p.name))); var w = h('div', 'w'); w.appendChild(h('b', null, p.name + (D.mvp === id ? ' 👑' : ''))); w.appendChild(h('small', null, MAGNA.teamName(p.teamId) + (D.goals[id] ? ' · ' + D.goals[id] + (D.goals[id] === 1 ? ' gol' : ' goles') : '') + (D.subIn[id] ? ' · entró de cambio' : '')));
+      a.appendChild(h('span', 'ps', String(i + 1))); a.appendChild(pic(h('i', 'mini', ini(p.name)), id)); var w = h('div', 'w'); w.appendChild(h('b', null, p.name + (D.mvp === id ? ' 👑' : ''))); w.appendChild(h('small', null, MAGNA.teamName(p.teamId) + (D.goals[id] ? ' · ' + D.goals[id] + (D.goals[id] === 1 ? ' gol' : ' goles') : '') + (D.subIn[id] ? ' · entró de cambio' : '')));
       var nb = h('div', 'al-nb'), bi = h('i'); bi.style.background = r >= 8 ? 'linear-gradient(90deg,#a8e000,#e9ff7a)' : r >= 6.5 ? 'linear-gradient(90deg,#1fb87a,#5dffc0)' : r >= 6 ? 'linear-gradient(90deg,#f5a400,#ffe066)' : 'linear-gradient(90deg,#e02424,#ff8a8a)'; nb.appendChild(bi); w.appendChild(nb); a.appendChild(w);
       a.appendChild(h('span', 'al-rb ' + rc(r), rt(r))); setTimeout(function () { bi.style.width = (r * 10) + '%'; }, 60 + i * 50); nt.appendChild(a); });
     return nt;
@@ -291,8 +292,8 @@
     var ky = keys(m, D); if (ky) box.appendChild(ky);
     var bn2 = h('div', 'al-bn'); ['h', 'a'].forEach(function (sd) { var X = D[sd], d = h('div'); d.style.setProperty('--tc', col(X.tid)); d.appendChild(h('small', null, '🪑 Banca · ' + MAGNA.teamName(X.tid)));
       if (!X.bench.length && !X.dt) d.appendChild(h('span', null, 'Sin suplentes'));
-      X.bench.forEach(function (pid) { var p = by(S().players, pid); if (!p) return; var a = h('a'); a.href = MAGNA_COS.profileUrl(pid); a.appendChild(h('i', null, ini(p.name))); a.appendChild(document.createTextNode(p.name + (D.goals[pid] ? ' ⚽' : '') + (D.R[pid] != null ? ' · ' + rt(D.R[pid]) : ''))); d.appendChild(a); });
-      if (X.dt) { var dt = h('a', 'dt'); dt.href = MAGNA_COS.profileUrl(X.dt.id); dt.appendChild(h('i', null, '🧢')); dt.appendChild(document.createTextNode('DT · ' + X.dt.name)); d.appendChild(dt); }
+      X.bench.forEach(function (pid) { var p = by(S().players, pid); if (!p) return; var a = h('a'); a.href = MAGNA_COS.profileUrl(pid); a.appendChild(pic(h('i', null, ini(p.name)), pid)); a.appendChild(document.createTextNode(p.name + (D.goals[pid] ? ' ⚽' : '') + (D.R[pid] != null ? ' · ' + rt(D.R[pid]) : ''))); d.appendChild(a); });
+      if (X.dt) { var dt = h('a', 'dt'); dt.href = MAGNA_COS.profileUrl(X.dt.id); dt.appendChild(pic(h('i', null, '🧢'), X.dt.id)); dt.appendChild(document.createTextNode('DT · ' + X.dt.name)); d.appendChild(dt); }
       bn2.appendChild(d); }); box.appendChild(bn2);
   }
 
