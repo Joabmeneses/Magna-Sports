@@ -81,7 +81,7 @@ var MAGNA = (function () {
     ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'legendaria', 'dinastia', 'dinastia'],
     ['x-estrella', 'color', 'Estrella fugaz', 'legendaria', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'legendaria', 'leyenda', 'leyenda'],
     ['x-hattrick', 'title', 'Rey del hat-trick', 'epica', '', 'hattrick'], ['x-perfecto', 'title', 'Partido perfecto', 'rara', '', 'perfecto'],
-    ['x-fundador', 'frame', 'Fundador de Magna', 'legendaria', 'fundador', 'manual']
+    ['x-fundador', 'frame', 'Fundador de Magna', 'legendaria', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'legendaria', 'jackpot', 'manual']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }; });
   var AWARD_TXT = { balon: 'Gana el Balón de Oro', campeon: 'Gana un título', dinastia: 'Gana 5 títulos', estrella: 'Sé MVP 10 veces', leyenda: 'Juega 75 partidos', hattrick: 'Marca 3 goles en un partido', perfecto: 'Saca un 10 de nota en un partido', manual: 'Lo entrega la administración', ganador: 'Gana 20 partidos', goleador: 'Marca 10 goles', canonero: 'Marca 50 goles', veterano: 'Juega 25 partidos', mvp: 'Sé MVP de un partido', elite: 'Llega a media 80' };
   // Arte oficial de los trofeos (carpeta trofeos/), en el orden de importancia de Magna

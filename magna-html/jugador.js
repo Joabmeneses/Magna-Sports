@@ -55,7 +55,7 @@
     gr.appendChild(lf);
     // centro: panel inclinado con el retrato
     var ct = h('div', 'hx-c'); ct.appendChild(h('span', 'hx-wm', p.name)); var pt = h('div', 'hx-pt'), img = M.pav(p.id) || (prof && prof.avatar && /^a\d\d$/.test(prof.avatar) ? 'avatars/' + prof.avatar + '.webp' : null); if (img) { var im = h('img'); im.src = img; im.alt = p.name; pt.appendChild(im); } else pt.appendChild(h('span', null, String(p.name).slice(0, 2).toUpperCase()));
-    var eqf = eq.frame && M.item(eq.frame); if (eqf && eqf.type === 'frame') pt.classList.add('fr-' + eqf.style); ct.appendChild(pt);
+    var ptw = h('div', 'hx-ptw'), eqf = eq.frame && M.item(eq.frame); if (eqf && eqf.type === 'frame') ptw.classList.add('fr-' + eqf.style); ptw.appendChild(pt); ct.appendChild(ptw);
     var tierB = h('div', 'hx-tier'); tierB.appendChild(h('small', null, 'NIVEL')); tierB.appendChild(h('b', null, tr.name)); ct.appendChild(tierB);
     for (var q = 0; q < 6; q++) { var sp = h('i', 'hx-sp'); sp.style.left = (14 + q * 14) + '%'; sp.style.animationDelay = (q * .5) + 's'; ct.appendChild(sp); }
     gr.appendChild(ct);

@@ -10,7 +10,7 @@ window.MAGNA_COS = (function () {
   var STY = {
     color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz' },
     plate: { magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía' },
-    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', leyenda: 'Leyenda', fundador: 'Fundador' },
+    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador' },
     title: {} };
   var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria' };
   function item(id) { var L = (window.MAGNA && MAGNA.S && MAGNA.S.shop) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
@@ -29,6 +29,29 @@ window.MAGNA_COS = (function () {
   // nombre de jugador que enlaza a su perfil público y lleva sus cosméticos. o: {title:true, plain:true}
   function pn(name, pid, o) { o = o || {}; var a = h(pid != null && !o.plain ? 'a' : 'span', 'mpn'); a.appendChild(h('span', 'mpn-n', name || '—')); if (pid == null) return a; if (a.tagName === 'A') a.href = 'jugador.html?id=' + pid; a.dataset.pn = pid; if (o.title) a.dataset.ttl = '1'; paintName(a); return a; }
   function profileUrl(pid) { return 'jugador.html?id=' + pid; }
+  // filtros SVG de los marcos de energía: recortan el anillo y lo deforman con ruido (plasma, llamas, partículas).
+  // Todo va en unidades relativas a la caja, así que se ve igual en un avatar de 24 px que en el retrato del perfil.
+  function fx() { if (document.getElementById('mg-fx')) return; var d = document.createElement('div'); d.id = 'mg-fx'; d.setAttribute('aria-hidden', 'true'); d.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
+    var enc = function (x) { return 'data:image/svg+xml,' + encodeURIComponent(x); };
+    var ring = function (st) { return enc("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><defs><radialGradient id='g'>" + st.map(function (o) { return "<stop offset='" + o[0] + "' stop-color='#fff' stop-opacity='" + o[1] + "'/>"; }).join('') + "</radialGradient></defs><rect width='100' height='100' fill='url(#g)'/></svg>"); };
+    var noise = function (fq, oc, sd) { return enc("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><filter id='t' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='" + fq + "' numOctaves='" + oc + "' seed='" + sd + "'/></filter><rect width='100' height='100' filter='url(#t)'/></svg>"); };
+    var f = function (id, st, fq, oc, sc, bl, sd) { return '<filter id="' + id + '" x="-30%" y="-30%" width="160%" height="160%" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">' +
+      '<feImage href="' + ring(st) + '" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="r"/><feComposite in="SourceGraphic" in2="r" operator="in" result="c"/>' +
+      '<feImage href="' + noise(fq, oc, sd || 3) + '" x="-.3" y="-.3" width="1.6" height="1.6" preserveAspectRatio="none" result="n"/>' +
+      '<feDisplacementMap in="c" in2="n" scale="' + sc + '" xChannelSelector="R" yChannelSelector="G" result="d"/>' +
+      '<feGaussianBlur in="d" stdDeviation="' + bl + '" result="b"/><feMerge result="m"><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="d"/></feMerge>' +
+      '<feImage href="' + hole + '" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="h"/><feComposite in="m" in2="h" operator="in"/></filter>'; };
+    // nada de energía encima de la cara: solo del borde del avatar hacia afuera
+    var hole = ring([[.745, 0], [.757, 1], [1, 1]]);
+    d.innerHTML = '<svg width="0" height="0">' +
+      f('mgf-plasma', [[.73, 0], [.762, 1], [.8, 1], [.86, 0]], '.22', 3, '.035', '.012', 5) +
+      f('mgf-fire', [[.72, 0], [.765, 1], [.82, 1], [.93, 0]], '.08 .2', 4, '.09', '.012', 2) +
+      f('mgf-wisp', [[.72, 0], [.765, 1], [.85, 1], [.97, 0]], '.15', 3, '.11', '.006', 4) +
+      f('mgf-clean', [[.752, 0], [.758, 1], [.9, 1], [.906, 0]], '.1', 1, '0', '.003', 1) +
+      f('mgf-dust', [[.7, 0], [.77, 1], [.9, 1], [1, 0]], '.2', 2, '.2', '.004', 9) +
+      f('mgf-dustin', [[.42, 0], [.54, 1], [.66, 1], [.69, 0]], '.2', 2, '.14', '.004', 6) + '</svg>';
+    (document.body || document.documentElement).appendChild(d); }
+  if (document.body) fx(); else document.addEventListener('DOMContentLoaded', fx);
   window.addEventListener('magna:update', function () { setTimeout(repaint, 0); });
   window.addEventListener('magna:cos', function () { try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {} repaint(); });
   // tocar un avatar de jugador abre su perfil (fuera del panel de administración)
