@@ -50,6 +50,10 @@
     var act = h('div', 'act');
     var meA = window.MAGNA_ME && MAGNA_ME.get(); if (meA && meA.player_id && t.coach === meA.player_id) { var mg = h('a', 'mg', '⚙ Gestionar equipo'); mg.href = 'mi-equipo.html'; act.appendChild(mg); }
     var sh = h('button', null, '↗ Compartir'); sh.type = 'button'; sh.onclick = function () { var u = location.origin + location.pathname + '?id=' + t.id; if (navigator.share) navigator.share({ title: t.name + ' · Magna Arena', url: u }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { sh.textContent = '¡Enlace copiado!'; setTimeout(function () { sh.textContent = '↗ Compartir'; }, 1600); }); }; act.appendChild(sh);
+    if (window.SHARE_CARD) { var cdb = h('button', null, '🖼️ Tarjeta'); cdb.type = 'button'; act.appendChild(cdb); cdb.onclick = function () { SHARE_CARD.open('team', function () {
+      var G = MAGNA.groupTrophies(tro).sort(function (a, c) { return MAGNA.trophyOrd(a.name, a.cat) - MAGNA.trophyOrd(c.name, c.cat); });
+      return { name: t.name, color: MAGNA.teamColor(t.id), crest: MAGNA.crestUrl(t.id), pos: pos, pts: bd.pts || 0, level: lvl, record: [w, l], trophyCount: tro.length, coach: coach ? coach.name : null, squad: squad.map(function (p) { return p.name; }),
+        trophies: G.map(function (g) { return { name: g.name, n: g.n, art: MAGNA.trophyArt(g.name, g.cat), emoji: MAGNA.TROPHY_ICON[g.cat] || '🏆' }; }) }; }); }; }
     var rk = h('a', null, '📊 Ranking'); rk.href = 'ranking.html'; act.appendChild(rk); var al = h('a', null, '← Equipos'); al.href = 'equipos.html'; act.appendChild(al);
     id.appendChild(act); hero.appendChild(id);
     var kp = h('div', 'kp'), cnt = [];

@@ -48,6 +48,11 @@
     if (prof) { ch.appendChild(h('span', null, '🪙 ' + fmt(prof.bits) + ' Bits')); if (prof.member_since) ch.appendChild(h('span', null, '📅 Desde ' + new Date(prof.member_since).toLocaleDateString('es', { month: 'short', year: 'numeric' }))); }
     tx.appendChild(ch);
     if (mine) { var ac = h('div', 'jp-act'), a1 = h('a', null, '🎨 Personalizar'); a1.href = 'cuenta.html#inventario'; var a2 = h('a', 'g', '🛍️ Tienda'); a2.href = 'tienda.html'; ac.appendChild(a1); ac.appendChild(a2); tx.appendChild(ac); }
+    if (window.SHARE_CARD) { var sb2 = h('div', 'jp-act'), shb = h('button', 'jp-shc', '🖼️ Tarjeta para compartir'); shb.type = 'button'; sb2.appendChild(shb); tx.appendChild(sb2);
+      shb.onclick = function () { SHARE_CARD.open('player', function () { var G2 = MAGNA.groupTrophies((x.titles || []).map(function (n2) { return { name: n2 }; })).sort(function (a, b) { return MAGNA.trophyOrd(a.name) - MAGNA.trophyOrd(b.name); }), bo2 = MAGNA.ballonCount(p.id), nota2 = x.rated ? String(Math.round(x.sum / x.rated * 10) / 10).replace('.', ',') : '—';
+        var T = (bo2 ? [{ name: 'Balón de Oro', n: bo2, art: MAGNA.trophyArt('Balón de Oro'), emoji: '🥇' }] : []).concat(G2.map(function (g) { return { name: g.name, n: g.n, art: MAGNA.trophyArt(g.name), emoji: /mundial/i.test(g.name) ? '🌍' : '🏆' }; }));
+        return { name: p.name, team: tm ? tm.name : null, role: MAGNA.roleOf(p) === 'coach' ? 'DT' : null, avatar: M.pav(p.id), media: x.media, tier: MAGNA.tierOf(x.media), ballon: bo2,
+          stats: [[x.media == null ? '—' : x.media, 'Media'], [x.pj || 0, 'Partidos'], [x.g || 0, 'Goles'], [x.mvp || 0, 'MVP'], [(x.titles || []).length + bo2, 'Títulos']], trophies: T }; }); }; }
     hd.appendChild(tx); if (MAGNA.plays(p)) hd.appendChild(pcard(p, x, tm)); root.appendChild(hd);
     // números
     var kp = h('div', 'jp-k'), pct = x.pj ? Math.round(x.w / x.pj * 100) : 0, nota = x.rated ? Math.round(x.sum / x.rated * 10) / 10 : null;

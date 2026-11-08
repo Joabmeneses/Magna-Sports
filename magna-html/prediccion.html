@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Magna Arena · Predicción de la llave</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<style>
+body.pd{background:#0b1030}
+body.pd:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(50% 40% at 50% 0,rgba(34,211,238,.25),transparent 70%),radial-gradient(40% 40% at 0 70%,rgba(139,92,246,.22),transparent 70%),radial-gradient(40% 40% at 100% 90%,rgba(255,90,54,.16),transparent 70%)}
+.pd-h{position:relative;margin-top:26px;border-radius:32px;overflow:hidden;padding:clamp(22px,5vw,46px);border:1px solid rgba(34,211,238,.45);background:radial-gradient(60% 100% at 90% 30%,rgba(34,211,238,.35),transparent 65%),linear-gradient(135deg,#0a2a3a,#16134a 60%,#100d36);display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center}
+.pd-h .ey{font:700 12px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#a5f3fc}.pd-h h1{margin:6px 0 10px;font-size:clamp(36px,7.5vw,80px);line-height:.95;padding-top:.1em}.pd-h p{margin:0;color:#cfe9f1;max-width:56ch}
+.pd-sc{min-width:170px;text-align:center;border-radius:24px;padding:18px 20px;background:rgba(5,8,25,.55);border:1px solid rgba(165,243,252,.35)}.pd-sc b{display:block;font:900 clamp(44px,8vw,64px)/1 Archivo,sans-serif;font-stretch:120%;color:#67e8f9}.pd-sc small{display:block;margin-top:6px;color:#cfe9f1;font:700 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase}.pd-sc em{display:block;margin-top:8px;font-style:normal;color:#ffd23f;font-weight:800}
+@media(max-width:700px){.pd-h{grid-template-columns:1fr}.pd-sc{min-width:0}}
+.pd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0}.pd-tabs button{border-radius:999px;padding:9px 16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:var(--fg);font:700 14px Archivo,sans-serif;cursor:pointer}.pd-tabs button.on{background:#22d3ee;border-color:#22d3ee;color:#062a33}
+.pd-rules{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}.pd-rules span{border-radius:999px;padding:7px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font:700 12px "JetBrains Mono",monospace;color:#d6dcf5}.pd-rules b{color:#ffd23f}
+.pd-s{margin-top:34px}.pd-s>h2{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 6px;font-size:clamp(24px,4vw,34px)}.pd-s>p{margin:0 0 14px;color:var(--muted)}
+.pd-tag{border-radius:999px;padding:5px 11px;font:700 11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;background:rgba(46,229,157,.15);color:#2ee59d;border:1px solid rgba(46,229,157,.4)}.pd-tag.cl{background:rgba(255,255,255,.06);color:var(--muted);border-color:rgba(255,255,255,.14)}
+.pd-login{margin-top:18px;border-radius:20px;padding:16px 18px;border:1px dashed rgba(255,210,63,.5);background:rgba(255,210,63,.06);display:flex;gap:12px;align-items:center;flex-wrap:wrap}.pd-login a{margin-left:auto;border-radius:999px;padding:10px 16px;background:#ffd23f;color:#1a1400;font:800 14px Archivo,sans-serif;text-decoration:none}
+.pd-ch{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pd-tm{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--fg);font:800 14px Archivo,sans-serif;cursor:pointer;text-align:left;transition:transform .12s,border-color .15s,background-color .15s;min-width:0}.pd-tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pd-tm:hover:not(:disabled){border-color:#22d3ee;transform:translateY(-2px)}.pd-tm.on{border-color:#ffd23f;background:rgba(255,210,63,.14);box-shadow:0 0 0 2px rgba(255,210,63,.35);animation:pdPop .35s}.pd-tm:disabled{cursor:default;opacity:.55}.pd-tm.on:disabled{opacity:1}
+.pd-tm.ok{border-color:#2ee59d;background:rgba(46,229,157,.14)}.pd-tm.ko{border-color:rgba(255,77,109,.6);background:rgba(255,77,109,.1)}
+@keyframes pdPop{40%{transform:scale(1.06)}}
+.pd-rd{margin-top:20px}.pd-rd h3{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:18px}.pd-rd h3 small{color:#ffd23f;font:700 12px "JetBrains Mono",monospace}
+.pd-xs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:10px}
+.pd-x{border-radius:20px;padding:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}.pd-x .when{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font:700 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}.pd-x .when b{color:#ffd23f}
+.pd-x .two{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}.pd-x .vs{color:var(--muted);font:900 13px Archivo,sans-serif}.pd-x .two .pd-tm{justify-content:center}
+.pd-x .res{margin-top:8px;text-align:center;font:800 13px Archivo,sans-serif}.pd-x .res.ok{color:#2ee59d}.pd-x .res.ko{color:#ff7a90}
+.pd-emp{border-radius:20px;padding:22px;text-align:center;color:var(--muted);border:1px dashed rgba(255,255,255,.18)}
+.pd-bd{display:grid;gap:8px}.pd-row{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}.pd-row.me{border-color:#22d3ee;background:rgba(34,211,238,.1)}
+.pd-row .ps{font:900 20px Archivo,sans-serif;text-align:center}.pd-row:nth-child(1) .ps{color:#ffd23f}.pd-row:nth-child(2) .ps{color:#d6dcf5}.pd-row:nth-child(3) .ps{color:#f59e6b}.pd-row .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}.pd-row .nm small{display:block;color:var(--muted);font:600 12px Archivo,sans-serif}.pd-row .pt{font:900 22px Archivo,sans-serif;color:#67e8f9}
+@media(prefers-reduced-motion:reduce){.pd-tm.on{animation:none}}
+</style></head>
+<body class="pd"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="pd"></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="prediccion.js" defer></script></body></html>

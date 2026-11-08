@@ -295,11 +295,15 @@ var MAGNA = (function () {
         ((m.live.lineup && m.live.lineup[sd]) || []).forEach(function (id) { who[id] = 1; }); (m.live.ev || []).forEach(function (e) { if (e.k === 'sub' && e.side === sd && e.in) who[e.in] = 1; }); });
       if (!Object.keys(who).length) S.players.forEach(function (p) { if (p.teamId === T.team) who[p.id] = 1; });
       Object.keys(who).forEach(function (id) { var x = st[id]; if (!x) return; x.titles = x.titles || []; x.titles.push(T.c.name); x.floor = (x.floor || 15) + T.w; }); });
-    (S.history || []).forEach(function (e) { (e.champIds || []).forEach(function (id) { var x = st[id], p = by(S.players, id); if (!x || !p) return; if ((p.prevTitles || []).some(function (n) { return hnk(n) === hnk(e.name); })) return; x.titles = x.titles || []; x.titles.push(e.name); x.floor = (x.floor || 15) + (e.mundial ? 15 : 10); }); });
+    // Un título del historial (por ejemplo «Champions III») reemplaza al título anterior genérico del jugador con el mismo nombre («Champions»): es el mismo trofeo, no se cuenta dos veces.
+    var prevLeft = {}; S.players.forEach(function (p) { prevLeft[p.id] = (p.prevTitles || []).slice(); });
+    (S.history || []).forEach(function (e) { (e.champIds || []).forEach(function (id) { var x = st[id], p = by(S.players, id); if (!x || !p) return; var L = prevLeft[id] || [], k = -1;
+      L.forEach(function (n, i) { if (k < 0 && hnk(n) === hnk(e.name)) k = i; }); if (k < 0) L.forEach(function (n, i) { if (k < 0 && hnk(baseName(n)) === hnk(baseName(e.name)) && editionNo(n) == null) k = i; });
+      if (k >= 0) L.splice(k, 1); x.titles = x.titles || []; x.titles.push(e.name); x.floor = (x.floor || 15) + (e.mundial ? 15 : 10); }); });
     // Títulos anteriores (historial cargado por la administración): Mundial +15, otros +10, igual que los del sitio.
     // MVP y goles anteriores al sitio (totales cargados a mano): suman a sus números e insignias, no cambian la media
     S.players.forEach(function (p) { var x = st[p.id], pv = p.prevStats; if (!x || !pv) return; x.mvp += Number(pv.mvp) || 0; x.g += Number(pv.g) || 0; });
-    S.players.forEach(function (p) { var x = st[p.id]; (p.prevTitles || []).forEach(function (n) { x.titles = x.titles || []; x.titles.push(n); x.floor = (x.floor || 15) + (/mundial|world/i.test(n) ? 15 : 10); }); });
+    S.players.forEach(function (p) { var x = st[p.id]; (prevLeft[p.id] || []).forEach(function (n) { x.titles = x.titles || []; x.titles.push(n); x.floor = (x.floor || 15) + (/mundial|world/i.test(n) ? 15 : 10); }); });
     Object.keys(st).forEach(function (id) { var x = st[id]; if (x.rated) x.nota = Math.round(x.sum / x.rated * 10) / 10; x.titles = x.titles || []; x.floor = x.floor ? Math.min(60, x.floor) : 10; if (x.floor > x.media) x.media = x.floor; if (!x.pj) return;
       x.opp = Math.round(x.opp / x.pj); var avg = x.score / x.pj, wgt = x.pj / (x.pj + 3);
       x.media = Math.max(x.floor, Math.min(100, Math.round(10 + (avg - 10) * wgt))); });

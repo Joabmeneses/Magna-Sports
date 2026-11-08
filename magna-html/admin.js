@@ -468,6 +468,28 @@
   }
   // ---------- Eventos (eventos.html) ----------
   var EVK = { torneo: '🏆 Torneo', amistoso: '🤝 Amistosos', especial: '🎉 Especial', stream: '📺 Transmisión', premio: '🥇 Premiación', comunidad: '🗣️ Comunidad' }, EVC = null;
+  // ---------- predicción de la llave: tabla y premios en Bits ----------
+  function predDlg(c) {
+    dialog('🔮 Predicciones · ' + c.name, function (b, close) {
+      b.appendChild(h('p', 'sub', 'Puntos: campeón +' + PRED.CHAMP + ', play-off +1, octavos +2, cuartos +3, semis +4, final +6. Los premios se entregan como regalo de Bits con notificación.'));
+      var list = h('div', 'up'); list.appendChild(M.skel(3)); b.appendChild(list); var R = [];
+      var pz = h('div', 'two2'), amt = [1000, 500, 250].map(function (v, i) { var f = h('label', 'f'); f.appendChild(h('span', null, (i + 1) + 'º lugar (Bits)')); var inp = h('input', 'in'); inp.type = 'number'; inp.min = 0; inp.max = 100000; inp.value = v; f.appendChild(inp); pz.appendChild(f); return inp; });
+      var err = h('p', 'err'), row = h('div', 'row'), pay; row.appendChild(btn('Cerrar', close));
+      row.appendChild(pay = btn('🎁 Entregar premios', function () {
+        var top = R.filter(function (x) { return x.pts > 0; }).slice(0, 3); if (!top.length) return err.textContent = 'Nadie tiene puntos todavía.';
+        var done = c.state && c.state.phase === 'done';
+        confirmBox('¿Entregar los premios?', (done ? '' : '⚠ El torneo todavía no termina. ') + top.map(function (x, i) { return (i + 1) + 'º ' + x.n + ' (' + x.pts + ' pts): ' + (Number(amt[i].value) || 0) + ' Bits'; }).join(' · ') + '. Si hay empate en puntos, gana quien tenga más aciertos.', 'Entregar', function () {
+          pay.disabled = true; var chain = Promise.resolve();
+          top.forEach(function (x, i) { var v = Math.round(Number(amt[i].value) || 0); if (v <= 0) return; chain = chain.then(function () { return ACCOUNTS.gift([x.id], v, '🔮 Predicción de la llave · ' + c.name + ': ' + (i + 1) + 'º lugar con ' + x.pts + ' puntos'); }); });
+          chain.then(function () { c.predPaid = MAGNA.now(); commit('Premios entregados'); close(); }, function (e) { pay.disabled = false; err.textContent = (e && e.message) || 'No se pudo entregar'; }); }); }, 'o'));
+      b.appendChild(h('h3', 'x', 'Premios')); b.appendChild(pz); if (c.predPaid) b.appendChild(h('p', 'hint', '✔ Ya entregaste premios el ' + new Date(c.predPaid.replace(' ', 'T') + 'Z').toLocaleString('es') + '.')); b.appendChild(err); b.appendChild(row);
+      evRpc('admin_pred_board', { p_tour: c.id }).then(function (L) { list.innerHTML = '';
+        R = (L || []).map(function (x) { var s2 = PRED.score(c, x.picks); return { id: x.account_id, n: x.display_name, pts: s2.pts, hits: s2.hits, picks: (x.picks || []).length }; }).sort(function (a, z) { return z.pts - a.pts || z.hits - a.hits || a.n.localeCompare(z.n); });
+        if (!R.length) { list.appendChild(h('p', 'sub', 'Nadie ha jugado todavía.')); return; }
+        R.slice(0, 30).forEach(function (x, i) { var r = h('div', 'ur'); r.appendChild(h('b', null, '#' + (i + 1))); var w = h('div', 'w'); w.appendChild(h('b', null, x.n)); w.appendChild(h('small', null, x.hits + ' aciertos · ' + x.picks + ' elecciones')); r.appendChild(w); r.appendChild(h('b', null, x.pts + ' pts')); list.appendChild(r); });
+      }, function (e) { list.innerHTML = ''; list.appendChild(h('p', 'err', /function|does not exist|schema/i.test((e && e.message) || '') ? 'Falta activar las predicciones en Supabase (archivo predicciones.sql).' : (e && e.message) || 'No se pudo cargar')); });
+    });
+  }
   function evRpc(n, a) { return window.MAGNA_SB().then(function (c) { return c.rpc(n, a); }).then(function (r) { if (r && r.error) throw r.error; return r.data; }); }
   function evEdit(e0) {
     var isNew = !e0, e = e0 ? Object.assign({}, e0) : { id: MAGNA.id(), kind: 'especial', title: '', at: null, end: null, desc: '', place: '', link: '', linkLabel: '' };
@@ -636,6 +658,7 @@
           var st = c.state, CH = c.format === 'champions'; box.appendChild(h('h2', 'x', 'Calendario automático'));
           if (CH && !st) { var sp0 = MAGNA.champSplit(c.teamIds.length); box.appendChild(h('p', 'sub', sp0 ? 'Con ' + c.teamIds.length + ' equipos: liga de ida y vuelta (' + (c.teamIds.length - 1) * 2 + ' jornadas) · ' + chTxt(c) + '. Eliminatoria a partido único.' : 'El formato Champions necesita al menos 3 equipos.')); }
           if (!st) { box.appendChild(h('p', 'sub', c.status === 'active' ? 'Genera los cruces según el formato.' : 'Activa el torneo con al menos 2 equipos para generar los cruces.')); var g = btn('Generar calendario', function () { var e = generate(c); if (e) toast(e, true); else { MAGNA.addNews('tournament_bracket', 'Se genera el calendario de ' + c.name + '.'); MAGNA.save(); draw(); render(); } }, 'o'); g.disabled = c.status !== 'active'; box.appendChild(g); }
+          if (st && window.PRED) { var pdb = h('div', 'bar2'); pdb.appendChild(btn('🔮 Predicciones de la llave', function () { predDlg(c); })); var pl = h('a', 'lk', 'Ver página ↗'); pl.href = 'prediccion.html?t=' + c.id; pl.target = '_blank'; pl.rel = 'noopener'; pdb.appendChild(pl); box.appendChild(pdb); }
           else { box.appendChild(h('p', 'sub', st.phase === 'done' ? 'Campeón: ' + MAGNA.teamName(st.champion) : st.phase === 'league' ? 'Todos contra todos en curso' : st.phase === 'groups' ? (CH ? 'Fase de liga (ida y vuelta) en curso · ' + chTxt(c) : 'Fase de grupos en curso · clasifican ' + c.gcfg.q + ' por grupo') : st.phase === 'playoff' ? 'Play-off en curso · ' + st.direct.length + ' equipos esperan en ' + MAGNA.koName(st.direct.length * 2) : 'Ronda actual: ' + st.round));
             if (CH && c.groups) { var sp = MAGNA.champSplit(c.groups[0].teamIds.length); box.appendChild(h('h2', 'x', 'Fase de liga')); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, c.groups[0]).map(function (r) { return [r.pos <= sp.direct ? r.pos + ' ✓' : r.pos <= sp.direct + sp.playoff ? r.pos + ' ▶' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); box.appendChild(h('p', 'sub', '✓ directo a ' + (sp.direct === 1 ? 'la final' : MAGNA.koName(sp.direct * 2).toLowerCase()) + ' · ▶ juega el play-off' + (sp.out ? ' · sin marca: eliminado' : ''))); }
             else if (c.groups) c.groups.forEach(function (g) { var q = c.gcfg.q; box.appendChild(h('h2', 'x', 'Grupo ' + g.name)); box.appendChild(table(['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'Pts'], MAGNA.groupTable(c, g).map(function (r) { return [r.pos <= q ? r.pos + ' ✓' : r.pos, r.team, r.pj, r.g, r.p, r.dg, r.pts]; }))); });
@@ -1110,7 +1133,9 @@
 
   // ---------- resumen ----------
   var PAGES = [['noticias.html', 'Noticias', 'Noticias, destacadas y reacciones'], ['index.html', 'Partidos', 'Portada con el partido destacado'], ['ligas.html', 'Ligas', 'Tablas de cada liga'], ['competiciones.html', 'Torneos', 'Torneos y cruces'], ['mundial.html', 'Mundial', 'Grupos y eliminatoria'], ['champions.html', 'Champions', 'Tabla general'], ['apuestas.html', 'Apuestas', 'Coins y pronósticos'], ['calendario.html', 'Calendario', 'Agenda de partidos'], ['equipos.html', 'Equipos', 'Fotos, plantillas y trofeos'], ['mercado.html', 'Fichajes', 'Mercado y salarios']];
+  function countUp(el, to) { var R = matchMedia('(prefers-reduced-motion: reduce)').matches, f = function (v) { return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }; if (R) { el.textContent = f(to); return; } var t0 = performance.now(); (function st(n) { var k = Math.min(1, (n - t0) / 1000); el.textContent = f(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(st); })(t0); }
   function homeV(b) {
+    if (window.ADMIN_DASH) { b.classList.add('dash'); return ADMIN_DASH(b, { h: h, btn: btn, icon: icon, go: go, toast: toast, compName: compName, countUp: countUp, setLive: function (id) { LIVE = id; } }); }
     var s = S(), lv = liveMatches(), upc = s.matches.filter(function (m) { return m.status === 'scheduled'; }).sort(function (a, c) { return String(a.at || '9').localeCompare(String(c.at || '9')); });
     var k = h('div', 'kpis');
     [['live', 'En vivo ahora', lv.length, 'vivo', '#ff5a36'], ['shield', 'Equipos', s.teams.length, 'equipos', '#8b5cf6'], ['user', 'Jugadores', s.players.length, 'jugadores', '#22d3ee'], ['league', 'Ligas activas', s.leagues.filter(function (c) { return c.status === 'active'; }).length, 'ligas', '#2ee59d'], ['cup', 'Torneos activos', s.tournaments.filter(function (c) { return c.status === 'active'; }).length, 'torneos', '#ffd23f'], ['cal', 'Próximos partidos', upc.length, 'partidos', '#3b4bff']].forEach(function (x) {
@@ -1308,11 +1333,14 @@
     if (TICK) { clearInterval(TICK); TICK = null; }
     var sd = document.getElementById('side'); sd.innerHTML = ''; var grp = null, cur = null;
     TABS.forEach(function (t) { if (t.g !== grp) { grp = t.g; cur = h('div', 'sg'); cur.appendChild(h('h4', null, t.g)); sd.appendChild(cur); }
-      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.appendChild(icon(t.i)); x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + ((typeof t.dim === 'function' ? t.dim() : t.dim) ? ' dim' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
+      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.style.setProperty('--ic', ({ General: '#60a5fa', Competiciones: '#fbbf24', Clubes: '#34d399', 'Comunicación': '#c084fc', Sitio: '#22d3ee' })[t.g] || '#60a5fa'); x.appendChild(icon(t.i)); x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + ((typeof t.dim === 'function' ? t.dim() : t.dim) ? ' dim' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
     var T = TABS.filter(function (t) { return t.id === tab; })[0], hd = document.getElementById('shead'); hd.innerHTML = '';
     var l = h('div'); l.appendChild(h('div', 'eb mono', 'Panel · ' + T.g)); l.appendChild(h('h1', 'x', T.l)); l.appendChild(h('p', null, T.d)); hd.appendChild(l);
     if (T.p) { var a = h('a', 'lk', 'Ver en el sitio ↗'); a.href = T.p; a.target = '_blank'; a.rel = 'noopener'; hd.appendChild(a); }
-    view.innerHTML = ''; T.f(view);
+    hd.classList.toggle('hide', tab === 'resumen'); document.body.classList.toggle('on-dash', tab === 'resumen');
+    var ql = h('div', 'sg sq'); ql.appendChild(h('h4', null, 'Enlaces rápidos')); [['index.html', 'Ver el sitio', 'home'], ['eventos.html', 'Eventos', 'cal'], ['tienda.html', 'Tienda', 'star']].forEach(function (x) { var a = h('a', 'si'); a.href = x[0]; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(icon(x[2])); a.appendChild(h('span', null, x[1])); a.appendChild(h('em', null, '↗')); ql.appendChild(a); }); sd.appendChild(ql);
+    var brd = h('div', 'sbrand'), bi = h('img'); bi.src = 'logo-sm.png'; bi.alt = ''; brd.appendChild(bi); brd.appendChild(h('b', null, 'MAGNA ARENA')); brd.appendChild(h('small', null, 'Competencia · Comunidad · Diversión')); sd.appendChild(brd);
+    view.classList.remove('dash'); view.innerHTML = ''; T.f(view);
   }
   function banner() {
     var b = document.getElementById('banner'), st = MAGNA.cloud.status; b.innerHTML = '';
