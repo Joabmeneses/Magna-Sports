@@ -45,7 +45,7 @@
     var pal = h('div', 'pal');
     L.forEach(function (b, i) { var r = h('div', 'pe' + (i === 0 ? ' first' : '')); r.style.animationDelay = Math.min(i, 10) * 50 + 'ms'; var ed = h('div', 'ed', b.ed || '—'); ed.appendChild(h('small', null, b.season ? String(b.season) : 'Edición')); r.appendChild(ed);
       var wn = MAGNA.ballonWho(b, 'winner') || '—'; r.appendChild(av(wn, b.winner, i === 0 ? 76 : 58)); var t = h('div'), wb = h('b'); wb.appendChild(b.winner != null && by(S().players, b.winner) ? M.pn(wn, b.winner) : M.pn(wn)); t.appendChild(wb); var tm = teamOf(b, 'team'); t.appendChild(h('span', 'tm', (tm ? tm : '') + (b.votes ? (tm ? ' · ' : '') + b.votes + ' votos' : '') + (b.source === 'vote' ? ' · votación de la comunidad' : ''))); r.appendChild(t);
-      var pd = h('div', 'pod'), s2 = MAGNA.ballonWho(b, 'second'), s3 = MAGNA.ballonWho(b, 'third'); if (s2) pd.appendChild(h('span', null, '🥈 ' + s2)); if (s3) pd.appendChild(h('span', null, '🥉 ' + s3)); r.appendChild(pd); pal.appendChild(r); });
+      var pd = h('div', 'pod'), s2 = MAGNA.ballonWho(b, 'second'), s3 = MAGNA.ballonWho(b, 'third'); if (s2) pd.appendChild(h('span', null, '🥈 ' + s2)); if (s3) pd.appendChild(h('span', null, '🥉 ' + s3)); r.appendChild(pd); if (b.winner != null && by(S().players, b.winner) && window.MAGNA_COS) { r.dataset.plh = b.winner; MAGNA_COS.host(r); } pal.appendChild(r); });
     sp.appendChild(pal); root.appendChild(sp);
 
     // más ganadores

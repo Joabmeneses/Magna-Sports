@@ -21,7 +21,7 @@
         .sort(function (a, b) { return ((PS[b.id] || {}).media || 0) - ((PS[a.id] || {}).media || 0) || a.name.localeCompare(b.name); });
       if (!L.length) { grid.appendChild(h('div', 'jp-emp', 'No hay jugadores con ese nombre.')); return; }
       L.forEach(function (p) { var x = PS[p.id] || {}, a = h('a', 'jd'); a.href = M.profileUrl(p.id); a.appendChild(M.tierAv(p.name, x.media, 46, p.id)); var d = h('div'); d.appendChild(M.pn(p.name, p.id, { plain: true }));
-        d.appendChild(h('small', null, (MAGNA.roleOf(p) === 'coach' ? 'DT · ' : '') + (p.teamId ? MAGNA.teamName(p.teamId) : 'Agente libre') + ' · Media ' + (x.media == null ? '—' : x.media))); a.appendChild(d); grid.appendChild(a); }); }
+        d.appendChild(h('small', null, (MAGNA.roleOf(p) === 'coach' ? 'DT · ' : '') + (p.teamId ? MAGNA.teamName(p.teamId) : 'Agente libre') + ' · Media ' + (x.media == null ? '—' : x.media))); a.appendChild(d); if (window.MAGNA_COS) { a.dataset.plh = p.id; MAGNA_COS.host(a); } grid.appendChild(a); }); }
     inp.oninput = function () { q = inp.value; draw(); }; draw();
   }
 

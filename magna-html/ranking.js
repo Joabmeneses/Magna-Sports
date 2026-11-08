@@ -110,7 +110,7 @@
       var br = h('div', 'rk-bar'), tr = h('div', 't'), fi = h('i'); tr.appendChild(fi); br.appendChild(tr); bars.push([fi, tab === 'jugadores' ? r.v : r.v / mx * 100]); var tg = h('div', 'tg');
       chips(r).forEach(function (x) { tg.appendChild(h('span', null, x)); }); br.appendChild(tg); row.appendChild(br);
       var v = h('div', 'rk-v', valTxt(r)); v.appendChild(h('small', null, T().unit)); row.appendChild(v); row.appendChild(h('span', 'rk-chev', '▾'));
-      row.onclick = function () { open[r.id] = !open[r.id]; c.classList.toggle('open', !!open[r.id]); row.setAttribute('aria-expanded', !!open[r.id]); }; c.appendChild(row);
+      row.onclick = function () { open[r.id] = !open[r.id]; c.classList.toggle('open', !!open[r.id]); row.setAttribute('aria-expanded', !!open[r.id]); }; c.appendChild(row); if (r.p && window.MAGNA_COS) { row.dataset.plh = r.p.id; MAGNA_COS.host(row); }
       var x = h('div', 'rk-x'), xi = h('div'), inn = h('div', 'rk-xi'), sts = h('div', 'rk-sts'); stats(r).forEach(function (s) { var d = h('div'); d.appendChild(h('b', null, String(s[0]))); d.appendChild(h('small', null, s[1])); sts.appendChild(d); }); inn.appendChild(sts);
       var ac = h('div', 'rk-acts'), href = hrefOf(r); if (href) { var a = h('a', 'pr', r.t ? 'Ver equipo →' : 'Ver perfil →'); a.href = href; ac.appendChild(a); }
       if (r.t) { var bd = h('button', null, '📊 De dónde salen los puntos'); bd.type = 'button'; bd.onclick = function () { breakdown(r); }; ac.appendChild(bd); }

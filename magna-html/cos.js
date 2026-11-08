@@ -21,8 +21,11 @@ window.MAGNA_COS = (function () {
     clsRm(el, 'fr-'); var f = styleOf(eqOf(el.dataset.pid), 'frame'); if (f && STY.frame[f.style]) el.classList.add('fr-' + f.style); }
   // pinta un nombre con los cosméticos de un "equipado" (eq) concreto
   function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (c && STY.color[c.style]) el.classList.add('c-' + c.style); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
-  function paintName(el) { nameStyle(el, eqOf(el.dataset.pn)); var t = el.querySelector('.mpn-t'), ti = styleOf(eqOf(el.dataset.pn), 'title'); if (el.dataset.ttl) { if (ti) { if (!t) { t = h('small', 'mpn-t'); el.appendChild(t); } t.textContent = ti.name; t.className = 'mpn-t tr-' + (ti.rarity || 'comun'); } else if (t) t.remove(); } }
-  function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); }
+  function paintName(el) { nameStyle(el, eqOf(el.dataset.pn)); if (el.classList.contains('in-plh')) clsRm(el, 'pl-'); var t = el.querySelector('.mpn-t'), ti = styleOf(eqOf(el.dataset.pn), 'title'); if (el.dataset.ttl) { if (ti) { if (!t) { t = h('small', 'mpn-t'); el.appendChild(t); } t.textContent = ti.name; t.className = 'mpn-t tr-' + (ti.rarity || 'comun'); } else if (t) t.remove(); } }
+  // fila "anfitriona" de una placa: el contenedor con data-plh="<id del jugador>" se viste con su placa y el nombre de adentro va sin cajita
+  function host(el) { var pid = el.dataset.plh; clsRm(el, 'pl-'); el.classList.remove('plh'); var pl = styleOf(eqOf(pid), 'plate');
+    if (pl && STY.plate[pl.style]) { el.classList.add('plh', 'pl-' + pl.style); [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); } }
+  function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); }
   function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_cosmetics').then(function (r) { return r && !r.error ? r : c.rpc('player_avatars'); }); }).then(function (r) { if (!r || r.error) return; var m = {}, cm = {};
       (r.data || []).forEach(function (x) { if (x.avatar) m[x.player_id] = x.avatar; cm[x.player_id] = { eq: x.equipped || {} }; }); PAV = m; COS = cm; try { localStorage.setItem('magna_pav', JSON.stringify(m)); localStorage.setItem('magna_cos', JSON.stringify(cm)); } catch (e) {} repaint(); try { window.dispatchEvent(new Event('magna:cosloaded')); } catch (e) {} }, function () {}); }
   // vista previa de un cosmético sobre un nombre (y avatar para los marcos)
@@ -63,5 +66,5 @@ window.MAGNA_COS = (function () {
   // tocar un avatar de jugador abre su perfil (fuera del panel de administración)
   if (!/admin\.html$/.test(location.pathname)) document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('.tav[data-pid]'); if (!t || e.defaultPrevented || t.closest('a,button,[data-nolink],.ov')) return; location.href = profileUrl(t.dataset.pid); });
   if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
-  return { pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
+  return { host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
 })();
