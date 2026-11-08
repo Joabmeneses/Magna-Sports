@@ -18,8 +18,9 @@
   var live = S.matches.filter(function (m) { return m.status === 'live'; });
   var next = S.matches.filter(function (m) { return m.status === 'scheduled'; }).sort(function (a, b) { return String(a.at || '9').localeCompare(String(b.at || '9')); });
   var done = S.matches.filter(function (m) { return m.status === 'finished'; }).sort(function (a, b) { return String(b.at || '').localeCompare(String(a.at || '')); });
-  // el partido que acaba de terminar (últimas 24 h) se queda en el banner para ver el rendimiento de los jugadores
-  var nowMs = Date.parse(now.replace(' ', 'T') + 'Z'), recent = done.filter(function (m) { var t = Date.parse(String(m.ended || m.at || '').replace(' ', 'T') + 'Z'); return !isNaN(t) && nowMs - t < 24 * 3600e3; }).slice(0, 1);
+  // el partido que acaba de terminar se queda 5 minutos en el banner (resultado final); después pasa al frente el próximo partido
+  var nowMs = Date.parse(now.replace(' ', 'T') + 'Z'), recent = done.filter(function (m) { var t = endMs(m); return !isNaN(t) && nowMs - t < HOLD; }).slice(0, 1);
+  if (recent.length && next.length) window.__HOME_SWITCH = endMs(recent[0]) + HOLD;
   var pick = live.concat(recent, next, done.filter(function (m) { return recent.indexOf(m) < 0; })).slice(0, 4);
   // enlace directo a un partido (index.html?m=ID): ese partido va primero en el banner
   var want = Number((/[?&]m=(\d+)/.exec(location.search) || [])[1]), wm = want ? by(S.matches, want) : null; if (wm) pick = [wm].concat(pick.filter(function (m) { return m !== wm; })).slice(0, 4);
@@ -31,5 +32,11 @@
   });
   return out;
   }
-  var data = build(); window.__HOME_N = data.length; window.MAGNA_HOME = function () { return data; };
+  var HOLD = 5 * 60e3;
+  function endMs(m) { return Date.parse(String(m.ended || m.at || '').replace(' ', 'T') + 'Z'); }
+  // a los 5 minutos de terminar un partido, el banner se recarga para mostrar el próximo
+  function switchAt(ms) { if (!ms || switchAt.ms === ms) return; switchAt.ms = ms; clearTimeout(switchAt.t); switchAt.t = setTimeout(function () { location.reload(); }, Math.max(1000, ms - Date.now() + 1500)); }
+  window.addEventListener('magna:update', function (e) { var prev = e.detail && e.detail.prev; if (!prev || !prev.matches) return;
+    MAGNA.S.matches.forEach(function (m) { var p = MAGNA.by(prev.matches, m.id); if (p && p.status !== 'finished' && m.status === 'finished') { var t = endMs(m); switchAt((isNaN(t) || Date.now() - t > HOLD ? Date.now() : t) + HOLD); } }); });
+  var data = build(); if (window.__HOME_SWITCH) switchAt(window.__HOME_SWITCH); window.__HOME_N = data.length; window.MAGNA_HOME = function () { return data; };
 })();

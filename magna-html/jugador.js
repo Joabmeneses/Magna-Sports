@@ -76,7 +76,7 @@
     var G = MAGNA.playerGames(p.id), gs = sec('Últimos partidos', G.length ? 'Su forma reciente y su nota en cada partido.' : null);
     if (!G.length) { gs.appendChild(h('div', 'jp-emp', 'Todavía no tiene partidos narrados.')); return; }
     var two = h('div', 'jp-two'), left = h('div', 'jp-box'), right = h('div', 'jp-box'), list = h('div', 'jp-gm');
-    G.slice(0, 8).forEach(function (g) { var r = h('div', 'gm'); r.appendChild(h('span', 'grs ' + g.res, g.res === 'W' ? 'G' : g.res === 'L' ? 'P' : 'E')); var vs2 = h('div', 'gvs'); vs2.appendChild(h('b', null, 'vs ' + MAGNA.teamName(g.rival))); vs2.appendChild(h('small', null, g.score + ' · ' + M.fdt(g.m.at))); r.appendChild(vs2);
+    G.slice(0, 8).forEach(function (g) { var r = h('div', 'gm'); r.appendChild(h('span', 'grs ' + g.res, g.res === 'W' ? 'G' : g.res === 'L' ? 'P' : 'E')); var vs2 = h('div', 'gvs'); vs2.appendChild(h('b', null, 'vs ' + MAGNA.teamName(g.rival))); vs2.appendChild(h('small', null, g.score + ' · ' + (g.m.hist ? '🏆 ' + g.m.hname : M.fdt(g.m.at)))); r.appendChild(vs2);
       var ex = h('div', 'gex'); if (g.g) ex.appendChild(h('span', null, '⚽'.repeat(Math.min(g.g, 4)) + (g.g > 4 ? '+' : ''))); if (g.mvp) ex.appendChild(h('span', null, '⭐')); r.appendChild(ex); r.appendChild(h('span', 'gnt' + ntCls(g.r), g.r == null ? '—' : String(g.r))); list.appendChild(r); });
     left.appendChild(list); two.appendChild(left);
     right.appendChild(h('b', null, 'Notas recientes')); var R = G.slice(0, 14).reverse().filter(function (g) { return g.r != null; }), sp2 = h('div', 'jp-spark');

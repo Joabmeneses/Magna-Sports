@@ -95,7 +95,7 @@ var MAGNA = (function () {
     var o = 0; TROPHY_ART.forEach(function (x, j) { if (x[0] === k) o = j; }); return { key: k, src: 'trofeos/' + k + '.webp', label: TROPHY_ART[o][2], ord: o }; }
   function trophyOrd(name, cat) { var a = trophyArt(name, cat); return a ? a.ord : 99; }
   // Partidos narrados de un jugador con su nota, goles, MVP y resultado (para su perfil)
-  function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
+  function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).concat(histPlayed()).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
       ['h', 'a'].forEach(function (k) { if (((L.lineup && L.lineup[k]) || []).indexOf(pid) >= 0) sd = k; }); (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in === pid) sd = e.side || 'h'; }); if (!sd) return;
       var g = (L.ev || []).filter(function (e) { return e.k === 'goal' && e.player === pid; }).length, my = sd === 'h' ? m.hs : m.as, op = sd === 'h' ? m.as : m.hs;
       out.push({ m: m, side: sd, team: sd === 'h' ? m.home : m.away, rival: sd === 'h' ? m.away : m.home, g: g, r: (L.ratings || {})[pid], mvp: String(L.mvp) === String(pid), res: my > op ? 'W' : my < op ? 'L' : 'D', score: my + '-' + op }); });
@@ -250,7 +250,9 @@ var MAGNA = (function () {
   function hnk(x) { return String(x || '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase(); }
   function histTeam(name) { var t = S.teams.filter(function (x) { return hnk(x.name) === hnk(name); })[0]; return t ? t.id : 'x:' + hnk(name); }
   function histDate(d) { d = String(d || ''); return /^\d{4}$/.test(d) ? d + '-01-01' : /^\d{4}-\d{2}$/.test(d) ? d + '-01' : d || '0000-01-01'; }
-  function histMatches() { var out = [], n = 0; (S.history || []).forEach(function (e) { var d = histDate(e.date); (e.matches || []).forEach(function (m, i) { n++; out.push({ id: -1e6 + n, hist: e.id, at: (m.d ? histDate(m.d) : d) + ' 00:' + String(Math.floor(i / 60)).padStart(2, '0') + ':' + String(i % 60).padStart(2, '0'), home: histTeam(m.home), away: histTeam(m.away), hs: m.hs, as: m.as }); }); }); return out; }
+  function histMatches() { var out = [], n = 0; (S.history || []).forEach(function (e) { var d = histDate(e.date); (e.matches || []).forEach(function (m, i) { n++; out.push({ id: -1e6 + n, hist: e.id, at: (m.d ? histDate(m.d) : d) + ' 00:' + String(Math.floor(i / 60)).padStart(2, '0') + ':' + String(i % 60).padStart(2, '0'), home: histTeam(m.home), away: histTeam(m.away), hs: m.hs, as: m.as, hp: m.hp, ap: m.ap, hname: e.name }); }); }); return out; }
+  // partidos del historial con jugadores anotados (hp/ap = ids de quienes jugaron por local/visitante): cuentan para partidos jugados, victorias y media
+  function histPlayed() { return histMatches().filter(function (m) { return (m.hp && m.hp.length) || (m.ap && m.ap.length); }).map(function (m) { return Object.assign({}, m, { status: 'finished', live: { lineup: { h: m.hp || [], a: m.ap || [] }, ev: [], ratings: {} } }); }); }
   function teamLevels() {
     var R = {}, K = 40, get = function (t) { return R[t] == null ? 1000 : R[t]; }, pre = {};
     var past = histMatches(), real = S.matches.filter(function (m) { return m.status === 'finished' && m.hs != null && m.as != null; });
@@ -267,7 +269,7 @@ var MAGNA = (function () {
   function playerStats() {
     var TL = teamLevels(), st = {};
     S.players.forEach(function (p) { st[p.id] = { pj: 0, g: 0, w: 0, l: 0, mvp: 0, media: 10, nota: null, rated: 0, sum: 0, score: 0, topW: 0, upsetL: 0, opp: 0, games: [] }; });
-    S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) {
+    S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).concat(histPlayed()).sort(byTime).forEach(function (m) {
       var L = m.live, win = m.hs > m.as ? 'h' : 'a', apps = { h: {}, a: {} }, pr = TL.pre[m.id] || { h: 1000, a: 1000, eh: .5 };
       ['h', 'a'].forEach(function (sd) { ((L.lineup && L.lineup[sd]) || []).forEach(function (id) { apps[sd][id] = 1; }); });
       (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in) apps[e.side || 'h'][e.in] = 1; });
@@ -295,6 +297,8 @@ var MAGNA = (function () {
       Object.keys(who).forEach(function (id) { var x = st[id]; if (!x) return; x.titles = x.titles || []; x.titles.push(T.c.name); x.floor = (x.floor || 15) + T.w; }); });
     (S.history || []).forEach(function (e) { (e.champIds || []).forEach(function (id) { var x = st[id], p = by(S.players, id); if (!x || !p) return; if ((p.prevTitles || []).some(function (n) { return hnk(n) === hnk(e.name); })) return; x.titles = x.titles || []; x.titles.push(e.name); x.floor = (x.floor || 15) + (e.mundial ? 15 : 10); }); });
     // Títulos anteriores (historial cargado por la administración): Mundial +15, otros +10, igual que los del sitio.
+    // MVP y goles anteriores al sitio (totales cargados a mano): suman a sus números e insignias, no cambian la media
+    S.players.forEach(function (p) { var x = st[p.id], pv = p.prevStats; if (!x || !pv) return; x.mvp += Number(pv.mvp) || 0; x.g += Number(pv.g) || 0; });
     S.players.forEach(function (p) { var x = st[p.id]; (p.prevTitles || []).forEach(function (n) { x.titles = x.titles || []; x.titles.push(n); x.floor = (x.floor || 15) + (/mundial|world/i.test(n) ? 15 : 10); }); });
     Object.keys(st).forEach(function (id) { var x = st[id]; if (x.rated) x.nota = Math.round(x.sum / x.rated * 10) / 10; x.titles = x.titles || []; x.floor = x.floor ? Math.min(60, x.floor) : 10; if (x.floor > x.media) x.media = x.floor; if (!x.pj) return;
       x.opp = Math.round(x.opp / x.pj); var avg = x.score / x.pj, wgt = x.pj / (x.pj + 3);

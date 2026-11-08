@@ -227,8 +227,10 @@
   function parseTitles(v) { v = String(v || '').trim(); if (!v || v === '0' || v === '-') return []; if (/^\d+$/.test(v)) { var n = Math.min(20, Number(v)), o = []; for (var i = 1; i <= n; i++) o.push('Título anterior ' + i); return o; }
     return v.split(/\s*[|/+]\s*/).map(function (t) { return okName(t, 2, 40); }).filter(Boolean).slice(0, 20); }
   function titlesDlg(p) {
-    ask('Títulos anteriores de ' + p.name, [{ k: 't', label: 'Un título por línea (por ejemplo: Copa Verano 2025). Si dice "Mundial" cuenta como Mundial.', type: 'textarea', value: (p.prevTitles || []).join('\n') }], function (v) {
-      var t = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (t.length) p.prevTitles = t; else delete p.prevTitles; commit('Títulos actualizados'); }, 'Guardar', 'Son títulos ganados antes de usar el sitio. Suben el mínimo de su media: +10 por torneo o liga y +15 por Mundial (hasta 60).');
+    var pv = p.prevStats || {};
+    ask('Historial de ' + p.name, [{ k: 't', label: 'Títulos anteriores: uno por línea (por ejemplo: Copa Verano 2025). Si dice "Mundial" cuenta como Mundial.', type: 'textarea', value: (p.prevTitles || []).join('\n') }, { k: 'm', label: 'MVP anteriores al sitio (total)', type: 'number', value: pv.mvp || 0, min: 0, max: 999 }, { k: 'g', label: 'Goles anteriores al sitio (total)', type: 'number', value: pv.g || 0, min: 0, max: 9999 }], function (v) {
+      var m = Number(v.m) || 0, g = Number(v.g) || 0; if (m < 0 || g < 0 || m > 999 || g > 9999 || m % 1 || g % 1) return 'Escribe números enteros (0 o más).';
+      var t = String(v.t || '').split('\n').map(function (x) { return okName(x, 2, 40); }).filter(Boolean).slice(0, 20); if (t.length) p.prevTitles = t; else delete p.prevTitles; if (m || g) p.prevStats = { mvp: m, g: g }; else delete p.prevStats; commit('Historial actualizado'); }, 'Guardar', 'Lo que ganó antes de usar el sitio. Los títulos suben el mínimo de su media: +10 por torneo o liga y +15 por Mundial (hasta 60). Los MVP y goles se suman a sus números e insignias: +10 por torneo o liga y +15 por Mundial (hasta 60).');
   }
   function importDlg() {
     dialog('Importar jugadores', function (b, close) {
@@ -318,7 +320,7 @@
       var dtOf = S().teams.filter(function (tm) { return tm.coach === p.id; })[0];
       return ['#' + p.id, h('b', null, p.name), roleSel(p), teamCtl(p), x.pj || 0, x.g || 0, md, ac, bits, [
       btn('Renombrar', function () { ask('Renombrar', [{ k: 'n', label: 'Nombre', value: p.name, maxlength: 24 }], function (v) { var n = okName(v.n, 2, 24); if (!n) return 'Nombre no válido.'; if (S().players.some(function (x) { return x.id !== p.id && nk(x.name) === nk(n); })) return 'Ya existe ese nombre.'; p.name = n; commit('Nombre actualizado'); }); }),
-      btn('Títulos' + (p.prevTitles && p.prevTitles.length ? ' (' + p.prevTitles.length + ')' : ''), function () { titlesDlg(p); }),
+      btn('Historial' + (p.prevTitles && p.prevTitles.length ? ' 🏆' + p.prevTitles.length : '') + (p.prevStats && p.prevStats.mvp ? ' ⭐' + p.prevStats.mvp : ''), function () { titlesDlg(p); }),
       btn('Eliminar para siempre', function () { confirmBox('¿Eliminar a ' + p.name + ' para siempre?', 'Se borran su ficha' + (a ? ', su cuenta (' + a.username + '), sus Bits y sus apuestas' : '') + '. No se puede deshacer.', 'Eliminar para siempre', function () {
         if (!a) return wipePlayer(p);
         ACCOUNTS.manage('delete', { id: a.id }).then(function () { loadAccs(); wipePlayer(p); }, function (e) { toast('No se pudo eliminar la cuenta: ' + e.message, true); }); }); }, 'd')]]; })));
@@ -367,7 +369,7 @@
         if ((S().history || []).some(function (x) { return x.id !== e.id && nk(x.name) === nk(n); })) return err.textContent = 'Ya hay un torneo del historial con ese nombre. Ponle el año para distinguirlo.';
         var d = dt.value.trim(); if (d && !/^\d{4}(-\d{2}){0,2}$/.test(d)) return err.textContent = 'La fecha va como 2025, 2025-07 o 2025-07-15.';
         var r = chk(); if (r.bad.length) return err.textContent = 'Corrige las líneas que no se entienden o bórralas.';
-        e.name = n; e.date = d; e.mundial = ct.value === 'mundial'; e.cat = e.mundial ? 'torneo' : ct.value; e.champion = okName(ch.value, 1, 30) || ''; e.champIds = Object.keys(sel).map(Number); e.matches = r.ok;
+        e.name = n; e.date = d; e.mundial = ct.value === 'mundial'; e.cat = e.mundial ? 'torneo' : ct.value; e.champion = okName(ch.value, 1, 30) || ''; e.champIds = Object.keys(sel).map(Number); var old = (e.matches || []).slice(); e.matches = r.ok.map(function (m) { var i = -1; old.forEach(function (x, j) { if (i < 0 && nk(x.home) === nk(m.home) && nk(x.away) === nk(m.away)) i = j; }); if (i >= 0) { var x = old.splice(i, 1)[0]; if (x.hp) m.hp = x.hp; if (x.ap) m.ap = x.ap; } return m; }); // conserva quién jugó cada partido
         S().history = S().history || []; if (isNew) S().history.push(e);
         S().teams.forEach(function (t) { if (t.trophies) t.trophies = t.trophies.filter(function (x) { return x.hist !== e.id; }); });
         var champ = e.champion && S().teams.filter(function (t) { return nk(t.name) === nk(e.champion); })[0];
@@ -959,7 +961,7 @@
     ask('Resultado: ' + MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), [{ k: 'h', label: MAGNA.teamName(m.home), type: 'number', value: m.hs == null ? '' : m.hs, min: 0, max: 99 }, { k: 'a', label: MAGNA.teamName(m.away), type: 'number', value: m.as == null ? '' : m.as, min: 0, max: 99 }], function (v) {
       var x = Number(v.h), y = Number(v.a); if (v.h === '' || v.a === '' || !Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0 || x > 99 || y > 99) return 'El marcador debe ser un entero entre 0 y 99.'; if (x === y) return 'No existen los empates: un equipo debe ganar.';
       var c = MAGNA.compOf(m); if (c && c.status === 'finished') return 'La competición ya finalizó.';
-      var corr = m.status === 'finished'; m.hs = x; m.as = y; m.status = 'finished'; MAGNA.addNews('match_result', (corr ? 'Resultado corregido: ' : 'Final: ') + MAGNA.teamName(m.home) + ' ' + x + ' - ' + y + ' ' + MAGNA.teamName(m.away) + ' (' + (c ? c.name : '') + ').'); commit('Resultado guardado'); }, 'Guardar');
+      var corr = m.status === 'finished'; m.hs = x; m.as = y; m.status = 'finished'; if (!corr) m.ended = MAGNA.now(); MAGNA.addNews('match_result', (corr ? 'Resultado corregido: ' : 'Final: ') + MAGNA.teamName(m.home) + ' ' + x + ' - ' + y + ' ' + MAGNA.teamName(m.away) + ' (' + (c ? c.name : '') + ').'); commit('Resultado guardado'); }, 'Guardar');
   }
   // ---------- noticias ----------
   function newsV(b) {
@@ -1251,7 +1253,7 @@
     cbtn('▶ 2.º tiempo', 'g', !live || L.phase !== 'HT', function () { liveAct(m, function () { m.live.phase = '2T'; m.live.clock.since = Date.now(); m.live.clock.run = true; addEv(m, { k: 'resume' }); }, 'Comienza el 2.º tiempo'); });
     cbtn('⇄ Sustitución', '', !live, function () { subDlg(m); });
     cbtn('■ Finalizar', 'r', !live, function () { if ((m.hs || 0) === (m.as || 0)) return toast('No hay empates: registra el gol decisivo antes de finalizar.', true);
-      confirmBox('¿Finalizar el partido?', MAGNA.teamName(m.home) + ' ' + m.hs + ' - ' + m.as + ' ' + MAGNA.teamName(m.away) + '. El resultado cuenta para la tabla.', 'Finalizar', function () { liveAct(m, function () { var c = m.live.clock; if (c.run) { c.acc += Date.now() - c.since; c.run = false; c.since = null; } addEv(m, { k: 'end', score: m.hs + '-' + m.as }); m.live.phase = 'FT'; m.status = 'finished'; MAGNA.addNews('match_result', 'Final: ' + MAGNA.teamName(m.home) + ' ' + m.hs + ' - ' + m.as + ' ' + MAGNA.teamName(m.away) + ' (' + compName(m) + ').'); }, 'Partido finalizado'); mvpDlg(m, true); }); });
+      confirmBox('¿Finalizar el partido?', MAGNA.teamName(m.home) + ' ' + m.hs + ' - ' + m.as + ' ' + MAGNA.teamName(m.away) + '. El resultado cuenta para la tabla.', 'Finalizar', function () { liveAct(m, function () { var c = m.live.clock; if (c.run) { c.acc += Date.now() - c.since; c.run = false; c.since = null; } addEv(m, { k: 'end', score: m.hs + '-' + m.as }); m.live.phase = 'FT'; m.status = 'finished'; m.ended = MAGNA.now(); MAGNA.addNews('match_result', 'Final: ' + MAGNA.teamName(m.home) + ' ' + m.hs + ' - ' + m.as + ' ' + MAGNA.teamName(m.away) + ' (' + compName(m) + ').'); }, 'Partido finalizado'); mvpDlg(m, true); }); });
     cbtn('↶ Deshacer', '', !(UNDO[m.id] && UNDO[m.id].length), function () { var st = JSON.parse(UNDO[m.id].pop()); m.status = st.status; m.hs = st.hs; m.as = st.as; if (st.live) m.live = st.live; else delete m.live; MAGNA.save(); toast('Último cambio deshecho'); render(); banner(); });
     if (fin) { cbtn('⭐ MVP' + (L.mvp ? ': ' + (MAGNA.playerName(L.mvp) || '') : ''), 'y', false, function () { mvpDlg(m, false); }); cbtn('📸 Imagen para compartir', 'o', false, function () { shareDlg(m); }); }
     cc.appendChild(ct); if (!live && !fin) cc.appendChild(h('p', 'hint', 'Inicia el partido para registrar goles, modos y sustituciones. El reloj corre solo y se detiene en el entretiempo.')); con.appendChild(cc);
