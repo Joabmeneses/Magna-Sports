@@ -53,8 +53,10 @@ ADMIN_MOD('data', function (A) {
     }
     load();
   }
-  function dataV(b) {
-    b.appendChild(h('p', 'sub', 'Tus datos se guardan en la nube (Supabase) y el sitio se actualiza solo, en segundos. Aquí puedes hacer copias de seguridad y gestionar quién es administrador.'));
+  function dataV(b, part) {
+    var BK = part !== 'roles', RO = part !== 'backup';
+    if (BK) {
+    b.appendChild(h('p', 'sub', 'Tus datos se guardan en la nube (Supabase) y el sitio se actualiza solo, en segundos. Aquí haces copias de seguridad y vuelves atrás si algo sale mal.'));
     var leg = MAGNA.legacyLocal();
     if (leg && (leg.teams.length || leg.matches.length)) { var bx = h('div', 'box'); bx.style.marginTop = '18px'; bx.appendChild(h('h3', 'x', 'Datos antiguos en este navegador')); bx.appendChild(h('p', 'hint', 'Encontramos datos que guardaste antes de conectar la nube: ' + leg.teams.length + ' equipos, ' + leg.players.length + ' jugadores y ' + leg.matches.length + ' partidos.'));
       var r0 = h('div', 'bar2'); r0.appendChild(btn('Subirlos a la nube', function () { confirmBox('¿Subir estos datos?', 'Reemplazan lo que hay ahora en la nube y se publican en el sitio.', 'Subir', function () { MAGNA.replace(leg); MAGNA.clearLegacy(); render(); toast('Datos subidos a la nube'); }); }, 'o')); r0.appendChild(btn('Descartarlos', function () { MAGNA.clearLegacy(); render(); })); bx.appendChild(r0); b.appendChild(bx); }
@@ -65,6 +67,10 @@ ADMIN_MOD('data', function (A) {
     bar.appendChild(btn('Descargar copia (data.js)', function () { download('data.js', '// Copia de Magna Arena. Generada ' + new Date().toISOString() + '\nwindow.MAGNA_DATA = ' + JSON.stringify(S()) + ';\nwindow.MAGNA_CONFIG = ' + JSON.stringify(window.MAGNA_CONFIG || { privacyContact: null }) + ';\n'); toast('Copia descargada'); }, 'o'));
     var fi = h('input'); fi.type = 'file'; fi.accept = '.js,.json'; fi.style.display = 'none'; fi.onchange = function () { var f = fi.files[0]; if (!f) return; f.text().then(function (t) { try { var m = /window\.MAGNA_DATA\s*=\s*(\{[\s\S]*?\});\s*(?:window\.MAGNA_CONFIG|$)/.exec(t), o = JSON.parse(m ? m[1] : t); if (!o || o.v !== 1 || !Array.isArray(o.teams) || !Array.isArray(o.matches)) throw 0; confirmBox('¿Restaurar esta copia?', 'Reemplaza los datos de la nube y del sitio.', 'Restaurar', function () { MAGNA.replace(o); render(); toast('Copia restaurada'); }); } catch (e) { toast('Archivo no válido.', true); } }); };
     b.appendChild(fi); bar.appendChild(btn('Restaurar una copia', function () { fi.click(); })); b.appendChild(bar);
+    }
+    if (RO) {
+    var rk = h('div', 'ro-cards'); [['🛡️', 'Administrador', 'Maneja todo el panel.', '#ff7a2f'], ['⚖️', 'Juez', 'Pone notas, goleadores y MVP.', '#b07cff'], ['🧢', 'Coach', 'Maneja su equipo en «Mi equipo».', '#32d583'], ['🎮', 'Jugador', 'Juega, apuesta Bits y colecciona.', '#4cc3ff']].forEach(function (x) { var c = h('div', 'ro-c'); c.style.setProperty('--c', x[3]); c.appendChild(h('span', 'ro-e', x[0])); c.appendChild(h('b', null, x[1])); c.appendChild(h('small', null, x[2])); rk.appendChild(c); }); b.appendChild(rk);
+    b.appendChild(h('p', 'hint', 'Los roles de Jugador y Coach se cambian en «Jugadores y roles». Aquí manejas administradores y jueces.'));
     b.appendChild(h('h2', 'x', 'Administradores'));
     var ab = h('div', 'box'), al = h('div', 'adms'); ab.appendChild(h('p', 'hint', 'Solo estos correos pueden entrar al panel. La persona nueva entra en "Es mi primera vez" con su correo y crea su contraseña.')); ab.appendChild(al); b.appendChild(ab);
     function loadAdmins() { al.innerHTML = ''; al.appendChild(M.skel(2)); MAGNA_ADMIN.sb.from('admins').select('email').order('email').then(function (r) { al.innerHTML = ''; (r.data || []).forEach(function (x) { var row = h('div', 'ur'), w = h('div', 'w'); w.appendChild(h('b', null, x.email)); row.appendChild(w); if (x.email !== MAGNA_ADMIN.email.toLowerCase()) row.appendChild(btn('Quitar', function () { confirmBox('¿Quitar a ' + x.email + '?', 'Ya no podrá entrar al panel.', 'Quitar', function () { MAGNA_ADMIN.sb.from('admins').delete().eq('email', x.email).then(function (q) { if (q.error) toast('No se pudo quitar.', true); loadAdmins(); }); }); }, 'd sm')); else row.appendChild(h('small', 'hint', 'Tú')); al.appendChild(row); });
@@ -93,6 +99,8 @@ ADMIN_MOD('data', function (A) {
       var ar = h('div'); ar.style.marginTop = '8px'; ar.appendChild(nj); jl.appendChild(ar); }
     function loadJ() { if (!window.ACCOUNTS || !ACCOUNTS.adminJudges) return; ACCOUNTS.adminJudges().then(function (ids) { JUD = ids; drawJ(); }, function () { JUD = []; drawJ(); }); }
     jq.addEventListener('input', drawJ); loadAccs(loadJ);
+    }
+    if (!BK) return;
     b.appendChild(h('h2', 'x', 'Zona delicada'));
     var z = h('div', 'bar2'); z.appendChild(btn('Cargar datos de ejemplo', function () { confirmBox('¿Cargar datos de ejemplo?', 'Reemplaza TODOS los datos del sitio por equipos y partidos de ejemplo. Antes se guarda un respaldo en la nube para que puedas volver atrás.', 'Cargar', function () { bkFirst('Antes de cargar datos de ejemplo', demo); }); }, 'warn'));
     z.appendChild(btn('Vaciar todo', function () { confirmBox('¿Vaciar todos los datos?', 'Se borran equipos, jugadores, competiciones, partidos y noticias del sitio. Antes se guarda un respaldo en la nube para que puedas volver atrás.', 'Vaciar', function () { bkFirst('Antes de vaciar todo', function () { MAGNA.replace(MAGNA.clone(MAGNA.EMPTY)); render(); banner(); }); }); }, 'd')); b.appendChild(z);

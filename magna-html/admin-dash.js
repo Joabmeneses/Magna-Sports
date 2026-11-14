@@ -19,20 +19,47 @@ window.ADMIN_DASH = function (b, A) {
   function finIn(a, z) { return fin.filter(function (m) { var t = endT(m); return t != null && t > a && t <= z; }); }
   function goals(L) { return L.reduce(function (s, m) { return s + (Number(m.hs) || 0) + (Number(m.as) || 0); }, 0); }
 
-  // ---------- portada ----------
-  var top = h('div', 'dtop'), hero = h('section', 'dhero'), hl = h('div', 'dh-l');
-  hl.appendChild(h('div', 'dh-ey', 'Panel de control')); var h1 = h('h1'); h1.appendChild(h('span', null, 'MAGNA')); h1.appendChild(h('span', 'g', 'ARENA')); hl.appendChild(h1); hl.appendChild(h('div', 'dh-sub', 'La casa de Magna Sports')); hl.appendChild(h('p', null, 'Partidos, torneos, jugadores y Bits. Todo lo que manejas, en un solo lugar.'));
-  var ch = h('div', 'dh-ch'); ['Competencia', 'Comunidad', 'Diversión'].forEach(function (t) { ch.appendChild(h('span', null, t)); }); hl.appendChild(ch); hero.appendChild(hl);
-  var mf = h('div', 'dh-mf'), mas = h('img', 'dh-mas'); mas.src = 'mascota/celebrando.webp'; mas.alt = ''; mas.onerror = function () { mf.remove(); }; mf.appendChild(mas); hero.appendChild(mf);
-  for (var i = 0; i < 10; i++) { var sp = h('i', 'dh-sp'); sp.style.left = (8 + i * 9) + '%'; sp.style.top = (12 + (i * 37) % 70) + '%'; sp.style.animationDelay = (i * .35) + 's'; hero.appendChild(sp); }
-  var stk = h('div', 'dh-stk'); stk.appendChild(h('small', null, live.length ? 'En vivo' : 'Jugados')); stk.appendChild(h('b', null, String(live.length || fin.length))); stk.appendChild(h('small', null, live.length ? (live.length === 1 ? 'partido' : 'partidos') : 'partidos')); hero.appendChild(stk);
-  var scr = h('div', 'dh-scr', 'Compite.\nGana.\nPresume.'); hero.appendChild(scr);
-  top.appendChild(hero);
-  var gr = h('section', 'dgreet'), hr = new Date().getHours(), who = (window.MAGNA_ADMIN && MAGNA_ADMIN.email || 'admin').split('@')[0];
-  var d0 = h('div', 'dg-d'); d0.appendChild(A.icon('cal')); d0.appendChild(h('span', null, new Date().toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }))); gr.appendChild(d0);
-  gr.appendChild(h('p', null, hr < 12 ? 'Buenos días,' : hr < 19 ? 'Buenas tardes,' : 'Buenas noches,')); gr.appendChild(h('b', 'dg-n', who.charAt(0).toUpperCase() + who.slice(1)));
-  gr.appendChild(h('small', null, 'Administrador · Magna Sports')); var lg = h('div', 'dg-lg'), li = h('img'); li.src = 'logo-sm.webp'; li.alt = ''; lg.appendChild(li); lg.appendChild(h('span', null, 'Juntos competimos')); gr.appendChild(lg);
-  top.appendChild(gr); b.appendChild(top);
+  // ---------- portada: saludo + 3 tarjetas (partido, temporada, goles) ----------
+  var hr = new Date().getHours(), who = (window.MAGNA_ADMIN && MAGNA_ADMIN.email || 'admin').split('@')[0]; who = who.charAt(0).toUpperCase() + who.slice(1);
+  var gr = h('section', 'nx-greet'), gl = h('div');
+  gl.appendChild(h('span', 'nx-date', new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' })));
+  gl.appendChild(h('h1', null, (hr < 12 ? 'Buenos días, ' : hr < 19 ? 'Buenas tardes, ' : 'Buenas noches, ') + who + ' 👋'));
+  gl.appendChild(h('p', null, live.length ? '¡Hay ' + (live.length === 1 ? 'un partido' : live.length + ' partidos') + ' en vivo! La comunidad está mirando.' : sch.length ? 'Tienes ' + sch.length + (sch.length === 1 ? ' partido programado' : ' partidos programados') + '. Todo listo para la próxima jornada.' : 'Todo tranquilo. ¿Programamos el próximo partido?'));
+  gr.appendChild(gl);
+  var ga = h('div', 'nx-ga');
+  [['plus', 'Programar partido', function () { A.form('match'); }, 'o'], ['news', 'Noticia', function () { window.__newsOpenEditor = true; A.go('noticias'); }, ''], ['gift', 'Regalar', function () { A.go('regalos'); }, '']].forEach(function (x) { var bb = h('button', 'nx-qb ' + x[3]); bb.type = 'button'; bb.appendChild(A.icon(x[0])); bb.appendChild(h('span', null, x[1])); bb.onclick = x[2]; ga.appendChild(bb); });
+  gr.appendChild(ga); b.appendChild(gr);
+  var row0 = h('div', 'nx-row');
+  // 1) partido destacado
+  var fm = live[0] || sch.filter(function (m) { var t = T(m.at); return t != null && t > NOW - 3 * 3600e3; })[0] || sch[0] || null, c1 = h('section', 'nx-c nx-m' + (fm && fm.status === 'live' ? ' is-live' : ''));
+  var c1h = h('div', 'nx-ch'); c1h.appendChild(h('span', 'nx-lb', fm ? (fm.status === 'live' ? '● En vivo ahora' : 'Próximo partido') : 'Sin partidos')); if (fm) c1h.appendChild(h('small', null, A.compName(fm))); c1.appendChild(c1h);
+  if (fm) { c1.style.setProperty('--hc', MAGNA.teamColor(fm.home)); c1.style.setProperty('--ac', MAGNA.teamColor(fm.away));
+    var vsr = h('div', 'nx-vs'); [fm.home, null, fm.away].forEach(function (tid) { if (tid == null) { var mid = h('div', 'nx-sc'); if (fm.status === 'live') { mid.appendChild(h('b', null, (fm.hs || 0) + ' - ' + (fm.as || 0))); mid.appendChild(h('small', null, "Min " + MAGNA.liveMinute(fm) + "'")); } else { var t0 = T(fm.at); mid.appendChild(h('b', 'tm', t0 ? new Date(t0).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' }) : 'VS')); mid.appendChild(h('small', null, t0 ? new Date(t0).toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short' }) : 'Sin fecha')); } vsr.appendChild(mid); return; }
+      var tw = h('div', 'nx-t'); tw.appendChild(M.crest(tid, MAGNA.teamName(tid), 54)); tw.appendChild(h('b', null, MAGNA.teamName(tid))); vsr.appendChild(tw); }); c1.appendChild(vsr);
+    c1.appendChild(A.btn(fm.status === 'live' ? '🎙️ Narrar partido' : '▶ Preparar partido', function () { A.setLive(fm.id); A.go('vivo'); }, 'o nx-go'));
+  } else { c1.appendChild(h('p', 'dd-e', 'No hay partidos en vivo ni programados.')); c1.appendChild(A.btn('+ Programar partido', function () { A.form('match'); }, 'o nx-go')); }
+  row0.appendChild(c1);
+  // 2) medidor de la temporada
+  var nd = sch.filter(function (m) { return !m.at; }).length, SEG = [['Jugados', fin.length, '#32d583'], ['En vivo', live.length, '#ff4d6d'], ['Programados', sch.length - nd, '#ffb547'], ['Sin fecha', nd, '#b07cff']], TOT = SEG.reduce(function (s, x) { return s + x[1]; }, 0);
+  var c2 = h('section', 'nx-c nx-g'), c2h = h('div', 'nx-ch'); c2h.appendChild(h('span', 'nx-lb', 'Avance de la temporada')); var c2a = h('button', 'dc-a', 'Ver partidos'); c2a.type = 'button'; c2a.onclick = function () { A.go('partidos'); }; c2h.appendChild(c2a); c2.appendChild(c2h);
+  var gw = h('div', 'nx-gw'), gs = svg('svg', { viewBox: '0 0 220 124', class: 'nx-gs' }), R0 = 92, CX = 110, CY = 112, GAP = 4;
+  function arcP(a0, a1) { var p = function (a) { return [CX + R0 * Math.cos(Math.PI - a), CY - R0 * Math.sin(Math.PI - a)]; }, s0 = p(a0), s1 = p(a1); return 'M' + s0[0].toFixed(2) + ' ' + s0[1].toFixed(2) + ' A' + R0 + ' ' + R0 + ' 0 0 1 ' + s1[0].toFixed(2) + ' ' + s1[1].toFixed(2); }
+  gs.appendChild(svg('path', { d: arcP(0.0001, Math.PI - 0.0001), stroke: 'rgba(255,255,255,.07)', 'stroke-width': 20, fill: 'none', 'stroke-linecap': 'round' }));
+  if (TOT) { var acc = 0, vis = SEG.filter(function (x) { return x[1] > 0; }), span = Math.PI - GAP * (vis.length - 1) * Math.PI / 180;
+    vis.forEach(function (x, i) { var a0 = acc, a1 = acc + span * x[1] / TOT; acc = a1 + GAP * Math.PI / 180; var pth = svg('path', { d: arcP(a0 + .02, Math.max(a0 + .03, a1 - .02)), stroke: x[2], 'stroke-width': 20, fill: 'none', 'stroke-linecap': 'round', class: 'nx-arc' }); pth.style.animationDelay = i * 120 + 'ms'; var tt = svg('title', {}); tt.textContent = x[0] + ': ' + x[1]; pth.appendChild(tt); gs.appendChild(pth); }); }
+  gw.appendChild(gs); var gc = h('div', 'nx-gc'), pc = TOT ? Math.round(fin.length / TOT * 100) : 0; gc.appendChild(h('b', null, pc + '%')); gc.appendChild(h('small', null, fin.length + ' de ' + TOT + ' partidos jugados')); gw.appendChild(gc); c2.appendChild(gw);
+  var lgd = h('div', 'nx-lg'); SEG.forEach(function (x) { var it = h('span'); var dt = h('i'); dt.style.background = x[2]; it.appendChild(dt); it.appendChild(document.createTextNode(x[0] + ' ')); it.appendChild(h('b', null, String(x[1]))); lgd.appendChild(it); }); c2.appendChild(lgd);
+  row0.appendChild(c2);
+  // 3) goles por semana
+  var wk0 = weekly(function (a, z) { return finIn(a, z); }, 8), wG0 = wk0.map(goals), dl = wG0[7] - wG0[6], c3 = h('section', 'nx-c nx-k'), c3h = h('div', 'nx-ch'), gi = h('span', 'nx-ki', '⚽'); c3h.appendChild(gi); var c3t = h('div'); c3t.appendChild(h('small', null, 'Goles')); c3t.appendChild(h('b', null, 'Esta semana')); c3h.appendChild(c3t); c3.appendChild(c3h);
+  var kv = h('div', 'nx-kv'), kb = h('b', null, '0'); A.countUp(kb, wG0[7]); kv.appendChild(kb); kv.appendChild(h('span', 'nx-dl ' + (dl > 0 ? 'up' : dl < 0 ? 'dn' : ''), (dl > 0 ? '▲ +' : dl < 0 ? '▼ ' : '● ') + dl)); c3.appendChild(kv); c3.appendChild(h('small', 'nx-ks', goals(fin) + ' goles en total · ' + fin.length + ' partidos'));
+  var LW = 260, LH = 70, mx0 = Math.max.apply(null, wG0.concat([1])), ls = svg('svg', { viewBox: '0 0 ' + LW + ' ' + LH, class: 'nx-ln', preserveAspectRatio: 'none' }), pts0 = wG0.map(function (v, i) { return [6 + i / 7 * (LW - 12), LH - 8 - v / mx0 * (LH - 22)]; });
+  ls.appendChild(svg('line', { x1: 0, x2: LW, y1: LH - 8, y2: LH - 8, stroke: 'rgba(255,255,255,.12)', 'stroke-dasharray': '3 5' }));
+  var dd0 = pts0.map(function (p, i) { if (!i) return 'M' + p[0] + ' ' + p[1]; var q = pts0[i - 1], cx = (q[0] + p[0]) / 2; return 'C' + cx + ' ' + q[1] + ' ' + cx + ' ' + p[1] + ' ' + p[0] + ' ' + p[1]; }).join(' ');
+  ls.appendChild(svg('path', { d: dd0, fill: 'none', stroke: '#32d583', 'stroke-width': 2.5, 'stroke-linecap': 'round', class: 'dk-ln' }));
+  pts0.forEach(function (p, i) { if (i === 7 || wG0[i] === mx0) ls.appendChild(svg('circle', { cx: p[0], cy: p[1], r: 4, fill: '#0f0b0a', stroke: i === 7 ? '#ff7a2f' : '#32d583', 'stroke-width': 2.5 })); });
+  c3.appendChild(ls); c3.onclick = function () { A.go('partidos'); }; c3.style.cursor = 'pointer'; row0.appendChild(c3);
+  b.appendChild(row0);
 
   // ---------- noticias en movimiento ----------
   var NW = (S.news || []).slice(0, 8), tk = h('div', 'dtick'), tb = h('span', 'dt-b'); tb.appendChild(A.icon('news')); tb.appendChild(h('span', null, 'Últimas noticias')); tk.appendChild(tb);
@@ -43,11 +70,6 @@ window.ADMIN_DASH = function (b, A) {
   var nav = h('div', 'dt-n'), pv = h('button', null, '‹'), nx = h('button', null, '›'); pv.type = nx.type = 'button'; pv.setAttribute('aria-label', 'Anterior'); nx.setAttribute('aria-label', 'Siguiente');
   pv.onclick = function () { vp.scrollBy({ left: -vp.clientWidth * .7, behavior: 'smooth' }); }; nx.onclick = function () { vp.scrollBy({ left: vp.clientWidth * .7, behavior: 'smooth' }); }; nav.appendChild(pv); nav.appendChild(nx); tk.appendChild(nav); b.appendChild(tk);
   var auto = setInterval(function () { if (!document.body.contains(vp)) return clearInterval(auto); if (tk.matches(':hover')) return; if (vp.scrollLeft + vp.clientWidth >= vp.scrollWidth - 4) vp.scrollTo({ left: 0, behavior: 'smooth' }); else vp.scrollBy({ left: 240, behavior: 'smooth' }); }, 3500);
-
-  // ---------- en vivo ----------
-  if (live.length) { var lw = h('section', 'dlive'); lw.appendChild(h('span', 'dl-t', '● EN VIVO AHORA'));
-    live.forEach(function (m) { var r = h('div', 'dl-m'); r.appendChild(M.crest(m.home, MAGNA.teamName(m.home), 34)); r.appendChild(h('b', null, MAGNA.teamName(m.home))); r.appendChild(h('span', 'dlv-s', (m.hs || 0) + ' - ' + (m.as || 0))); r.appendChild(h('b', null, MAGNA.teamName(m.away))); r.appendChild(M.crest(m.away, MAGNA.teamName(m.away), 34));
-      r.appendChild(A.btn('Manejar partido', function () { A.setLive(m.id); A.go('vivo'); }, 'o')); lw.appendChild(r); }); b.appendChild(lw); }
 
   // ---------- indicadores ----------
   var kg = h('div', 'dkpi');
@@ -115,7 +137,7 @@ window.ADMIN_DASH = function (b, A) {
   if (!items.length) { ul.appendChild(h('p', 'dd-e', 'No hay nada programado.')); ul.appendChild(A.btn('+ Programar partido', function () { A.go('partidos'); }, 'o')); }
   up.appendChild(ul); row2.appendChild(up);
   var qa = card('', 'Acciones rápidas'), qg = h('div', 'dqa');
-  [['user', 'Registrar jugador', 'form:player', '#3b82f6'], ['cal', 'Programar partido', 'form:match', '#10b981'], ['shield', 'Registrar equipo', 'form:team', '#f97316'], ['live', 'Narrar en vivo', 'vivo', '#ef4444'], ['news', 'Crear noticia', 'noticias', '#a855f7'], ['star', 'Tienda', 'tienda', '#ec4899'], ['cup', 'Balón de Oro', 'balon', '#eab308'], ['up', 'Respaldos', 'datos', '#06b6d4']].forEach(function (x) {
+  [['user', 'Registrar jugador', 'form:player', '#3b82f6'], ['cal', 'Programar partido', 'form:match', '#10b981'], ['shield', 'Registrar equipo', 'form:team', '#f97316'], ['live', 'Narrar en vivo', 'vivo', '#ef4444'], ['news', 'Crear noticia', 'noticias', '#a855f7'], ['star', 'Tienda', 'tienda', '#ec4899'], ['cup', 'Balón de Oro', 'balon', '#eab308'], ['gift', 'Regalos', 'regalos', '#06b6d4']].forEach(function (x) {
     var a = h('button', 'dq'); a.type = 'button'; var ic = h('span', 'dq-i'); ic.style.setProperty('--c', x[3]); ic.appendChild(A.icon(x[0])); a.appendChild(ic); a.appendChild(h('span', null, x[1])); a.onclick = function () { if (/^form:/.test(x[2]) && A.form) A.form(x[2].slice(5)); else A.go(x[2]); }; qg.appendChild(a); });
   qa.appendChild(qg); row2.appendChild(qa);
   // tendencia: líneas por mes

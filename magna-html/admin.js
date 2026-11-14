@@ -203,8 +203,8 @@
   var ACCS = null;
   function loadAccs(then) { ACCOUNTS.list().then(function (l) { ACCS = l; then && then(); }, function () { ACCS = ACCS || []; then && then(); }); }
   // ---------- regalar Bits (llega como notificación a la campanita) ----------
-  function giftDlg(pre) {
-    if (ACCS === null) return loadAccs(function () { giftDlg(pre); });
+  function giftDlg(pre, o) {
+    if (ACCS === null) return loadAccs(function () { giftDlg(pre, o); });
     if (!ACCS.length) return toast('Todavía no hay cuentas. Crea cuentas en Jugadores.', true);
     dialog('🎁 Regalar Bits', function (b, close) {
       b.appendChild(h('p', 'sub', 'Los Bits se suman al saldo de cada cuenta y le llega una notificación a su campanita al instante.'));
@@ -229,6 +229,7 @@
         go.disabled = true; go.textContent = 'Regalando…';
         ACCOUNTS.gift(ids, a, m).then(function (n) { close(); toast('🎁 ' + a.toLocaleString('es') + ' Bits regalados a ' + n + (n === 1 ? ' cuenta' : ' cuentas')); MAGNA.addNews('gift', '🎁 La administración regaló ' + a.toLocaleString('es') + ' Bits' + (n > 1 ? ' a ' + n + ' miembros' : '') + '.'); commit(); loadAccs(function () { if (tab === 'jugadores') render(); }); },
           function (e) { go.disabled = false; sum(); err.textContent = 'No se pudo: ' + (e.message || e); }); }, 'o'); rr.appendChild(go); b.appendChild(rr);
+      if (o) { if (o.amt) amt.value = o.amt; if (o.msg) msg.value = o.msg; }
       draw(); amt.focus();
     });
   }
@@ -625,7 +626,18 @@
     up: '<path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     play: '<path d="M7 4l13 8-13 8V4z"/>',
-    star: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9L12 3z"/>'
+    star: '<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9L12 3z"/>',
+    gift: '<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-1.5-3-5-4-5.5-2S9 8 12 8zm0 0c1.5-3 5-4 5.5-2S15 8 12 8z"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/>',
+    db: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+    bag: '<path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>',
+    ball: '<circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/>',
+    pulse: '<path d="M3 12h4l2-6 4 12 2-6h6"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 .5c0 1.5-2.5 2-2.5 3.5M12 17h.01"/>',
+    out: '<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>',
+    ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/>'
   };
   function icon(k) { var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = IC[k] || ''; return s; }
   function fdate(at) { return at ? new Date(at.replace(' ', 'T') + 'Z').toLocaleString('es', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha'; }
@@ -681,26 +693,28 @@
   }
   // ---------- estructura del panel ----------
   var TABS = [
-    { id: 'resumen', g: 'General', l: 'Resumen', i: 'home', f: homeV, d: 'Todo tu sitio de un vistazo: lo que está en vivo, lo próximo y accesos a cada página.' },
-    { id: 'vivo', g: 'General', l: 'En vivo', i: 'live', f: liveV, d: 'Narra el partido: inicio, goles, modo de juego, sustituciones, entretiempo y final.', p: 'index.html', ct: function () { return liveMatches().length; } },
-    { id: 'ligas', g: 'Competiciones', l: 'Ligas', i: 'league', f: function (b) { compV(b, 'leagues'); }, d: 'Crea ligas, inscribe equipos y sigue la clasificación.', p: 'ligas.html' },
-    { id: 'torneos', g: 'Competiciones', l: 'Torneos y Mundial', i: 'cup', f: function (b) { compV(b, 'tournaments'); }, d: 'Eliminatorias, todos contra todos o formato Mundial con fase de grupos.', p: 'mundial.html' },
-    { id: 'balon', g: 'Competiciones', l: 'Balón de Oro', i: 'cup', f: balonV, d: 'Registra los ganadores de cada edición o abre una votación para que la comunidad elija al mejor jugador.', p: 'balon.html', ct: function () { return S().ballonVote ? 1 : 0; } },
-    { id: 'historial', g: 'Competiciones', l: 'Historial', i: 'cup', f: histV, d: 'Torneos anteriores al sitio: marcadores y campeones. Ajustan el nivel de los equipos y los títulos de los jugadores.', p: 'competiciones.html' },
-    { id: 'partidos', g: 'Competiciones', l: 'Partidos', i: 'cal', f: matchesV, d: 'Programa partidos, cambia fechas y registra resultados.', p: 'calendario.html', ct: function () { var p = pendingReqs().length; return p || S().matches.filter(function (m) { return m.status === 'scheduled'; }).length; }, dim: function () { return !pendingReqs().length; } },
-    { id: 'equipos', g: 'Clubes', l: 'Equipos', i: 'shield', f: teamsV, d: 'Equipos, fotos, plantillas y trofeos.', p: 'equipos.html' },
-    { id: 'jugadores', g: 'Clubes', l: 'Jugadores y coaches', i: 'user', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
-    { id: 'economia', g: 'Clubes', l: 'Fichajes y Bits', i: 'coin', f: econV, d: 'Abre o cierra el mercado de fichajes, y maneja presupuestos y contratos de cada equipo.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
-    { id: 'tienda', g: 'Clubes', l: 'Tienda e inventarios', i: 'star', f: shopV, d: 'Cosméticos que los miembros compran con Bits o reciben de regalo: colores de nombre, placas, marcos y títulos.', p: 'tienda.html' },
-    { id: 'eventos', g: 'Comunicación', l: 'Eventos', i: 'cal', f: eventsV, d: 'Agenda de la comunidad: torneos relámpago, amistosos, transmisiones y premiaciones. Los miembros se apuntan con «¡Voy!».', p: 'eventos.html' },
-    { id: 'noticias', g: 'Comunicación', l: 'Noticias', i: 'news', f: function (b) { window.ADMIN_NEWS(b, { h: h, btn: btn, toast: toast, dialog: dialog, confirmBox: confirmBox }); }, d: 'Crea, programa, destaca y edita las noticias de la comunidad.', p: 'noticias.html' },
-    { id: 'actividad', g: 'Comunicación', l: 'Actividad', i: 'league', f: newsV, d: 'Avisos cortos y el registro automático de lo que pasa (resultados, fichajes, MVP).', p: 'index.html' },
-    { id: 'datos', g: 'Sitio', l: 'Datos y accesos', i: 'up', f: dataV, d: 'Copias de seguridad y administradores. Tus cambios ya se publican solos.' }
+    { id: 'resumen', g: 'Inicio', l: 'Resumen', i: 'home', c: '#ff7a2f', f: homeV, d: 'Todo tu sitio de un vistazo: lo que está en vivo, lo próximo y accesos a cada página.' },
+    { id: 'vivo', g: 'Inicio', l: 'En vivo', i: 'live', c: '#ff4d6d', f: liveV, d: 'Narra el partido: goles, modos, cambios, notas y celebraciones. Atajos: Q gol local · P gol visitante · S cambio · Z deshacer.', p: 'index.html', ct: function () { return liveMatches().length; } },
+    { id: 'partidos', g: 'Competición', l: 'Partidos', i: 'cal', c: '#32d583', f: matchesV, d: 'Programa partidos, cambia fechas y registra resultados.', p: 'calendario.html', ct: function () { var p = pendingReqs().length; return p || S().matches.filter(function (m) { return m.status === 'scheduled'; }).length; }, dim: function () { return !pendingReqs().length; } },
+    { id: 'ligas', g: 'Competición', l: 'Ligas', i: 'league', c: '#4cc3ff', f: function (b) { compV(b, 'leagues'); }, d: 'Crea ligas, inscribe equipos y sigue la clasificación.', p: 'ligas.html' },
+    { id: 'torneos', g: 'Competición', l: 'Torneos y Mundial', i: 'cup', c: '#ffc53d', f: function (b) { compV(b, 'tournaments'); }, d: 'Eliminatorias, Champions, todos contra todos o formato Mundial con fase de grupos.', p: 'mundial.html' },
+    { id: 'balon', g: 'Competición', l: 'Balón de Oro', i: 'ball', c: '#ffd23f', f: balonV, d: 'Registra los ganadores de cada edición o abre una votación para que la comunidad elija al mejor jugador.', p: 'balon.html', ct: function () { return S().ballonVote ? 1 : 0; } },
+    { id: 'historial', g: 'Competición', l: 'Historial', i: 'league', c: '#9b8cff', f: histV, d: 'Torneos anteriores al sitio: marcadores y campeones. Ajustan el nivel de los equipos y los títulos de los jugadores.', p: 'competiciones.html' },
+    { id: 'equipos', g: 'Comunidad', l: 'Equipos', i: 'shield', c: '#b07cff', f: teamsV, d: 'Equipos, escudos, plantillas y trofeos.', p: 'equipos.html' },
+    { id: 'jugadores', g: 'Comunidad', l: 'Jugadores y roles', i: 'user', c: '#4cc3ff', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
+    { id: 'roles', g: 'Comunidad', l: 'Roles y accesos', i: 'key', c: '#ff5fa2', f: function (b) { dataV(b, 'roles'); }, d: 'Quién manda en el sitio: administradores con correo, administradores con código y jueces que califican partidos.' },
+    { id: 'eventos', g: 'Comunidad', l: 'Eventos', i: 'cal', c: '#32d583', f: eventsV, d: 'Agenda de la comunidad: torneos relámpago, amistosos, transmisiones y premiaciones. Los miembros se apuntan con «¡Voy!».', p: 'eventos.html' },
+    { id: 'economia', g: 'Bits y tienda', l: 'Fichajes y Bits', i: 'coin', c: '#ffc53d', f: econV, d: 'Abre o cierra el mercado de fichajes, y maneja presupuestos y contratos de cada equipo.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
+    { id: 'tienda', g: 'Bits y tienda', l: 'Tienda', i: 'bag', c: '#ff5fa2', f: shopV, d: 'Cosméticos que los miembros compran con Bits o reciben de regalo: colores de nombre, placas, marcos y títulos.', p: 'tienda.html' },
+    { id: 'regalos', g: 'Bits y tienda', l: 'Regalos', i: 'gift', c: '#ff7a2f', f: regalosV, d: 'Premia a la comunidad: regala Bits o cosméticos en segundos, con premios listos para el MVP, los goleadores o los campeones.' },
+    { id: 'noticias', g: 'Comunicación', l: 'Noticias', i: 'news', c: '#b07cff', f: function (b) { window.ADMIN_NEWS(b, { h: h, btn: btn, toast: toast, dialog: dialog, confirmBox: confirmBox }); }, d: 'Crea, programa, destaca y edita las noticias de la comunidad.', p: 'noticias.html' },
+    { id: 'actividad', g: 'Comunicación', l: 'Actividad', i: 'pulse', c: '#4cc3ff', f: newsV, d: 'Avisos cortos y el registro automático de lo que pasa (resultados, fichajes, MVP).', p: 'index.html' },
+    { id: 'respaldo', g: 'Sistema', l: 'Respaldos', i: 'db', c: '#32d583', f: function (b) { dataV(b, 'backup'); }, d: 'Copias de seguridad en la nube y en tu computadora. Antes de cualquier cambio grande se guarda una copia sola.' }
   ];
-  function go(t) { tab = t; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function go(t) { if (t === 'datos') t = 'respaldo'; if (!TABS.some(function (x) { return x.id === t; })) t = 'resumen'; tab = t; document.body.classList.remove('nv-open'); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   window.ADMIN_GO = go;
   // ---------- secciones que se cargan al abrirlas (admin-<módulo>.js): el panel abre más rápido ----------
-  var MODDEF = {}, MODS = {}, MODV = '2611080500', MODOF = { vivo: 'live', ligas: 'comp', torneos: 'comp', balon: 'balon', historial: 'hist', economia: 'econ', datos: 'data', eventos: 'events', tienda: 'shop' };
+  var MODDEF = {}, MODS = {}, MODV = '2611141600', MODOF = { vivo: 'live', ligas: 'comp', torneos: 'comp', balon: 'balon', historial: 'hist', economia: 'econ', roles: 'data', respaldo: 'data', eventos: 'events', tienda: 'shop', regalos: 'shop' };
   window.ADMIN_MOD = function (n, f) { MODDEF[n] = f; };
   var $ = {}; Object.defineProperties($, { ACCS: { get: function () { return ACCS; }, set: function (v) { ACCS = v; } }, BKK: { get: function () { return BKK; }, set: function (v) { BKK = v; } }, EVC: { get: function () { return EVC; }, set: function (v) { EVC = v; } }, EVK: { get: function () { return EVK; }, set: function (v) { EVK = v; } }, INV: { get: function () { return INV; }, set: function (v) { INV = v; } }, LIVE: { get: function () { return LIVE; }, set: function (v) { LIVE = v; } }, MF: { get: function () { return MF; }, set: function (v) { MF = v; } }, NEXT: { get: function () { return NEXT; }, set: function (v) { NEXT = v; } }, ST: { get: function () { return ST; }, set: function (v) { ST = v; } }, TF: { get: function () { return TF; }, set: function (v) { TF = v; } }, TICK: { get: function () { return TICK; }, set: function (v) { TICK = v; } }, UNDO: { get: function () { return UNDO; }, set: function (v) { UNDO = v; } }, exBusy: { get: function () { return exBusy; }, set: function (v) { exBusy = v; } }, tab: { get: function () { return tab; }, set: function (v) { tab = v; } } });
   function modApi() { return { $: $, S: S, ibtn: ibtn, ppSum: ppSum, ppChips: ppChips, ppSearch: ppSearch, stack: stack, ask: ask, banner: banner, btn: btn, by: by, closesDlg: closesDlg, commit: commit, compName: compName, confirmBox: confirmBox, dialog: dialog, evRpc: evRpc, fdate: fdate, go: go, h: h, loadAccs: loadAccs, nk: nk, okName: okName, render: render, rr: rr, setsDlg: setsDlg, shareDlg: shareDlg, showCode: showCode, table: table, toLocal: toLocal, toUtc: toUtc, toast: toast }; }
@@ -724,28 +738,116 @@
   function eventsV() { modRun('events', 'eventsV', arguments); }
   function shopV() { modRun('shop', 'shopV', arguments); }
   function syncExcl() { modRun('shop', 'syncExcl', arguments); }
+  function tabOf(id) { return TABS.filter(function (t) { return t.id === id; })[0]; }
   function render() {
     if (TICK) { clearInterval(TICK); TICK = null; }
+    var T = tabOf(tab) || TABS[0]; tab = T.id;
     var sd = document.getElementById('side'); sd.innerHTML = ''; var grp = null, cur = null;
+    var brd = h('button', 'nb-brand'); brd.type = 'button'; brd.onclick = function () { go('resumen'); }; var bi = h('img'); bi.src = 'logo-sm.webp'; bi.alt = ''; brd.appendChild(bi); var bt = h('span'); bt.appendChild(h('b', null, 'Magna Arena')); bt.appendChild(h('small', null, 'Panel de control')); brd.appendChild(bt); sd.appendChild(brd);
+    var cls = h('button', 'nb-x', '✕'); cls.type = 'button'; cls.setAttribute('aria-label', 'Cerrar menú'); cls.onclick = function () { document.body.classList.remove('nv-open'); }; sd.appendChild(cls);
     TABS.forEach(function (t) { if (t.g !== grp) { grp = t.g; cur = h('div', 'sg'); cur.appendChild(h('h4', null, t.g)); sd.appendChild(cur); }
-      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.style.setProperty('--ic', ({ General: '#60a5fa', Competiciones: '#fbbf24', Clubes: '#34d399', 'Comunicación': '#c084fc', Sitio: '#22d3ee' })[t.g] || '#60a5fa'); x.appendChild(icon(t.i)); if (MODOF[t.id]) { x.onmouseenter = x.onfocus = x.ontouchstart = function () { modPrefetch(MODOF[t.id]); }; } x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + ((typeof t.dim === 'function' ? t.dim() : t.dim) ? ' dim' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
-    var T = TABS.filter(function (t) { return t.id === tab; })[0], hd = document.getElementById('shead'); hd.innerHTML = '';
-    var l = h('div'); l.appendChild(h('div', 'eb mono', 'Panel · ' + T.g)); l.appendChild(h('h1', 'x', T.l)); l.appendChild(h('p', null, T.d)); hd.appendChild(l);
-    if (T.p) { var a = h('a', 'lk', 'Ver en el sitio ↗'); a.href = T.p; a.target = '_blank'; a.rel = 'noopener'; hd.appendChild(a); }
+      var x = h('button', 'si' + (t.id === tab ? ' on' : '')); x.type = 'button'; x.style.setProperty('--ic', t.c); x.appendChild(icon(t.i)); if (MODOF[t.id]) { x.onmouseenter = x.onfocus = x.ontouchstart = function () { modPrefetch(MODOF[t.id]); }; } x.appendChild(h('span', null, t.l)); var n = t.ct ? t.ct() : 0; if (n) x.appendChild(h('span', 'ct' + ((typeof t.dim === 'function' ? t.dim() : t.dim) ? ' dim' : '') + (t.id === 'vivo' ? ' lv' : ''), n)); x.onclick = function () { go(t.id); }; cur.appendChild(x); });
+    var hc = h('div', 'nb-help'), hi = h('span', 'nb-hi'); hi.appendChild(icon('help')); hc.appendChild(hi); hc.appendChild(h('b', null, '¿Dónde está cada cosa?')); hc.appendChild(h('p', null, 'La guía te muestra qué hace cada sección y te lleva directo.')); hc.appendChild(btn('Abrir la guía', guideDlg, 'o')); sd.appendChild(hc);
+    var vs = h('a', 'nb-site'); vs.href = 'index.html'; vs.target = '_blank'; vs.rel = 'noopener'; vs.appendChild(icon('ext')); vs.appendChild(h('span', null, 'Ver el sitio')); sd.appendChild(vs);
+    var hd = document.getElementById('shead'); hd.innerHTML = ''; hd.style.setProperty('--ic', T.c);
+    var ti = h('span', 'sh-ic'); ti.appendChild(icon(T.i)); hd.appendChild(ti);
+    var l = h('div', 'sh-tx'); l.appendChild(h('div', 'eb mono', T.g)); l.appendChild(h('h1', 'x', T.l)); l.appendChild(h('p', null, T.d)); hd.appendChild(l);
+    if (T.p) { var a = h('a', 'lk'); a.href = T.p; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(h('span', null, 'Ver en el sitio')); a.appendChild(icon('ext')); hd.appendChild(a); }
     hd.classList.toggle('hide', tab === 'resumen'); document.body.classList.toggle('on-dash', tab === 'resumen');
-    var ql = h('div', 'sg sq'); ql.appendChild(h('h4', null, 'Enlaces rápidos')); [['index.html', 'Ver el sitio', 'home'], ['eventos.html', 'Eventos', 'cal'], ['tienda.html', 'Tienda', 'star']].forEach(function (x) { var a = h('a', 'si'); a.href = x[0]; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(icon(x[2])); a.appendChild(h('span', null, x[1])); a.appendChild(h('em', null, '↗')); ql.appendChild(a); }); sd.appendChild(ql);
-    var brd = h('div', 'sbrand'), bi = h('img'); bi.src = 'logo-sm.webp'; bi.alt = ''; brd.appendChild(bi); brd.appendChild(h('b', null, 'MAGNA ARENA')); brd.appendChild(h('small', null, 'Competencia · Comunidad · Diversión')); sd.appendChild(brd);
-    view.classList.remove('dash'); view.innerHTML = ''; T.f(view);
+    dock();
+    view.classList.remove('dash'); view.className = 'v-' + tab; view.innerHTML = ''; T.f(view);
   }
+  // barra inferior en el teléfono
+  function dock() { var d = document.getElementById('ndock'); if (!d) return; d.innerHTML = '';
+    [['resumen', 'Inicio', 'home'], ['vivo', 'En vivo', 'live'], ['partidos', 'Partidos', 'cal'], ['noticias', 'Noticias', 'news'], ['__m', 'Menú', 'menu']].forEach(function (x) {
+      var b = h('button', 'nd-i' + (x[0] === tab ? ' on' : '')); b.type = 'button'; b.appendChild(icon(x[2])); b.appendChild(h('span', null, x[1]));
+      if (x[0] === 'vivo' && liveMatches().length) b.appendChild(h('i', 'nd-dot'));
+      b.onclick = function () { if (x[0] === '__m') document.body.classList.add('nv-open'); else go(x[0]); }; d.appendChild(b); }); }
   function banner() {
     var b = document.getElementById('banner'), st = MAGNA.cloud.status; b.innerHTML = '';
     var cls = st === 'error' ? ' err' : (st === 'saving' || st === 'pending') ? ' sav' : '';
-    b.className = 'pub' + cls; b.appendChild(h('i'));
-    b.appendChild(h('span', null, st === 'error' ? 'No se pudo guardar. Reintentando… revisa tu conexión.' : st === 'saving' || st === 'pending' ? 'Guardando y publicando…' : 'Conectado · los cambios se publican al instante en el sitio.'));
-    b.appendChild(h('span', 'sp')); if (window.MAGNA_ADMIN) { b.appendChild(h('span', null, MAGNA_ADMIN.email)); b.appendChild(btn('Salir', function () { MAGNA_ADMIN.signOut(); }, 'sm')); }
+    b.className = 'pub' + cls;
+    var s1 = h('span', 'nt-st'); s1.appendChild(h('i')); s1.appendChild(h('span', null, st === 'error' ? 'Sin conexión · reintentando' : st === 'saving' || st === 'pending' ? 'Guardando…' : 'En línea'));
+    s1.title = st === 'error' ? 'No se pudo guardar. Reintentando… revisa tu conexión.' : 'Conectado · los cambios se publican al instante en el sitio.'; b.appendChild(s1);
+    var lv = liveMatches(); if (lv.length) { var lc = h('button', 'nt-lv'); lc.type = 'button'; lc.appendChild(h('i')); lc.appendChild(h('span', null, lv.length === 1 ? MAGNA.teamName(lv[0].home) + ' ' + (lv[0].hs || 0) + '-' + (lv[0].as || 0) + ' ' + MAGNA.teamName(lv[0].away) : lv.length + ' en vivo')); lc.onclick = function () { LIVE = lv[0].id; go('vivo'); }; b.appendChild(lc); }
+    if (window.MAGNA_ADMIN) { var who = String(MAGNA_ADMIN.email || 'admin'), nm = who.split('@')[0], pf = h('span', 'nt-pf'); pf.appendChild(h('span', 'nt-av', nm.slice(0, 1).toUpperCase())); var pt = h('span', 'nt-pt'); pt.appendChild(h('b', null, nm.charAt(0).toUpperCase() + nm.slice(1))); pt.appendChild(h('small', null, 'Administrador')); pf.appendChild(pt); pf.title = who; b.appendChild(pf);
+      var so = h('button', 'nt-out'); so.type = 'button'; so.title = 'Cerrar sesión'; so.setAttribute('aria-label', 'Cerrar sesión'); so.appendChild(icon('out')); so.onclick = function () { MAGNA_ADMIN.signOut(); }; b.appendChild(so); }
+  }
+  // ---------- guía: qué hace cada sección ----------
+  function guideDlg() {
+    dialog('🧭 Guía del panel', function (b, close) {
+      b.appendChild(h('p', 'sub', 'Toca una sección para ir directo. También puedes buscar cualquier cosa con la barra de arriba (atajo: tecla /).'));
+      var grp = null, box = h('div', 'gd'); TABS.forEach(function (t) { if (t.g !== grp) { grp = t.g; box.appendChild(h('h4', null, t.g)); }
+        var x = h('button', 'gd-i'); x.type = 'button'; x.style.setProperty('--ic', t.c); var ic = h('span', 'gd-ic'); ic.appendChild(icon(t.i)); x.appendChild(ic); var tx = h('span'); tx.appendChild(h('b', null, t.l)); tx.appendChild(h('small', null, t.d)); x.appendChild(tx); x.onclick = function () { close(); go(t.id); }; box.appendChild(x); });
+      b.appendChild(box); var r = h('div', 'row'); r.appendChild(btn('Cerrar', close)); b.appendChild(r);
+    });
+  }
+  // ---------- buscador: secciones, equipos, jugadores, partidos y acciones ----------
+  function prefill(q) { setTimeout(function () { var i = view.querySelector('input[type=search],input[placeholder*="uscar"]'); if (i) { i.value = q; i.dispatchEvent(new Event('input', { bubbles: true })); i.focus(); } }, 500); }
+  function searchUI() {
+    var w = document.getElementById('nsrch'); if (!w || w.firstChild) return;
+    var ic = icon('search'); w.appendChild(ic); var inp = h('input'); inp.type = 'text'; inp.placeholder = 'Buscar equipos, jugadores, secciones…'; inp.setAttribute('aria-label', 'Buscar en el panel'); inp.autocomplete = 'off'; w.appendChild(inp); w.appendChild(h('kbd', null, '/'));
+    var res = h('div', 'nt-res'); res.hidden = true; w.appendChild(res); var L = [], sel = 0;
+    function acts() { return [['🎁 Regalar Bits', function () { giftDlg(); }], ['📅 Programar partido', function () { matchDlg(null); }], ['👤 Registrar jugador', function () { if (formsApi()) ADMIN_FORMS.player(); }], ['🛡️ Registrar equipo', function () { if (formsApi()) ADMIN_FORMS.team(); }], ['📰 Crear noticia', function () { window.__newsOpenEditor = true; go('noticias'); }], ['💾 Hacer copia de seguridad', function () { go('respaldo'); }], ['⚖️ Nombrar juez', function () { go('roles'); }]]; }
+    function find(q) { var t = nk(q), out = []; if (!t) return out;
+      var hit = function (s) { return nk(s).indexOf(t) >= 0; };
+      TABS.forEach(function (x) { if (hit(x.l) || hit(x.g) || hit(x.d)) out.push({ k: 'Sección', c: x.c, n: x.l, s: x.g, f: function () { go(x.id); } }); });
+      acts().forEach(function (x) { if (hit(x[0])) out.push({ k: 'Acción', c: '#ff7a2f', n: x[0], s: 'Atajo', f: x[1] }); });
+      S().teams.forEach(function (x) { if (hit(x.name)) out.push({ k: 'Equipo', c: MAGNA.teamColor(x.id), n: x.name, s: 'Abrir en Equipos', f: function () { go('equipos'); prefill(x.name); } }); });
+      S().players.forEach(function (x) { if (hit(x.name)) out.push({ k: 'Jugador', c: '#4cc3ff', n: x.name, s: MAGNA.teamName(x.teamId) || 'Agente libre', f: function () { go('jugadores'); prefill(x.name); } }); });
+      S().matches.forEach(function (m) { if (m.status === 'cancelled') return; var nn = MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away); if (hit(nn)) out.push({ k: m.status === 'live' ? 'En vivo' : m.status === 'finished' ? 'Jugado' : 'Partido', c: m.status === 'live' ? '#ff4d6d' : '#32d583', n: nn + (m.status === 'scheduled' ? '' : ' · ' + (m.hs || 0) + '-' + (m.as || 0)), s: compName(m), f: function () { if (m.status === 'finished' && !m.live) { go('partidos'); prefill(MAGNA.teamName(m.home)); } else { LIVE = m.id; go('vivo'); } } }); });
+      return out.slice(0, 9); }
+    function draw() { res.innerHTML = ''; L = find(inp.value); sel = Math.min(sel, Math.max(0, L.length - 1));
+      if (!inp.value.trim()) { res.hidden = true; return; } res.hidden = false;
+      if (!L.length) { res.appendChild(h('p', 'nt-e', 'Nada con «' + inp.value.trim() + '». Prueba con otro nombre.')); return; }
+      L.forEach(function (x, i) { var r = h('button', 'nt-r' + (i === sel ? ' on' : '')); r.type = 'button'; r.style.setProperty('--c', x.c || '#ff7a2f'); r.appendChild(h('em', null, x.k)); var tx = h('span'); tx.appendChild(h('b', null, x.n)); tx.appendChild(h('small', null, x.s || '')); r.appendChild(tx); r.onmousedown = function (e) { e.preventDefault(); }; r.onclick = function () { pickR(i); }; res.appendChild(r); }); }
+    function pickR(i) { var x = L[i]; if (!x) return; inp.value = ''; res.hidden = true; inp.blur(); x.f(); }
+    inp.oninput = function () { sel = 0; draw(); };
+    inp.onkeydown = function (e) { if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(L.length - 1, sel + 1); draw(); } else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, sel - 1); draw(); } else if (e.key === 'Enter') { e.preventDefault(); pickR(sel); } else if (e.key === 'Escape') { inp.value = ''; draw(); inp.blur(); } };
+    inp.onblur = function () { setTimeout(function () { res.hidden = true; }, 120); }; inp.onfocus = function () { if (inp.value) draw(); };
+    document.addEventListener('keydown', function (e) { var tg = e.target, typing = tg && (/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) || tg.isContentEditable); if (typing || document.querySelector('.ov')) return; if (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) { e.preventDefault(); inp.focus(); } });
+    var bg = document.getElementById('nburg'); if (bg) { bg.appendChild(icon('menu')); bg.onclick = function () { document.body.classList.add('nv-open'); }; }
+    var sc = document.getElementById('nscrim'); if (sc) sc.onclick = function () { document.body.classList.remove('nv-open'); };
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') document.body.classList.remove('nv-open'); });
+  }
+  // ---------- regalos ----------
+  function regalosV(b) {
+    if (ACCS === null) { b.appendChild(M.skel ? M.skel(3) : h('p', 'hint', 'Cargando cuentas…')); return loadAccs(function () { if (tab === 'regalos') render(); }); }
+    var A = ACCS || [], mem = A.filter(function (a) { return a.role === 'member'; }), tot = A.reduce(function (s, a) { return s + (Number(a.bits) || 0); }, 0);
+    var hero = h('section', 'rg-hero'), ht = h('div'); ht.appendChild(h('span', 'rg-ey', '🎉 Premia a tu gente')); ht.appendChild(h('h2', null, 'Un regalo cambia el día')); ht.appendChild(h('p', null, 'Los regalos llegan al instante a la campanita de cada miembro. Los Bits son ficticios: no tienen valor real.')); hero.appendChild(ht);
+    var hs = h('div', 'rg-st'); [[A.length, 'cuentas'], [tot.toLocaleString('es'), 'Bits en circulación'], [(S().news || []).filter(function (n) { return n.kind === 'gift'; }).length, 'regalos enviados']].forEach(function (x) { var d = h('div'); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); hs.appendChild(d); }); hero.appendChild(hs); b.appendChild(hero);
+    var g = h('div', 'rg-grid');
+    [['coin', '#ffc53d', 'Regalar Bits', 'Elige cuentas, la cantidad y un mensaje. Atajos de 100 a 5.000.', 'Regalar Bits', function () { giftDlg(); }],
+     ['bag', '#ff5fa2', 'Regalar cosmético', 'Colores de nombre, placas, marcos y títulos de la tienda, sin que paguen.', 'Elegir cosmético', function () { if (!(S().shop || []).length) { toast('Primero activa la tienda en la sección Tienda.', true); return go('tienda'); } modLoad('shop').then(function (m) { MODS.shop.done = m; m.itemGiftDlg(null); }, function () { toast('No se pudo abrir. Revisa tu conexión.', true); }); }],
+     ['star', '#b07cff', 'Entregar exclusivos', 'Revisa quién ganó títulos, MVP o hat-tricks y le entrega su cosmético exclusivo.', 'Entregar ahora', function () { syncExcl(true); }]].forEach(function (x) {
+      var c = h('div', 'rg-c'); c.style.setProperty('--c', x[1]); var ic = h('span', 'rg-ic'); ic.appendChild(icon(x[0])); c.appendChild(ic); c.appendChild(h('h3', null, x[2])); c.appendChild(h('p', null, x[3])); c.appendChild(btn(x[4], x[5], 'o')); g.appendChild(c); });
+    b.appendChild(g);
+    // premios rápidos según lo que pasó en el sitio
+    b.appendChild(h('h2', 'x', 'Premios rápidos'));
+    b.appendChild(h('p', 'hint', 'Ya vienen con las cuentas, la cantidad y el mensaje. Solo revisas y confirmas.'));
+    var acc = function (pid) { return A.filter(function (a) { return a.player_id != null && String(a.player_id) === String(pid); })[0]; };
+    var fin = S().matches.filter(function (m) { return m.status === 'finished'; }).sort(function (x, y) { return String(y.ended || y.at || '').localeCompare(String(x.ended || x.at || '')); });
+    var PR = [], mv = fin.filter(function (m) { return m.live && m.live.mvp; })[0];
+    if (mv) { var ma = acc(mv.live.mvp), vs = MAGNA.teamName(mv.home) + ' vs ' + MAGNA.teamName(mv.away); PR.push(['⭐', 'MVP del último partido', (MAGNA.playerName(mv.live.mvp) || 'Jugador') + ' · ' + vs, 300, ma ? [ma.id] : [], '⭐ Premio al MVP de ' + vs + '. ¡Crack!']); }
+    var gm = fin.filter(function (m) { return m.live && (m.live.ev || []).some(function (e) { return e.k === 'goal' && e.player; }); })[0];
+    if (gm) { var sc = {}; gm.live.ev.forEach(function (e) { if (e.k === 'goal' && e.player) sc[e.player] = 1; }); var ids = Object.keys(sc).map(acc).filter(Boolean).map(function (a) { return a.id; }), vs2 = MAGNA.teamName(gm.home) + ' vs ' + MAGNA.teamName(gm.away); var gn = Object.keys(sc).map(function (id) { return MAGNA.playerName(id); }).filter(Boolean).join(', '); PR.push(['⚽', 'Goleadores del último partido', (gn ? gn + ' · ' : '') + vs2, 150, ids, '⚽ Premio por anotar en ' + vs2 + '.']); }
+    var champ = null; S().tournaments.concat(S().leagues).forEach(function (c) { if (c.state && c.state.champion) champ = c; });
+    if (champ) { var ct = champ.state.champion, ids2 = S().players.filter(function (p) { return p.teamId === ct; }).map(function (p) { return acc(p.id); }).filter(Boolean).map(function (a) { return a.id; }); PR.push(['🏆', 'Campeones de ' + champ.name, MAGNA.teamName(ct), 1000, ids2, '🏆 ¡Campeones de ' + champ.name + '! Premio para todo el equipo.']); }
+    var nw = A.filter(function (a) { return a.role === 'member' && Date.parse(a.created_at) > Date.now() - 14 * 864e5; }); if (nw.length) PR.push(['👋', 'Bienvenida a los nuevos', nw.length + (nw.length === 1 ? ' cuenta nueva' : ' cuentas nuevas') + ' en las últimas 2 semanas', 100, nw.map(function (a) { return a.id; }), '👋 ¡Bienvenido a Magna Sports! Aquí tienes unos Bits para empezar.']);
+    PR.push(['🎈', 'Detalle para todos', mem.length + ' miembros de la comunidad', 50, mem.map(function (a) { return a.id; }), '🎈 Un detalle de la administración para toda la comunidad.']);
+    var pl = h('div', 'rg-pre');
+    PR.forEach(function (x) { var r = h('div', 'rg-p'), em = h('span', 'rg-pe', x[0]); r.appendChild(em); var tx = h('div', 'rg-pt'); tx.appendChild(h('b', null, x[1])); tx.appendChild(h('small', null, x[2])); r.appendChild(tx);
+      r.appendChild(h('span', 'rg-pa', '+' + x[3].toLocaleString('es') + ' Bits' + (x[4].length > 1 ? ' c/u' : '')));
+      var bb = btn(x[4].length ? 'Premiar' + (x[4].length > 1 ? ' a ' + x[4].length : '') : 'Sin cuenta', function () { giftDlg(x[4], { amt: x[3], msg: x[5] }); }, 'o sm'); bb.disabled = !x[4].length; if (!x[4].length) bb.title = 'Esta persona aún no tiene cuenta. Créala en Jugadores y roles.'; r.appendChild(bb); pl.appendChild(r); });
+    b.appendChild(pl);
+    var hg = (S().news || []).filter(function (n) { return n.kind === 'gift'; }).slice(0, 8);
+    b.appendChild(h('h2', 'x', 'Últimos regalos'));
+    var hl = h('div', 'rg-hist'); if (!hg.length) hl.appendChild(h('p', 'hint', 'Todavía no has regalado nada. ¡Estrena con un premio rápido!'));
+    hg.forEach(function (n) { var r = h('div', 'rg-h'); r.appendChild(h('span', null, '🎁')); r.appendChild(h('b', null, String(n.text || '').replace(/^🎁\s*/, ''))); r.appendChild(h('small', null, n.at ? new Date(String(n.at).replace(' ', 'T') + 'Z').toLocaleDateString('es', { day: 'numeric', month: 'short' }) : '')); hl.appendChild(r); });
+    b.appendChild(hl);
   }
   MAGNA.cloud.onStatus(function () { banner(); });
-  render(); banner();
+  searchUI(); render(); banner();
   // en un rato libre se precargan las demás secciones para que abran al instante
   setTimeout(function () { var q = ['live', 'comp', 'shop', 'balon', 'data', 'hist', 'econ', 'events'], go1 = function () { var n = q.shift(); if (!n) return; modPrefetch(n); setTimeout(function () { if (window.requestIdleCallback) requestIdleCallback(go1, { timeout: 3000 }); else go1(); }, 900); }; go1(); }, 6000);
   window.addEventListener('magna:update', function (e) { if (e.detail && e.detail.remote) { render(); banner(); if (e.detail.why === 'remote') toast('Se actualizaron los datos: un coach hizo cambios en su equipo.'); } });

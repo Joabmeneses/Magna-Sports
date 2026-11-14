@@ -85,5 +85,5 @@ ADMIN_MOD('shop', function (A) {
           [btn('Editar', function () { shopEdit(x); }, 'sm'), btn('Regalar', function () { itemGiftDlg(x); }, 'sm'), btn(x.active === false ? 'Poner a la venta' : 'Ocultar', function () { x.active = x.active === false; commit(x.active ? 'A la venta' : 'Oculto de la tienda'); }, 'sm'),
             btn('Eliminar', function () { confirmBox('¿Eliminar ' + x.name + ' del catálogo?', (own[x.id] ? own[x.id] + ' cuentas lo tienen; dejará de verse en su inventario. ' : '') + 'Si solo quieres dejar de venderlo, usa Ocultar.', 'Eliminar', function () { S().shop = S().shop.filter(function (y) { return y !== x; }); commit('Cosmético eliminado'); }); }, 'sm d')]]; }))); });
   }
-  return { shopV: shopV, syncExcl: syncExcl };
+  return { shopV: shopV, syncExcl: syncExcl, itemGiftDlg: itemGiftDlg };
 });

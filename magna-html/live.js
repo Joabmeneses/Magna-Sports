@@ -62,7 +62,7 @@
     var RT = (m.live && m.live.ratings) || {}, rk = Object.keys(RT).map(function (id) { return [Number(id), RT[id]]; }).sort(function (a, b) { return b[1] - a[1]; });
     if (rk.length) { md.appendChild(el('h4', null, 'Valoraciones')); var vr = el('div', 'tg'); vr.style.justifyContent = 'flex-start'; rk.slice(0, 8).forEach(function (x) { var s = el('span', null, (MAGNA.playerName(x[0]) || '—') + ' · ' + String(x[1]).replace('.', ',')); if (x[1] >= 8) s.style.cssText = 'background:rgba(46,229,157,.18);color:#2ee59d'; vr.appendChild(s); }); md.appendChild(vr); }
     md.appendChild(el('h4', null, 'Minuto a minuto'));
-    var ICO = { start: '▶', goal: '⚽', mode: '🎮', set: '✔', sub: '⇄', ht: '⏸', resume: '▶', end: '🏁' }, ev = ((m.live && m.live.ev) || []).slice().reverse();
+    var ICO = { start: '▶', goal: '⚽', mode: '🎮', set: '✔', sub: '⇄', ht: '⏸', resume: '▶', end: '🏁', note: '💬' }, ev = ((m.live && m.live.ev) || []).slice().reverse();
     if (!ev.length) md.appendChild(el('p', 'nt', 'El partido acaba de empezar.'));
     ev.forEach(function (e) { var r = el('div', 'mlev'); r.appendChild(el('span', 'm', e.min ? e.min + "'" : '')); r.appendChild(el('span', 'i', ICO[e.k] || '•')); r.appendChild(el('span', null, MAGNA.eventText(m, e))); md.appendChild(r); });
     md.appendChild(el('p', 'nt', 'En tiempo real: lo narra el administrador y aparece aquí al instante.' + (window.MAGNA_TZ ? ' Horas en ' + MAGNA_TZ.label + '.' : '')));
