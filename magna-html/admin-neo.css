@@ -339,3 +339,12 @@ body.neo .cb.nx{animation:none}
 body.neo .cb.nx:before{content:"";position:absolute;inset:-5px;border-radius:inherit;border:2px solid rgba(255,255,255,.4);pointer-events:none;animation:cbRing 1.6s ease-in-out infinite;will-change:opacity}
 @keyframes cbRing{0%,100%{opacity:0}50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){body.neo .cb.nx:before{animation:none;opacity:.6}}
+
+/* ---------- economía de equipos ---------- */
+body.neo .ec-box{margin:18px 0 6px;padding:18px;border-radius:22px;border:var(--glb);background:radial-gradient(60% 120% at 0 0,rgba(255,197,61,.18),transparent 70%),#17110e;box-shadow:var(--sh)}
+body.neo .ec-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+body.neo .ec-hd>div:first-child{flex:1 1 420px}
+body.neo .ec-box h2.x{margin-top:0!important}
+body.neo .ec-hd .bar2{margin:0}
+body.neo .ec-mu{display:inline-block;padding:4px 9px;border-radius:999px;background:rgba(176,124,255,.18);color:#d4bcff;font:800 12.5px Archivo,sans-serif}
+body.neo .ec-wn{color:#ff8fa3;font-weight:700}

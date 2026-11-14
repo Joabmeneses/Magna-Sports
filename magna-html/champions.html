@@ -322,12 +322,15 @@ real();render();
 /* --- Champions a mano: jornadas y cruces los crea la administración --- */
 (function(){if(!CFG||!CFG.manual)return;var z=$('#zcs');if(z)z.hidden=true;var pa=document.querySelector('a[href="prediccion.html"]');if(pa){pa.href='prediccion.html?t='+CFG.id;pa.removeAttribute('style');pa.className='ch-pl';pa.textContent='🔮 Predice al campeón y gana Bits →';var ps=document.createElement('style');ps.textContent='.ch-pl{display:table;margin:4px 0 16px;font:800 14px Archivo,sans-serif;color:#0d0d10!important;text-decoration:underline;text-decoration-color:#ff6a00;text-decoration-thickness:3px;text-underline-offset:4px}.ch-pl:hover{color:#ff6a00!important}';document.head.appendChild(ps)}
  var GS=CFG.groups||[],MG=GS.length>1;
- $('.top .sub').textContent=(MG?'Fase de grupos ('+GS.length+' grupos)':'Fase de liga en una sola tabla')+': la administración define cada jornada. Después llegan los cruces de la eliminatoria, también elegidos por la administración.';
- if(GS.length){if(MG)$('.tabs button[data-p="1"]').textContent='Fase de grupos';var ct=$('#ctag');if(ct&&MG)ct.textContent='Champions · Fase de grupos';var p1=$('#p1');[].forEach.call(p1.children,function(x){x.hidden=true});
+ $('.top .sub').textContent='Fase de liga en una sola tabla con todos los equipos: la administración define cada jornada. Después llegan los cruces de la eliminatoria, también elegidos por la administración.';
+ if(GS.length){var p1=$('#p1');[].forEach.call(p1.children,function(x){x.hidden=true});
   var T=MAGNA.S.tournaments.filter(function(t){return t.id===CFG.id})[0],ALL=MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}),LV={};ALL.forEach(function(m){if(m.status==='live'){LV[m.home]=1;LV[m.away]=1}});
-  var Z=CFG.zones||(function(){if(MG)return{d:2,p:0};var sp=MAGNA.champSplit(GS[0].teamIds.length)||{direct:1,playoff:0};return{d:sp.direct,p:sp.playoff}})();
-  ustStyle(MG?'460':'760');var box=document.createElement('div');box.className='ust-w';
-  GS.forEach(function(g){var rows=T?MAGNA.groupTable(T,g):[];box.appendChild(ustCard(MG?'Grupo '+g.name:'Clasificación',rows.length+' equipos',rows,Z,LV,ALL.filter(function(m){return m.group===g.name}).sort(jsort)))});
+  // todos los equipos en una sola tabla (aunque la administración haya armado las jornadas por grupos)
+  var rows=[];if(T)GS.forEach(function(g){rows=rows.concat(MAGNA.groupTable(T,g))});
+  rows.sort(function(x,y){return y.pts-x.pts||y.dg-x.dg||y.gf-x.gf||x.team.localeCompare(y.team,'es')});rows.forEach(function(x,i){x.pos=i+1});
+  var Z=(!MG&&CFG.zones)||(function(){var sp=MAGNA.champSplit(rows.length)||{direct:1,playoff:0};return{d:sp.direct,p:sp.playoff}})();
+  ustStyle('760');var box=document.createElement('div');box.className='ust-w';
+  box.appendChild(ustCard('Clasificación',rows.length+' equipos',rows,Z,LV,ALL.slice().sort(jsort)));
   p1.appendChild(box)}
  if(!CFG.phase||CFG.phase==='groups'){var lk=$('#p2 .lockko');if(lk){var s=lk.querySelector('.lk-s');if(s)s.remove();var pp=lk.querySelector('p');if(pp)pp.textContent='La administración armará los cruces cuando cierre la fase de liga. Hasta entonces la tabla puede cambiar en cualquier jornada.'}return}
  var p2=$('#p2');[].forEach.call(p2.children,function(x){x.hidden=true});$('.tabs button[data-p="2"]').textContent='Eliminatorias';
@@ -363,7 +366,7 @@ if(CFG&&!CFG.manual&&CFG.phase&&CFG.phase!=='groups'){$('.sub2').textContent='Cu
  var gm=CFG?MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}).sort(jsort):null;
  ustStyle('760');var box=document.createElement('div');box.className='ust-w';box.appendChild(ustCard('Clasificación',rows.length+' equipos',rows,{d:D,p:K,dl:'Directo a '+KL},LV,gm));p1.appendChild(box)})();
 /* --- pestañas --- */
-$$('.tabs button').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.p;$$('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('#p1').hidden=p!=='1';$('#p2').hidden=p!=='2';$('#ctag').textContent=p==='1'?(window.MAGNA_CH_CFG&&MAGNA_CH_CFG.groups&&MAGNA_CH_CFG.groups.length>1?'Champions · Fase de grupos':'Champions · Fase de liga'):'Champions · Eliminatorias'})});
+$$('.tabs button').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.p;$$('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('#p1').hidden=p!=='1';$('#p2').hidden=p!=='2';$('#ctag').textContent=p==='1'?'Champions · Fase de liga':'Champions · Eliminatorias'})});
 $$('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();toast('Próximamente')})});
 
 })();
