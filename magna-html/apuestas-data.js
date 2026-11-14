@@ -10,7 +10,8 @@ window.MAGNA_BETS_MS = function () {
   }
   var ref = {}; if (sv && sv.B) sv.B.forEach(function (b) { if (b.st === 'open') ref[b.mid] = 1; });
   function wr(t) { var f = S.matches.filter(function (m) { return m.status === 'finished' && (m.home === t || m.away === t); }); if (!f.length) return .5; return f.filter(function (m) { return m.home === t ? m.hs > m.as : m.as > m.hs; }).length / f.length; }
-  var list = S.matches.filter(function (m) { return m.status === 'live' || m.status === 'scheduled' || ref[m.id]; })
+  // solo partidos con fecha ya establecida (o en juego, o con una apuesta tuya abierta)
+  var list = S.matches.filter(function (m) { return m.status === 'live' || (m.status === 'scheduled' && m.at) || ref[m.id]; })
     .sort(function (a, b) { return (b.status === 'live') - (a.status === 'live') || String(a.at || '9').localeCompare(String(b.at || '9')); }).slice(0, 12);
   var cols = {}, n = 0;
   return list.map(function (m) {

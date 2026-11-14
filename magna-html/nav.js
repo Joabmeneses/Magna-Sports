@@ -10,7 +10,7 @@
     shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>', swap: '<path d="M7 7h12l-3-3M17 17H5l3 3"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
     news: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
-    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>', chev: '<path d="M6 9l6 6 6-6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>'
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>', search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>', chev: '<path d="M6 9l6 6 6-6"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>'
   };
   var L = [
     ['index.html', 'Partidos', 'play', 'Partidos', 'Partido destacado y resultados'], ['calendario.html', 'Calendario', 'cal', 'Partidos', 'Agenda de partidos'],
@@ -84,6 +84,57 @@
     '.bit-sp{position:fixed;z-index:9999;width:7px;height:7px;border-radius:50%;pointer-events:none;animation:bitSp .8s cubic-bezier(.2,.7,.3,1) forwards}' +
     '@keyframes bitSp{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}' +
     '@media(prefers-reduced-motion:reduce){.bit-ic:before,.bit-ic:after,.bit-ic img,.bit-ic.pop{animation:none}.bit-sp{display:none}}';
+  // ===== piel «cómic» del menú (papel crema, borde negro y sombra dura) =====
+  var sk = document.createElement('style'); sk.textContent = '' +
+    '.mn{background:rgba(13,13,16,.94)!important;border-bottom:0!important;box-shadow:0 10px 30px -18px #000;transition:transform .3s cubic-bezier(.2,.8,.2,1)}' +
+    '.mn:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:linear-gradient(90deg,#c6ff1a,#ff6a00 35%,#ff4fa3 65%,#22b8ff);pointer-events:none}' +
+    '.mn.tight .mn-links a,.mn.tight .mn-dd{padding:8px 6px}.mn.tight2 .mn-links a,.mn.tight2 .mn-dd{padding:8px 4px;font-size:11px!important}.mn.mn-hide{transform:translateY(-110%)}.mn-in{transition:height .25s}.mn.mn-sm .mn-in{height:54px}.mn.mn-sm .mn-logo img{height:32px}' +
+    '.mn-logo{text-shadow:2px 2px 0 #ff6a00}.mn-logo img{transition:transform .3s cubic-bezier(.3,1.6,.5,1),height .25s}.mn-logo:hover img{transform:rotate(-10deg) scale(1.1)}' +
+    '.mn-links{gap:1px;overflow:visible}' +
+    '.mn-links a,.mn-dd{font:800 12px/1 Archivo,sans-serif!important;letter-spacing:.02em!important;color:#d8d4c6;padding:8px 8px;border:2.5px solid transparent;border-radius:8px;transition:transform .15s,color .15s,background-color .15s}' +
+    '.mn-links a:before,.mn-dd:before{content:"";position:absolute;left:10px;right:10px;bottom:4px;height:3px;border-radius:2px;background:#c6ff1a;transform:scaleX(0);transform-origin:0 50%;transition:transform .2s}' +
+    '.mn-links a:hover,.mn-dd:hover,.mn-dd[aria-expanded="true"]{color:#fff;background:transparent;transform:translateY(-1px)}.mn-links a:hover:before,.mn-dd:hover:before,.mn-dd[aria-expanded="true"]:before{transform:scaleX(1)}' +
+    '.mn-links a.on,.mn-dd.on{color:#0d0d10!important;background:#f1ead8;border-color:#0d0d10;box-shadow:3px 3px 0 #ff6a00;transform:rotate(-2deg)}.mn-links a.on:before,.mn-dd.on:before,.mn-links a.on:after,.mn-dd.on:after{display:none}' +
+    '.mn-links a.lv:after{content:"";display:block;position:absolute;right:1px;top:3px;left:auto;bottom:auto;width:8px;height:8px;border-radius:50%;background:#ff3b47;box-shadow:0 0 0 0 rgba(255,59,71,.7);animation:mnLv 1.4s infinite}' +
+    '.mn-btn.lv{position:relative}.mn-btn.lv:after{content:"";position:absolute;right:-2px;top:-2px;width:11px;height:11px;border-radius:50%;background:#ff3b47;border:2px solid #0d0d10;animation:mnLv 1.4s infinite}' +
+    '@keyframes mnLv{70%{box-shadow:0 0 0 8px rgba(255,59,71,0)}100%{box-shadow:0 0 0 0 rgba(255,59,71,0)}}' +
+    '.mn-shop,.mn-acc,.mn-me,.mn-bell,.mn-btn{background:#fff!important;color:#0d0d10!important;border:2.5px solid #0d0d10!important;box-shadow:3px 3px 0 #ff6a00;transition:transform .12s,box-shadow .12s,background-color .15s!important}' +
+    '.mn-shop:hover,.mn-acc:hover,.mn-me:hover,.mn-bell:hover,.mn-btn:hover,.mn-shop.on,.mn-acc.on{background:#c6ff1a!important;transform:translate(-1px,-2px);box-shadow:4px 5px 0 #ff6a00}' +
+    '.mn-shop:active,.mn-acc:active,.mn-me:active,.mn-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #ff6a00}' +
+    '.mn-me *{color:#0d0d10}.mn-r .mn-adm{background:#ff3b47;color:#fff;border:2.5px solid #0d0d10;box-shadow:3px 3px 0 #0d0d10,3px 3px 0 1px #fff}.mn-r .mn-adm:hover,.mn-r .mn-adm.on{background:#ff5a66;transform:translateY(-2px)}' +
+    '.mn-tz{border:2px solid #2c2c35!important;background:#17171c!important;color:#d8d4c6!important}' +
+    /* desplegable de competiciones */
+    '.mn-pan{background:#f1ead8!important;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px)!important;background-size:7px 7px!important;border:3px solid #0d0d10!important;border-radius:12px!important;box-shadow:8px 8px 0 #ff6a00,8px 8px 0 3px #0d0d10!important;color:#0d0d10;transform:translateY(-8px) rotate(-1deg)}' +
+    '.mn-pan.show{transform:none}' +
+    '.mn-pc{background:#fff!important;border:2.5px solid #0d0d10!important;border-radius:10px!important;color:#0d0d10!important;box-shadow:3px 3px 0 var(--c);transition:transform .15s,box-shadow .15s}' +
+    '.mn-pc:hover,.mn-pc:focus-visible{transform:translate(-2px,-2px) rotate(-1deg);box-shadow:5px 5px 0 var(--c)}.mn-pc.on{background:#efffc7!important}' +
+    '.mn-pc .ic{background:var(--c)!important;color:#0d0d10!important;border:2px solid #0d0d10;border-radius:50%!important;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}.mn-pc:hover .ic{transform:rotate(-14deg) scale(1.1)}' +
+    '.mn-pc b{text-transform:uppercase;font-stretch:112%}.mn-pc small{color:#5b574c!important;font-weight:600}' +
+    '.mn-pa{border-top:2px dashed #0d0d10!important}.mn-pa>span{color:#0d0d10!important;font-weight:800!important}' +
+    '.mn-pa a{background:#0d0d10!important;color:#f1ead8!important;border-radius:999px;transition:transform .15s}.mn-pa a:hover{transform:translateY(-2px);color:#c6ff1a!important}.mn-pa a i{background:#c6ff1a!important}' +
+    /* menú del celular */
+    '.mn-ov{background:rgba(5,5,8,.7)}' +
+    '.mn-sh{background:#f1ead8!important;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px),radial-gradient(60% 40% at 100% 0,rgba(198,255,26,.4),transparent 70%),radial-gradient(50% 40% at 0 100%,rgba(255,79,163,.2),transparent 70%)!important;background-size:7px 7px,auto,auto!important;color:#0d0d10!important;border:0!important;border-bottom:4px solid #0d0d10!important;padding-bottom:22px!important;box-shadow:0 20px 40px rgba(0,0,0,.5)}' +
+    '.mn-sh .mn-hd{position:sticky;top:-16px;z-index:3;margin:-16px -16px 10px!important;padding:12px 16px;height:auto!important;background:#0d0d10;border-bottom:4px solid #c6ff1a}' +
+    '.mn-sh .mn-logo{color:#fff}.mn-x{background:#ff3b47!important;color:#fff!important;border:2.5px solid #fff!important;transition:transform .2s}.mn-x:hover{transform:rotate(90deg)}' +
+    '.mn-live a{display:flex;align-items:center;gap:8px;margin:4px 0 12px;padding:11px 14px;background:#ff3b47;color:#fff;text-decoration:none;border:2.5px solid #0d0d10;border-radius:10px;box-shadow:4px 4px 0 #0d0d10;font:800 13px Archivo,sans-serif;transform:rotate(-1deg)}' +
+    '.mn-live i{width:9px;height:9px;border-radius:50%;background:#fff;animation:mnBl 1s infinite}@keyframes mnBl{50%{opacity:.2}}.mn-live b{font-style:italic;font-weight:900;letter-spacing:.06em}.mn-live span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mn-live em{font-style:normal;padding:3px 8px;background:#0d0d10;border-radius:999px}' +
+    '.mn-q{display:flex;align-items:center;gap:8px;margin:0 0 6px;padding:0 12px;height:46px;background:#fff;border:2.5px solid #0d0d10;border-radius:12px;box-shadow:3px 3px 0 #0d0d10}.mn-q svg{width:18px;height:18px;flex:none}' +
+    '.mn-q input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#0d0d10;font:700 15px Archivo,sans-serif}.mn-q:focus-within{box-shadow:3px 3px 0 #ff6a00}' +
+    '.mn-none{margin:14px 0;font:700 14px Archivo,sans-serif;color:#5b574c;text-align:center}' +
+    '.mn-gs[hidden]{display:none}.mn-sh .mn-g{display:inline-block;margin:16px 0 10px!important;padding:5px 10px;background:#0d0d10;color:var(--c)!important;font:900 11px Archivo,sans-serif!important;letter-spacing:.12em!important;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--c)}' +
+    '.mn-sh .mn-it{background:#fff!important;border:2.5px solid #0d0d10!important;border-radius:10px!important;color:#0d0d10!important;box-shadow:3px 3px 0 var(--c);opacity:0;transform:translateY(12px);transition:transform .15s,box-shadow .15s}' +
+    '.mn-ov.show .mn-it{animation:mnIn .4s cubic-bezier(.2,1.4,.4,1) var(--d,0ms) forwards}@keyframes mnIn{to{opacity:1;transform:none}}' +
+    '.mn-sh .mn-it:hover,.mn-sh .mn-it:focus-visible{transform:translate(-2px,-2px)!important;box-shadow:5px 5px 0 var(--c)}.mn-sh .mn-it:active{transform:translate(2px,2px)!important;box-shadow:1px 1px 0 var(--c)}' +
+    '.mn-sh .mn-it[hidden]{display:none}' +
+    '.mn-sh .mn-it .ic{background:var(--c)!important;color:#fff!important;border:2px solid #0d0d10;border-radius:50%!important}.mn-sh .mn-it b{font-weight:900;text-transform:uppercase;font-stretch:108%}.mn-sh .mn-it small{color:#5b574c!important}' +
+    '.mn-sh .mn-it.on{background:#c6ff1a!important;box-shadow:3px 3px 0 #0d0d10;transform:rotate(-1deg)}.mn-sh .mn-it.on .ic{background:#0d0d10!important;color:#c6ff1a!important}' +
+    '.mn-sh .mn-foot{margin-top:18px}.mn-sh .mn-foot .mn-adm{justify-content:center;background:#0d0d10!important;color:#c6ff1a!important;border:2.5px solid #0d0d10!important;border-radius:12px;padding:13px;font:900 13px Archivo,sans-serif!important;box-shadow:3px 3px 0 #ff6a00}' +
+    '.mn-sh .mn-foot .mn-adm:not(.mn-acc2){background:#ff3b47!important;color:#fff!important;box-shadow:3px 3px 0 #0d0d10}' +
+    '.mn-sh .pwa-sw{background:#fff!important;border:2.5px solid #0d0d10!important;color:#0d0d10!important;border-radius:12px!important}.mn-sh .pwa-sw small{color:#5b574c!important}' +
+    '.mn-sh .mn-app{background:#22b8ff!important;color:#fff!important;border:2.5px solid #0d0d10!important;border-radius:12px!important;box-shadow:3px 3px 0 #0d0d10}' +
+    '@media(prefers-reduced-motion:reduce){.mn,.mn-sh .mn-it{transition:none}.mn-ov.show .mn-it{animation:none;opacity:1;transform:none}.mn-links a.lv:after,.mn-btn.lv:after{animation:none}}';
+  document.head.appendChild(sk);
   var bst = document.createElement('style'); bst.textContent = bcss; document.head.appendChild(bst);
   window.MAGNA_BIT = function (size) { var s = document.createElement('span'); s.className = 'bit-ic'; if (size) s.style.setProperty('--bs', typeof size === 'number' ? size + 'px' : size); var i = document.createElement('img'); i.src = 'bits.webp'; i.alt = ''; i.width = i.height = 160; i.decoding = 'async'; s.appendChild(i); s.setAttribute('aria-hidden', 'true'); return s; };
   window.MAGNA_BIT.burst = function (el, n) { if (!el || !el.getBoundingClientRect) return; var ic = el.classList && el.classList.contains('bit-ic') ? el : el.querySelector && el.querySelector('.bit-ic'); if (ic) { ic.classList.remove('pop'); void ic.offsetWidth; ic.classList.add('pop'); } var r = (ic || el).getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, C = ['#ffd23f', '#ff8a00', '#ff4d1a', '#a855f7', '#fff3b0'];
@@ -121,16 +172,29 @@
   function close() { if (!ov) return; var o = ov; ov = null; o.classList.remove('show'); document.documentElement.style.overflow = ''; btn.setAttribute('aria-expanded', 'false'); setTimeout(function () { o.remove(); }, 260); btn.focus(); }
   function open() {
     ov = document.createElement('div'); ov.className = 'mn-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Menú');
-    var groups = {}; L.forEach(function (x) { (groups[x[3]] = groups[x[3]] || []).push(x); });
+    var groups = {}, NI = 0, GC = { 'Partidos': '#ff3b47', 'Competiciones': '#8b5cf6', 'Eventos': '#ffb400', 'Comunidad': '#22b8ff' }; L.forEach(function (x) { (groups[x[3]] = groups[x[3]] || []).push(x); });
     ov.innerHTML = '<div class="mn-sh"><div class="mn-hd"><a class="mn-logo" href="index.html"><img src="logo-nav.webp" alt="" width="34" height="38">Magna Arena</a><button class="mn-x" type="button" aria-label="Cerrar menú">' + svg('x') + '</button></div>' +
-      Object.keys(groups).map(function (g) { return '<div class="mn-g">' + g + '</div><div class="mn-grid">' + groups[g].map(function (x) { return '<a class="mn-it' + (x[0] === here ? ' on' : '') + '" href="' + x[0] + '"><span class="ic">' + svg(x[2]) + '</span><span><b>' + x[1] + '</b><small>' + x[4] + '</small></span></a>'; }).join('') + '</div>'; }).join('') +
+      '<div class="mn-live" hidden></div><label class="mn-q">' + svg('search') + '<input type="search" placeholder="¿A dónde quieres ir?" aria-label="Buscar sección"></label><p class="mn-none" hidden>No hay secciones con ese nombre.</p>' +
+      Object.keys(groups).map(function (g, gi) { var gc = GC[g] || '#c6ff1a'; return '<section class="mn-gs" style="--c:' + gc + '"><div class="mn-g">' + g + '</div><div class="mn-grid">' + groups[g].map(function (x, i) { NI++; return '<a class="mn-it' + (x[0] === here ? ' on' : '') + '" href="' + x[0] + '" data-k="' + (x[1] + ' ' + x[4] + ' ' + g).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') + '" style="--d:' + (NI * 28) + 'ms"><span class="ic">' + svg(x[2]) + '</span><span><b>' + x[1] + '</b><small>' + x[4] + '</small></span></a>'; }).join('') + '</div></section>'; }).join('') +
       '<div class="mn-foot"><a class="mn-adm mn-acc2' + (here === 'cuenta.html' ? ' on' : '') + '" href="cuenta.html">' + svg('user') + '<span class="mn-acct">Mi cuenta · Bits</span></a><a class="mn-adm' + (isAdm ? ' on' : '') + '" href="admin.html">' + svg('lock') + 'Administración</a></div></div>';
     var ma = window.MAGNA_ME && MAGNA_ME.get(), mt = ov.querySelector('.mn-acct'); if (ma && mt) mt.textContent = ma.display_name + ' · ' + String(Number(ma.bits || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' Bits';
     document.body.appendChild(ov); document.documentElement.style.overflow = 'hidden'; btn.setAttribute('aria-expanded', 'true');
     requestAnimationFrame(function () { if (ov) ov.classList.add('show'); });
     ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('.mn-x')) close(); });
-    var cur = ov.querySelector('.mn-it.on') || ov.querySelector('.mn-it'); if (cur) cur.focus();
+    var qi = ov.querySelector('.mn-q input'); qi.addEventListener('input', function () { var q = qi.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(), n = 0;
+      [].forEach.call(ov.querySelectorAll('.mn-it'), function (a) { var on = !q || a.dataset.k.indexOf(q) >= 0; a.hidden = !on; if (on) n++; });
+      [].forEach.call(ov.querySelectorAll('.mn-gs'), function (g) { g.hidden = !g.querySelector('.mn-it:not([hidden])'); }); ov.querySelector('.mn-none').hidden = n > 0; });
+    qi.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var f = ov.querySelector('.mn-it:not([hidden])'); if (f) location.href = f.getAttribute('href'); } });
+    var lv = liveMatch(), lb = ov.querySelector('.mn-live'); if (lv && lb) { lb.hidden = false; lb.innerHTML = '<a href="index.html"><i></i><b>EN VIVO</b><span></span><em>Ver ›</em></a>'; lb.querySelector('span').textContent = MAGNA.teamName(lv.home) + ' ' + (lv.hs || 0) + ' - ' + (lv.as || 0) + ' ' + MAGNA.teamName(lv.away); }
+    var cur = ov.querySelector('.mn-it.on') || ov.querySelector('.mn-it'); if (cur && matchMedia('(hover: hover)').matches) cur.focus();
   }
+  function liveMatch() { try { return window.MAGNA && MAGNA.S ? MAGNA.S.matches.filter(function (m) { return m.status === 'live'; })[0] || null : null; } catch (e) { return null; } }
+  // punto rojo en «Partidos» cuando hay un partido en vivo
+  function liveDot() { var a = hd.querySelector('.mn-links a[href="index.html"]'), b = btn; var on = !!liveMatch(); if (a) a.classList.toggle('lv', on); if (b) b.classList.toggle('lv', on); }
+  addEventListener('magna:update', liveDot); setTimeout(liveDot, 1500);
+  // la barra se encoge al bajar
+  (function () { var y0 = scrollY, tk = false; addEventListener('scroll', function () { if (tk) return; tk = true; requestAnimationFrame(function () { tk = false; var y = scrollY, dy = y - y0;
+      hd.classList.toggle('mn-sm', y > 40); if (Math.abs(dy) > 6) {  y0 = y; } }); }, { passive: true }); })();
   btn.addEventListener('click', function () { ov ? close() : open(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   // zona horaria: las horas se muestran en la hora local de cada persona; aquí se dice de qué país es
@@ -242,6 +306,7 @@
     var ac = el('div', 'mpac'); ac.appendChild(link('cuenta.html', 'user', 'Mi cuenta')); ac.appendChild(link('apuestas.html', 'bet', 'Apostar')); ac.appendChild(link('ranking.html' + (s ? '#jugadores' : '#bits'), 'rank', 'Ranking'));
     if (s && s.t) ac.appendChild(link('equipo.html?id=' + s.t.id, 'shield', 'Mi equipo')); else ac.appendChild(link('mercado.html', 'swap', 'Fichajes')); if (me.player_id != null) ac.appendChild(link('jugador.html?id=' + me.player_id, 'user', 'Mi perfil')); ac.appendChild(link('tienda.html', 'star', 'Tienda'));
     if (s && s.dt) { var ce = link('mi-equipo.html', 'shield', 'Gestionar mi equipo (DT)'); ce.style.cssText = 'grid-column:1/-1;border-color:rgba(255,210,63,.45);color:#ffd23f'; ac.insertBefore(ce, ac.firstChild); }
+    if (window.ACCOUNTS && ACCOUNTS.isJudge) ACCOUNTS.isJudge().then(function (ok) { if (!ok) return; var jz = link('juez.html', 'rank', '⚖️ Panel del juez'); jz.style.cssText = 'grid-column:1/-1;border-color:rgba(34,184,255,.5);color:#22b8ff'; ac.insertBefore(jz, ac.firstChild); }, function () {});
     if (me.role === 'admin') { var ad = link('admin.html', 'lock', 'Panel de administración'); ad.style.gridColumn = '1/-1'; ac.appendChild(ad); }
     var out = el('button', 'mpout'); out.type = 'button'; out.innerHTML = svg('logout'); out.appendChild(document.createTextNode('Cerrar sesión'));
     out.onclick = function () { out.disabled = true; client().then(function (c) { return c.auth.signOut(); }).catch(function () {}).then(function () { save(null); closePop(); if (/cuenta\.html|apuestas\.html|admin\.html/.test(here)) location.reload(); }); };

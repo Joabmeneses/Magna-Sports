@@ -441,7 +441,7 @@
   var ST = { draft: 'Borrador', active: 'Activa', paused: 'Pausada', finished: 'Finalizada' }, NEXT = { draft: [['active', 'Activar']], active: [['paused', 'Pausar'], ['finished', 'Finalizar']], paused: [['active', 'Reanudar'], ['finished', 'Finalizar']], finished: [] };
   // ---------- torneos: asistente de creación y panel paso a paso ----------
   var TF = {
-    champions: { i: '⭐', n: 'Champions', d: 'Liga de ida y vuelta con todos, luego play-off y eliminatoria a partido único.', p: 'champions.html', min: 3 },
+    champions: { i: '⭐', n: 'Champions', d: 'Una tabla de liga con las jornadas que creas tú, y después los cruces que tú elijas.', p: 'champions.html', min: 3 },
     groups_knockout: { i: '🌍', n: 'Mundial', d: 'Fase de grupos y después eliminatoria con los mejores de cada grupo.', p: 'mundial.html', min: 2 },
     knockout: { i: '⚔️', n: 'Eliminatoria directa', d: 'Cuadro de cruces: quien pierde queda fuera.', p: 'competiciones.html', min: 2 },
     round_robin: { i: '🔁', n: 'Todos contra todos', d: 'Una sola vuelta. Gana quien más puntos sume.', p: 'competiciones.html', min: 2 }

@@ -31,7 +31,7 @@ window.ADMIN_NEWS = function (b, U) {
     var go = btn('Redactar ahora', function () { go.disabled = true; go.textContent = 'Redactando…'; A.run().then(function () { load(); }, function () {}).then(function () { go.disabled = false; go.textContent = 'Redactar ahora'; refresh(); }); }, 'o'); t.appendChild(go); c.appendChild(t);
     var info = h('p', null, 'Convierte los resultados, campeones, avances de torneo y fichajes en borradores de noticia. Nunca publica sola: tú revisas, editas y publicas.'); c.appendChild(info);
     var extra = h('div'); c.appendChild(extra);
-    function refresh() { A.status().then(function (s) { extra.innerHTML = '';
+    function refresh() { A.status().then(function (s) { s = s || {}; extra.innerHTML = '';
         if (!s.configured) { pill.className = 'pill no'; pill.textContent = 'Falta la clave'; go.disabled = true;
           var ol = h('ol'); ol.innerHTML = '<li>Entra a <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, crea una cuenta y una <b>API key</b> (pide añadir saldo; cada noticia cuesta unos centavos de dólar).</li><li>En <a href="https://supabase.com/dashboard/project/ryahntcvsqjhcurvyrdr/functions/secrets" target="_blank" rel="noopener">Supabase → Edge Functions → Secrets</a>, añade un secreto llamado <code>ANTHROPIC_API_KEY</code> y pega la clave.</li><li>Vuelve aquí y pulsa <b>Redactar ahora</b>. No compartas la clave con nadie (tampoco en el chat).</li>'; extra.appendChild(ol); return; }
         pill.className = 'pill ok'; pill.textContent = 'Activo'; go.disabled = A.busy();

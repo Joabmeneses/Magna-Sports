@@ -4,8 +4,8 @@
 window.PRED = (function () {
   var CHAMP = 10;
   // puntos por acertar el ganador de un cruce según la ronda
-  function roundPts(r) { r = String(r || ''); return /semi/i.test(r) ? 4 : /cuartos/i.test(r) ? 3 : /octavos/i.test(r) ? 2 : /play.?off/i.test(r) ? 1 : /final/i.test(r) ? 6 : 2; }
-  function roundOrd(r) { r = String(r || ''); return /play.?off/i.test(r) ? 0 : /ronda de/i.test(r) ? 1 : /octavos/i.test(r) ? 2 : /cuartos/i.test(r) ? 3 : /semi/i.test(r) ? 4 : /final/i.test(r) ? 5 : 1; }
+  function roundPts(r) { r = String(r || ''); return /dieciseisavos/i.test(r) ? 1 : /tercer/i.test(r) ? 2 : /semi/i.test(r) ? 4 : /cuartos/i.test(r) ? 3 : /octavos/i.test(r) ? 2 : /play.?off/i.test(r) ? 1 : /final/i.test(r) ? 6 : 2; }
+  function roundOrd(r) { r = String(r || ''); return /play.?off/i.test(r) ? 0 : /dieciseisavos/i.test(r) ? 1 : /tercer/i.test(r) ? 4.5 : /ronda de/i.test(r) ? 1 : /octavos/i.test(r) ? 2 : /cuartos/i.test(r) ? 3 : /semi/i.test(r) ? 4 : /final/i.test(r) ? 5 : 1; }
   function koMatches(c) { return MAGNA.S.matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && !m.group; })
     .sort(function (a, b) { return roundOrd(a.round) - roundOrd(b.round) || String(a.at || '9').localeCompare(String(b.at || '9')) || a.id - b.id; }); }
   function winner(m) { if (m.status !== 'finished' || m.hs == null || m.as == null || m.hs === m.as) return null; return m.hs > m.as ? m.home : m.away; }

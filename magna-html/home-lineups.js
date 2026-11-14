@@ -209,7 +209,7 @@
   function popCard(arena, k, pid, D) {
     var old = arena.querySelector('.al-pop'); [].forEach.call(arena.querySelectorAll('.al-k.on'), function (x) { x.classList.remove('on'); }); if (old) { var same = old.dataset.p == pid; old.remove(); if (same) return; }
     var p = by(S().players, pid), ps = (MAGNA.playerStats ? MAGNA.playerStats()[pid] : null) || {}, b = h('div', 'al-pop'); b.dataset.p = pid; b.style.setProperty('--tc', col(p.teamId)); k.classList.add('on');
-    var nb = h('b'); nb.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true, title: true })); if (D.mvp === pid) nb.appendChild(document.createTextNode(' 👑')); b.appendChild(nb);
+    var nb = h('b'); nb.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true, title: true })); if (D.mvp === pid) nb.appendChild(document.createTextNode(' ⭐')); b.appendChild(nb);
     var tr = MAGNA.tierOf ? MAGNA.tierOf(ps.media) : { name: '' }; b.appendChild(h('small', null, MAGNA.teamName(p.teamId) + ' · media ' + (ps.media != null ? ps.media : 10) + (tr.name ? ' · ' + tr.name : '')));
     var g = h('div', 'st'); [[rt(D.R[pid]), 'Nota'], [String(D.goals[pid] || 0), 'Goles'], [String(ps.mvp || 0), 'MVP total']].forEach(function (x) { var d = h('div'); d.appendChild(h('b', null, x[0])); d.appendChild(h('small', null, x[1])); g.appendChild(d); }); b.appendChild(g);
     var lk = h('div', 'lk'), a0 = h('a', null, 'Ver perfil →'); a0.href = MAGNA_COS.profileUrl(pid); lk.appendChild(a0); var a = h('a', null, MAGNA.teamName(p.teamId) + ' →'); a.href = 'equipo.html?id=' + p.teamId; lk.appendChild(a); b.appendChild(lk);
@@ -237,8 +237,8 @@
         k.dataset.p = pid; k.style.left = sx + '%'; k.style.top = sy + '%'; k.style.zIndex = 10 + Math.round(depth * 10); k.style.setProperty('--k', k2); k.style.setProperty('--tc', col(p.teamId)); k.style.animationDelay = (i * 90 + (sd === 'a' ? 180 : 0)) + 'ms'; k.style.setProperty('--fd', (i * .5 + (sd === 'a' ? .25 : 0)) + 's');
         var cd = h('span', 'cd'); cd.appendChild(h('span', 'rt ' + rc(r), rt(r))); cd.appendChild(h('span', 'ps', sd === 'h' ? 'LOC' : 'VIS'));
         var av = pav(h('span', 'av', ini(p.name)), pid); cd.appendChild(av); var nm = h('span', 'nm'); nm.appendChild(MAGNA_COS.pn(p.name, pid, { plain: true })); cd.appendChild(nm);
-        var ft = h('span', 'ft'); if (D.goals[pid]) ft.appendChild(h('i', null, '⚽' + (D.goals[pid] > 1 ? '×' + D.goals[pid] : ''))); if (D.subIn[pid]) ft.appendChild(h('i', null, '⇄')); if (mvp) ft.appendChild(h('i', null, 'MVP')); cd.appendChild(ft);
-        k.appendChild(cd); if (mvp) k.appendChild(h('span', 'al-cr', '👑'));
+        var ft = h('span', 'ft'); if (D.goals[pid]) ft.appendChild(h('i', null, '⚽' + (D.goals[pid] > 1 ? '×' + D.goals[pid] : ''))); if (D.subIn[pid]) ft.appendChild(h('i', null, '⇄')); cd.appendChild(ft);
+        if (mvp) { var st = h('span', 'al-mvs'); st.title = 'MVP del partido'; st.setAttribute('aria-hidden', 'true'); cd.appendChild(st); } k.appendChild(cd);
         k.setAttribute('aria-label', p.name + (r != null ? ', nota ' + rt(r) : '') + (D.goals[pid] ? ', ' + D.goals[pid] + ' goles' : '') + (mvp ? ', MVP' : ''));
         k.onclick = function (ev) { ev.stopPropagation(); popCard(sd0, k, pid, D); }; layer.appendChild(k); }); });
     sd0.addEventListener('click', function () { var o = sd0.querySelector('.al-pop'); if (o) o.remove(); [].forEach.call(layer.querySelectorAll('.al-k.on'), function (x) { x.classList.remove('on'); }); });
@@ -265,7 +265,7 @@
     var rated = L.filter(function (id) { return D.R[id] != null; }).sort(function (x, y) { return D.R[y] - D.R[x] || (D.goals[y] || 0) - (D.goals[x] || 0); });
     if (!rated.length) { nt.appendChild(h('div', 'al-e', m.status === 'scheduled' ? '⏳ Las notas aparecen cuando el partido empiece. Cada jugador recibe una nota de 1 a 10.' : '📝 Todavía no hay notas para este partido.')); return nt; }
     rated.forEach(function (id, i) { var p = by(S().players, id), r = D.R[id], a = h('a', 'al-nr'); a.dataset.p = id; a.href = MAGNA_COS.profileUrl(id); a.style.setProperty('--tc', col(p.teamId)); a.style.animationDelay = i * 50 + 'ms';
-      a.appendChild(h('span', 'ps', String(i + 1))); a.appendChild(pic(h('i', 'mini', ini(p.name)), id)); var w = h('div', 'w'); w.appendChild(h('b', null, p.name + (D.mvp === id ? ' 👑' : ''))); w.appendChild(h('small', null, MAGNA.teamName(p.teamId) + (D.goals[id] ? ' · ' + D.goals[id] + (D.goals[id] === 1 ? ' gol' : ' goles') : '') + (D.subIn[id] ? ' · entró de cambio' : '')));
+      a.appendChild(h('span', 'ps', String(i + 1))); a.appendChild(pic(h('i', 'mini', ini(p.name)), id)); var w = h('div', 'w'); w.appendChild(h('b', null, p.name + (D.mvp === id ? ' ⭐' : ''))); w.appendChild(h('small', null, MAGNA.teamName(p.teamId) + (D.goals[id] ? ' · ' + D.goals[id] + (D.goals[id] === 1 ? ' gol' : ' goles') : '') + (D.subIn[id] ? ' · entró de cambio' : '')));
       var nb = h('div', 'al-nb'), bi = h('i'); bi.style.background = r >= 8 ? 'linear-gradient(90deg,#a8e000,#e9ff7a)' : r >= 6.5 ? 'linear-gradient(90deg,#1fb87a,#5dffc0)' : r >= 6 ? 'linear-gradient(90deg,#f5a400,#ffe066)' : 'linear-gradient(90deg,#e02424,#ff8a8a)'; nb.appendChild(bi); w.appendChild(nb); a.appendChild(w);
       a.appendChild(h('span', 'al-rb ' + rc(r), rt(r))); setTimeout(function () { bi.style.width = (r * 10) + '%'; }, 60 + i * 50); nt.appendChild(a); });
     return nt;
@@ -273,7 +273,7 @@
   function keys(m, D) { if (m.status === 'scheduled') return null; var w = h('div', 'al-keys'), all = D.h.played.concat(D.a.played), k = 0;
     function add(ic, html) { var c = h('div', 'al-key'); c.style.setProperty('--r', ((k % 2 ? 1 : -1) * (1 + k % 3 * .5)) + 'deg'); c.style.animationDelay = k * 80 + 'ms'; k++; c.appendChild(h('i', null, ic)); var s2 = h('span'); s2.innerHTML = html; c.appendChild(s2); w.appendChild(c); }
     function nm(id) { var p = by(S().players, id); return p ? p.name.replace(/[<>&]/g, '') : '?'; }
-    if (D.mvp) add('👑', 'MVP: <b>' + nm(D.mvp) + '</b>');
+    if (D.mvp) add('⭐', 'MVP: <b>' + nm(D.mvp) + '</b>');
     var gs = all.filter(function (id) { return D.goals[id]; }).sort(function (a, b) { return D.goals[b] - D.goals[a]; }); if (gs.length) add('⚽', 'Goleador: <b>' + nm(gs[0]) + '</b> (' + D.goals[gs[0]] + ')');
     var rs = all.filter(function (id) { return D.R[id] != null; }).sort(function (a, b) { return D.R[b] - D.R[a]; }); if (rs.length) add('📈', 'Mejor nota: <b>' + nm(rs[0]) + '</b> ' + rt(D.R[rs[0]]));
     var ah = teamAvg(D.h, D), aa = teamAvg(D.a, D); if (ah != null && aa != null && ah !== aa) add('🛡️', 'Mejor promedio: <b>' + MAGNA.teamName(ah > aa ? D.h.tid : D.a.tid).replace(/[<>&]/g, '') + '</b> ' + rt(Math.max(ah, aa)));

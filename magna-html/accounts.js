@@ -22,6 +22,16 @@ window.ACCOUNTS = (function () {
   function playerBits() { return sb().then(function (c) { return c.rpc('player_bits').then(function (r) { var o = {}; (r.data || []).forEach(function (x) { o[x.player_id] = x.bits; }); return o; }); }).catch(function () { return {}; }); }
   function myBets() { return sb().then(function (c) { return c.from('bets').select('*').order('created_at', { ascending: false }).limit(100).then(chk).then(function (r) { return r.data || []; }); }); }
   function placeBet(matchId, side, stake) { return sb().then(function (c) { return c.rpc('place_bet', { p_match: matchId, p_side: side, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
+  // parleys: combinadas de 2 a 8 partidos (Bits ficticios)
+  function myParlays() { return sb().then(function (c) { return c.from('parlays').select('*, parlay_legs(*)').order('created_at', { ascending: false }).limit(50).then(chk).then(function (r) { return r.data || []; }); }); }
+  function placeParlay(legs, stake) { return sb().then(function (c) { return c.rpc('place_parlay', { p_legs: legs, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
+  // rol de juez: valoraciones, goleadores y MVP
+  function isJudge() { return sb().then(function (c) { return c.rpc('is_judge').then(function (r) { return r.data === true; }); }); }
+  function judgeSave(matchId, ratings, goals, mvp) { return sb().then(function (c) { return c.rpc('judge_save', { p_match: matchId, p_ratings: ratings, p_goals: goals, p_mvp: mvp == null ? null : mvp }).then(chk).then(function () { return true; }); }); }
+  function rateJudge(matchId, stars) { return sb().then(function (c) { return c.rpc('rate_judge', { p_match: matchId, p_stars: stars }).then(chk); }); }
+  function judgeStars(matchId) { return sb().then(function (c) { return c.rpc('judge_stars', { p_match: matchId == null ? null : matchId }).then(chk).then(function (r) { return r.data || []; }); }); }
+  function adminJudges() { return sb().then(function (c) { return c.rpc('admin_judges').then(chk).then(function (r) { return (r.data || []).map(function (x) { return x.account_id; }); }); }); }
+  function setJudge(id, on) { return sb().then(function (c) { return c.rpc('admin_set_judge', { p_account: id, p_on: !!on }).then(chk); }); }
   function cashOut(id) { return sb().then(function (c) { return c.rpc('cash_out', { p_bet: id }).then(chk).then(function (r) { return r.data; }); }); }
   // Diálogo con usuario y código para copiar
   function codeBox(h, acc) {
@@ -35,5 +45,5 @@ window.ACCOUNTS = (function () {
     function done() { var t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(function () { btn.textContent = t; }, 1600); }
     (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject()).then(done, function () { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); });
   }
-  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, cashOut: cashOut, codeBox: codeBox, copy: copy };
+  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, myParlays: myParlays, placeParlay: placeParlay, isJudge: isJudge, rateJudge: rateJudge, judgeStars: judgeStars, judgeSave: judgeSave, adminJudges: adminJudges, setJudge: setJudge, cashOut: cashOut, codeBox: codeBox, copy: copy };
 })();

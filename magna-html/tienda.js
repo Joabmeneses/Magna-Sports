@@ -60,7 +60,7 @@
     l.appendChild(h('div', 'ey', '🛍️ Tienda · Magna Arena'));
     var t = h('h1'); t.innerHTML = 'Colecciona <em>estilos</em><br>únicos para tu <em>nombre</em>'; l.appendChild(t);
     l.appendChild(h('p', null, 'Colores neón, placas, marcos y títulos que se ven en todo el sitio: en tu perfil, en las alineaciones y en el ranking. Se compran con Bits.'));
-    var ac = h('div', 'cta'); ac.appendChild(btn('big', 'Explorar la tienda', function () { document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' }); }));
+    var ac = h('div', 'cta'); ac.appendChild(btn('big', 'Explorar la tienda', function () { var c = document.getElementById('catalogo') || document.querySelector('.ts-s'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }));
     var ib = btn('ghost big', acc ? '🎒 Mi inventario' : 'Entrar para comprar', function () { location.href = acc ? 'cuenta.html#inventario' : 'cuenta.html'; }); ac.appendChild(ib); l.appendChild(ac);
     var st = h('div', 'sts'), W = wearMap(), styled = {}; Object.keys(W).forEach(function (k) { W[k].forEach(function (p) { styled[p] = 1; }); });
     [[L.length, 'Cosméticos'], [L.filter(function (x) { return x.rarity === 'legendaria'; }).length, 'Legendarios'], [Object.keys(styled).length, 'Jugadores con estilo']].forEach(function (v) { var d = h('div'), n = h('b', null, '0'); d.appendChild(n); d.appendChild(h('small', null, v[1])); st.appendChild(d); count(n, v[0]); });

@@ -1,6 +1,9 @@
 'use strict';
 // Página de cada equipo: equipo.html?id=<id del equipo>. Versión colorida e interactiva, con alineación.
 (function () {
+  // copia al portapapeles; si el navegador no deja, usa el método antiguo y, si tampoco, muestra el enlace para copiarlo a mano
+  function copyTxt(t, ok) { function old() { var ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); var r = false; try { r = document.execCommand('copy'); } catch (e) {} ta.remove(); if (r) ok(); else prompt('Copia el enlace:', t); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, old); else old(); }
   var h = M.h, S = MAGNA.S, by = MAGNA.by, root = document.getElementById('eq'), RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var CATN = {}; MAGNA.TROPHY_CATS.forEach(function (c) { CATN[c[0]] = c[1]; });
   var CATC = { liga: '#8b5cf6', torneo: '#ffd23f', champions: '#22d3ee', mundial: '#2ee59d', otro: '#ff8a3d' };
@@ -64,12 +67,12 @@
     function sq(k, label, fn, href) { var b2 = h(href ? 'a' : 'button', 'tq-sq'); if (href) b2.href = href; else b2.type = 'button'; b2.innerHTML = ic(k); b2.appendChild(h('span', 'tp', label)); b2.setAttribute('aria-label', label); if (fn) b2.onclick = fn; act.appendChild(b2); return b2; }
     function okFx(b3, msg, def) { b3.classList.add('ok'); b3.querySelector('.tp').textContent = msg; setTimeout(function () { b3.classList.remove('ok'); b3.querySelector('.tp').textContent = def; }, 1600); }
     var url0 = location.origin + location.pathname + '?id=' + t.id;
-    var shb = sq('share', 'Compartir', function () { if (navigator.share) navigator.share({ title: t.name + ' · Magna Arena', url: url0 }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(url0).then(function () { okFx(shb, '¡Enlace copiado!', 'Compartir'); }); });
+    var shb = sq('share', 'Compartir', function () { if (navigator.share) navigator.share({ title: t.name + ' · Magna Arena', url: url0 }).catch(function () {}); else copyTxt(url0, function () { okFx(shb, '¡Enlace copiado!', 'Compartir'); }); });
     if (window.SHARE_CARD) sq('card', 'Tarjeta del equipo', function () { SHARE_CARD.open('team', function () {
       var G = MAGNA.groupTrophies(tro).sort(function (a, c) { return MAGNA.trophyOrd(a.name, a.cat) - MAGNA.trophyOrd(c.name, c.cat); });
       return { name: t.name, color: MAGNA.teamColor(t.id), crest: MAGNA.crestUrl(t.id), pos: pos, pts: bd.pts || 0, level: lvl, record: [w, l], trophyCount: tro.length, coach: coach ? coach.name : null, squad: squad.map(function (p) { return p.name; }),
         trophies: G.map(function (g) { return { name: g.name, n: g.n, art: MAGNA.trophyArt(g.name, g.cat), emoji: MAGNA.TROPHY_ICON[g.cat] || '🏆' }; }) }; }); });
-    var cpb = sq('link', 'Copiar enlace', function () { if (navigator.clipboard) navigator.clipboard.writeText(url0).then(function () { okFx(cpb, '¡Copiado!', 'Copiar enlace'); }); });
+    var cpb = sq('link', 'Copiar enlace', function () { copyTxt(url0, function () { okFx(cpb, '¡Copiado!', 'Copiar enlace'); }); });
     sq('rank', 'Ver el ranking', null, 'ranking.html');
     var meA = window.MAGNA_ME && MAGNA_ME.get(); if (meA && meA.player_id && t.coach === meA.player_id) sq('gear', 'Gestionar equipo', null, 'mi-equipo.html');
     mid.appendChild(act); hero.appendChild(mid);

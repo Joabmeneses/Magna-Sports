@@ -67,7 +67,7 @@
       el.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true); }
   }
   // ---------- 4. inclinación 3D con brillo ----------
-  var TILT = '.others .mc, .hh-g, .hh-cc, .hh-n, .hh-m, .hh-box, .ts-c, .ts-f';
+  var TILT = '.others .mc, .hh-g, .hh-cc, .hh-n, .hh-m, .hh-box, .ts-c, .ts-f, .eqs .tc, .tq-st>div, .pf-st>div, .ck .gc, .ck article.tc, .ck article.mt, .ck .pd-tm';
   function tilt() { if (!FINE || RM) return;
     document.addEventListener('pointermove', function (e) { var c = e.target.closest && e.target.closest(TILT); if (!c) return; var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height, k = c.classList.contains('hh-box') ? 3 : 8;
       c.classList.add('mv-tl'); c.style.setProperty('--mx', x * 100 + '%'); c.style.setProperty('--my', y * 100 + '%'); c.style.transform = 'perspective(800px) rotateX(' + ((.5 - y) * k) + 'deg) rotateY(' + ((x - .5) * k) + 'deg) translateY(-3px)'; }, { passive: true });
@@ -91,9 +91,32 @@
     function fill(im, name) { if (!im || !name) return; var t = by[name.trim().toLowerCase()]; im.dataset.in = name.trim().slice(0, 2).toUpperCase(); if (t && MAGNA.teamColor) im.style.setProperty('--tc', MAGNA.teamColor(t.id)); }
     var hs = $$('.hero.mob h1 span'); if (hs.length >= 3) { fill(document.querySelector('.hero.mob .d1 .im.e'), hs[0].textContent); fill(document.querySelector('.hero.mob .d2 .im.e'), hs[2].textContent); }
     $$('.others .mc').forEach(function (c) { var t = c.querySelector('.mc-t'), ims = c.querySelectorAll('.mc-c .im'); if (!t || ims.length < 2) return; var nm = t.textContent.split(/\s+vs\.?\s+/i); if (nm.length < 2) return; if (ims[0].classList.contains('e')) fill(ims[0], nm[0]); if (ims[1].classList.contains('e')) fill(ims[1], nm[1]); });
+    $$('.ck .im.e:not([data-in]), .eqs .im.e:not([data-in])').forEach(function (im) { var p = im.parentElement, nm = null; for (var k = 0; k < 4 && p && !nm; k++, p = p.parentElement) nm = [].slice.call(p.querySelectorAll('.nm, h3, b')).filter(function (x) { return !x.contains(im) && x.textContent.trim().length > 1 && !/^[\d#·.,%+\-\s]+$/.test(x.textContent); })[0];
+      if (nm) fill(im, nm.textContent.replace(/^Gana\s+/i, '')); });
     var bn = [document.getElementById('bN1'), document.getElementById('bN2')]; $$('.bn-grid .dc').forEach(function (d, i) { var im = d.querySelector('.im.e'); if (im && bn[i]) fill(im, bn[i].textContent); }); }
   // ---------- arranque y re-dibujos ----------
-  function run() { initials(); banner(); lineups(); ['.others', '.hh-ms', '.hh-news'].forEach(function (s) { $$(s).forEach(slider); }); if (innerWidth < 760) $$('.hh-go, .hh-comp').forEach(slider); reveal(); }
+
+  /* guía de pestañas (equipo y perfil): una frase que explica qué hay en cada pestaña + deslizar para cambiar */
+  var GUIDE = { cancha: ['⚽', 'Quién juega: 3 titulares, el suplente y el DT. Toca una ficha para ver la carta del jugador.'], temporada: ['📈', 'Cómo le va esta temporada: puntos, rendimiento y modos donde más gana.'],
+    vitrina: ['🏆', 'Trofeos y premios ganados. Toca uno para darle la vuelta y ver cuándo lo ganó.'], partidos: ['📅', 'Resultados recientes, próximos partidos y torneos en los que juega.'],
+    rivales: ['🆚', 'Compáralo con otro equipo: estilo de juego y cara a cara.'], resumen: ['⭐', 'Lo básico: partidos, victorias, goles, MVP y nota media. Abajo, su racha.'],
+    insignias: ['🎖️', 'Logros que se desbloquean jugando. Las grises aún le faltan.'], inventario: ['🎒', 'Cosméticos que tiene: colores de nombre, placas, marcos y títulos.'] };
+  function guide() { $$('.tq-tabs, .pf-tabs').forEach(function (tb) { var on = tb.querySelector('.on'); if (!on) return; var k = ((on.firstChild && on.firstChild.textContent) || '').trim().toLowerCase(), g = GUIDE[k], el = tb.nextElementSibling;
+      if (!el || !el.classList.contains('mv-guide')) { el = h('div', 'mv-guide'); el.setAttribute('aria-live', 'polite'); tb.parentNode.insertBefore(el, tb.nextSibling); }
+      if (el.dataset.k === k) return; el.dataset.k = k; el.innerHTML = ''; el.hidden = !g; if (!g) return;
+      el.appendChild(h('b', null, g[0])); el.appendChild(h('span', null, g[1])); el.appendChild(h('em', null, '⟷ desliza para cambiar')); });
+    $$('.tq-box, .pf-box').forEach(function (bx) { if (bx.dataset.mvs) return; bx.dataset.mvs = '1';
+      swipe(bx, function (d) { if (Math.abs(d) < 70) return; var tb = $$('.tq-tab, .pf-tab', bx.parentNode), i = tb.findIndex(function (x) { return x.classList.contains('on'); }), j = i + (d < 0 ? 1 : -1);
+        if (i < 0 || j < 0 || j >= tb.length) { bx.classList.add('mv-bump'); setTimeout(function () { bx.classList.remove('mv-bump'); }, 400); return; } buzz(10); tb[j].click(); tb[j].scrollIntoView({ block: 'nearest', inline: 'center', behavior: RM ? 'auto' : 'smooth' }); }); }); }
+  document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.tq-tab, .pf-tab')) setTimeout(guide, 0); });
+
+  /* consejos de cada página: qué se puede hacer aquí, en 2-3 pegatinas */
+  var TIPS = {};
+  function tips() { if (!document.body.classList.contains('ck') || document.querySelector('.ck-tips')) return; var k = (location.pathname.split('/').pop() || '').replace(/\.html$/, ''), t = TIPS[k], h1 = document.querySelector('main h1'); if (!t || !h1) return;
+    var hero = h1.closest('main>section.top, .rk-h, .bo-h, .ev-h, .pd-h, .nh'), at = hero || h1; if (hero && hero.querySelector('.tb, .gc')) hero = null; if (!hero) { at = h1; var nx = h1.nextElementSibling; if (nx && nx.tagName === 'P') at = nx; }
+    var w = h('div', 'ck-tips'); w.appendChild(h('b', null, 'Aquí puedes')); t.forEach(function (x, i) { var s = h('span'); s.style.setProperty('--d', (i + 1) * 90 + 'ms'); s.appendChild(h('i', null, x[0])); s.appendChild(document.createTextNode(x[1])); w.appendChild(s); });
+    at.parentNode.insertBefore(w, at.nextSibling); }
+  function run() { initials(); banner(); lineups(); ['.others', '.hh-ms', '.hh-news'].forEach(function (s) { $$(s).forEach(slider); }); if (innerWidth < 760) $$('.hh-go, .hh-comp').forEach(slider); reveal(); guide(); tips(); }
   var t = null, mo = new MutationObserver(function () { clearTimeout(t); t = setTimeout(run, 150); });
   function start() { run(); tilt(); chrome(); var m = document.querySelector('main'); if (m) mo.observe(m, { childList: true, subtree: true }); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 300); }); else setTimeout(start, 300);

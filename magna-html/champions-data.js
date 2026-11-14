@@ -22,7 +22,7 @@
   window.MAGNA_CH_TEAMS = function () {
     if (T) {
       var mine = S.matches.filter(function (m) { return m.type === 'tournament' && m.cid === T.id; }), lgm = mine.filter(function (m) { return m.group && m.status === 'finished'; });
-      var ids = T.groups ? T.groups[0].teamIds : T.teamIds;
+      var ids = T.groups ? T.groups.reduce(function (a, g) { return a.concat(g.teamIds); }, []) : T.teamIds;
       return ids.map(function (id) { return row(id, lgm, T.name, mine.filter(function (m) { return m.group; })); });
     }
     var played = S.matches.filter(function (m) { return m.status === 'finished'; }), seen = {};
@@ -33,6 +33,6 @@
     });
   };
   // Cuadro oficial: partidos del play-off y la eliminatoria del torneo (los de liga llevan m.group).
-  window.MAGNA_CH_CFG = T ? { name: T.name, id: T.id, legs: T.legs === 1 ? 1 : 2, phase: T.state ? T.state.phase : null, champion: T.state && T.state.champion || null,
+  window.MAGNA_CH_CFG = T ? { name: T.name, id: T.id, legs: T.legs === 1 ? 1 : 2, phase: T.state ? T.state.phase : null, manual: !!T.manual, groups: T.groups || null, zones: T.zones || null, champion: T.state && T.state.champion || null,
     ko: S.matches.filter(function (m) { return m.type === 'tournament' && m.cid === T.id && !m.group && m.status !== 'cancelled'; }) } : null;
 })();
