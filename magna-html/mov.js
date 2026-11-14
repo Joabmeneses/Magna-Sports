@@ -116,7 +116,12 @@
     var hero = h1.closest('main>section.top, .rk-h, .bo-h, .ev-h, .pd-h, .nh'), at = hero || h1; if (hero && hero.querySelector('.tb, .gc')) hero = null; if (!hero) { at = h1; var nx = h1.nextElementSibling; if (nx && nx.tagName === 'P') at = nx; }
     var w = h('div', 'ck-tips'); w.appendChild(h('b', null, 'Aquí puedes')); t.forEach(function (x, i) { var s = h('span'); s.style.setProperty('--d', (i + 1) * 90 + 'ms'); s.appendChild(h('i', null, x[0])); s.appendChild(document.createTextNode(x[1])); w.appendChild(s); });
     at.parentNode.insertBefore(w, at.nextSibling); }
-  function run() { initials(); banner(); lineups(); ['.others', '.hh-ms', '.hh-news'].forEach(function (s) { $$(s).forEach(slider); }); if (innerWidth < 760) $$('.hh-go, .hh-comp').forEach(slider); reveal(); guide(); tips(); }
+  // rendimiento: las animaciones infinitas de lo que no se ve se pausan
+  var offIO = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('mv-off', !e.isIntersecting); }); }, { rootMargin: '120px 0px' }) : null;
+  function pauseOff() { if (!offIO) return; $$('main > *, main section, footer').forEach(function (el) { if (el.dataset.mvo) return; el.dataset.mvo = '1'; offIO.observe(el); }); }
+  if (!document.getElementById('mv-off-css')) { var oc = document.createElement('style'); oc.id = 'mv-off-css'; oc.textContent = '.mv-off,.mv-off *{animation-play-state:paused!important}'; document.head.appendChild(oc); }
+  document.addEventListener('visibilitychange', function () { document.documentElement.classList.toggle('mv-hid', document.hidden); });
+  function run() { initials(); banner(); lineups(); ['.others', '.hh-ms', '.hh-news'].forEach(function (s) { $$(s).forEach(slider); }); if (innerWidth < 760) $$('.hh-go, .hh-comp').forEach(slider); reveal(); guide(); tips(); pauseOff(); }
   var t = null, mo = new MutationObserver(function () { clearTimeout(t); t = setTimeout(run, 150); });
   function start() { run(); tilt(); chrome(); var m = document.querySelector('main'); if (m) mo.observe(m, { childList: true, subtree: true }); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 300); }); else setTimeout(start, 300);
