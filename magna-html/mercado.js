@@ -20,7 +20,7 @@
       var st = h('div', 'pst'); if (window.ACCOUNTS) ACCOUNTS.playerBits().then(function (o) { if (o[p.id] == null) return; var d = h('div'); d.appendChild(h('b', null, Number(o[p.id]).toLocaleString('es'))); d.appendChild(h('span', null, 'Bits')); st.appendChild(d); });
       [[p.matches, 'Partidos'], [p.titles.length, p.titles.length === 1 ? 'Trofeo' : 'Trofeos'], [p.wins + 'V · ' + p.losses + 'D', 'Récord'], [p.top_wins, 'Victorias vs fuertes'], [p.nota == null ? '—' : String(p.nota).replace('.', ','), 'Nota media'], [p.goals, 'Goles'], [p.mvp, 'MVP']].forEach(function (k) { var d = h('div'); d.appendChild(h('b', null, k[0])); d.appendChild(h('span', null, k[1])); st.appendChild(d); }); b.appendChild(st);
       var pl = h('a', 'btn2 o', 'Ver perfil completo →'); pl.href = M.profileUrl(p.id); pl.style.margin = '6px 0 10px'; b.appendChild(pl); if (p.titles.length) b.appendChild(h('p', 'sub', '🏆 Campeón de ' + p.titles.join(', ') + '. Sus títulos le aseguran una media de al menos ' + p.floor + '.'));
-      if (p.salary_bits != null) b.appendChild(h('p', 'sub', 'Contrato: ' + p.salary_bits + ' Bits'));
+      if (p.salary_bits != null) b.appendChild(h('p', 'sub', 'Contrato: ' + p.salary_bits + ' Bucks'));
       var games = (MAGNA.playerStats()[p.id] || {}).games || [];
       b.appendChild(h('h2', 'x', 'Últimos partidos'));
       if (!games.length) b.appendChild(h('p', 'em', 'Todavía no tiene partidos narrados en vivo.'));

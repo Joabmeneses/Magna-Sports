@@ -94,7 +94,7 @@
       nm.appendChild(c ? h('small', null, 'DT: ' + c.name) : h('small', 'tm-warn', '⚠ Sin DT asignado')); hd.appendChild(nm);
       var rkb = h('div', 'tm-rk'); rkb.appendChild(h('b', null, '#' + pos)); rkb.appendChild(h('small', null, String((PT[t.id] || {}).pts || 0).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' pts')); hd.appendChild(rkb); cd.appendChild(hd);
       var sl = h('div', 'tm-sq'); for (var k = 0; k < 4; k++) { var p = pl[k], d = h('span', 'tm-sl' + (p ? ' on' : '')); if (p) { d.appendChild(M.tierAv(p.name, (PSx[p.id] || {}).media == null ? 10 : PSx[p.id].media, 26, p.id)); d.appendChild(h('em', null, p.name)); d.title = p.name; } else d.appendChild(h('em', null, 'Libre')); sl.appendChild(d); } cd.appendChild(sl);
-      var st = h('div', 'pp-st'); [[pl.length + '/4', 'Plantilla'], [tro, 'Trofeos'], [t.budget || 0, 'Bits'], [t.level ? ((MAGNA.TIERS[MAGNA.tierRank(t.level)] || [])[1] || t.level) : '—', 'Fichajes']].forEach(function (x) { var dd = h('div'); dd.appendChild(h('b', null, String(x[0]))); dd.appendChild(h('small', null, x[1])); st.appendChild(dd); }); cd.appendChild(st);
+      var st = h('div', 'pp-st'); [[pl.length + '/4', 'Plantilla'], [tro, 'Trofeos'], [t.budget || 0, 'Bucks'], [t.level ? ((MAGNA.TIERS[MAGNA.tierRank(t.level)] || [])[1] || t.level) : '—', 'Fichajes']].forEach(function (x) { var dd = h('div'); dd.appendChild(h('b', null, String(x[0]))); dd.appendChild(h('small', null, x[1])); st.appendChild(dd); }); cd.appendChild(st);
       var ft = h('div', 'pp-ft tm-ft'); ft.appendChild(ibtn('users', 'Plantilla', function () { squadDlg(t.id); })); ft.appendChild(ibtn('trophy', 'Trofeos', function () { trophyDlg(t.id); })); ft.appendChild(ibtn('img', 'Banner', function () { bannerDlg(t); })); ft.appendChild(ibtn('edit', 'Editar', function () { editTeam(t); }));
       ft.appendChild(h('span', 'sp')); ft.appendChild(ibtn('open', null, function () { window.open('equipo.html?id=' + t.id, '_blank'); })); ft.lastChild.title = 'Ver página'; ft.lastChild.setAttribute('aria-label', 'Ver página de ' + t.name); ft.appendChild(ibtn('trash', null, function () { delTeam(t); }, 'del')); ft.lastChild.title = 'Eliminar equipo'; cd.appendChild(ft);
       cd._k = nk(t.name + ' ' + (c ? c.name : '')); cd._f = { nodt: !t.coach, inc: pl.length < 4 }; cards.push(cd); grid.appendChild(cd); });
@@ -162,7 +162,7 @@
     });
   }
   function editTeam(t) {
-    ask('Editar ' + t.name, [{ k: 'n', label: 'Nombre', value: t.name, maxlength: 30 }, { k: 'i', label: 'Descripción', type: 'textarea', value: t.info }, { k: 'b', label: 'Presupuesto en Bits', type: 'number', value: t.budget, min: 0 }, { k: 'f', label: 'Foto o escudo (déjalo vacío para no cambiarlo; se reduce sola)', type: 'file' }, { k: 'x', label: 'Quitar la foto actual', type: 'checkbox' }], function (v) {
+    ask('Editar ' + t.name, [{ k: 'n', label: 'Nombre', value: t.name, maxlength: 30 }, { k: 'i', label: 'Descripción', type: 'textarea', value: t.info }, { k: 'b', label: 'Bucks para fichajes', type: 'number', value: t.budget, min: 0 }, { k: 'f', label: 'Foto o escudo (déjalo vacío para no cambiarlo; se reduce sola)', type: 'file' }, { k: 'x', label: 'Quitar la foto actual', type: 'checkbox' }], function (v) {
       var n = okName(v.n, 2, 30); if (!n) return 'Nombre no válido.'; if (S().teams.some(function (x) { return x.id !== t.id && nk(x.name) === nk(n); })) return 'Ya existe un equipo con ese nombre.';
       var bd = Number(v.b); if (!Number.isInteger(bd) || bd < 0 || bd > 1e9) return 'Presupuesto no válido.';
       return readImg(v.f).then(function (img) { var e = imgErr(img); if (e) return e; t.name = n; t.info = (v.i || '').slice(0, 300); t.budget = bd; if (img) t.crest = img; else if (v.x) t.crest = null; commit('Equipo actualizado'); });
@@ -704,7 +704,7 @@
     { id: 'jugadores', g: 'Comunidad', l: 'Jugadores y roles', i: 'user', c: '#4cc3ff', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
     { id: 'roles', g: 'Comunidad', l: 'Roles y accesos', i: 'key', c: '#ff5fa2', f: function (b) { dataV(b, 'roles'); }, d: 'Quién manda en el sitio: administradores con correo, administradores con código y jueces que califican partidos.' },
     { id: 'eventos', g: 'Comunidad', l: 'Eventos', i: 'cal', c: '#32d583', f: eventsV, d: 'Agenda de la comunidad: torneos relámpago, amistosos, transmisiones y premiaciones. Los miembros se apuntan con «¡Voy!».', p: 'eventos.html' },
-    { id: 'economia', g: 'Bits y tienda', l: 'Fichajes y Bits', i: 'coin', c: '#ffc53d', f: econV, d: 'Abre o cierra el mercado de fichajes, y maneja presupuestos y contratos de cada equipo.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
+    { id: 'economia', g: 'Bits y tienda', l: 'Economía y fichajes', i: 'coin', c: '#ffc53d', f: econV, d: 'Caja de Bits de cada equipo (sueldos), Bucks para fichajes, multiplicador por puntos y mercado de fichajes.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
     { id: 'tienda', g: 'Bits y tienda', l: 'Tienda', i: 'bag', c: '#ff5fa2', f: shopV, d: 'Cosméticos que los miembros compran con Bits o reciben de regalo: colores de nombre, placas, marcos y títulos.', p: 'tienda.html' },
     { id: 'regalos', g: 'Bits y tienda', l: 'Regalos', i: 'gift', c: '#ff7a2f', f: regalosV, d: 'Premia a la comunidad: regala Bits o cosméticos en segundos, con premios listos para el MVP, los goleadores o los campeones.' },
     { id: 'noticias', g: 'Comunicación', l: 'Noticias', i: 'news', c: '#b07cff', f: function (b) { window.ADMIN_NEWS(b, { h: h, btn: btn, toast: toast, dialog: dialog, confirmBox: confirmBox }); }, d: 'Crea, programa, destaca y edita las noticias de la comunidad.', p: 'noticias.html' },
@@ -846,7 +846,14 @@
     hg.forEach(function (n) { var r = h('div', 'rg-h'); r.appendChild(h('span', null, '🎁')); r.appendChild(h('b', null, String(n.text || '').replace(/^🎁\s*/, ''))); r.appendChild(h('small', null, n.at ? new Date(String(n.at).replace(' ', 'T') + 'Z').toLocaleDateString('es', { day: 'numeric', month: 'short' }) : '')); hl.appendChild(r); });
     b.appendChild(hl);
   }
-  MAGNA.cloud.onStatus(function () { banner(); });
+  // economía: al guardar un partido oficial terminado, se reparten ingresos y sueldos (la base de datos evita pagar dos veces)
+  function finOff() { return S().matches.filter(function (m) { return m.status === 'finished' && m.type !== 'friendly'; }).length; }
+  var EFIN = -1, ETM = null;
+  function econSettle(force) { if (!window.MAGNA_SB || !window.MAGNA_ADMIN || MAGNA.cloud.source !== 'cloud') return; var n = finOff(); if (!force && n === EFIN) return; EFIN = n;
+    MAGNA_SB().then(function (c) { return c.rpc('econ_settle'); }).then(function (r) { if (r && !r.error && r.data > 0) toast('💰 Se pagaron ingresos y sueldos de ' + r.data + (r.data === 1 ? ' partido' : ' partidos')); }, function () {}); }
+  window.ADMIN_ECON_SETTLE = econSettle;
+  MAGNA.cloud.onStatus(function () { banner(); if (MAGNA.cloud.status === 'saved') { clearTimeout(ETM); ETM = setTimeout(function () { econSettle(false); }, 1500); } });
+  setTimeout(function () { econSettle(true); }, 3000);
   searchUI(); render(); banner();
   // en un rato libre se precargan las demás secciones para que abran al instante
   setTimeout(function () { var q = ['live', 'comp', 'shop', 'balon', 'data', 'hist', 'econ', 'events'], go1 = function () { var n = q.shift(); if (!n) return; modPrefetch(n); setTimeout(function () { if (window.requestIdleCallback) requestIdleCallback(go1, { timeout: 3000 }); else go1(); }, 900); }; go1(); }, 6000);

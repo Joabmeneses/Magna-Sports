@@ -2,7 +2,7 @@
 // Panel del coach: alineación, plantilla, mercado (fichar, liberar, ofertas). Todo lo valida la base de datos.
 (function () {
   var h = M.h, app = document.getElementById('app'), me = null, tab = 'alineacion', draft = null, busy = false;
-  try { var hs = location.hash.slice(1); if (/^(alineacion|plantilla|mercado|ofertas)$/.test(hs)) tab = hs; } catch (e) {}
+  try { var hs = location.hash.slice(1); if (/^(alineacion|plantilla|mercado|ofertas|amistosos|economia)$/.test(hs)) tab = hs; } catch (e) {}
   function S() { return MAGNA.S; }
   function by(l, id) { return MAGNA.by(l, id); }
   function fmt(n) { return String(Math.round(Number(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
@@ -30,14 +30,56 @@
     app.innerHTML = ''; app.style.setProperty('--tc', MAGNA.teamColor(t.id));
     // cabecera
     var hero = h('div', 'ce-hero'); hero.appendChild(M.crest(t.id, t.name, 88)); var tx = h('div'); tx.appendChild(h('h1', 'x', t.name)); tx.appendChild(h('p', 'sub', 'Eres el DT · Nivel de fichajes: ' + MAGNA.TIERS[lv][1] + ' (puedes fichar hasta ese nivel)')); var lk = h('a', null, 'Ver página del equipo →'); lk.href = 'equipo.html?id=' + t.id; lk.style.cssText = 'display:inline-block;margin-top:8px;color:#c9b8ff;font-size:14px'; tx.appendChild(lk); hero.appendChild(tx);
-    var kp = h('div', 'ce-kp'); [[fmt(t.budget || 0), 'Presupuesto (Bits)', 'gold'], [members.length + '/4', 'Plantilla'], [inbox.length, 'Ofertas por responder']].forEach(function (x) { var d = h('div', x[2] || ''); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); kp.appendChild(d); }); hero.appendChild(kp); app.appendChild(hero);
+    var kp = h('div', 'ce-kp'); [[fmt(t.budget || 0), 'Bucks para fichajes', 'gold'], [members.length + '/4', 'Plantilla'], [inbox.length, 'Ofertas por responder']].forEach(function (x) { var d = h('div', x[2] || ''); d.appendChild(h('b', null, String(x[0]))); d.appendChild(h('small', null, x[1])); kp.appendChild(d); }); hero.appendChild(kp); app.appendChild(hero);
     var mb = h('div', 'mk' + (mk.open ? ' on' : '')); mb.appendChild(h('i')); var mt = h('span'); mt.appendChild(h('b', null, mk.open ? 'Mercado abierto' : 'Mercado cerrado')); mt.appendChild(document.createTextNode(mk.open ? ' · Puedes fichar, liberar y hacer ofertas' + (mk.closes ? ' hasta el ' + M.fdt(mk.closes) : '') + '.' : ' · Puedes armar tu alineación; los fichajes se habilitan cuando la administración abra el mercado.')); mb.appendChild(mt); app.appendChild(mb);
     // pestañas
-    var tb = h('div', 'tabs'); [['alineacion', 'Alineación'], ['plantilla', 'Plantilla'], ['mercado', 'Mercado'], ['ofertas', 'Ofertas'], ['amistosos', 'Amistosos']].forEach(function (x) { var b = h('button', x[0] === tab ? 'on' : '', x[1]); b.type = 'button'; if (x[0] === 'ofertas' && inbox.length) b.appendChild(h('span', 'nb', String(inbox.length))); b.onclick = function () { tab = x[0]; try { history.replaceState(null, '', '#' + tab); } catch (e) {} render(); }; tb.appendChild(b); }); app.appendChild(tb);
+    var tb = h('div', 'tabs'); [['alineacion', 'Alineación'], ['economia', '💰 Economía'], ['plantilla', 'Plantilla'], ['mercado', 'Mercado'], ['ofertas', 'Ofertas'], ['amistosos', 'Amistosos']].forEach(function (x) { var b = h('button', x[0] === tab ? 'on' : '', x[1]); b.type = 'button'; if (x[0] === 'ofertas' && inbox.length) b.appendChild(h('span', 'nb', String(inbox.length))); b.onclick = function () { tab = x[0]; try { history.replaceState(null, '', '#' + tab); } catch (e) {} render(); }; tb.appendChild(b); }); app.appendChild(tb);
     var body = h('div'); app.appendChild(body);
-    if (tab === 'alineacion') lineupV(body, t, members); else if (tab === 'plantilla') squadV(body, t, members, mk); else if (tab === 'mercado') marketV(body, t, members, mk, lv); else if (tab === 'amistosos') friendlyV(body, t); else offersV(body, t, offers);
+    if (tab === 'alineacion') lineupV(body, t, members); else if (tab === 'plantilla') squadV(body, t, members, mk); else if (tab === 'mercado') marketV(body, t, members, mk, lv); else if (tab === 'amistosos') friendlyV(body, t); else if (tab === 'economia') econV(body, t, members); else offersV(body, t, offers);
   }
 
+  // ---------- economía: caja de Bits (sueldos), Bucks (fichajes) y sueldo por partido de cada jugador ----------
+  var EC = null, ECT = null, ECL = false, PD = {};
+  function econLoad(t) { if (ECL) return; ECL = true; ECT = t.id;
+    ACCOUNTS.coach('econ_settle').then(function (n) { if (n && ACCOUNTS.pullState) return ACCOUNTS.pullState(); }).catch(function () {}).then(function () { return ACCOUNTS.coach('econ_team', { p_team: t.id }); })
+      .then(function (d) { ECL = false; EC = d || null; PD = {}; if (tab === 'economia') render(); }, function (e) { ECL = false; EC = { err: e.message || 'No se pudo cargar' }; if (tab === 'economia') render(); }); }
+  function econV(b, t, members) {
+    if (!EC || ECT !== t.id) { econLoad(t); b.appendChild(h('p', 'em', 'Cargando la economía del equipo…')); return; }
+    if (EC.err) { b.appendChild(h('p', 'em', '⚠️ ' + EC.err)); var rt = h('button', 'btn', 'Reintentar'); rt.type = 'button'; rt.onclick = function () { EC = null; render(); }; b.appendChild(rt); return; }
+    var pay = function (p) { return PD[p.id] != null ? PD[p.id] : Number((EC.pay || {})[p.id] || 0); }, roll = members.reduce(function (s, p) { return s + pay(p); }, 0), left = roll ? Math.floor(EC.bits / roll) : null;
+    var kp = h('div', 'ec-kp');
+    [['🪙', fmt(EC.bits), 'Caja del equipo', 'Bits para pagar sueldos', 'b'], ['💵', fmt(t.budget || 0), 'Bucks', 'Para fichar en el mercado', 'u'], ['📈', 'x' + String(EC.mult).replace('.', ','), 'Multiplicador', 'Más puntos de ranking = más dinero', 'm'],
+     ['🧾', fmt(roll), 'Sueldos por partido', left == null ? 'Aún no pagas sueldos' : left >= 1 ? 'Te alcanza para ' + left + (left === 1 ? ' partido' : ' partidos') : '⚠️ No te alcanza para un partido', left != null && left < 1 ? 'w' : 's']].forEach(function (x) {
+      var d = h('div', 'ec-c ' + x[4]); d.appendChild(h('span', 'ec-e', x[0])); d.appendChild(h('b', null, x[1])); d.appendChild(h('small', null, x[2])); d.appendChild(h('em', null, x[3])); kp.appendChild(d); });
+    b.appendChild(kp);
+    var inc = h('div', 'ec-in'); inc.appendChild(h('h3', 'x', 'Cuánto gana tu equipo por partido oficial'));
+    var ig = h('div', 'ec-ig'); [['🏆 Victoria', EC.win], ['💪 Derrota', EC.loss]].forEach(function (x) { var d = h('div'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', null, '+' + fmt(x[1].bits) + ' Bits')); d.appendChild(h('span', 'u', '+' + fmt(x[1].bucks) + ' Bucks')); ig.appendChild(d); }); inc.appendChild(ig);
+    inc.appendChild(h('p', 'em', 'Valores de liga. Torneos x1,2 · Champions x1,5 · Mundial x2. Los amistosos no pagan. Al terminar cada partido oficial entra el dinero y se paga solo el sueldo de toda la plantilla.'));
+    b.appendChild(inc);
+    b.appendChild(h('h3', 'x', 'Sueldo por partido'));
+    b.appendChild(h('p', 'em', 'Lo que recibe cada jugador de tu plantilla en su cuenta (Bits) después de cada partido oficial, juegue o no. Máximo 1.000 por jugador. Si la caja no alcanza, se paga lo que haya.'));
+    if (!members.length) b.appendChild(h('p', 'em', 'Tu plantilla está vacía.'));
+    var L = h('div', 'ec-pl');
+    members.forEach(function (p) { var r = h('div', 'ec-r'), v = pay(p), sv = Number((EC.pay || {})[p.id] || 0); r.appendChild(av(p)); var tx = h('div', 'tx'); tx.appendChild(h('b', null, p.name)); tx.appendChild(h('small', null, v ? fmt(v) + ' Bits por partido' : 'Sin sueldo')); r.appendChild(tx);
+      var st = h('div', 'ec-st'), mi = h('button', null, '−'), inp = h('input'), pl = h('button', null, '+'); mi.type = pl.type = 'button'; inp.type = 'number'; inp.min = 0; inp.max = 1000; inp.step = 10; inp.value = v; inp.setAttribute('aria-label', 'Sueldo de ' + p.name);
+      function set(x) { x = Math.max(0, Math.min(1000, Math.round(Number(x) || 0))); PD[p.id] = x; render(); }
+      mi.onclick = function () { set(v - 10); }; pl.onclick = function () { set(v + 10); }; inp.onchange = function () { set(inp.value); };
+      st.appendChild(mi); st.appendChild(inp); st.appendChild(pl); r.appendChild(st);
+      var qk = h('div', 'ec-q'); [0, 50, 100, 200].forEach(function (n) { var q = h('button', v === n ? 'on' : null, String(n)); q.type = 'button'; q.onclick = function () { set(n); }; qk.appendChild(q); }); r.appendChild(qk);
+      if (v !== sv) r.classList.add('ch'); L.appendChild(r); });
+    b.appendChild(L);
+    var ch = members.filter(function (p) { return PD[p.id] != null && PD[p.id] !== Number((EC.pay || {})[p.id] || 0); });
+    var bar = h('div', 'lineup'); bar.appendChild(h('div', 'cnt', ch.length ? ch.length + (ch.length === 1 ? ' cambio sin guardar' : ' cambios sin guardar') : 'Todo guardado'));
+    var sv2 = h('button', 'btn o', busy ? 'Guardando…' : 'Guardar sueldos'); sv2.type = 'button'; sv2.disabled = !ch.length || busy;
+    sv2.onclick = function () { busy = true; render(); ch.reduce(function (pr, p) { return pr.then(function () { return ACCOUNTS.coach('coach_set_pay', { p_player: p.id, p_bits: PD[p.id] }); }); }, Promise.resolve())
+      .then(function () { busy = false; toast('💰 Sueldos guardados', 'ok'); EC = null; render(); }, function (e) { busy = false; toast(e.message || 'No se pudo', 'bad'); EC = null; render(); }); };
+    bar.appendChild(sv2); b.appendChild(bar);
+    b.appendChild(h('h3', 'x', 'Movimientos'));
+    var lg = h('div', 'ec-lg'); if (!(EC.log || []).length) lg.appendChild(h('p', 'em', 'Todavía no hay movimientos. El dinero llega cuando tu equipo juegue un partido oficial.'));
+    (EC.log || []).forEach(function (x) { var r = h('div', 'ec-lr ' + x.kind); r.appendChild(h('span', 'ec-li', x.kind === 'income' ? '💰' : x.kind === 'salary' ? '🧾' : '🛠️')); var tx = h('div'); tx.appendChild(h('b', null, x.note || '')); tx.appendChild(h('small', null, new Date(x.at).toLocaleString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))); r.appendChild(tx);
+      var am = h('div', 'ec-la'); if (x.bits) am.appendChild(h('span', x.bits > 0 ? 'p' : 'n', (x.bits > 0 ? '+' : '') + fmt(x.bits) + ' Bits')); if (x.bucks) am.appendChild(h('span', 'u', (x.bucks > 0 ? '+' : '') + fmt(x.bucks) + ' Bucks')); r.appendChild(am); lg.appendChild(r); });
+    b.appendChild(lg);
+  }
   function lineupV(b, t, members) {
     if (!members.length) { b.appendChild(h('p', 'em', 'Tu plantilla está vacía. Ficha jugadores en la pestaña Mercado cuando el mercado esté abierto.')); return; }
     if (!draft || draft.team !== t.id) { draft = { team: t.id, s: {} }; members.forEach(function (p) { draft.s[p.id] = p.slot === 'reserve' ? 'reserve' : 'starter'; }); }
@@ -58,9 +100,9 @@
 
   function squadV(b, t, members, mk) {
     if (!members.length) b.appendChild(h('p', 'em', 'Todavía no tienes jugadores.'));
-    members.forEach(function (p) { var r = h('div', 'row'); r.appendChild(av(p)); var tx = h('div', 'tx'); tx.appendChild(h('b', null, p.name + (t.coach === p.id ? ' (DT)' : ''))); tx.appendChild(h('small', null, (p.slot === 'reserve' ? 'Suplente' : 'Titular') + ' · media ' + media(p) + ' · ' + MAGNA.tierOf(media(p)).name + ' · ' + MAGNA.roleName(p))); r.appendChild(tx); r.appendChild(h('span', 'price', fmt(price(p)) + ' Bits'));
+    members.forEach(function (p) { var r = h('div', 'row'); r.appendChild(av(p)); var tx = h('div', 'tx'); tx.appendChild(h('b', null, p.name + (t.coach === p.id ? ' (DT)' : ''))); tx.appendChild(h('small', null, (p.slot === 'reserve' ? 'Suplente' : 'Titular') + ' · media ' + media(p) + ' · ' + MAGNA.tierOf(media(p)).name + ' · ' + MAGNA.roleName(p))); r.appendChild(tx); r.appendChild(h('span', 'price', fmt(price(p)) + ' Bucks'));
       var a = h('div', 'act'), rl = h('button', 'btn d', 'Liberar (+' + fmt(Math.floor(price(p) / 2)) + ')'); rl.type = 'button'; rl.disabled = !mk.open || busy || t.coach === p.id; rl.title = !mk.open ? 'El mercado está cerrado' : t.coach === p.id ? 'Eres el DT' : 'Queda como agente libre y recuperas la mitad de su precio';
-      rl.onclick = function () { confirmIt('¿Liberar a ' + p.name + '?', 'Queda como agente libre y tu equipo recupera ' + fmt(Math.floor(price(p) / 2)) + ' Bits (la mitad de su precio).', 'Liberar', function () { act('coach_release', { p_player: p.id }, function (v) { return p.name + ' liberado · +' + fmt(v) + ' Bits'; }); }); }; a.appendChild(rl); r.appendChild(a); b.appendChild(r); });
+      rl.onclick = function () { confirmIt('¿Liberar a ' + p.name + '?', 'Queda como agente libre y tu equipo recupera ' + fmt(Math.floor(price(p) / 2)) + ' Bucks (la mitad de su precio).', 'Liberar', function () { act('coach_release', { p_player: p.id }, function (v) { return p.name + ' liberado · +' + fmt(v) + ' Bucks'; }); }); }; a.appendChild(rl); r.appendChild(a); b.appendChild(r); });
     var coach = by(S().players, t.coach); if (coach && MAGNA.roleOf(coach) === 'coach') b.appendChild(h('p', 'em', 'Cuerpo técnico: ' + coach.name + ' (Solo coach).'));
     b.appendChild(h('p', 'em', 'Para vender a otro equipo, espera sus ofertas en la pestaña Ofertas.'));
   }
@@ -73,16 +115,16 @@
       var others = S().players.filter(function (p) { return p.teamId && p.teamId !== t.id && MAGNA.plays(p) && (!s || p.name.toLowerCase().indexOf(s) >= 0); }).sort(function (a, c) { return media(c) - media(a); });
       list.appendChild(h('h3', 'x', 'Agentes libres'));
       if (!free.length) list.appendChild(h('p', 'em', 'No hay agentes libres.'));
-      free.forEach(function (p) { var tr = MAGNA.tierOf(media(p)), lock = tr.rank > lv, r = h('div', 'row'); r.appendChild(av(p)); var tx = h('div', 'tx'); var tb0 = h('b'); tb0.appendChild(M.pn(p.name, p.id)); tx.appendChild(tb0); tx.appendChild(h('small', null, 'Media ' + media(p) + ' · ' + tr.name)); r.appendChild(tx); r.appendChild(h('span', 'price', fmt(price(p)) + ' Bits'));
+      free.forEach(function (p) { var tr = MAGNA.tierOf(media(p)), lock = tr.rank > lv, r = h('div', 'row'); r.appendChild(av(p)); var tx = h('div', 'tx'); var tb0 = h('b'); tb0.appendChild(M.pn(p.name, p.id)); tx.appendChild(tb0); tx.appendChild(h('small', null, 'Media ' + media(p) + ' · ' + tr.name)); r.appendChild(tx); r.appendChild(h('span', 'price', fmt(price(p)) + ' Bucks'));
         var a = h('div', 'act'); if (lock) a.appendChild(h('span', 'lock', '🔒 Por encima de tu nivel')); else { var f = h('button', 'btn g', 'Fichar'); f.type = 'button'; f.disabled = !mk.open || full || busy || (t.budget || 0) < price(p); f.title = !mk.open ? 'Mercado cerrado' : full ? 'Plantilla llena' : (t.budget || 0) < price(p) ? 'Presupuesto insuficiente' : '';
-          f.onclick = function () { confirmIt('¿Fichar a ' + p.name + '?', 'Cuesta ' + fmt(price(p)) + ' Bits de tu presupuesto (' + fmt(t.budget || 0) + ').', 'Fichar', function () { act('coach_sign', { p_player: p.id }, function (v) { return '¡' + p.name + ' es tuyo! · −' + fmt(v) + ' Bits'; }); }); }; a.appendChild(f); }
+          f.onclick = function () { confirmIt('¿Fichar a ' + p.name + '?', 'Cuesta ' + fmt(price(p)) + ' Bucks de tu presupuesto (' + fmt(t.budget || 0) + ').', 'Fichar', function () { act('coach_sign', { p_player: p.id }, function (v) { return '¡' + p.name + ' es tuyo! · −' + fmt(v) + ' Bucks'; }); }); }; a.appendChild(f); }
         r.appendChild(a); list.appendChild(r); });
       list.appendChild(h('h3', 'x', 'Jugadores de otros equipos'));
       if (!others.length) list.appendChild(h('p', 'em', 'No hay jugadores en otros equipos.'));
       others.forEach(function (p) { var tr = MAGNA.tierOf(media(p)), lock = tr.rank > lv, r = h('div', 'row'), tm = by(S().teams, p.teamId); r.appendChild(av(p)); var tx = h('div', 'tx'); var tb0 = h('b'); tb0.appendChild(M.pn(p.name, p.id)); tx.appendChild(tb0); tx.appendChild(h('small', null, (tm ? tm.name : '') + ' · media ' + media(p) + ' · ' + tr.name)); r.appendChild(tx); r.appendChild(h('span', 'price', 'Valor ' + fmt(price(p))));
         var a = h('div', 'act'), pend = (S().offers || []).some(function (o) { return o.player === p.id && o.buyer === t.id && o.status === 'pending'; });
         if (lock) a.appendChild(h('span', 'lock', '🔒 Por encima de tu nivel')); else if (pend) a.appendChild(h('span', 'st pending', 'Oferta enviada')); else { var o = h('button', 'btn', 'Hacer oferta'); o.type = 'button'; o.disabled = !mk.open || full || busy; o.title = !mk.open ? 'Mercado cerrado' : full ? 'Plantilla llena' : '';
-          o.onclick = function () { ask('Oferta por ' + p.name, 'Su valor es ' + fmt(price(p)) + ' Bits. Tu presupuesto: ' + fmt(t.budget || 0) + '. El otro coach decide si acepta.', price(p), function (v) { act('coach_offer', { p_player: p.id, p_amount: v }, 'Oferta enviada a ' + (tm ? tm.name : 'su equipo')); }); }; a.appendChild(o); }
+          o.onclick = function () { ask('Oferta por ' + p.name, 'Su valor es ' + fmt(price(p)) + ' Bucks. Tu presupuesto: ' + fmt(t.budget || 0) + '. El otro coach decide si acepta.', price(p), function (v) { act('coach_offer', { p_player: p.id, p_amount: v }, 'Oferta enviada a ' + (tm ? tm.name : 'su equipo')); }); }; a.appendChild(o); }
         r.appendChild(a); list.appendChild(r); }); }
     q.oninput = draw; draw();
     if (!mk.open) b.insertBefore(h('p', 'em', 'El mercado está cerrado: puedes mirar, pero no fichar ni ofertar.'), bar);
@@ -90,9 +132,9 @@
 
   function offersV(b, t, offers) {
     var ST = { pending: 'Pendiente', accepted: 'Aceptada', rejected: 'Rechazada', cancelled: 'Cancelada' };
-    function row(o, mine) { var p = by(S().players, o.player), other = by(S().teams, mine ? o.seller : o.buyer), r = h('div', 'row'); if (p) r.appendChild(av(p)); var tx = h('div', 'tx'); tx.appendChild(h('b', null, (p ? p.name : 'Jugador') + ' · ' + fmt(o.amount) + ' Bits')); tx.appendChild(h('small', null, (mine ? 'A ' : 'De ') + (other ? other.name : '—') + (o.at ? ' · ' + M.fdt(o.at) : ''))); r.appendChild(tx); r.appendChild(h('span', 'st ' + o.status, ST[o.status] || o.status));
+    function row(o, mine) { var p = by(S().players, o.player), other = by(S().teams, mine ? o.seller : o.buyer), r = h('div', 'row'); if (p) r.appendChild(av(p)); var tx = h('div', 'tx'); tx.appendChild(h('b', null, (p ? p.name : 'Jugador') + ' · ' + fmt(o.amount) + ' Bucks')); tx.appendChild(h('small', null, (mine ? 'A ' : 'De ') + (other ? other.name : '—') + (o.at ? ' · ' + M.fdt(o.at) : ''))); r.appendChild(tx); r.appendChild(h('span', 'st ' + o.status, ST[o.status] || o.status));
       var a = h('div', 'act'); if (o.status === 'pending') { if (mine) { var c = h('button', 'btn d', 'Cancelar'); c.type = 'button'; c.disabled = busy; c.onclick = function () { act('coach_offer_reply', { p_offer: o.id, p_action: 'cancel' }, 'Oferta cancelada'); }; a.appendChild(c); }
-        else { var y = h('button', 'btn g', 'Aceptar'), n = h('button', 'btn d', 'Rechazar'); y.type = n.type = 'button'; y.disabled = n.disabled = busy; y.onclick = function () { confirmIt('¿Vender a ' + (p ? p.name : 'este jugador') + '?', (other ? other.name : 'El otro equipo') + ' paga ' + fmt(o.amount) + ' Bits y el jugador pasa a su plantilla.', 'Aceptar oferta', function () { act('coach_offer_reply', { p_offer: o.id, p_action: 'accept' }, '¡Venta cerrada! +' + fmt(o.amount) + ' Bits'); }); }; n.onclick = function () { act('coach_offer_reply', { p_offer: o.id, p_action: 'reject' }, 'Oferta rechazada'); }; a.appendChild(y); a.appendChild(n); } }
+        else { var y = h('button', 'btn g', 'Aceptar'), n = h('button', 'btn d', 'Rechazar'); y.type = n.type = 'button'; y.disabled = n.disabled = busy; y.onclick = function () { confirmIt('¿Vender a ' + (p ? p.name : 'este jugador') + '?', (other ? other.name : 'El otro equipo') + ' paga ' + fmt(o.amount) + ' Bucks y el jugador pasa a su plantilla.', 'Aceptar oferta', function () { act('coach_offer_reply', { p_offer: o.id, p_action: 'accept' }, '¡Venta cerrada! +' + fmt(o.amount) + ' Bucks'); }); }; n.onclick = function () { act('coach_offer_reply', { p_offer: o.id, p_action: 'reject' }, 'Oferta rechazada'); }; a.appendChild(y); a.appendChild(n); } }
       r.appendChild(a); return r; }
     var inb = offers.filter(function (o) { return o.seller === t.id; }).reverse(), out = offers.filter(function (o) { return o.buyer === t.id; }).reverse();
     b.appendChild(h('h3', 'x', 'Recibidas')); if (!inb.length) b.appendChild(h('p', 'em', 'Nadie ha ofertado por tus jugadores todavía.')); inb.slice(0, 20).forEach(function (o) { b.appendChild(row(o, false)); });
