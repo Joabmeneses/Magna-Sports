@@ -84,6 +84,29 @@ window.SHARE_CARD = (function () {
       x.textAlign = 'left'; stats(x, [[String(d.pts).replace(/\B(?=(\d{3})+(?!\d))/g, '.'), 'Puntos'], [d.trophyCount, 'Trofeos'], [d.record[0] + '-' + d.record[1], 'V-D'], [d.level, 'Nivel']], 846, col);
       return cabinet(x, d.trophies || [], 1036, col); }).then(function () { foot(x); return c; }); }
 
+  // d: { name, kicker, comp, status, live, home:{name,color,crest}, away:{…}, hs, as, scheduled, when, mvp, best, scorers:[texto], sets }
+  function match(d) { var c = canvas(), x = c.getContext('2d'), hc = d.home.color || '#8b5cf6', ac = d.away.color || '#ff5a36';
+    return fonts().then(function () { return Promise.all([img('logo-sm.webp'), img(d.home.crest), img(d.away.crest)]); }).then(function (I) {
+      bg(x, hc); var r3 = x.createRadialGradient(W - 60, H * .55, 30, W - 60, H * .55, 760); r3.addColorStop(0, rgba(ac, .5)); r3.addColorStop(1, rgba(ac, 0)); x.fillStyle = r3; x.fillRect(0, 0, W, H);
+      head(x, I[0], d.kicker || 'RESULTADO');
+      x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.fillStyle = 'rgba(241,243,251,.75)'; fit(x, (d.comp || '').toUpperCase(), W - 180, 30, 700, MONO); x.fillText((d.comp || '').toUpperCase(), W / 2, 214);
+      [[d.home, I[1], W * .22, hc], [d.away, I[2], W * .78, ac]].forEach(function (t) { var cx = t[2], cy = 430;
+        if (t[1]) { x.save(); x.shadowColor = rgba(t[3], .9); x.shadowBlur = 60; var s = 230 / Math.max(t[1].width, t[1].height); x.drawImage(t[1], cx - t[1].width * s / 2, cy - t[1].height * s / 2, t[1].width * s, t[1].height * s); x.restore(); }
+        else avatar(x, null, t[0].name, cx, cy, 112, t[3]);
+        x.textAlign = 'center'; x.fillStyle = '#fff'; fit(x, t[0].name.toUpperCase(), 380, 58); x.fillText(t[0].name.toUpperCase(), cx, 640); });
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      if (d.scheduled) { x.fillStyle = '#ffd23f'; x.font = 'italic 900 120px ' + F; x.fillText('VS', W / 2, 430); }
+      else { x.save(); x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 24; x.fillStyle = '#fff'; x.font = 'italic 900 170px ' + F; x.fillText(d.hs + '-' + d.as, W / 2, 430); x.restore(); }
+      var pill = d.status || '', pc = d.live ? '#ff3b47' : d.scheduled ? '#ffd23f' : '#c6ff1a'; x.font = '900 28px ' + F; var pw = x.measureText(pill).width + 60; x.fillStyle = pc; rr(x, (W - pw) / 2, 690, pw, 60, 30); x.fill(); x.fillStyle = d.live ? '#fff' : '#0a0d18'; x.fillText(pill, W / 2, 721);
+      x.textBaseline = 'alphabetic';
+      var items = d.scheduled ? [[d.when || 'Por definir', 'Fecha'], [d.prob || '—', 'Favorito']] : [[d.mvp || '—', 'MVP'], [d.best || '—', 'Mejor nota']].concat(d.sets ? [[d.sets, 'Sets']] : []);
+      stats(x, items, 800, '#ffd23f');
+      var L = (d.scorers || []).slice(0, 6); x.textAlign = 'center';
+      if (L.length) { x.fillStyle = 'rgba(241,243,251,.6)'; x.font = '700 22px ' + MONO; x.fillText('GOLES', W / 2, 1010); x.fillStyle = '#f1f3fb'; var txt = L.join('   ·   '); fit(x, '⚽ ' + txt, W - 160, 38, 800); x.fillText('⚽ ' + txt, W / 2, 1066); if (d.scorers.length > 6) { x.font = '700 24px ' + F; x.fillStyle = 'rgba(241,243,251,.6)'; x.fillText('y ' + (d.scorers.length - 6) + ' más', W / 2, 1110); } }
+      else if (!d.scheduled) { x.fillStyle = 'rgba(241,243,251,.55)'; x.font = '700 30px ' + F; x.fillText('Revive el partido completo en Magna Arena', W / 2, 1060); }
+      else { x.fillStyle = 'rgba(241,243,251,.75)'; x.font = '800 34px ' + F; x.fillText('¿Quién gana? Apuesta tus Bits 🎲', W / 2, 1060); }
+      x.textAlign = 'left'; foot(x); return c; }); }
+
   // botón listo para poner en una página: genera la tarjeta, muestra una vista previa y deja compartir o descargar
   function open(kind, getData) {
     var ov = document.createElement('div'); ov.className = 'shc-ov'; ov.innerHTML = '<div class="shc" role="dialog" aria-modal="true" aria-label="Tarjeta para compartir"><div class="shc-hd"><b>Tarjeta para compartir</b><button type="button" class="shc-x" aria-label="Cerrar">✕</button></div><div class="shc-im"><div class="shc-ld">Creando tu tarjeta…</div></div><div class="shc-ac"><button type="button" class="shc-go" disabled>📤 Compartir</button><button type="button" class="shc-dl" disabled>⬇ Descargar</button></div><p class="shc-hint">Perfecta para historias, publicaciones o el grupo de WhatsApp.</p></div>';
@@ -92,7 +115,7 @@ window.SHARE_CARD = (function () {
     function esc(e) { if (e.key === 'Escape') close(); } document.addEventListener('keydown', esc);
     ov.addEventListener('click', function (e) { if (e.target === ov || e.target.closest('.shc-x')) close(); });
     var d = getData(), file = 'magna-' + slug(d.name) + '.png', go = ov.querySelector('.shc-go'), dlb = ov.querySelector('.shc-dl'), box = ov.querySelector('.shc-im');
-    (kind === 'team' ? team(d) : player(d)).then(function (c) { var u = c.toDataURL('image/png'), im = new Image(); im.src = u; im.alt = 'Tarjeta de ' + d.name; box.innerHTML = ''; box.appendChild(im);
+    (kind === 'team' ? team(d) : kind === 'match' ? match(d) : player(d)).then(function (c) { var u = c.toDataURL('image/png'), im = new Image(); im.src = u; im.alt = 'Tarjeta de ' + d.name; box.innerHTML = ''; box.appendChild(im);
       go.disabled = dlb.disabled = false; if (!(navigator.share && navigator.canShare)) go.style.display = 'none';
       go.onclick = function () { deliver(c, file, d.name + ' · Magna Arena').catch(function () {}); };
       dlb.onclick = function () { c.toBlob(function (b) { if (b) dl(b, file); }, 'image/png'); };
@@ -107,5 +130,5 @@ window.SHARE_CARD = (function () {
     '.shc-ac{display:flex;gap:10px;margin-top:14px}.shc-ac button{flex:1;border-radius:999px;padding:13px 14px;font:800 15px Archivo,sans-serif;cursor:pointer;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#f1f3fb}.shc-ac .shc-go{background:linear-gradient(135deg,#ff5a36,#ff8a00);border-color:transparent;color:#fff}.shc-ac button:disabled{opacity:.45;cursor:wait}' +
     '.shc-hint{margin:10px 2px 0;color:rgba(241,243,251,.55);font-size:12.5px;text-align:center}';
     document.head.appendChild(st); }
-  return { player: player, team: team, open: open };
+  return { player: player, team: team, match: match, open: open };
 })();

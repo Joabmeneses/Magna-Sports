@@ -40,7 +40,12 @@
   }
   function drawHist(g) {
     var L = ((window.MAGNA && MAGNA.S.history) || []).slice().sort(function (a, b) { return String(b.date || '').localeCompare(String(a.date || '')); });
-    if (!L.length) { g.appendChild(h('p', 'em', 'Todavía no hay torneos en el historial.')); return; }
+    var SE = ((window.MAGNA && MAGNA.S.seasons) || []).slice().reverse();
+    SE.forEach(function (x, i) { var c = h('article', 'tc ss-pub'); c.style.setProperty('--bar', COL[i % COL.length]); c.style.setProperty('--tint', M.tint(i + 3)); var lg = h('div', 'lg mono'); lg.appendChild(h('span', null, 'Temporada')); lg.appendChild(h('span', 'badge', String(x.at || '').slice(0, 4))); c.appendChild(lg);
+      var cr = h('div', 'cr'); cr.style.width = cr.style.height = '88px'; cr.style.fontSize = '38px'; cr.textContent = '🏁'; c.appendChild(cr); c.appendChild(h('h3', 'x', x.name));
+      var ul = h('div', 'ss-pl'); (x.champions || []).forEach(function (ch) { ul.appendChild(h('span', null, '🏆 ' + ch.teamName + ' · ' + ch.comp)); }); if (x.scorer) ul.appendChild(h('span', null, '⚽ Goleador: ' + x.scorer.name + ' (' + x.scorer.n + ')')); if (x.mvp) ul.appendChild(h('span', null, '⭐ Más MVP: ' + x.mvp.name + ' (' + x.mvp.n + ')')); c.appendChild(ul);
+      var rk = h('div', 'ranks'); [[x.played, 'Partidos'], [x.goals, 'Goles'], [(x.champions || []).length, 'Campeones']].forEach(function (y) { var d = h('div', 'rk'); d.appendChild(h('b', null, String(y[0]))); d.appendChild(h('span', 'mono', y[1])); rk.appendChild(d); }); c.appendChild(rk); g.appendChild(c); });
+    if (!L.length) { if (!SE.length) g.appendChild(h('p', 'em', 'Todavía no hay torneos en el historial.')); return; }
     var EDN = {}, EDC = {}; L.slice().reverse().forEach(function (e) { var k = MAGNA.baseName(e.name).toLowerCase(); EDC[k] = (EDC[k] || 0) + 1; EDN[e.id] = EDC[k]; });
     L.forEach(function (e, i) {
       var c = h('button', 'tc'); c.style.animationDelay = i * 50 + 'ms'; c.style.setProperty('--bar', COL[i % COL.length]); c.style.setProperty('--tint', M.tint(i));

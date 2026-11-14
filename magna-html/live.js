@@ -78,6 +78,8 @@
     return { goal: goal, other: core(prev) !== core(next) || (statusChange && !window.MAGNA_HANDLES_MATCHES) };
   }
   if (!window.MAGNA_SB || MAGNA.cloud.source !== 'cloud') return;
+  // revisa (máximo cada 5 min, lo controla la base de datos) si hay coaches por avisar antes de su partido
+  setTimeout(function () { window.MAGNA_SB().then(function (sb) { return sb.rpc('remind_tick'); }).catch(function () {}); }, 6000);
   window.MAGNA_SB().then(function (sb) {
     sb.channel('magna-site').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_state' }, function (p) {
       var data = p.new && p.new.data; if (!data || !data.v) return;

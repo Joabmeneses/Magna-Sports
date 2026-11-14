@@ -216,7 +216,7 @@
 
     // ---------- partidos ----------
     function mrow(m) {
-      var hm = m.home === t.id, op = hm ? m.away : m.home, c = MAGNA.compOf(m), r = h('div', 'mrow');
+      var hm = m.home === t.id, op = hm ? m.away : m.home, c = MAGNA.compOf(m), r = h('div', 'mrow'); r.style.cursor = 'pointer'; r.title = 'Ver la ficha del partido'; r.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a,button')) return; location.href = 'partido.html?id=' + m.id; });
       var oc = h('a'); oc.href = link(op); oc.appendChild(crest(op, 40)); oc.title = MAGNA.teamName(op); r.appendChild(oc);
       var tx = h('div'); tx.appendChild(h('b', null, 'vs ' + MAGNA.teamName(op)));
       tx.appendChild(h('small', null, (hm ? 'Local' : 'Visitante') + ' · ' + (c ? c.name : '—') + (m.round ? ' · ' + m.round : '') + (m.at ? ' · ' + M.fdt(m.at) : '')));
