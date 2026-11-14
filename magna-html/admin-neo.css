@@ -364,3 +364,14 @@ body.neo .ss-op{display:flex;gap:12px;align-items:flex-start;padding:12px;border
 body.neo .ss-op input[type=checkbox]{margin-top:3px;width:18px;height:18px;accent-color:#ff6b2c;flex:none}body.neo .ss-op>div{flex:1;min-width:0;display:grid;gap:3px}body.neo .ss-op b{font-size:14.5px}body.neo .ss-op small{color:var(--muted);font-size:12.5px}
 body.neo .ss-n{display:flex;align-items:center;gap:8px;margin-top:6px}body.neo .ss-n .in{width:120px;padding:8px 10px}body.neo .ss-n em{font-style:normal;color:var(--muted);font-size:12.5px}body.neo .ss-2{display:flex;gap:12px;flex-wrap:wrap}
 body.neo .ss-log{display:grid;gap:4px;font-size:13.5px;margin:6px 0}
+
+/* ---------- registro de actividad ---------- */
+body.neo .rl-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}body.neo .rl-bar .in{flex:1 1 200px;width:auto;padding:10px 12px}body.neo .rl-bar select.in{flex:0 1 210px}
+body.neo .rl-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}body.neo .rl-kp div{padding:12px 14px;border-radius:16px;border:var(--glb);background:var(--gl),#17110e}body.neo .rl-kp b{display:block;font:900 24px Archivo,sans-serif}body.neo .rl-kp small{color:var(--muted);font-size:12px}
+body.neo .rl-list{display:grid;gap:6px}
+body.neo .rl-d{margin:14px 2px 4px;color:#8f837b;font:800 11.5px Archivo,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+body.neo .rl-r{display:grid;grid-template-columns:52px 34px minmax(0,1fr);gap:10px;align-items:center;padding:10px 12px;border-radius:14px;border:var(--glb);background:rgba(255,255,255,.025);border-left:3px solid var(--c)}
+body.neo .rl-r time{color:var(--muted);font:700 12.5px "JetBrains Mono",monospace}
+body.neo .rl-av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:800 13px Archivo,sans-serif;color:#fff;background:linear-gradient(135deg,#ff9a4c,#ff4d6d)}
+body.neo .rl-t b{display:block;font-weight:600;font-size:14px;line-height:1.35}body.neo .rl-t small{color:var(--muted);font-size:12px}body.neo .rl-t em{font-style:normal;color:var(--c);font-weight:700}
+@media(max-width:600px){body.neo .rl-r{grid-template-columns:44px minmax(0,1fr)}body.neo .rl-av{display:none}body.neo .rl-kp{gap:6px}}
