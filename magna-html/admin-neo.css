@@ -348,3 +348,19 @@ body.neo .ec-box h2.x{margin-top:0!important}
 body.neo .ec-hd .bar2{margin:0}
 body.neo .ec-mu{display:inline-block;padding:4px 9px;border-radius:999px;background:rgba(176,124,255,.18);color:#d4bcff;font:800 12.5px Archivo,sans-serif}
 body.neo .ec-wn{color:#ff8fa3;font-weight:700}
+
+/* ---------- fin de temporada ---------- */
+body.neo .ss-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:6px 0 16px;padding:16px 18px;border-radius:20px;border:1px solid rgba(255,107,44,.45);background:radial-gradient(70% 140% at 0 0,rgba(255,107,44,.3),transparent 70%),#17110e}
+body.neo .ss-cta>div{flex:1 1 300px}body.neo .ss-cta b{display:block;font:800 17px Archivo,sans-serif}body.neo .ss-cta small{color:var(--muted);font-size:13px}
+body.neo .ss-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+body.neo .ss-card{display:grid;gap:6px;padding:14px;border-radius:18px;border:var(--glb);background:var(--gl),#17110e}body.neo .ss-card>b{font:800 16px Archivo,sans-serif}body.neo .ss-card>small{color:var(--muted);font-size:12.5px}
+body.neo .ss-ch{font-size:13px;padding:5px 10px;border-radius:10px;background:rgba(255,197,61,.1);color:#ffd98a}
+body.neo .ss-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+body.neo .ss-sum div{display:grid;justify-items:center;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:var(--glb)}body.neo .ss-sum span{font-size:20px}body.neo .ss-sum b{font:900 24px Archivo,sans-serif}body.neo .ss-sum small{color:var(--muted);font-size:12px}
+body.neo .ss-aw{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:6px}
+body.neo .ss-aw div{padding:10px 12px;border-radius:14px;background:rgba(255,197,61,.08);border:1px solid rgba(255,197,61,.25)}body.neo .ss-aw small{display:block;color:#ffd98a;font:800 11px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.06em}body.neo .ss-aw b{display:block;font-size:15px}body.neo .ss-aw em{font-style:normal;color:var(--muted);font-size:12.5px}
+body.neo .md h4{margin:18px 0 8px;color:#cbbfb7;font:800 12px Archivo,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+body.neo .ss-op{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;border:var(--glb);background:rgba(255,255,255,.03);margin-bottom:8px;cursor:pointer}
+body.neo .ss-op input[type=checkbox]{margin-top:3px;width:18px;height:18px;accent-color:#ff6b2c;flex:none}body.neo .ss-op>div{flex:1;min-width:0;display:grid;gap:3px}body.neo .ss-op b{font-size:14.5px}body.neo .ss-op small{color:var(--muted);font-size:12.5px}
+body.neo .ss-n{display:flex;align-items:center;gap:8px;margin-top:6px}body.neo .ss-n .in{width:120px;padding:8px 10px}body.neo .ss-n em{font-style:normal;color:var(--muted);font-size:12.5px}body.neo .ss-2{display:flex;gap:12px;flex-wrap:wrap}
+body.neo .ss-log{display:grid;gap:4px;font-size:13.5px;margin:6px 0}

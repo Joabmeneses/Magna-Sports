@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>Magna Arena · Partido</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="calle.css">
+<style>
+body.ptp{background:#101233}
+body.ptp:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(45% 35% at 0 0,rgba(255,90,54,.22),transparent 70%),radial-gradient(45% 35% at 100% 10%,rgba(59,75,255,.32),transparent 70%)}
+.ptp .em{color:var(--muted)}
+.pt-h{position:relative;margin-top:26px;border-radius:28px;overflow:hidden;padding:20px clamp(14px,4vw,34px) 22px;border:3px solid #0d0d10;box-shadow:8px 8px 0 #0d0d10;background:radial-gradient(70% 120% at 0 100%,color-mix(in srgb,var(--hc) 55%,transparent),transparent 65%),radial-gradient(70% 120% at 100% 100%,color-mix(in srgb,var(--ac) 55%,transparent),transparent 65%),linear-gradient(180deg,#1b1f4a,#121433)}
+.pt-h.lv{box-shadow:8px 8px 0 #ff3b47}
+.pt-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.pt-cp{font:700 12px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#cfd3ef}
+.pt-st{padding:5px 12px;border-radius:999px;font:900 12px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.12)}
+.pt-st.live{background:#ff3b47;color:#fff}.pt-st.finished{background:#c6ff1a;color:#0d0d10}.pt-st.scheduled{background:#ffd23f;color:#0d0d10}
+.pt-sb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin:20px 0 6px}
+.pt-t{display:grid;justify-items:center;gap:6px;text-align:center;min-width:0}
+.pt-cr{display:inline-block;border-radius:50%;transition:transform .15s}.pt-cr:hover{transform:scale(1.06) rotate(-4deg)}
+.pt-tn{font:italic 900 clamp(18px,3.4vw,30px)/1 Archivo,sans-serif;font-stretch:115%;text-transform:uppercase;color:#fff;text-decoration:none;overflow-wrap:anywhere}.pt-tn:hover{text-decoration:underline}
+.pt-t small{color:#b9bedf;font-size:12px}.pt-wb{padding:3px 10px;border-radius:999px;background:#ffd23f;color:#0d0d10;font:900 11px Archivo,sans-serif;transform:rotate(-3deg)}
+.pt-t.win .pt-cr{box-shadow:0 0 0 4px #ffd23f;border-radius:50%}
+.pt-mid{display:grid;justify-items:center;gap:6px;text-align:center}
+.pt-sc{display:flex;align-items:center;gap:10px;font:italic 900 clamp(48px,10vw,92px)/.9 Archivo,sans-serif;font-stretch:120%;color:#fff;text-shadow:4px 4px 0 #0d0d10}.pt-sc i{font-style:normal;opacity:.5}.pt-sc .w{color:#c6ff1a}
+.pt-vs{font:italic 900 46px Archivo,sans-serif;color:#ffd23f;text-shadow:3px 3px 0 #0d0d10}
+.pt-mid small{color:#d6daf5;font:700 12px "JetBrains Mono",monospace}.pt-sets{font-style:normal;font:800 13px Archivo,sans-serif;background:rgba(0,0,0,.35);padding:4px 10px;border-radius:999px}
+.pt-ac{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.pt-b{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:12px;border:2px solid #0d0d10;background:#f1ead8;color:#0d0d10;font:800 14px Archivo,sans-serif;text-decoration:none;cursor:pointer;box-shadow:3px 3px 0 #0d0d10;transition:transform .1s}
+.pt-b:hover{transform:translate(-1px,-1px)}.pt-b:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #0d0d10}.pt-b.o{background:#c6ff1a}.pt-b.r{background:#ff3b47;color:#fff}
+.pt-s{margin-top:30px}.pt-s>h2.x{margin:0 0 12px;font-size:clamp(22px,3.6vw,30px)}
+.pt-st2,.pt-pv{display:grid;gap:6px;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.pt-r{display:grid;grid-template-columns:96px 1fr 96px;align-items:center;gap:12px}.pt-r>b{font:900 22px Archivo,sans-serif;text-align:center}.pt-r>b.w{color:#c6ff1a}.pt-r>small{text-align:center;color:var(--muted);font-size:12.5px}
+.pt-bar{display:grid;gap:5px}.pt-bar small{text-align:center;color:#cfd3ef;font:700 11px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase}
+.tr{display:flex;height:9px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08)}.tr i{display:block;height:100%}.tr .l{background:var(--hc)}.tr .r{background:var(--ac)}
+.pt-hl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.pt-hc{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;border:2px solid #0d0d10;background:#f1ead8;color:#0d0d10;box-shadow:4px 4px 0 #0d0d10}.pt-hc .e{font-size:26px}.pt-hc small{display:block;font:800 11px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#5b574c}.pt-hc b{display:block;font:900 15px Archivo,sans-serif}.pt-hc b a{color:inherit}
+.pt-hc.mvp{background:#ffd23f}.pt-hc.gol{background:#c6ff1a}.pt-hc.nota{background:#7dd3fc}.pt-hc.juez{background:#d8b4fe}.pt-hc.modo{background:#fda4af}
+.pt-sl{display:grid;gap:6px}.pt-set{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.05);border-left:5px solid var(--mc)}.pt-set em{margin-left:auto;font-style:normal;font-weight:800;color:#c6ff1a;font-size:13px}.pt-set:not(.done) em{color:var(--muted)}
+.pt-lu{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.pt-lc{border-radius:20px;padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-top:5px solid var(--tc)}
+.pt-lh{display:flex;align-items:center;gap:10px;margin:2px 4px 8px}.pt-lh b{font:italic 900 18px Archivo,sans-serif;text-transform:uppercase}
+.pt-pl{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 6px;border-top:1px solid rgba(255,255,255,.06)}.pt-pl .tx b{display:block;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pt-pl .tx small{color:var(--muted);font-size:12px}
+.pt-nt{min-width:44px;text-align:center;padding:5px 8px;border-radius:10px;font:900 15px Archivo,sans-serif;background:rgba(255,255,255,.1)}.pt-nt.hi{background:#2ee59d;color:#062417}.pt-nt.lo{background:#ff4d6d;color:#fff}.pt-nt.e{color:var(--muted)}
+.pt-tl{display:grid;gap:6px}.pt-ev{display:grid;grid-template-columns:44px 30px 1fr;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.04);border-left:4px solid var(--tc,rgba(255,255,255,.15))}
+.pt-ev .pm{font:800 13px "JetBrains Mono",monospace;color:#ff8a5c;text-align:right}.pt-ev .ic{text-align:center;font-size:17px}.pt-ev.k-goal{background:rgba(198,255,26,.1)}.pt-ev.k-goal .tx{font-weight:800}.pt-ev.k-note{background:rgba(125,211,252,.08)}.pt-ev.k-end{background:rgba(255,210,63,.1)}
+.pt-pr{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.pt-pr b{font:900 24px Archivo,sans-serif}.pt-pr .tr{height:14px}
+.pt-c{margin:8px 2px 12px;font-size:13px}
+.pt-ot{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:8px}
+.pt-om{display:grid;grid-template-columns:26px auto 26px 1fr;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--fg);text-decoration:none;transition:border-color .15s,transform .12s}.pt-om:hover{border-color:#c6ff1a;transform:translateY(-2px)}
+.pt-om>b{font:900 14px Archivo,sans-serif}.pt-om span{min-width:0}.pt-om em{display:block;font-style:normal;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pt-om small{color:var(--muted);font-size:11.5px}
+.pt-emp{text-align:center;padding:80px 0}.pt-emp .pt-b{margin-top:14px}
+.pt-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:90;background:#0d0d10;color:#fff;border:2px solid #c6ff1a;padding:12px 18px;border-radius:14px;font:700 14px Archivo,sans-serif;max-width:calc(100vw - 24px)}
+@media(max-width:560px){.pt-sb{gap:6px}.pt-r{grid-template-columns:76px 1fr 76px;gap:8px}.pt-r>b{font-size:18px}.pt-h{box-shadow:5px 5px 0 #0d0d10}}
+</style></head>
+<body class="ptp ac"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="pt"></main>
+<p class="foot wrap">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="partido.js" defer></script><script src="mov.js" defer></script></body></html>
