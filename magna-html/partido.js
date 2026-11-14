@@ -32,7 +32,7 @@
     return { name: nm(m.home) + '-vs-' + nm(m.away), kicker: sch ? 'PRÓXIMO PARTIDO' : m.status === 'live' ? 'EN VIVO' : 'RESULTADO', comp: comp(m) + (m.round ? ' · ' + m.round : ''), status: m.status === 'live' ? '● EN VIVO' : sch ? 'POR JUGAR' : 'FINAL',
       live: m.status === 'live', scheduled: sch, when: m.at ? M.fdt(m.at) : null, prob: P ? (P.p >= .5 ? nm(m.home) + ' ' + Math.round(P.p * 100) + '%' : nm(m.away) + ' ' + Math.round((1 - P.p) * 100) + '%') : null,
       home: { name: nm(m.home), color: col(m.home), crest: MAGNA.crestUrl(m.home) }, away: { name: nm(m.away), color: col(m.away), crest: MAGNA.crestUrl(m.away) }, hs: m.hs || 0, as: m.as || 0,
-      mvp: L.mvp ? MAGNA.playerName(L.mvp) : null, best: best != null ? (MAGNA.playerName(Number(best)) || '—') + ' ' + fmtN(R[best]) : null, sets: ss ? ss.h + '-' + ss.a : null, scorers: scorers }; }
+      mvp: L.mvp ? MAGNA.playerName(L.mvp) : null, best: best != null ? (MAGNA.playerName(Number(best)) || '—') + ' ' + fmtN(R[best]) : null, sets: ss ? ss.h + '-' + ss.a : null, scorers: scorers, winner: m.status === 'finished' && m.hs !== m.as ? nm(m.hs > m.as ? m.home : m.away) : null }; }
   function hero(m) {
     var L = m.live || {}, live = m.status === 'live', fin = m.status === 'finished', s = h('section', 'pt-h' + (live ? ' lv' : ''));
     s.style.setProperty('--hc', col(m.home)); s.style.setProperty('--ac', col(m.away));
