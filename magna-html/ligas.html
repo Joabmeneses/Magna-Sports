@@ -118,8 +118,9 @@ nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transfo
 </style>
 <style>nav{gap:16px!important}@media(min-width:900px){.logo{font-size:22px!important}}span.p{position:absolute}
 @media(max-width:420px){.tb:not(.full){--cols:minmax(0,1fr) 40px 38px 58px}.tb:not(.full) .c.pj,.tb:not(.full) .hc[data-k="pj"]{display:none}.c1{gap:6px;padding-left:10px}.cr{width:26px;height:26px}.nm{font-size:14px}.form{gap:3px}.form i{width:10px;height:10px}.pos{width:16px}.lgd{display:none}}
-</style><link rel="stylesheet" href="cos.css"></head>
-<body>
+</style><link rel="stylesheet" href="cos.css">
+<link rel="stylesheet" href="calle.css"></head>
+<body class="ac ck">
 <header>
 <div class="wrap hd">
 <div class="logo x"><i></i>Magna Arena</div>
@@ -131,7 +132,7 @@ nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transfo
 <section class="top">
 <div class="tag mono"><i class="lv"></i><span id="ltag">Liga Magna · Jornada 7</span></div>
 <h1 class="x">Ligas</h1>
-<p class="sub">Toca una columna para ordenar y un equipo para ver su detalle.</p>
+<p class="sub">Elige la división arriba. Toca un equipo para ver su página o descarga la tabla como imagen.</p>
 <div class="chips" id="lgs" role="tablist" aria-label="Ligas"></div>
 <div class="ctl">
 <div class="seg" role="group" aria-label="Vista"><button class="on" data-v="s">Resumen</button><button data-v="f">Completa</button></div>
@@ -146,7 +147,7 @@ nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transfo
 </section>
 </main>
 <div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="ligas-data.js"></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="ligas-data.js"></script><script src="tabla-img.js"></script>
 <script>
 (function(){
 var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
@@ -195,8 +196,15 @@ $$('.seg button').forEach(function(b){b.addEventListener('click',function(){$$('
 LG.forEach(function(L,i){var b=document.createElement('button');b.className='chip'+(i?'':' on');b.style.setProperty('--c',L.c);b.setAttribute('role','tab');b.setAttribute('aria-selected',i===0);b.innerHTML='<i></i>'+L.n;
  b.addEventListener('click',function(){$$('.chip').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});build(i,true)});$('#lgs').appendChild(b)});
 $$('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();toast('Próximamente')})});
+/* tabla estilo Champions (UCL) con descarga de imagen */
+function ucl(li){var L=LG[li];if(!L||!window.ustCard)return;var tb=$('#tb');if(!tb)return;tb.style.display='none';var c=$('.ctl');if(c)c.style.display='none';var old=$('#ucl');if(old)old.remove();
+ var LV={},rows=L.T.slice().sort(function(a,b){return a.rk-b.rk}).map(function(t){if(t.live)LV[t.id]=1;return{pos:t.rk,team:t.n,team_id:t.id,pj:t.pj,g:t.g,p:t.p,dg:t.dg,pts:t.pts}});
+ var lg=MAGNA.S.leagues.filter(function(x){return x.name===L.n})[0],gm=lg?MAGNA.S.matches.filter(function(m){return m.type==='league'&&m.cid===lg.id&&m.status!=='cancelled'}).sort(jsort):null;
+ rows.forEach(function(r){r.zone=r.pos<=L.z?'d':'e'});var w=tntCard({title:L.n,kicker:'Liga Magna · '+pl(L.T.length,'equipo','equipos'),rows:rows,legend:{d:'Clasifican'},live:LV,gm:gm});w.id='ucl';var top=tb.closest('section.top');if(top)top.parentNode.insertBefore(w,top.nextSibling);else tb.parentNode.insertBefore(w,tb)}
+var _build=build;build=function(li,anim){_build(li,anim);ucl(li)};
 build(0,true);
 })();
 </script>
+<script src="mov.js" defer></script>
 </body>
 </html>

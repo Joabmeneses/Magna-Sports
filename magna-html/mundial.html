@@ -105,8 +105,9 @@ h1{margin:14px 0 6px;font-size:clamp(40px,11vw,96px);line-height:.95;background:
 @media (max-width:640px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.rd,.champ{width:220px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<link rel="stylesheet" href="cos.css"></head>
-<body>
+<link rel="stylesheet" href="cos.css">
+<link rel="stylesheet" href="calle.css"></head>
+<body class="ac ck">
 <header>
 <div class="wrap hd">
 <a class="logo x" href="index.html"><i></i>Magna Arena</a>
@@ -189,5 +190,6 @@ function bye(t,i,label){var d=el('div','mt');d.style.animationDelay=i*50+'ms';d.
 pick(LIST.filter(function(c){return c.status==='active'})[0]||LIST[0]);
 })();
 </script>
+<script src="mov.js" defer></script>
 </body>
 </html>
