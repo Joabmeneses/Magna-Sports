@@ -5,7 +5,7 @@
 body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d10;--pink:#ff4fa3;--sky:#22b8ff;--yel:#ffd23f;--grn:#2ee59d;--red:#ff3b47}
 /* ---------- marcador principal: papel crema rasgado ---------- */
 .ac .banner{--k:var(--ink);color:var(--ink)!important;background:var(--cream)!important;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.2px)!important;background-size:7px 7px!important;border-radius:6px!important;margin-top:16px!important;padding-top:34px!important;
-  clip-path:polygon(0 2%,4% 0,11% 1.5%,19% 0,27% 2%,36% .5%,44% 2%,53% 0,61% 1.5%,70% 0,79% 2%,87% .5%,95% 2%,100% .5%,99.4% 22%,100% 46%,99% 71%,100% 98%,92% 100%,83% 98%,74% 100%,65% 98.5%,55% 100%,46% 98%,37% 100%,27% 98.5%,18% 100%,9% 98%,0 100%,.6% 74%,0 49%,1% 24%);filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
+  clip-path:polygon(0 2%,4% 0,11% 1.5%,19% 0,27% 2%,36% .5%,44% 2%,53% 0,61% 1.5%,70% 0,79% 2%,87% .5%,95% 2%,100% .5%,99.4% 22%,100% 46%,99% 71%,100% 98%,92% 100%,83% 98%,74% 100%,65% 98.5%,55% 100%,46% 98%,37% 100%,27% 98.5%,18% 100%,9% 98%,0 100%,.6% 74%,0 49%,1% 24%);filter:none}
 .ac .banner::before{background:radial-gradient(40% 50% at 100% 0,rgba(198,255,26,.35),transparent 70%),radial-gradient(35% 45% at 0 100%,rgba(255,106,0,.18),transparent 70%)!important;animation:none!important;transform:none!important}
 .ac .banner .live{background:var(--org);color:#fff;font:900 13px Archivo,sans-serif!important;font-stretch:125%;letter-spacing:.12em;border-radius:4px;padding:7px 12px;transform:rotate(-2deg)}
 .ac .banner .live i{background:#fff;opacity:1}
@@ -35,7 +35,7 @@ body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d1
 @keyframes acStk{50%{transform:rotate(4deg) scale(1.05)}}
 
 .ac .al{position:relative;color:var(--ink);background:var(--cream);background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.2px);background-size:7px 7px;border-radius:6px;padding:26px clamp(14px,2.4vw,26px) 24px;
-  clip-path:polygon(0 1%,4% 0,11% .8%,19% 0,27% 1%,36% .3%,44% 1%,53% 0,61% .8%,70% 0,79% 1%,87% .3%,95% 1%,100% .3%,99.4% 22%,100% 46%,99% 71%,100% 99%,92% 100%,83% 99%,74% 100%,65% 99.2%,55% 100%,46% 99%,37% 100%,27% 99.2%,18% 100%,9% 99%,0 100%,.6% 74%,0 49%,1% 24%);filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
+  clip-path:polygon(0 1%,4% 0,11% .8%,19% 0,27% 1%,36% .3%,44% 1%,53% 0,61% .8%,70% 0,79% 1%,87% .3%,95% 1%,100% .3%,99.4% 22%,100% 46%,99% 71%,100% 99%,92% 100%,83% 99%,74% 100%,65% 99.2%,55% 100%,46% 99%,37% 100%,27% 99.2%,18% 100%,9% 99%,0 100%,.6% 74%,0 49%,1% 24%);filter:none}
 .ac .al-h h2{color:var(--ink)!important;font-stretch:125%!important}
 .ac .al-h h2 em{color:var(--lime)!important;-webkit-text-stroke:2px var(--ink);text-shadow:4px 4px 0 var(--ink)!important;display:inline-block;transform:skewX(-6deg)}
 .ac .al-st{transform:rotate(-2deg)}.ac .al-st:not(.live):not(.fin){background:var(--ink);color:var(--lime)}
@@ -113,7 +113,7 @@ body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d1
 
 /* ===================== CÓMIC: portada del celular ===================== */
 .ac .hero.mob{position:relative;margin:14px -12px 8px;padding:30px 18px 26px;color:#0d0d10;background:#f1ead8;background-image:radial-gradient(rgba(0,0,0,.08) 1px,transparent 1.3px),radial-gradient(60% 50% at 100% 0,rgba(198,255,26,.35),transparent 70%),radial-gradient(50% 40% at 0 100%,rgba(255,106,0,.22),transparent 70%);background-size:7px 7px,auto,auto;
-  clip-path:polygon(0 1.2%,6% 0,14% 1%,23% 0,33% 1.2%,44% .3%,55% 1.2%,66% 0,77% 1%,88% .2%,100% 1%,99.2% 30%,100% 62%,99% 99%,88% 100%,76% 99%,63% 100%,50% 99%,37% 100%,24% 99.2%,12% 100%,0 99%,.8% 66%,0 33%);filter:drop-shadow(0 14px 24px rgba(0,0,0,.5))}
+  clip-path:polygon(0 1.2%,6% 0,14% 1%,23% 0,33% 1.2%,44% .3%,55% 1.2%,66% 0,77% 1%,88% .2%,100% 1%,99.2% 30%,100% 62%,99% 99%,88% 100%,76% 99%,63% 100%,50% 99%,37% 100%,24% 99.2%,12% 100%,0 99%,.8% 66%,0 33%);filter:none}
 .ac .hero.mob .meta{gap:10px;color:#0d0d10;letter-spacing:.06em}
 .ac .hero.mob .meta .live{position:relative;padding:12px 18px;border-radius:0;background:#ff3b47;color:#fff;font:italic 900 18px Archivo,sans-serif;font-stretch:125%;letter-spacing:.02em;transform:rotate(-6deg);
   clip-path:polygon(0 18%,9% 0,22% 14%,36% 0,50% 12%,64% 0,78% 14%,92% 0,100% 20%,94% 50%,100% 80%,90% 100%,76% 86%,62% 100%,48% 88%,34% 100%,20% 86%,8% 100%,0 80%,6% 50%);filter:drop-shadow(3px 3px 0 #0d0d10);animation:cmLive 1.2s ease-in-out infinite}
@@ -162,7 +162,7 @@ body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d1
 
 /* ===================== CÓMIC: caja de accesos rápidos ===================== */
 .ac .hh-sec:has(.hh-go){position:relative;padding:26px clamp(14px,2.4vw,26px) 24px;color:#0d0d10;background:#f1ead8;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.2px),radial-gradient(45% 60% at 100% 0,rgba(255,79,163,.2),transparent 70%),radial-gradient(40% 60% at 0 100%,rgba(34,184,255,.18),transparent 70%);background-size:7px 7px,auto,auto;border-radius:6px;
-  clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%);filter:drop-shadow(0 14px 26px rgba(0,0,0,.45))}
+  clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%);filter:none}
 .ac .hh-sec:has(.hh-go) .hh-hd h2{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#0d0d10!important;-webkit-text-fill-color:#0d0d10;font-stretch:125%;text-transform:uppercase;text-shadow:3px 3px 0 #ff6a00}
 .ac .hh-go{gap:16px!important;padding:6px 6px 12px}
 .ac .hh-g{position:relative;overflow:visible!important;min-height:150px;padding:18px 16px 16px!important;border:3px solid #0d0d10;border-radius:8px!important;color:#fff!important;background:var(--c)!important;background-image:radial-gradient(rgba(0,0,0,.2) 1.3px,transparent 1.7px),linear-gradient(160deg,rgba(255,255,255,.28),transparent 45%)!important;background-size:8px 8px,auto!important;box-shadow:6px 6px 0 #0d0d10;transform:rotate(-1.2deg);transition:transform .25s cubic-bezier(.3,1.6,.5,1),box-shadow .2s}
@@ -218,7 +218,7 @@ body.ac{--lime:#c6ff1a;--org:#ff6a00;--org2:#ff9a1f;--cream:#f1ead8;--ink:#0d0d1
 
 /* ===================== CÓMIC: noticias y equipos de la comunidad ===================== */
 .ac .hh-sec:has(.hh-news),.ac .hh-sec:has(.hh-feed),.ac .hh-sec:has(.hh-mq){position:relative;padding:26px clamp(14px,2.4vw,26px) 24px;color:#0d0d10;background:#f1ead8;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.2px);background-size:7px 7px;border-radius:6px;
-  clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%);filter:drop-shadow(0 14px 26px rgba(0,0,0,.45))}
+  clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%);filter:none}
 .ac .hh-sec:has(.hh-news) .hh-hd h2,.ac .hh-sec:has(.hh-feed) .hh-hd h2,.ac .hh-sec:has(.hh-mq) .hh-hd h2{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#0d0d10!important;-webkit-text-fill-color:#0d0d10;font-stretch:125%;text-transform:uppercase;text-shadow:3px 3px 0 var(--h,#ff6a00)}
 .ac .hh-sec:has(.hh-news) .hh-more,.ac .hh-sec:has(.hh-feed) .hh-more,.ac .hh-sec:has(.hh-mq) .hh-more{padding:7px 12px;background:#0d0d10;color:#c6ff1a!important;font:900 12px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.04em;box-shadow:3px 3px 0 #ff6a00;text-decoration:none;transform:rotate(1deg);transition:transform .15s}
 .ac .hh-sec .hh-more:hover{transform:rotate(-2deg) scale(1.05)}
@@ -372,7 +372,7 @@ body.tvm{overflow:hidden}
 
 /* ===================== TIENDA EN ESTILO CÓMIC ===================== */
 .ac.tn{--paper:#f1ead8;--ink:#0d0d10}
-.ac .ts-h,.ac .ts-cta{color:#0d0d10;background:#f1ead8;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px),radial-gradient(50% 60% at 100% 0,rgba(255,79,163,.22),transparent 70%),radial-gradient(45% 55% at 0 100%,rgba(198,255,26,.3),transparent 70%);background-size:7px 7px,auto,auto;border:0!important;border-radius:6px!important;filter:drop-shadow(0 16px 28px rgba(0,0,0,.5));
+.ac .ts-h,.ac .ts-cta{color:#0d0d10;background:#f1ead8;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px),radial-gradient(50% 60% at 100% 0,rgba(255,79,163,.22),transparent 70%),radial-gradient(45% 55% at 0 100%,rgba(198,255,26,.3),transparent 70%);background-size:7px 7px,auto,auto;border:0!important;border-radius:6px!important;filter:none;
   clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%)}
 .ac .ts-h{padding:clamp(28px,4vw,46px) clamp(18px,3.4vw,44px) clamp(26px,3.6vw,40px)!important;overflow:visible}
 .ac .ts-h .ey{border:0;border-radius:0;background:#ff6a00;color:#fff;font:900 12px Archivo,sans-serif;font-stretch:125%;letter-spacing:.12em;transform:rotate(-2deg)}
@@ -541,7 +541,7 @@ body.ac.eqs:before,body.ac.eqp:after,body.ac.jp:after{background:radial-gradient
 body.ac.ck{background:#121018!important;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.3px)!important;background-size:9px 9px!important}
 body.ac.ck:before,body.ac.ck:after{background:radial-gradient(45% 35% at 0 0,rgba(255,106,0,.16),transparent 70%),radial-gradient(40% 35% at 100% 15%,rgba(198,255,26,.09),transparent 70%),radial-gradient(50% 40% at 50% 100%,rgba(255,79,163,.1),transparent 70%)!important}
 /* portada de cada página = papel crema rasgado */
-.ck :is(main>section.top,.rk-h,.bo-h,.ev-h,.pd-h,.nh){position:relative;margin-top:22px;color:#0d0d10!important;background:#f1ead8!important;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px),radial-gradient(50% 60% at 100% 0,var(--ckA,rgba(255,106,0,.22)),transparent 70%),radial-gradient(45% 55% at 0 100%,rgba(198,255,26,.3),transparent 70%)!important;background-size:7px 7px,auto,auto!important;border:0!important;border-radius:6px!important;box-shadow:none!important;filter:drop-shadow(0 16px 28px rgba(0,0,0,.5));padding:clamp(24px,4vw,40px) clamp(18px,3.4vw,40px) clamp(24px,3.4vw,34px)!important;
+.ck :is(main>section.top,.rk-h,.bo-h,.ev-h,.pd-h,.nh){position:relative;margin-top:22px;color:#0d0d10!important;background:#f1ead8!important;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px),radial-gradient(50% 60% at 100% 0,var(--ckA,rgba(255,106,0,.22)),transparent 70%),radial-gradient(45% 55% at 0 100%,rgba(198,255,26,.3),transparent 70%)!important;background-size:7px 7px,auto,auto!important;border:0!important;border-radius:6px!important;box-shadow:none!important;filter:none;padding:clamp(24px,4vw,40px) clamp(18px,3.4vw,40px) clamp(24px,3.4vw,34px)!important;
   clip-path:polygon(0 2%,4% 0,11% 1.6%,19% 0,27% 2%,36% .6%,44% 2%,53% 0,61% 1.6%,70% 0,79% 2%,87% .6%,95% 2%,100% .6%,99.4% 30%,100% 60%,99% 99%,92% 100%,83% 98.4%,74% 100%,65% 98.6%,55% 100%,46% 98%,37% 100%,27% 98.6%,18% 100%,9% 98%,0 100%,.6% 70%,0 40%)}
 .ck :is(.rk-h,.bo-h,.ev-h,.pd-h,.nh):before,.ck :is(.rk-h,.bo-h,.ev-h,.pd-h,.nh):after{opacity:.25}
 .ck :is(main>section.top,.rk-h,.bo-h,.ev-h,.pd-h,.nh) :is(h1,h1 *){color:#0d0d10!important;-webkit-text-fill-color:#0d0d10!important;background:none!important;-webkit-text-stroke:0!important;filter:none!important}

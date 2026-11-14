@@ -190,8 +190,8 @@ table.rt td[colspan]{display:block;text-align:left}
 .gfx-star.s2{left:auto;right:6%;top:10%;bottom:auto;width:clamp(16px,2.4vw,30px);height:clamp(16px,2.4vw,30px)}
 .gfx-tick{position:absolute;z-index:3;left:10%;top:10%;width:clamp(26px,3vw,40px);height:clamp(22px,2.6vw,34px);transform:rotate(-14deg)}.gfx-tick:before,.gfx-tick:after{content:"";position:absolute;top:0;width:34%;height:100%;border:3px solid var(--tb);transform:skewX(-14deg);border-radius:3px}.gfx-tick:before{left:0}.gfx-tick:after{right:0;height:70%;top:30%}
 /* animaciones */
-.tbh-auto.tbh-brillo .gfx-w{animation:gfxGlow 2.8s ease-in-out infinite}.tbh-auto .gfx-star{animation:gfxStar 3.2s ease-in-out infinite}.tbh-auto .gfx-star.s2{animation-delay:1.4s}
-.tbh-auto.tbh-flotar .gfx-l{animation:gfxWave 2.2s ease-in-out infinite;animation-delay:var(--d)}.tbh-auto.tbh-flotar .gfx-w{animation:gfxGlow 3.5s ease-in-out infinite}
+.tbh-auto.tbh-brillo .gfx-w{filter:drop-shadow(0 0 18px var(--tb-s))}.tbh-auto .gfx-star{animation:gfxStar 3.2s ease-in-out infinite}.tbh-auto .gfx-star.s2{animation-delay:1.4s}
+.tbh-auto.tbh-flotar .gfx-l{animation:gfxWave 2.2s ease-in-out infinite;animation-delay:var(--d)}.tbh-auto.tbh-flotar .gfx-w{filter:drop-shadow(0 0 18px var(--tb-s))}
 .tbh-auto.tbh-neon .gfx-w{animation:gfxNeon 5s linear infinite}
 @keyframes gfxGlow{0%,100%{filter:drop-shadow(0 0 10px var(--tb-s))}50%{filter:drop-shadow(0 0 26px var(--tb)) drop-shadow(0 0 4px #fff)}}
 @keyframes gfxStar{0%,100%{transform:scale(.8) rotate(0);opacity:.8}50%{transform:scale(1.15) rotate(45deg);opacity:1}}
