@@ -90,8 +90,8 @@ var MAGNA = (function () {
     ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'rara', 'dinastia', 'dinastia'],
     ['x-estrella', 'color', 'Estrella fugaz', 'rara', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'rara', 'leyenda', 'leyenda'],
     ['x-hattrick', 'title', 'Rey del hat-trick', 'epica', '', 'hattrick'], ['x-perfecto', 'title', 'Partido perfecto', 'rara', '', 'perfecto'],
-    ['x-fundador', 'frame', 'Fundador de Magna', 'rara', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'rara', 'jackpot', 'manual']
-  ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }; });
+    ['x-fundador', 'frame', 'Fundador de Magna', 'rara', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'legendaria', 'jackpot', 'manual', { lv: 1 }], ['x-jackpot-2', 'frame', 'Jackpot · Racha', 'legendaria', 'jackpot', 'manual', { lv: 2, upg: 'x-jackpot', req: 'x-jackpot' }], ['x-jackpot-3', 'frame', 'Jackpot · Premio mayor', 'legendaria', 'jackpot', 'manual', { lv: 3, upg: 'x-jackpot', req: 'x-jackpot-2' }]
+  ].map(function (x) { return Object.assign({ id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }, x[6] || {}); });
   var AWARD_TXT = { balon: 'Gana el Balón de Oro', campeon: 'Gana un título', dinastia: 'Gana 5 títulos', estrella: 'Sé MVP 10 veces', leyenda: 'Juega 75 partidos', hattrick: 'Marca 3 goles en un partido', perfecto: 'Saca un 10 de nota en un partido', manual: 'Lo entrega la administración', ganador: 'Gana 20 partidos', goleador: 'Marca 10 goles', canonero: 'Marca 50 goles', veterano: 'Juega 25 partidos', mvp: 'Sé MVP de un partido', elite: 'Llega a media 80' };
   // Arte oficial de los trofeos (carpeta trofeos/), en el orden de importancia de Magna
   var TROPHY_ART = [['omegacup', /omega/i, 'OmegaCup'], ['mundial', /mundial|world/i, 'Mundial'], ['champions', /champions/i, 'Champions'], ['liga', /\bliga\b|divisi[oó]n|league/i, 'Liga'],
