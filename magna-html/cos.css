@@ -395,49 +395,64 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fr-ouroboros>.fxm .gem{display:none}
 
 /* ===================== MARCO MAGENTA (exclusivo del sorteo) — energía contenida que quiere liberarse =====================
-   Ciclo: gira → se comprime y tiembla (carga) → ESTALLA (onda expansiva, chispas, destello) → vuelve. Las ondas invaden sutilmente el avatar.
-   Nv.1 Chispa: un remolino tenue, ondas muy suaves, sin estallidos · Nv.2 Corriente: dos remolinos opuestos, rayos eléctricos, estalla cada 5 s
-   Nv.3 Singularidad: tres remolinos, rayos constantes, estalla cada 3,2 s con más fuerza, núcleo blanco y color que vibra */
-.fr-magenta{animation:none!important;box-shadow:0 0 .3em rgba(255,60,220,.45)}
-.fr-magenta:after{inset:-30%!important;background:url("fx/magenta-1.webp") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 4px rgba(255,60,220,.7))!important;animation:frSpin 16s linear infinite!important;z-index:3!important}
-.fr-magenta:before{inset:-30%!important;background:url("fx/magenta-2.webp") center/100% 100% no-repeat!important;filter:none;opacity:0!important;mix-blend-mode:screen;animation:frSpin 22s linear infinite reverse!important;z-index:2!important;-webkit-mask:none!important;mask:none!important}
-.fr-magenta>.fxm{inset:-30%!important;z-index:4!important;--m1:#ff4fd8;--m2:#b24bff;--m3:#fff}
+   Todo dentro de la caja del marco (1,4× el avatar). Una OLA de energía se persigue alrededor del aro y acelera mientras carga;
+   al llenarse ESTALLA (destello, onda y chispas contenidas) y vuelve a empezar. Las ondas invaden sutilmente el avatar.
+   Nv.1 Chispa: un remolino tenue y una ola lenta · Nv.2 Corriente: dos remolinos, dos olas que se persiguen, rayos, estalla cada 5 s
+   Nv.3 Singularidad: tres remolinos, tres olas, rayos constantes, estalla cada 3,2 s con máxima intensidad */
+.fr-magenta{animation:none!important;box-shadow:0 0 .25em rgba(255,60,220,.45)}
+.fr-magenta:after{inset:-20%!important;background:url("fx/magenta-1.webp") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 3px rgba(255,60,220,.7))!important;animation:frSpin 16s linear infinite!important;z-index:3!important}
+.fr-magenta:before{inset:-20%!important;background:url("fx/magenta-2.webp") center/100% 100% no-repeat!important;filter:none;opacity:0!important;mix-blend-mode:screen;animation:frSpin 22s linear infinite reverse!important;z-index:2!important;-webkit-mask:none!important;mask:none!important}
+.fr-magenta>.fxm{inset:-20%!important;z-index:4!important;--m1:#ff4fd8;--m2:#b24bff;--m3:#fff}
 .fr-magenta>.fxm>i{display:none}
 /* ondas que invaden el avatar (la cara del centro queda despejada) */
-.fr-magenta>.fxm .o1{display:block!important;inset:0;border-radius:50%;background:url("fx/magenta-in.webp") center/100% 100% no-repeat;-webkit-mask:radial-gradient(closest-side,transparent 30%,#000 50%,#000 60%,transparent 66%);mask:radial-gradient(closest-side,transparent 30%,#000 50%,#000 60%,transparent 66%);mix-blend-mode:screen;opacity:.22;animation:frSpin 30s linear infinite reverse;z-index:0}
+.fr-magenta>.fxm .o1{display:block!important;inset:0;border-radius:50%;background:url("fx/magenta-in.webp") center/100% 100% no-repeat;-webkit-mask:radial-gradient(closest-side,transparent 36%,#000 56%,#000 68%,transparent 73%);mask:radial-gradient(closest-side,transparent 36%,#000 56%,#000 68%,transparent 73%);mix-blend-mode:screen;opacity:.24;animation:frSpin 30s linear infinite reverse;z-index:0}
 .fr-magenta>.fxm .o1:before,.fr-magenta>.fxm .o1:after{display:none}
-/* Nv.1 */
-.fr-magenta[data-lv="1"]:after{filter:saturate(.55) brightness(.72)!important;opacity:.8;animation-duration:28s!important}
+/* la OLA que se persigue: cabeza blanca brillante y cola magenta, recorriendo el aro */
+.fr-magenta>.fxm .o3{display:block!important;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 62%,rgba(178,75,255,.25) 72%,rgba(255,79,216,.85) 92%,#fff 96.7%,rgba(255,214,247,.55) 97.7%,transparent 99.3%);-webkit-mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 88%,transparent 96%);mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 88%,transparent 96%);mix-blend-mode:screen;filter:blur(.6px) drop-shadow(0 0 4px #ff4fd8);animation:frSpin 3.6s linear infinite;z-index:5}
+.fr-magenta>.fxm .o3:before,.fr-magenta>.fxm .o3:after{display:none}
+.fr-magenta[data-lv="1"]>.fxm .o3{opacity:.55}
+.fr-magenta[data-lv="1"]:after{filter:saturate(.55) brightness(.72)!important;opacity:.85;animation-duration:28s!important}
 .fr-magenta[data-lv="1"]{box-shadow:0 0 .15em rgba(255,60,220,.3)}
-/* Nv.2 y Nv.3: segundo remolino, rayos, carga y estallido */
+/* Nv.2 */
 .fr-magenta:not([data-lv="1"]):before{opacity:.9!important}
-.fr-magenta:not([data-lv="1"]):after{filter:brightness(1.12) drop-shadow(0 0 5px rgba(255,60,220,.85))!important;animation:frSpin 14s linear infinite,fxSurge 5s ease-in-out infinite!important}
+.fr-magenta:not([data-lv="1"]):after{filter:brightness(1.12) drop-shadow(0 0 4px rgba(255,60,220,.85))!important;animation:frSpin 14s linear infinite,fxSurge 5s ease-in-out infinite!important}
 .fr-magenta:not([data-lv="1"]):before{animation:frSpin 20s linear infinite reverse,fxSurge 5s ease-in-out infinite!important}
 .fr-magenta:not([data-lv="1"]){animation:fxMgB 5s ease-in-out infinite!important}
-.fr-magenta:not([data-lv="1"])>.fxm .o1{opacity:.32;animation:frSpin 26s linear infinite reverse,fxInv 5s ease-in-out infinite}
-.fr-magenta:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;animation:fxArc 5s steps(1) infinite;background:url("fx/magenta-rayos.svg") center/100% 100% no-repeat;filter:drop-shadow(0 0 2px #ff4fd8);z-index:5}
+.fr-magenta:not([data-lv="1"])>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 12%,rgba(255,79,216,.85) 42%,#fff 46.7%,rgba(255,214,247,.55) 47.7%,transparent 49.3% 62%,rgba(255,79,216,.85) 92%,#fff 96.7%,rgba(255,214,247,.55) 97.7%,transparent 99.3%);animation:fxChase 5s cubic-bezier(.55,0,.25,1) infinite}
+.fr-magenta:not([data-lv="1"])>.fxm .o1{opacity:.34;animation:frSpin 26s linear infinite reverse,fxInv 5s ease-in-out infinite}
+.fr-magenta:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;animation:fxArc 5s steps(1) infinite;background:url("fx/magenta-rayos.svg") center/100% 100% no-repeat;filter:drop-shadow(0 0 2px #ff4fd8);z-index:6}
 .fr-magenta>.fxm .o2:before,.fr-magenta>.fxm .o2:after{display:none}
-.fr-magenta:not([data-lv="1"])>.fxm .b2{display:block;inset:16%;border-radius:50%;border:3px solid #ffd6f7;box-shadow:0 0 12px #ff4fd8,inset 0 0 12px #ff4fd8;background:none;-webkit-mask:none;mask:none;opacity:0;animation:fxShock 5s ease-out infinite;z-index:6}
-.fr-magenta:not([data-lv="1"])>.fxm .bu{display:block;inset:4%;border:0;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 7deg,#fff 0 1.2deg,transparent 1.2deg 14deg),repeating-conic-gradient(#ff4fd8 0 2deg,transparent 2deg 19deg);-webkit-mask:radial-gradient(closest-side,transparent 78%,#000 82%,#000 88%,transparent 92%);mask:radial-gradient(closest-side,transparent 78%,#000 82%,#000 88%,transparent 92%);animation:fxSpark 5s ease-out infinite;z-index:6}
-.fr-magenta:not([data-lv="1"])>.fxm .sx{display:block;inset:6%;border-radius:50%;background:radial-gradient(closest-side,transparent 48%,rgba(255,214,247,.95) 62%,rgba(255,79,216,.6) 74%,transparent 90%);mix-blend-mode:screen;opacity:0;animation:fxFlash 5s ease-out infinite;z-index:7}
-/* Nv.3: más rápido y más fuerte */
-.fr-magenta[data-lv="3"]:after{filter:brightness(1.35) saturate(1.2) drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(255,60,220,.95))!important;animation:frSpin 9s linear infinite,fxSurge3 3.2s ease-in-out infinite!important}
+.fr-magenta:not([data-lv="1"])>.fxm .b2{display:block;inset:13%;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px #ff4fd8,inset 0 0 10px #ff4fd8;background:none;-webkit-mask:none;mask:none;opacity:0;animation:fxShock 5s ease-out infinite;z-index:7}
+.fr-magenta:not([data-lv="1"])>.fxm .bu{display:block;inset:1%;border:0;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 7deg,#fff 0 1.4deg,transparent 1.4deg 12deg),repeating-conic-gradient(#ff4fd8 0 2.4deg,transparent 2.4deg 17deg);-webkit-mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);animation:fxSpark 5s ease-out infinite;z-index:7}
+.fr-magenta:not([data-lv="1"])>.fxm .sx{display:block;inset:0;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.55) 0,rgba(255,214,247,.9) 70%,rgba(255,79,216,.8) 84%,transparent 100%);mix-blend-mode:screen;opacity:0;animation:fxFlash 5s ease-out infinite;z-index:8}
+/* Nv.3: tres olas, más rápido y más violento */
+.fr-magenta[data-lv="3"]:after{filter:brightness(1.35) saturate(1.2) drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(255,60,220,.95))!important;animation:frSpin 9s linear infinite,fxSurge3 3.2s ease-in-out infinite!important}
 .fr-magenta[data-lv="3"]:before{animation:frSpin 13s linear infinite reverse,fxSurge3 3.2s ease-in-out infinite!important}
 .fr-magenta[data-lv="3"]{animation:fxMgB3 3.2s ease-in-out infinite!important}
-.fr-magenta[data-lv="3"]>.fxm .o1{opacity:.42;animation:frSpin 18s linear infinite reverse,fxInv 3.2s ease-in-out infinite}
+.fr-magenta[data-lv="3"]>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 8%,rgba(255,79,216,.9) 28%,#fff 31.5%,rgba(255,214,247,.55) 32.5%,transparent 34.1% 41%,rgba(255,79,216,.9) 61%,#fff 64.8%,rgba(255,214,247,.55) 65.8%,transparent 67.4% 74%,rgba(255,79,216,.9) 94%,#fff 98.0%,rgba(255,214,247,.55) 99.0%,transparent 100.6%);animation:fxChase3 3.2s cubic-bezier(.55,0,.25,1) infinite}
+.fr-magenta[data-lv="3"]>.fxm .o1{opacity:.44;animation:frSpin 18s linear infinite reverse,fxInv 3.2s ease-in-out infinite}
 .fr-magenta[data-lv="3"]>.fxm .o2{animation:none;opacity:1}
 .fr-magenta[data-lv="3"]>.fxm .b2,.fr-magenta[data-lv="3"]>.fxm .bu,.fr-magenta[data-lv="3"]>.fxm .sx{animation-duration:3.2s}
-.fr-magenta[data-lv="3"]>.fxm .au{display:block;inset:0!important;opacity:.95;background:url("fx/magenta-3.webp") center/100% 100% no-repeat!important;mix-blend-mode:screen;animation:frSpin 7s linear infinite,fxMgH 3.2s ease-in-out infinite!important;z-index:1}
-.fr-magenta[data-lv="3"]>.fxm .o3{display:block}
-@keyframes fxSurge{0%,50%{scale:1;translate:0 0}62%{scale:.95}66%{translate:.7% -.5%}68%{translate:-.7% .5%}70%{translate:.6% .6%}72%{translate:-.6% -.5%}74%{translate:.5% -.6%}76%{translate:0 0;scale:.93}80%{scale:1.12}88%{scale:1.02}100%{scale:1;translate:0 0}}
-@keyframes fxSurge3{0%,40%{scale:1;translate:0 0}55%{scale:.94}60%{translate:1% -.7%}62%{translate:-1% .8%}64%{translate:.9% .9%}66%{translate:-.9% -.7%}68%{translate:.8% -.9%}72%{translate:0 0;scale:.91}77%{scale:1.16}86%{scale:1.03}100%{scale:1;translate:0 0}}
-@keyframes fxShock{0%,77%{opacity:0;transform:scale(.85)}80%{opacity:1;transform:scale(.95)}100%{opacity:0;transform:scale(1.32)}}
-@keyframes fxSpark{0%,78%{opacity:0;transform:scale(.8) rotate(0)}81%{opacity:1}100%{opacity:0;transform:scale(1.28) rotate(25deg)}}
-@keyframes fxFlash{0%,77%{opacity:0}80%{opacity:1}92%,100%{opacity:0}}
-@keyframes fxInv{0%,50%{filter:none}74%{filter:brightness(1.8) saturate(1.3)}80%{filter:brightness(.7)}100%{filter:none}}
-@keyframes fxArc{0%,55%{opacity:.35}56%,79%{opacity:1}80%,100%{opacity:.35}}
-@keyframes fxMgB{0%,55%{box-shadow:0 0 .3em rgba(255,60,220,.5)}76%{box-shadow:0 0 .5em rgba(255,214,247,.8),0 0 1em rgba(255,60,220,.9)}80%{box-shadow:0 0 .9em #fff,0 0 2em rgba(255,60,220,1)}100%{box-shadow:0 0 .3em rgba(255,60,220,.5)}}
-@keyframes fxMgB3{0%,45%{box-shadow:0 0 .4em rgba(255,255,255,.6),0 0 .9em rgba(255,60,220,.8)}72%{box-shadow:0 0 .6em #fff,0 0 1.4em rgba(255,60,220,1)}77%{box-shadow:0 0 1.1em #fff,0 0 2.6em rgba(255,60,220,1),0 0 3.4em rgba(178,75,255,.7)}100%{box-shadow:0 0 .4em rgba(255,255,255,.6),0 0 .9em rgba(255,60,220,.8)}}
+.fr-magenta[data-lv="3"]>.fxm .au{display:block;inset:0!important;opacity:.9;background:url("fx/magenta-3.webp") center/100% 100% no-repeat!important;mix-blend-mode:screen;animation:frSpin 7s linear infinite,fxMgH 3.2s ease-in-out infinite!important;z-index:1}
+/* la ola acelera mientras carga y da el último giro en el estallido */
+@keyframes fxChase{0%{transform:rotate(0)}50%{transform:rotate(380deg)}78%{transform:rotate(1150deg)}82%{transform:rotate(1310deg)}100%{transform:rotate(1440deg)}}
+@keyframes fxChase3{0%{transform:rotate(0)}40%{transform:rotate(340deg)}75%{transform:rotate(1240deg)}79%{transform:rotate(1400deg)}100%{transform:rotate(1800deg)}}
+/* impulso: se comprime, tiembla fuerte y revienta (sin salirse de la caja) */
+@keyframes fxSurge{0%,50%{scale:1;translate:0 0}60%{scale:.95}63%{translate:1.2% -1%}65%{translate:-1.3% .9%}67%{translate:1.1% 1.2%}69%{translate:-1.2% -1%}71%{translate:1.3% -.8%}73%{translate:-1% 1.2%}75%{translate:.9% -1.1%}77%{translate:0 0;scale:.9}80%{scale:1.06}86%{scale:.99}100%{scale:1;translate:0 0}}
+@keyframes fxSurge3{0%,40%{scale:1;translate:0 0}52%{scale:.94}56%{translate:1.6% -1.2%}58%{translate:-1.7% 1.3%}60%{translate:1.5% 1.6%}62%{translate:-1.6% -1.4%}64%{translate:1.7% -1.1%}66%{translate:-1.4% 1.6%}68%{translate:1.3% -1.5%}70%{translate:-1.5% 1%}73%{translate:0 0;scale:.88}77%{scale:1.08}84%{scale:.98}100%{scale:1;translate:0 0}}
+@keyframes fxShock{0%,77%{opacity:0;transform:scale(.9)}79%{opacity:1;transform:scale(.95)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes fxSpark{0%,77%{opacity:0;transform:scale(.88) rotate(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.05) rotate(30deg)}}
+@keyframes fxFlash{0%,76%{opacity:0}79%{opacity:.95}84%{opacity:.25}88%{opacity:.6}96%,100%{opacity:0}}
+@keyframes fxInv{0%,50%{filter:none}75%{filter:brightness(2) saturate(1.4)}80%{filter:brightness(.6)}100%{filter:none}}
+@keyframes fxArc{0%,52%{opacity:.35}53%,79%{opacity:1}80%,100%{opacity:.35}}
+@keyframes fxMgB{0%,55%{box-shadow:0 0 .25em rgba(255,60,220,.5)}76%{box-shadow:0 0 .4em rgba(255,214,247,.9),0 0 .8em rgba(255,60,220,.9)}80%{box-shadow:0 0 .6em #fff,0 0 1.2em rgba(255,60,220,1)}100%{box-shadow:0 0 .25em rgba(255,60,220,.5)}}
+@keyframes fxMgB3{0%,45%{box-shadow:0 0 .3em rgba(255,255,255,.6),0 0 .7em rgba(255,60,220,.8)}72%{box-shadow:0 0 .5em #fff,0 0 1em rgba(255,60,220,1)}77%{box-shadow:0 0 .8em #fff,0 0 1.5em rgba(255,60,220,1),0 0 2em rgba(178,75,255,.7)}100%{box-shadow:0 0 .3em rgba(255,255,255,.6),0 0 .7em rgba(255,60,220,.8)}}
 @keyframes fxMgH{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(-45deg) brightness(1.2)}}
-.fr-magenta>.fxm .gem{display:none!important}
+.fr-magenta:not([data-lv="3"])>.fxm .gem{display:none!important}
+/* Nv.3 · HORIZONTE DE SUCESOS: la singularidad se traga el avatar (gira en espiral hacia el vacío) y renace en el estallido */
+.fr-magenta[data-lv="3"]>.fxm{background-image:inherit;background-size:0 0;background-repeat:no-repeat}
+.fr-magenta[data-lv="3"]>.fxm .gem{display:block!important;inset:14.3%!important;width:auto!important;height:auto!important;margin:0!important;border-radius:50%!important;clip-path:none!important;filter:none;background-color:#0b0012!important;background-image:inherit!important;background-size:100% 100%;background-position:center!important;background-repeat:no-repeat!important;box-shadow:inset 0 0 10px rgba(255,79,216,.9),inset 0 0 22px rgba(11,0,18,.95);opacity:0;animation:fxSing 3.2s cubic-bezier(.5,0,.3,1) infinite!important;z-index:3}
+.fr-magenta[data-lv="3"]>.fxm .gem:after{display:block!important;content:"";position:absolute;inset:0;border-radius:50%;transform:none!important;background:radial-gradient(closest-side,#000 0 18%,rgba(255,79,216,.95) 24%,rgba(178,75,255,.5) 34%,transparent 48%);opacity:0;animation:fxHole 3.2s ease-in infinite}
+@keyframes fxSing{0%,46%{opacity:0;transform:rotate(0);background-size:100% 100%;filter:none}50%{opacity:1;transform:rotate(0);background-size:100% 100%}73%{opacity:1;transform:rotate(600deg);background-size:10% 10%;filter:blur(.6px) brightness(1.7) hue-rotate(-40deg)}76%{opacity:1;transform:rotate(700deg);background-size:0% 0%}77%{opacity:1;transform:rotate(720deg);background-size:135% 135%;filter:brightness(2.4)}86%{opacity:1;background-size:100% 100%;filter:none}92%,100%{opacity:0;transform:rotate(720deg);background-size:100% 100%}}
+@keyframes fxHole{0%,50%{opacity:0;transform:scale(.2)}74%{opacity:1;transform:scale(1)}76%{opacity:1;transform:scale(.3)}78%,100%{opacity:0;transform:scale(1.6)}}
 @media(prefers-reduced-motion:reduce){.fr-magenta,.fr-magenta:after,.fr-magenta:before,.fr-magenta>.fxm *{animation:none!important}.fr-magenta>.fxm .b2,.fr-magenta>.fxm .bu,.fr-magenta>.fxm .sx{display:none!important}}
