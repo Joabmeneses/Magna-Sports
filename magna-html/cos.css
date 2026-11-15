@@ -358,7 +358,7 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fxm .gem:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%);transform:translateX(-120%);animation:fxGlint 2.6s ease-in-out infinite}
 .fxm .au{inset:12%;display:none;background:radial-gradient(closest-side,transparent 58%,var(--m1) 70%,var(--m2) 78%,transparent 90%);opacity:.6;animation:fxAura 2.4s ease-in-out infinite}
 .frm[data-lv="3"] .fxm .au{display:block}
-.frm[data-lv="3"]:not(.fr-ouroboros):not(.fr-navidad) .fxm .gem{background:linear-gradient(135deg,#fffbe6 0,#ffd23f 40%,#b8860b 75%,#ffe27a);width:18%;height:18%;margin-left:-9%}
+.frm[data-lv="3"]:not(.fr-ouroboros):not(.fr-navidad):not(.fr-manga) .fxm .gem{background:linear-gradient(135deg,#fffbe6 0,#ffd23f 40%,#b8860b 75%,#ffe27a);width:18%;height:18%;margin-left:-9%}
 .frm[data-lv="3"] .fxm .bu{border-width:3px}
 @keyframes fxWave{0%{opacity:0;transform:scale(.85)}2%{opacity:1}13%{opacity:0;transform:scale(1.35)}100%{opacity:0;transform:scale(1.35)}}
 @keyframes fxSpark{0%{opacity:0;transform:scale(.8) rotate(0)}3%{opacity:1}15%{opacity:0;transform:scale(1.18) rotate(40deg)}100%{opacity:0;transform:scale(1.18) rotate(40deg)}}
@@ -393,3 +393,41 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fxm .o1,.fxm .o2,.fxm .o3,.fxm .bu,.fxm .b2,.fxm .gem,.fxm .au{will-change:transform,opacity}
 @media(prefers-reduced-motion:reduce){.fxm *,.fxm *:before,.fxm *:after{animation:none!important}.fxm .bu,.fxm .b2{display:none}}
 .fr-ouroboros>.fxm .gem{display:none}
+
+/* ===================== MARCO MANGA (cómic japonés en blanco y negro) =====================
+   Nv.1 Boceto: viñeta de tinta, trama y foto en blanco y negro · Nv.2 Viñeta: líneas de acción que vibran y ¡ドン!
+   Nv.3 Despertar: vuelve el color, líneas rojas, sello 覚醒 y destello de impacto (colores invertidos un instante) */
+.fr-manga{animation:none!important;box-shadow:none}
+.fr-manga[data-lv="1"],.fr-manga[data-lv="2"]{filter:grayscale(1) contrast(1.25)}
+.fr-manga:after{inset:-19.5%!important;background:url("fx/manga-marco.svg") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 1px rgba(255,255,255,.6))!important;animation:none!important;z-index:3!important}
+.fr-manga:before{inset:-19.5%!important;background:url("fx/manga-lineas.svg") center/100% 100% no-repeat!important;filter:none;opacity:.5!important;animation:none!important;z-index:2!important}
+.fr-manga:not([data-lv="1"]):before{opacity:1!important;animation:fxMangaL .3s steps(2) infinite!important}
+.fr-manga[data-lv="3"]:before{background-image:url("fx/manga-lineas-rojo.svg")!important;animation-duration:.22s!important}
+.fr-manga[data-lv="3"]{box-shadow:0 0 0 .07em #e11d2e,0 0 .9em rgba(225,29,46,.55)}
+.fr-manga[data-lv="3"]:after{animation:fxShake 5s steps(1) infinite!important}
+@keyframes fxMangaL{50%{transform:rotate(1.6deg) scale(1.025)}}
+@keyframes fxShake{0%,88%{transform:none}89%{transform:translate(3%,-2%) rotate(-2deg)}91%{transform:translate(-3%,2%) rotate(2deg)}93%{transform:translate(2%,1%)}95%,100%{transform:none}}
+.fr-manga>.fxm{--m1:#111;--m2:#111;--m3:#fff}
+.fr-manga>.fxm .bu{inset:21%!important;border:0!important;opacity:.22!important;animation:none!important;background:radial-gradient(circle,#000 0 .8px,transparent 1.25px) 0 0/4px 4px;mix-blend-mode:multiply}
+.fr-manga>.fxm .gem{display:none}
+.fr-manga:not([data-lv="1"])>.fxm .gem{display:block;left:auto;right:-2%;top:0;bottom:auto;width:40%;height:27%;margin:0;clip-path:none;border-radius:0;background:url("fx/manga-don.svg") center/contain no-repeat;animation:fxDon 4.5s cubic-bezier(.2,1.6,.4,1) var(--dl,0s) infinite;filter:drop-shadow(1px 1px 0 #111)}
+.fr-manga>.fxm .gem:after{display:none}
+@keyframes fxDon{0%,50%{transform:scale(0) rotate(-25deg);opacity:0}57%{transform:scale(1.2) rotate(8deg);opacity:1}64%,90%{transform:scale(1) rotate(0);opacity:1}100%{transform:scale(.5);opacity:0}}
+.fr-manga[data-lv="3"]>.fxm .au{display:block;inset:5%;background:#fff;mix-blend-mode:difference;opacity:0;animation:fxImpact 5s steps(1) infinite;z-index:8}
+@keyframes fxImpact{0%,88%{opacity:0}89%{opacity:1}91%{opacity:0}93%{opacity:1}95%,100%{opacity:0}}
+.fr-manga>.fxm .o3{animation:none!important;inset:0}
+.fr-manga>.fxm .o3:before{left:auto;right:-3%;top:auto;bottom:-1%;width:30%;height:30%;margin:0;border-radius:0;background:url("fx/manga-sello.svg") center/contain no-repeat;transform:rotate(-12deg);filter:drop-shadow(0 0 4px rgba(225,29,46,.8))}
+.fr-manga>.fxm .o3:after{display:none}
+.fr-manga:hover:before{animation-duration:.12s!important}
+/* Manga · humo de cómic (Nv.1 abajo, Nv.2 rodea el marco, Nv.3 gira rápido) y aura de poder en Nv.3 */
+.fr-manga>.fxm .b2{inset:0!important;opacity:1!important;-webkit-mask:none!important;mask:none!important;border-radius:0!important;background:url("fx/manga-humo.svg") center/100% 100% no-repeat!important;animation:frSpin 24s linear infinite!important}
+.fr-manga[data-lv="1"]>.fxm .b2{-webkit-mask:linear-gradient(to top,#000 26%,transparent 50%)!important;mask:linear-gradient(to top,#000 26%,transparent 50%)!important;animation:fxPuff 5s ease-in-out infinite!important}
+.fr-manga[data-lv="3"]>.fxm .b2{animation-duration:9s!important;filter:drop-shadow(0 0 3px rgba(225,29,46,.75))}
+.fr-manga:hover>.fxm .b2{animation-duration:4s!important}
+@keyframes fxPuff{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2.5%) scale(1.04)}}
+.fr-manga>.fxm .o2{inset:3%!important;animation:none!important}
+.fr-manga>.fxm .o2:before{display:none}
+.fr-manga[data-lv="3"]>.fxm .o2{animation:fxAuraM .2s steps(2) infinite!important}
+.fr-manga[data-lv="3"]>.fxm .o2:before{display:block;content:"";position:absolute;left:0;top:0;width:100%;height:100%;margin:0;border-radius:0;background:url("fx/manga-aura.svg") center/100% 100% no-repeat}
+@keyframes fxAuraM{50%{transform:scale(1.035) rotate(1.5deg)}}
+@media(prefers-reduced-motion:reduce){.fr-manga:before,.fr-manga:after,.fr-manga>.fxm *{animation:none!important}.fr-manga>.fxm .au{display:none!important}}
