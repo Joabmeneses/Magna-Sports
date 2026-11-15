@@ -456,3 +456,57 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 @keyframes fxSing{0%,46%{opacity:0;transform:rotate(0);background-size:100% 100%;filter:none}50%{opacity:1;transform:rotate(0);background-size:100% 100%}73%{opacity:1;transform:rotate(600deg);background-size:10% 10%;filter:blur(.6px) brightness(1.7) hue-rotate(-40deg)}76%{opacity:1;transform:rotate(700deg);background-size:0% 0%}77%{opacity:1;transform:rotate(720deg);background-size:135% 135%;filter:brightness(2.4)}86%{opacity:1;background-size:100% 100%;filter:none}92%,100%{opacity:0;transform:rotate(720deg);background-size:100% 100%}}
 @keyframes fxHole{0%,50%{opacity:0;transform:scale(.2)}74%{opacity:1;transform:scale(1)}76%{opacity:1;transform:scale(.3)}78%,100%{opacity:0;transform:scale(1.6)}}
 @media(prefers-reduced-motion:reduce){.fr-magenta,.fr-magenta:after,.fr-magenta:before,.fr-magenta>.fxm *{animation:none!important}.fr-magenta>.fxm .b2,.fr-magenta>.fxm .bu,.fr-magenta>.fxm .sx{display:none!important}}
+
+/* ===== Jackpot Ludópata · legendario exclusivo con 3 niveles =====
+   Nv.1 Ficha: la marquesina clásica · Nv.2 Racha: fichas y monedas en órbita, bombillos al doble
+   Nv.3 Premio mayor: una tragamonedas aparece sobre el avatar, los carretes giran (el tercero se hace esperar),
+   cae 7-7-7 y explota el JACKPOT con lluvia de monedas, destello y letrero */
+.fr-jackpot>.fxm{inset:-16%!important;z-index:3;--m1:#ffd23f;--m2:#ff2d55;--m3:#fff}
+.fr-jackpot>.fxm>i:before,.fr-jackpot>.fxm>i:after{display:none!important}
+.fr-jackpot>.fxm .au,.fr-jackpot>.fxm .gem{display:none!important}
+.fr-jackpot:after{filter:drop-shadow(0 0 2px #ffd23f) drop-shadow(0 0 4px rgba(255,45,85,.6))!important;-webkit-mask:radial-gradient(closest-side,transparent 75%,#000 76% 90%,transparent 91%)!important;mask:radial-gradient(closest-side,transparent 75%,#000 76% 90%,transparent 91%)!important}
+.fr-jackpot[data-lv="1"]:after{animation-duration:5.4s!important;filter:saturate(.8) drop-shadow(0 0 2px #ffd23f)!important}
+.fr-jackpot[data-lv="1"]>.fxm .bu,.fr-jackpot[data-lv="1"]>.fxm .b2{display:none}
+.fr-jackpot:not([data-lv="1"]):after{animation-duration:2.4s!important}
+.fr-jackpot:not([data-lv="1"])>.fxm .o1{display:block;inset:0;border-radius:0;background:url("fx/jackpot-fichas.svg") center/100% 100% no-repeat;animation:frSpin 9s linear infinite;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));z-index:1}
+.fr-jackpot:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;background:url("fx/jackpot-monedas.svg") center/100% 100% no-repeat;animation:frSpin 14s linear infinite reverse,jkTw 1.6s ease-in-out infinite;z-index:1}
+.fr-jackpot>.fxm .bu{border-color:#ffd23f}
+@keyframes jkTw{50%{opacity:.5}}
+/* Nv.1 y Nv.2 · moneda al aire: sale de abajo, gira y vuelve a caer */
+.fr-jackpot:not([data-lv="3"])>.fxm .gem{display:block!important;left:43%;bottom:6%;top:auto;width:14%!important;height:14%!important;margin:0!important;border-radius:50%;clip-path:none;background:url("fx/jackpot-moneda.svg") center/contain no-repeat!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.6));opacity:0;animation:jkToss 5s cubic-bezier(.3,0,.4,1) var(--dl,0s) infinite!important;z-index:6}
+@keyframes jkToss{0%,62%{opacity:0;transform:translateY(0) rotateY(0) scale(.6)}65%{opacity:1;transform:translateY(0) rotateY(0) scale(1)}76%{transform:translateY(-260%) rotateY(900deg) scale(1.15);animation-timing-function:cubic-bezier(.5,0,.8,.6)}88%{opacity:1;transform:translateY(0) rotateY(1800deg) scale(1)}90%{transform:translateY(-25%) rotateY(1800deg) scale(1)}92%{opacity:1;transform:translateY(0) rotateY(1800deg)}97%,100%{opacity:0;transform:translateY(0) rotateY(1800deg) scale(.6)}}
+/* Nv.2 · ruleta: una bola blanca corre por la marquesina, frena y donde cae se enciende el premio; las fichas saltan */
+.fr-jackpot[data-lv="2"]>.fxm .o3{display:block;inset:0;border-radius:50%;background:none;animation:jkRoul 6s linear infinite;z-index:5}
+.fr-jackpot[data-lv="2"]>.fxm .o3:before{display:block!important;content:"";position:absolute;left:50%;top:5.6%;width:8%;height:8%;margin-left:-4%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#e5e7eb 45%,#6b7280);box-shadow:0 0 4px #fff,0 1px 2px rgba(0,0,0,.7)}
+.fr-jackpot[data-lv="2"]>.fxm .o3:after{display:block!important;content:"";position:absolute;left:50%;top:1%;width:18%;height:18%;margin-left:-9%;border-radius:50%;background:radial-gradient(closest-side,#fff 0 18%,#ffd23f 40%,rgba(255,45,85,.6) 65%,transparent);opacity:0;animation:jkHit 6s ease-out infinite}
+.fr-jackpot[data-lv="2"]>.fxm .o1{animation:frSpin 9s linear infinite,jkHop 6s ease-out infinite}
+@keyframes jkRoul{0%{transform:rotate(0);animation-timing-function:linear}45%{transform:rotate(1440deg);animation-timing-function:cubic-bezier(.15,.6,.3,1)}78%{transform:rotate(1785deg);animation-timing-function:ease-out}82%,100%{transform:rotate(1800deg)}}
+@keyframes jkHit{0%,80%{opacity:0;transform:scale(.4)}83%{opacity:1;transform:scale(1.15)}95%,100%{opacity:0;transform:scale(1.5)}}
+@keyframes jkHop{0%,81%{scale:1}85%{scale:1.14}89%{scale:.97}93%,100%{scale:1}}
+/* Nv.3 · Premio mayor: dos tiradas. La primera queda en 7-7 y el tercer 7 se pasa por un pelo (¡CASI!);
+   la segunda, con el tercer carrete haciéndose esperar, cae 7-7-7 y explota el JACKPOT */
+.fr-jackpot[data-lv="3"]{animation:frJack 1.2s steps(1) infinite!important}
+.fr-jackpot[data-lv="3"]:after{animation-duration:1.2s!important}
+.fr-jackpot[data-lv="3"]:before{animation:jkCard 16s ease-in-out infinite!important}
+.fr-jackpot[data-lv="3"]>.fxm .o1{animation-duration:6s}
+.fr-jackpot[data-lv="3"]>.fxm .o2{animation:frSpin 8s linear infinite reverse,jkTw .8s ease-in-out infinite}
+.fr-jackpot[data-lv="3"]>.fxm .o3{display:block;inset:12.1%;overflow:hidden;isolation:isolate;border-radius:50%;background:linear-gradient(90deg,transparent 32.6%,#ffd23f 32.6% 34%,transparent 34% 66%,#ffd23f 66% 67.4%,transparent 67.4%),linear-gradient(rgba(0,0,0,.55),transparent 28% 72%,rgba(0,0,0,.55)),radial-gradient(closest-side,#3a0610,#12000a);box-shadow:inset 0 0 0 2px #ffd23f,0 0 6px rgba(255,210,63,.7);opacity:0;animation:jkWin 16s ease-in-out infinite;z-index:2}
+.fr-jackpot[data-lv="3"]>.fxm .o3:before,.fr-jackpot[data-lv="3"]>.fxm .o3:after{display:block!important;content:"";position:absolute;top:0;left:0;width:66.67%;height:720%;margin:0;border-radius:0;opacity:1;background:url("fx/jackpot-carretes.svg") 0 0/150% 100% no-repeat;transform:translateY(2.78%);animation:jkReel 16s linear infinite;z-index:-1}
+.fr-jackpot[data-lv="3"]>.fxm .o3:after{left:66.67%;width:33.33%;background-position:100% 0;background-size:300% 100%;animation-name:jkReel2}
+.fr-jackpot[data-lv="3"]>.fxm .au{display:block!important;inset:auto;right:-1%;top:20%;width:9%;height:24%;border-radius:0;opacity:1;background:url("fx/jackpot-palanca.svg") center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7));transform-origin:50% 92%;animation:jkLever 16s ease-in-out infinite;z-index:6}
+.fr-jackpot[data-lv="3"]>.fxm:before{content:"";position:absolute;left:22%;right:22%;top:17%;height:18%;background:url("fx/jackpot-casi.svg") center/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7));opacity:0;animation:jkCasi 16s cubic-bezier(.3,1.6,.5,1) infinite;z-index:7}
+.fr-jackpot[data-lv="3"]>.fxm .sx{display:block;inset:6%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,251,230,.95),rgba(255,210,63,.7) 55%,rgba(255,45,85,.35) 72%,transparent 80%);opacity:0;animation:jkFl 16s ease-out infinite;z-index:3}
+.fr-jackpot[data-lv="3"]>.fxm .b2{display:block;inset:0;border-radius:0;-webkit-mask:none;mask:none;background:url("fx/jackpot-lluvia.svg") center/100% 100% no-repeat;opacity:0;animation:jkBoom 16s cubic-bezier(.15,.7,.3,1) infinite;z-index:4}
+.fr-jackpot[data-lv="3"]>.fxm .bu{inset:14%;border:3px solid #ffd23f;box-shadow:0 0 8px #ffd23f;opacity:0;animation:jkRing 16s ease-out infinite;z-index:4}
+.fr-jackpot[data-lv="3"]>.fxm .gem{display:block!important;left:14%;right:14%;top:auto;bottom:-3%;width:auto!important;height:24%!important;margin:0!important;border-radius:0;clip-path:none;background:url("fx/jackpot-letrero.svg") center/contain no-repeat!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));opacity:0;animation:jkSign 16s cubic-bezier(.3,1.6,.5,1) infinite!important;z-index:6}
+@keyframes jkWin{0%,13%{opacity:0;transform:scale(.8);translate:0 0}17%{opacity:1;transform:scale(1)}36%{translate:0 0}37%{translate:-4% 0}38%{translate:4% 0}39%{translate:-3% 0}40%{translate:2% 0}41%{translate:0 0}43%{opacity:1;transform:scale(1)}46%,53%{opacity:0;transform:scale(.8)}57%{opacity:1;transform:scale(1)}92%{opacity:1;transform:scale(1)}96%,100%{opacity:0;transform:scale(1.06)}}
+@keyframes jkReel{0%,18%{transform:translateY(2.78%)}19%{transform:translateY(-3%);animation-timing-function:linear}27%{transform:translateY(-72%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}30%{transform:translateY(-89.6%)}31%,49%{transform:translateY(-88.89%)}50%,58%{transform:translateY(2.78%)}59%{transform:translateY(-3%);animation-timing-function:linear}67%{transform:translateY(-72%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}70%{transform:translateY(-89.6%)}71%,100%{transform:translateY(-88.89%)}}
+@keyframes jkReel2{0%,18%{transform:translateY(2.78%)}19%{transform:translateY(-3%);animation-timing-function:linear}31%{transform:translateY(-70%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}35%{transform:translateY(-85.4%)}36%,49%{transform:translateY(-84.72%)}50%,58%{transform:translateY(2.78%)}59%{transform:translateY(-3%);animation-timing-function:linear}73%{transform:translateY(-70%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}79%{transform:translateY(-89.8%)}80%,100%{transform:translateY(-88.89%)}}
+@keyframes jkLever{0%,13%{transform:scaleY(1)}15%{transform:scaleY(-.7)}18%{transform:scaleY(1)}53%{transform:scaleY(1)}55%{transform:scaleY(-.7)}58%,100%{transform:scaleY(1)}}
+@keyframes jkCasi{0%,35%{opacity:0;transform:scale(.3) rotate(6deg)}38%{opacity:1;transform:scale(1.12) rotate(4deg)}40%{opacity:1;transform:scale(1) rotate(4deg)}43%{opacity:1;transform:scale(1) rotate(4deg) translateY(10%)}46%,100%{opacity:0;transform:scale(.9) rotate(4deg) translateY(30%)}}
+@keyframes jkFl{0%,79%{opacity:0}81%{opacity:.95}84%{opacity:.15}86%{opacity:.6}93%,100%{opacity:0}}
+@keyframes jkBoom{0%,80%{opacity:0;transform:scale(.3) rotate(0)}82%{opacity:1}92%{opacity:1;transform:scale(1) rotate(28deg)}97%,100%{opacity:0;transform:scale(1.03) rotate(32deg)}}
+@keyframes jkRing{0%,80%{opacity:0;transform:scale(.9)}82%{opacity:1;transform:scale(.95)}93%,100%{opacity:0;transform:scale(1.3)}}
+@keyframes jkSign{0%,80%{opacity:0;transform:scale(.3) rotate(-10deg)}84%{opacity:1;transform:scale(1.12) rotate(-4deg)}87%{transform:scale(1) rotate(-4deg)}94%{opacity:1;transform:scale(1) rotate(-4deg)}98%,100%{opacity:0;transform:scale(.9) rotate(-4deg)}}
+@keyframes jkCard{0%,77%{opacity:1;transform:rotate(12deg)}80%{opacity:1;transform:rotate(12deg) rotateY(90deg) scale(1.2)}82%,95%{opacity:0;transform:rotate(12deg) scale(.4)}99%,100%{opacity:1;transform:rotate(12deg)}}
+@media(prefers-reduced-motion:reduce){.fr-jackpot>.fxm *,.fr-jackpot>.fxm:before{animation:none!important}.fr-jackpot>.fxm .o3,.fr-jackpot>.fxm .gem,.fr-jackpot>.fxm .b2,.fr-jackpot>.fxm .bu,.fr-jackpot>.fxm .sx,.fr-jackpot>.fxm .gem{display:none!important}}
