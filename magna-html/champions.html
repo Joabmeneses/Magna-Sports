@@ -205,7 +205,7 @@ span.p{position:absolute;width:9px;height:14px;border-radius:2px}
 <div class="hrw"><div class="r"><div class="c1 hcl">Equipo</div><button class="hc" data-k="pj">PJ<i></i></button><button class="hc xc" data-k="g">G<i></i></button><button class="hc xc" data-k="p">P<i></i></button><button class="hc xc" data-k="gf">GF<i></i></button><button class="hc xc" data-k="gc">GC<i></i></button><button class="hc" data-k="dg">DG<i></i></button><button class="hc on" data-k="pts">Pts<i></i></button><div class="hcl">Forma</div></div></div>
 <div id="rows"></div>
 </div></div></div>
-<p class="note">Tabla calculada con los partidos terminados. No hay empates.</p>
+<p class="note">Tabla calculada con los partidos terminados. Victoria = 3 pts · Derrota = 1 pt · No hay empates.</p>
 </section>
 <section id="p2" class="pn" hidden>
 <div class="bar2"><div class="bch" id="bch"></div><div class="acts"><button class="pb" id="sim">Simular llaves</button><button class="pb g" id="rst">Reiniciar</button></div></div>
@@ -223,7 +223,7 @@ var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){retur
 var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 var TEAMS=window.MAGNA_CH_TEAMS();
 if(!TEAMS.length){document.getElementById('p1').innerHTML='<p class="note" style="padding:50px 0">Todavía no hay partidos jugados. La tabla se calcula con los resultados que registre el administrador.</p>';document.querySelector('.tabs').style.display='none';return}
-TEAMS.forEach(function(t){t.pj=t.g+t.p;t.dg=t.gf-t.gc;t.pts=3*t.g});
+TEAMS.forEach(function(t){t.pj=t.g+t.p;t.dg=t.gf-t.gc;t.pts=3*t.g+t.p});
 var ORD=TEAMS.slice().sort(function(a,b){return b.pts-a.pts||b.dg-a.dg||b.gf-a.gf||a.n.localeCompare(b.n,'es')});ORD.forEach(function(t,i){t.rk=i+1});
 var CFG=window.MAGNA_CH_CFG,SP=MAGNA.champSplit(ORD.length)||{direct:ORD.length,playoff:0,out:0},D=SP.direct,K=SP.playoff,KN=MAGNA.koName(D*2),KL=D===1?'la final':KN.toLowerCase();
 (function(){var pl2=function(n,a,b){return n+' '+(n===1?a:b)};if(CFG){$('h1.x').textContent=CFG.name}
