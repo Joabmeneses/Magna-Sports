@@ -517,7 +517,14 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 @media(prefers-reduced-motion:reduce){.fr-jackpot>.fxm *,.fr-jackpot>.fxm:before{animation:none!important}.fr-jackpot>.fxm .o3,.fr-jackpot>.fxm .gem,.fr-jackpot>.fxm .b2,.fr-jackpot>.fxm .bu,.fr-jackpot>.fxm .sx,.fr-jackpot>.fxm .gem{display:none!important}}
 
 /* marcos legendarios/míticos en avatares chiquitos (menos de 50 px): versión liviana */
-.frm.fxs>.fxm{display:none!important}
+.frm.fxs>.fxm{display:block!important;inset:0!important;z-index:5!important;animation:none!important;background:none!important}
+.frm.fxs[class][data-lv]>.fxm>i[class]{display:none!important}
+.frm.fxs[class][data-lv]>.fxm:before{display:none!important}
+.frm.fxs[class][data-lv]>.fxm:after{display:none!important;content:""}
+/* en avatares chiquitos el nivel se ve con una insignia (2 plateada, 3 dorada) */
+.frm.fxs[class][data-lv="2"]>.fxm:after,.frm.fxs[class][data-lv="3"]>.fxm:after{display:grid!important;place-items:center;position:absolute;left:auto;top:auto;right:-14%;bottom:-14%;width:46%;height:46%;min-width:13px;min-height:13px;border-radius:50%;border:1.5px solid #0d0d10;font:900 calc(var(--s,40px)*.26)/1 Archivo,sans-serif;color:#0d0d10;box-shadow:0 1px 3px rgba(0,0,0,.6);transform:none;opacity:1;animation:none;mask:none;-webkit-mask:none;filter:none}
+.frm.fxs[class][data-lv="2"]>.fxm:after{content:"2";background:linear-gradient(135deg,#ffffff,#cbd5e1 55%,#94a3b8)}
+.frm.fxs[class][data-lv="3"]>.fxm:after{content:"3";background:linear-gradient(135deg,#fffbe6,#ffd23f 50%,#c08400)}
 .frm.fxs{animation:none!important}
 .fr-ouroboros.fxs:before,.fr-magenta.fxs:before{display:none!important}
 .fr-ouroboros.fxs:after,.fr-navidad.fxs:after,.fr-navidad.fxs:before,.fr-magenta.fxs:after,.fr-jackpot.fxs:after,.fr-jackpot.fxs:before{filter:none!important}
