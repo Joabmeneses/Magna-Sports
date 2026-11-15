@@ -14,7 +14,9 @@
   function equipped(it) { return !!(inv && inv.eq[it.type] === it.id); }
   // quién lleva puesto cada cosmético (sale de los cosméticos públicos de los jugadores)
   function wearMap() { var m = {}; try { var c = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; Object.keys(c).forEach(function (pid) { var eq = (c[pid] && c[pid].eq) || {}; Object.keys(eq).forEach(function (k) { if (eq[k]) (m[eq[k]] = m[eq[k]] || []).push(pid); }); }); } catch (e) {} return m; }
-  function forSale() { return I.shop().filter(function (x) { return x.active !== false && !x.exclusive; }); }
+  function forSale() { return I.shop().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg; }); }
+  function ups(it) { return I.shop().filter(function (x) { return x.upg === it.id && x.active !== false; }).sort(function (a, b) { return a.lv - b.lv; }); }
+  function topLv(it) { var lv = owned(it.id) ? 1 : 0; ups(it).forEach(function (u) { if (owned(u.id)) lv = Math.max(lv, u.lv); }); return lv; }
   function pname(pid) { var p = MAGNA.by(MAGNA.S.players, Number(pid)); return p ? p.name : ''; }
 
   // ---------- piezas ----------
@@ -40,6 +42,7 @@
     var c = h('div', 'ts-c r-' + (it.rarity || 'comun') + (it.exclusive ? ' x' : '') + (owned(it.id) ? ' mine' : '')); c.style.animationDelay = Math.min(i, 16) * 35 + 'ms'; c.dataset.tilt = '8';
     var art = h('button', 'art'); art.type = 'button'; art.setAttribute('aria-label', 'Ver ' + it.name); art.onclick = function () { view(it); };
     art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id));
+    if (it.type === 'frame' && it.rarity === 'mitica') art.appendChild(h('span', 'evo-chip', '🧬 Evoluciona')); else if (it.type === 'frame' && it.lv && ups(it).length) art.appendChild(h('span', 'evo-chip up', '⬆️ 3 niveles'));
     if (it.type === 'plate' && it.rarity === 'mitica' && window.MAGNA_COS && MAGNA_COS.banner) { MAGNA_COS.banner(art, it.style, { lite: true }); art.classList.add('art-bn'); }
     art.appendChild(h('span', 'rr', (M.RAR[it.rarity] || 'Común')));
     if (owned(it.id)) art.appendChild(h('span', 'ok', equipped(it) ? '✓ Puesto' : '✓ Tuyo'));
@@ -155,6 +158,19 @@
     ['‹', '›'].forEach(function (a, k) { var b = h('button', 'ts-ar ' + (k ? 'nx' : 'pv'), a); b.type = 'button'; b.setAttribute('aria-label', k ? 'Siguiente' : 'Anterior'); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.min(tr.clientWidth * .8, 600), behavior: 'smooth' }); }; wr.appendChild(b); });
     s.appendChild(wr); return s; }
   // vitrina grande: las placas míticas como portada de perfil, rotando solas
+  var LVT = { ouroboros: [[1, 'Nv.1 · Dormido', 'Incluido con el marco: descansa, apagado y lento'], [2, 'Nv.2 · Despierto', 'Fuego vivo, ojo encendido y 2 brasas en órbita'], [3, 'Nv.3 · Furia', 'Llamas al rojo, aura de fuego y gira más rápido']] };
+  // Niveles que se compran (Dragón eterno): Nv.1 viene con el marco; Nv.2 y Nv.3 son mejoras que se pagan aparte, en orden
+  function upBox(it, close) { var box = h('div', 'cf-evo'), eh = h('div', 'cf-evh'), have = topLv(it), L = [it].concat(ups(it)), T = LVT[it.style] || [];
+    eh.appendChild(h('b', null, '⬆️ Mejoras del marco')); eh.appendChild(h('small', null, 'Compra el marco y despiértalo nivel por nivel. Cada mejora se equipa sola.')); box.appendChild(eh);
+    var lr = h('div', 'cf-evl'); L.forEach(function (x, i) { var lv = x.lv || i + 1, c = h('div', 'cf-lv' + (have >= lv ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + x.style); av.dataset.lv = lv; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw);
+      c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); var pr = h('span', 'cf-lvp'); pr.appendChild(MAGNA_BIT(12)); pr.appendChild(document.createTextNode(' ' + I.fmt(x.price))); c.appendChild(pr);
+      if (i > 0 && acc) { if (have >= lv) { var ok = h('em', 'cf-lvk', inv && inv.eq.frame === x.id ? '✓ Puesto' : 'Tuyo'); if (!(inv && inv.eq.frame === x.id)) { ok = btn('own sm', 'Equipar', function () { close(); wear(x); }); } c.appendChild(ok); }
+        else if (have === lv - 1 && have > 0) { var bb = btn('sm', Number(acc.bits) >= x.price ? 'Mejorar' : 'Te faltan ' + I.fmt(x.price - Number(acc.bits)), function () { bb.disabled = true; bb.textContent = 'Mejorando…';
+            I.buy(x).then(function (nb) { acc.bits = nb; inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); close(); return I.equip(x.type, x.id).then(function () { inv.eq[x.type] = x.id; I.syncSelf(acc, inv.eq); celebrate(x); }, function () { render(); }); }, function (e) { bb.disabled = false; bb.textContent = 'Mejorar'; I.toast(e.message || 'No se pudo mejorar', true); }); });
+          if (Number(acc.bits) < x.price) bb.disabled = true; c.appendChild(bb); }
+        else c.appendChild(h('em', 'cf-lvk lk', have ? '🔒 Primero Nv.' + (lv - 1) : '🔒 Compra el marco')); }
+      lr.appendChild(c); }); box.appendChild(lr);
+    box.appendChild(h('small', 'cf-evt', '👆 Pásale el dedo o el mouse para desatar su fuego.')); return box; }
   function spotlight(P) { if (!P.length || !window.MAGNA_COS || !MAGNA_COS.banner) return null;
     var w = h('div', 'my-sp'), bn = h('div', 'my-bn'), inf = h('div', 'my-in'), dots = h('div', 'my-dt'), i = 0, T = null, nm = acc ? acc.display_name : 'Tu nombre';
     var big = h('div', 'my-nm'), lb = h('span', 'my-lb'), tt = h('b', 'my-tt'), pr = h('div', 'my-pr'), go = btn('big', '💎 Ver placa', function () { view(P[i]); });
@@ -180,7 +196,12 @@
   function view(it) {
     M.modal(function (b, close) { var w = h('div', 'cf r-' + (it.rarity || 'comun')), own = owned(it.id), on = own && equipped(it), W = wearMap()[it.id] || [];
       var tp = h('div', 'cf-t'); tp.appendChild(h('span', 'rr', M.RAR[it.rarity] || 'Común')); tp.appendChild(h('span', null, ICO[it.type] + ' ' + M.KIND[it.type])); w.appendChild(tp);
-      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); if (it.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { var vb = h('div', 'cf-bn'); vb.appendChild(h('small', null, 'Portada de tu perfil')); vb.appendChild(h('b', null, acc ? acc.display_name : 'Tu nombre')); MAGNA_COS.banner(vb, it.style); w.appendChild(vb); } w.appendChild(ctx(it));
+      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); if (it.type === 'frame' && it.lv && ups(it).length) w.appendChild(upBox(it, close)); else if (it.type === 'frame' && window.MAGNA_COS && MAGNA_COS.MYF && MAGNA_COS.MYF[it.style]) { var ev = h('div', 'cf-evo'), eh = h('div', 'cf-evh'); eh.appendChild(h('b', null, '🧬 Evoluciona contigo')); eh.appendChild(h('small', null, 'Sube de nivel jugando: cada partido suma 1 punto y cada MVP 3.')); ev.appendChild(eh);
+      var me = acc && acc.player_id != null ? MAGNA_COS.evo(acc.player_id) : null, lr = h('div', 'cf-evl');
+      (LVT[it.style] || [[1, 'Nv.1', 'Al comprarlo: gema y momento mítico'], [2, 'Nv.2', '15 pts: + 2 satélites en órbita'], [3, 'Nv.3', '40 pts: aura, 3 satélites y gema de oro']]).forEach(function (L) { var c = h('div', 'cf-lv' + (me && me.lv >= L[0] ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + it.style); av.dataset.lv = L[0]; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw); c.appendChild(h('b', null, L[1])); c.appendChild(h('small', null, L[2])); lr.appendChild(c); });
+      ev.appendChild(lr); if (me) { var pr2 = h('div', 'cf-evp'), bar = h('i'); bar.style.width = Math.min(100, me.pts / 40 * 100) + '%'; pr2.appendChild(bar); ev.appendChild(pr2); ev.appendChild(h('small', 'cf-evt', 'Tienes ' + me.pts + ' pts' + (me.next ? ' · te faltan ' + (me.next - me.pts) + ' para Nv.' + (me.lv + 1) : ' · ¡nivel máximo!'))); }
+      ev.appendChild(h('small', 'cf-evt', '👆 Pásale el dedo o el mouse a un marco mítico para desatar su poder.')); w.appendChild(ev); }
+    if (it.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { var vb = h('div', 'cf-bn'); vb.appendChild(h('small', null, 'Portada de tu perfil')); vb.appendChild(h('b', null, acc ? acc.display_name : 'Tu nombre')); MAGNA_COS.banner(vb, it.style); w.appendChild(vb); } w.appendChild(ctx(it));
       if (W.length) { var wr = h('div', 'cf-w'), av = h('div', 'avs'); W.slice(0, 5).forEach(function (pid) { av.appendChild(M.tierAv(pname(pid), null, 30, pid)); }); wr.appendChild(av); wr.appendChild(h('span', null, W.length === 1 ? 'Lo lleva ' + pname(W[0]) : 'Lo llevan ' + W.length + ' jugadores')); w.appendChild(wr); }
       if (it.exclusive) w.appendChild(h('p', 'sub', '🔒 ' + (MAGNA.AWARD_TXT[it.award] || 'Exclusivo: lo entrega la administración.')));
       var r2 = h('div', 'r'), no = btn('ghost', own || it.exclusive ? 'Cerrar' : 'Cancelar', close); r2.appendChild(no);

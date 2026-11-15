@@ -67,13 +67,13 @@ var MAGNA = (function () {
   var SHOP_DEFAULT = [
     ['c-sangre', 'color', 'Carmesí', 'comun', 200, 'sangre'], ['c-menta', 'color', 'Menta', 'comun', 200, 'menta'], ['c-oro', 'color', 'Nombre dorado', 'rara', 400, 'oro'], ['c-hielo', 'color', 'Hielo', 'rara', 450, 'hielo'],
     ['c-neon-rosa', 'color', 'Neón rosa', 'epica', 900, 'neon-rosa'], ['c-neon-cian', 'color', 'Neón cian', 'epica', 900, 'neon-cian'], ['c-neon-verde', 'color', 'Neón verde', 'epica', 900, 'neon-verde'],
-    ['c-galaxia', 'color', 'Galaxia', 'legendaria', 1800, 'galaxia'], ['c-fuego', 'color', 'Fuego vivo', 'legendaria', 2000, 'fuego'], ['c-arcoiris', 'color', 'Arcoíris', 'legendaria', 2500, 'arcoiris'],
+    ['c-galaxia', 'color', 'Galaxia', 'rara', 1800, 'galaxia'], ['c-fuego', 'color', 'Fuego vivo', 'rara', 2000, 'fuego'], ['c-arcoiris', 'color', 'Arcoíris', 'rara', 2500, 'arcoiris'],
     ['p-noche', 'plate', 'Placa Medianoche', 'comun', 200, 'noche'], ['p-plata', 'plate', 'Placa de plata', 'comun', 250, 'plata'], ['p-selva', 'plate', 'Placa Selva', 'comun', 250, 'selva'], ['p-magna', 'plate', 'Placa Magna', 'rara', 500, 'magna'],
-    ['p-fuego', 'plate', 'Placa de fuego', 'epica', 1000, 'fuego'], ['p-neon', 'plate', 'Placa neón', 'epica', 1100, 'neon'], ['p-oro', 'plate', 'Placa de oro', 'epica', 1200, 'oro'], ['p-sakura', 'plate', 'Placa Sakura', 'epica', 1300, 'sakura'], ['p-galaxia', 'plate', 'Placa Galaxia', 'legendaria', 2000, 'galaxia'],
+    ['p-fuego', 'plate', 'Placa de fuego', 'epica', 1000, 'fuego'], ['p-neon', 'plate', 'Placa neón', 'epica', 1100, 'neon'], ['p-oro', 'plate', 'Placa de oro', 'epica', 1200, 'oro'], ['p-sakura', 'plate', 'Placa Sakura', 'epica', 1300, 'sakura'], ['p-galaxia', 'plate', 'Placa Galaxia', 'rara', 2000, 'galaxia'],
     ['f-oro', 'frame', 'Marco dorado', 'rara', 600, 'oro'], ['f-hielo', 'frame', 'Marco de hielo', 'rara', 600, 'hielo'], ['f-toxico', 'frame', 'Marco tóxico', 'rara', 700, 'toxico'], ['f-neon', 'frame', 'Marco neón', 'epica', 1200, 'neon'],
-    ['f-elite', 'frame', 'Marco Élite', 'epica', 1500, 'elite'], ['f-fuego', 'frame', 'Marco de fuego', 'legendaria', 2200, 'fuego'], ['f-arcoiris', 'frame', 'Marco arcoíris', 'legendaria', 2400, 'arcoiris'], ['f-corona', 'frame', 'Corona real', 'legendaria', 3000, 'corona'],
+    ['f-elite', 'frame', 'Marco Élite', 'epica', 1500, 'elite'], ['f-fuego', 'frame', 'Marco de fuego', 'rara', 2200, 'fuego'], ['f-arcoiris', 'frame', 'Marco arcoíris', 'rara', 2400, 'arcoiris'], ['f-corona', 'frame', 'Corona real', 'rara', 3000, 'corona'],
     ['t-novato', 'title', 'Novato', 'comun', 100, ''], ['t-muro', 'title', 'El Muro', 'comun', 150, ''], ['t-goleador', 'title', 'Goleador', 'rara', 300, ''], ['t-mago', 'title', 'El Mago', 'rara', 300, ''], ['t-capitan', 'title', 'Capitán', 'rara', 350, ''],
-    ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'legendaria', 1500, '']
+    ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'rara', 1500, '']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
   // Colección Mítica: lo más premium y caro de la tienda
   var SHOP_MITICA = [
@@ -81,16 +81,16 @@ var MAGNA = (function () {
     ['m-p-holo', 'plate', 'Placa holográfica', 10000, 'holo'], ['m-p-aurora', 'plate', 'Placa Aurora', 11000, 'aurora'], ['m-p-cosmos', 'plate', 'Placa Cosmos', 12000, 'cosmos'], ['m-p-diamante', 'plate', 'Placa de diamante', 14000, 'diamante'], ['m-p-dragon', 'plate', 'Placa del Dragón', 16000, 'dragon'], ['m-p-trono', 'plate', 'Placa del Trono', 20000, 'trono'],
     ['m-p-navidad', 'plate', 'Placa Navidad', 18000, 'navidad'],
     ['m-f-holo', 'frame', 'Marco holográfico', 12000, 'holo'], ['m-f-aurora', 'frame', 'Marco Aurora', 13000, 'aurora'], ['m-f-rayo', 'frame', 'Marco Rayo', 15000, 'rayo'], ['m-f-diamante', 'frame', 'Marco de diamante', 18000, 'diamante'], ['m-f-dragon', 'frame', 'Marco del Dragón', 20000, 'dragon'], ['m-f-vacio', 'frame', 'Marco del Vacío', 25000, 'vacio'],
-    ['m-f-navidad', 'frame', 'Marco Navidad', 16000, 'navidad'], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 30000, 'ouroboros'],
+    ['m-f-navidad', 'frame', 'Marco Navidad', 16000, 'navidad'], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 7000, 'ouroboros', { rarity: 'legendaria', lv: 1 }], ['m-f-ouroboros-2', 'frame', 'Dragón eterno · Despierto', 10000, 'ouroboros', { rarity: 'legendaria', lv: 2, upg: 'm-f-ouroboros', req: 'm-f-ouroboros' }], ['m-f-ouroboros-3', 'frame', 'Dragón eterno · Furia', 20000, 'ouroboros', { rarity: 'legendaria', lv: 3, upg: 'm-f-ouroboros', req: 'm-f-ouroboros-2' }],
     ['m-t-magnate', 'title', 'Magnate', 6000, ''], ['m-t-inmortal', 'title', 'Inmortal', 8000, ''], ['m-t-elegido', 'title', 'El Elegido', 10000, ''], ['m-t-dios', 'title', 'Dios del balón', 12000, ''], ['m-t-emperador', 'title', 'Emperador de Magna', 15000, '']
-  ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: 'mitica', price: x[3], style: x[4], active: true }; });
+  ].map(function (x) { return Object.assign({ id: x[0], type: x[1], name: x[2], rarity: 'mitica', price: x[3], style: x[4], active: true }, x[5] || {}); });
   // Cosméticos exclusivos: no se compran; se entregan solos al desbloquear la insignia indicada en "award" (o los da la administración si es "manual")
   var SHOP_EXCL = [
-    ['x-balon-marco', 'frame', 'Marco Balón de Oro', 'legendaria', 'balon', 'balon'], ['x-balon-titulo', 'title', 'Balón de Oro', 'legendaria', '', 'balon'],
-    ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'legendaria', 'dinastia', 'dinastia'],
-    ['x-estrella', 'color', 'Estrella fugaz', 'legendaria', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'legendaria', 'leyenda', 'leyenda'],
+    ['x-balon-marco', 'frame', 'Marco Balón de Oro', 'rara', 'balon', 'balon'], ['x-balon-titulo', 'title', 'Balón de Oro', 'rara', '', 'balon'],
+    ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'rara', 'dinastia', 'dinastia'],
+    ['x-estrella', 'color', 'Estrella fugaz', 'rara', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'rara', 'leyenda', 'leyenda'],
     ['x-hattrick', 'title', 'Rey del hat-trick', 'epica', '', 'hattrick'], ['x-perfecto', 'title', 'Partido perfecto', 'rara', '', 'perfecto'],
-    ['x-fundador', 'frame', 'Fundador de Magna', 'legendaria', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'legendaria', 'jackpot', 'manual']
+    ['x-fundador', 'frame', 'Fundador de Magna', 'rara', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'rara', 'jackpot', 'manual']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }; });
   var AWARD_TXT = { balon: 'Gana el Balón de Oro', campeon: 'Gana un título', dinastia: 'Gana 5 títulos', estrella: 'Sé MVP 10 veces', leyenda: 'Juega 75 partidos', hattrick: 'Marca 3 goles en un partido', perfecto: 'Saca un 10 de nota en un partido', manual: 'Lo entrega la administración', ganador: 'Gana 20 partidos', goleador: 'Marca 10 goles', canonero: 'Marca 50 goles', veterano: 'Juega 25 partidos', mvp: 'Sé MVP de un partido', elite: 'Llega a media 80' };
   // Arte oficial de los trofeos (carpeta trofeos/), en el orden de importancia de Magna
