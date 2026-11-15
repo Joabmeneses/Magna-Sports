@@ -50,7 +50,7 @@
 
   // ---------- piezas ----------
   function avOf(r, size) { if (r.t) return M.crest(r.t.id, r.t.name, size); if (r.b && !r.p) return bitsAv(r.b, size); return M.tierAv(r.p.name, r.media != null ? r.media : (MAGNA.playerStats()[r.p.id] || {}).media, size, r.p.id); }
-  function bitsAv(b, size) { var a = h('div', 'av'), fr = b.equipped && b.equipped.frame && M.item(b.equipped.frame), u = window.MAGNA_AVATAR_URL && MAGNA_AVATAR_URL(b.avatar); if (fr && fr.type === 'frame') a.classList.add('fr-' + fr.style); a.style.width = a.style.height = size + 'px';
+  function bitsAv(b, size) { var a = h('div', 'av'), fr = b.equipped && b.equipped.frame && M.item(b.equipped.frame), u = window.MAGNA_AVATAR_URL && MAGNA_AVATAR_URL(b.avatar); if (fr && fr.type === 'frame') { a.classList.add('fr-' + fr.style); if (fr.lv) a.dataset.lvi = fr.lv; } a.style.width = a.style.height = size + 'px';
     if (u) { var im = h('img'); im.src = u; im.alt = ''; a.appendChild(im); } else a.textContent = String(b.display_name || '?').slice(0, 2).toUpperCase(); return a; }
   function nameOf(r, plain) { if (r.t) return h('span', null, r.t.name); if (r.p) return M.pn(r.b ? r.b.display_name : r.p.name, r.p.id, { plain: plain }); return M.nameStyle(M.pn(r.b.display_name), r.b.equipped || {}); }
   function subOf(r) { if (r.rich) return r.pay ? 'Paga ' + fmt(r.pay) + ' Bits de sueldo por partido' : 'Aún no paga sueldos'; if (r.t) return r.pj ? r.w + 'V · ' + r.l + 'D' + (r.tro ? ' · ' + r.tro + ' 🏆' : '') : 'Sin partidos'; var p = r.p; if (!p) return 'Miembro';

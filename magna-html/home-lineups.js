@@ -11,7 +11,7 @@
   function rc(v) { return v == null ? 'na' : v >= 8 ? 'top' : v >= 6.5 ? 'good' : v >= 6 ? 'mid' : 'low'; }
   function rt(v) { return v == null ? '–' : Number(v).toFixed(1).replace('.', ','); }
   var PAV = {}; try { PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {}
-  function pav(el, pid) { var eq0 = MAGNA_COS.eqOf ? MAGNA_COS.eqOf(pid) : {}, fr0 = eq0.frame && MAGNA_COS.item(eq0.frame); if (fr0 && fr0.type === 'frame') el.classList.add('fr-' + fr0.style); var id = PAV[pid]; if (id && /^a\d\d$/.test(id)) { el.style.background = 'url("avatars/' + id + '.webp") center/cover'; el.style.color = 'transparent'; } return el; }
+  function pav(el, pid) { var eq0 = MAGNA_COS.eqOf ? MAGNA_COS.eqOf(pid) : {}, fr0 = eq0.frame && MAGNA_COS.item(eq0.frame); if (fr0 && fr0.type === 'frame') { el.classList.add('fr-' + fr0.style); if (fr0.lv) el.dataset.lvi = fr0.lv; } var id = PAV[pid]; if (id && /^a\d\d$/.test(id)) { el.style.background = 'url("avatars/' + id + '.webp") center/cover'; el.style.color = 'transparent'; } return el; }
   if (window.MAGNA_SB) window.MAGNA_SB().then(function (c) { return c.rpc('player_avatars'); }).then(function (r) { if (!r || r.error) return; var m = {}; (r.data || []).forEach(function (x) { m[x.player_id] = x.avatar; }); PAV = m; try { localStorage.setItem('magna_pav', JSON.stringify(m)); } catch (e) {} lastKey = ''; draw(); }, function () {});
   function col(tid) { return MAGNA.teamColor ? MAGNA.teamColor(tid) : '#8b5cf6'; }
   var CSS = '' +

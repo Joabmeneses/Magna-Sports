@@ -58,7 +58,7 @@
     // franja bajo la portada: avatar + insignia de media + botones cuadrados
     var mid = h('div', 'pf-mid'), av = h('div', 'pf-av'), pt = h('div', 'pf-pt'), img = M.pav(p.id) || (prof && prof.avatar && /^a\d\d$/.test(prof.avatar) ? 'avatars/' + prof.avatar + '.webp' : null);
     if (img) { var im = h('img'); im.src = img; im.alt = p.name; pt.appendChild(im); } else pt.appendChild(h('span', null, String(p.name).slice(0, 2).toUpperCase()));
-    var ptw = h('div', 'pf-ptw'), eqf = eq.frame && M.item(eq.frame); if (eqf && eqf.type === 'frame') ptw.classList.add('fr-' + eqf.style); ptw.appendChild(pt); av.appendChild(ptw);
+    var ptw = h('div', 'pf-ptw'), eqf = eq.frame && M.item(eq.frame); if (eqf && eqf.type === 'frame') { ptw.classList.add('fr-' + eqf.style); if (eqf.lv) ptw.dataset.lvi = eqf.lv; } ptw.appendChild(pt); av.appendChild(ptw);
     var T = [[0, 40, 'Plata'], [40, 60, 'Oro'], [60, 80, 'Élite'], [80, 100, 'Máximo']], seg = T.filter(function (z) { return cur >= z[0] && cur < z[1]; })[0] || T[3];
     var bdg = h('button', 'pf-bdg'); bdg.type = 'button'; bdg.setAttribute('aria-label', 'Media ' + cur + ', nivel ' + tr.name); bdg.appendChild(h('b', null, String(cur)));
     var pop = h('div', 'pf-pop'); pop.appendChild(h('b', null, 'Nivel ' + tr.name)); var xb = h('div', 'pf-xp'), xf = h('i'); xb.appendChild(xf); pop.appendChild(xb); pop.appendChild(h('small', null, cur >= 80 ? '¡Nivel máximo!' : 'Faltan ' + (seg[1] - cur) + ' pts para ' + seg[2]));
