@@ -50,6 +50,7 @@
     if (prof) { var bt = h('span', 'pf-cur'); bt.title = 'Bits'; bt.appendChild(MAGNA_BIT(20)); bt.appendChild(h('b', null, fmt(prof.bits))); top.appendChild(bt); }
     if (bo) { var bb = h('span', 'pf-cur'); bb.title = bo > 1 ? bo + ' Balones de Oro' : 'Balón de Oro'; bb.appendChild(M.trophyImg('Balón de Oro', null, 20, '')); bb.appendChild(h('b', null, '×' + bo)); top.appendChild(bb); }
     bn.appendChild(top);
+    var eqp = eq.plate && M.item(eq.plate); if (eqp && eqp.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { MAGNA_COS.banner(bn, eqp.style); bn.classList.add('pf-pl'); if (eqp.rarity === 'mitica') { var bt2 = h('span', 'pf-myb', '💎 Placa Mítica · ' + eqp.name); bn.appendChild(bt2); } }
     var nm = h('div', 'pf-nm'); if (tm) nm.appendChild(M.crest(tm.id, tm.name, 30)); var pn = M.pn(p.name, p.id, { plain: true, title: true });
     if (prof) { M.nameStyle(pn, eq); var ti = eq.title && M.item(eq.title), old = pn.querySelector('.mpn-t'); if (old) old.remove(); if (ti && ti.type === 'title') pn.appendChild(h('small', 'mpn-t tr-' + (ti.rarity || 'comun'), ti.name)); pn.removeAttribute('data-pn'); }
     nm.appendChild(pn); bn.appendChild(nm); card.appendChild(bn);

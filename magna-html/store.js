@@ -75,6 +75,15 @@ var MAGNA = (function () {
     ['t-novato', 'title', 'Novato', 'comun', 100, ''], ['t-muro', 'title', 'El Muro', 'comun', 150, ''], ['t-goleador', 'title', 'Goleador', 'rara', 300, ''], ['t-mago', 'title', 'El Mago', 'rara', 300, ''], ['t-capitan', 'title', 'Capitán', 'rara', 350, ''],
     ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'legendaria', 1500, '']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
+  // Colección Mítica: lo más premium y caro de la tienda
+  var SHOP_MITICA = [
+    ['m-c-holo', 'color', 'Holográfico', 8000, 'holo'], ['m-c-aurora', 'color', 'Aurora boreal', 9000, 'aurora'], ['m-c-lava', 'color', 'Lava fundida', 10000, 'lava'], ['m-c-diamante', 'color', 'Diamante', 12000, 'diamante'], ['m-c-oro24', 'color', 'Oro 24K', 15000, 'oro24'], ['m-c-vacio', 'color', 'Vacío', 18000, 'vacio'],
+    ['m-p-holo', 'plate', 'Placa holográfica', 10000, 'holo'], ['m-p-aurora', 'plate', 'Placa Aurora', 11000, 'aurora'], ['m-p-cosmos', 'plate', 'Placa Cosmos', 12000, 'cosmos'], ['m-p-diamante', 'plate', 'Placa de diamante', 14000, 'diamante'], ['m-p-dragon', 'plate', 'Placa del Dragón', 16000, 'dragon'], ['m-p-trono', 'plate', 'Placa del Trono', 20000, 'trono'],
+    ['m-p-navidad', 'plate', 'Placa Navidad', 18000, 'navidad'],
+    ['m-f-holo', 'frame', 'Marco holográfico', 12000, 'holo'], ['m-f-aurora', 'frame', 'Marco Aurora', 13000, 'aurora'], ['m-f-rayo', 'frame', 'Marco Rayo', 15000, 'rayo'], ['m-f-diamante', 'frame', 'Marco de diamante', 18000, 'diamante'], ['m-f-dragon', 'frame', 'Marco del Dragón', 20000, 'dragon'], ['m-f-vacio', 'frame', 'Marco del Vacío', 25000, 'vacio'],
+    ['m-f-navidad', 'frame', 'Marco Navidad', 16000, 'navidad'], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 30000, 'ouroboros'],
+    ['m-t-magnate', 'title', 'Magnate', 6000, ''], ['m-t-inmortal', 'title', 'Inmortal', 8000, ''], ['m-t-elegido', 'title', 'El Elegido', 10000, ''], ['m-t-dios', 'title', 'Dios del balón', 12000, ''], ['m-t-emperador', 'title', 'Emperador de Magna', 15000, '']
+  ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: 'mitica', price: x[3], style: x[4], active: true }; });
   // Cosméticos exclusivos: no se compran; se entregan solos al desbloquear la insignia indicada en "award" (o los da la administración si es "manual")
   var SHOP_EXCL = [
     ['x-balon-marco', 'frame', 'Marco Balón de Oro', 'legendaria', 'balon', 'balon'], ['x-balon-titulo', 'title', 'Balón de Oro', 'legendaria', '', 'balon'],
@@ -344,7 +353,7 @@ var MAGNA = (function () {
     MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
-    trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
+    trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_MITICA: SHOP_MITICA, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },

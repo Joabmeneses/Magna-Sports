@@ -43,7 +43,7 @@
       if (!x) { var mid = h('div', 'pt-mid');
         if (m.status === 'scheduled' || m.status === 'cancelled') { mid.appendChild(h('b', 'pt-vs', 'VS')); mid.appendChild(h('small', null, m.at ? M.fdt(m.at) : 'Fecha por definir')); }
         else { var sc = h('b', 'pt-sc'); sc.appendChild(h('span', W === 'h' ? 'w' : null, String(m.hs || 0))); sc.appendChild(h('i', null, '-')); sc.appendChild(h('span', W === 'a' ? 'w' : null, String(m.as || 0))); mid.appendChild(sc);
-          var ck = h('small', 'pt-ck', live ? MAGNA.liveClock(m) + " · min " + MAGNA.liveMinute(m) : (m.at ? M.fdt(m.at) : '')); mid.appendChild(ck);
+          var ck = h('small', 'pt-ck', live ? MAGNA.liveClock(m) + " · min " + MAGNA.liveMinute(m) : (m.at ? M.fdt(m.at) : '')); mid.appendChild(ck); if (fin && m.wo) mid.appendChild(h('small', 'pt-wo', '🏳️ Victoria por W · ' + nm(m.wo === 'h' ? m.home : m.away)));
           if (live && L.clock && L.clock.run) { clearInterval(TK); TK = setInterval(function () { if (!document.body.contains(ck)) return clearInterval(TK); ck.textContent = MAGNA.liveClock(m) + ' · min ' + MAGNA.liveMinute(m); }, 1000); } }
         if (m.sets && m.sets.length) { var ss = MAGNA.setScore(m); mid.appendChild(h('em', 'pt-sets', 'Sets ' + ss.h + ' - ' + ss.a)); }
         sb.appendChild(mid); return; }

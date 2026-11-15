@@ -8,11 +8,11 @@ window.MAGNA_COS = (function () {
   // Cosméticos equipados (color de nombre, placa, marco del avatar, título) de cada jugador con cuenta
   var COS = {}; try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; } catch (e) {}
   var STY = {
-    color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz' },
-    plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía' },
-    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador' },
+    color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz', holo: 'Holográfico', lava: 'Lava fundida', aurora: 'Aurora boreal', diamante: 'Diamante', oro24: 'Oro 24K', vacio: 'Vacío' },
+    plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía', holo: 'Holográfica', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', trono: 'Trono', cosmos: 'Cosmos', navidad: 'Navidad' },
+    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad' },
     title: {} };
-  var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria' };
+  var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria', mitica: 'Mítica' };
   function item(id) { var L = (window.MAGNA && MAGNA.S && MAGNA.S.shop) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
   function eqOf(pid) { var c = pid != null && COS[pid]; return (c && c.eq) || {}; }
   function styleOf(eq, k) { var it = eq && eq[k] ? item(eq[k]) : null; return it && it.type === k ? it : null; }
@@ -23,8 +23,17 @@ window.MAGNA_COS = (function () {
   function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (c && STY.color[c.style]) el.classList.add('c-' + c.style); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
   function paintName(el) { nameStyle(el, eqOf(el.dataset.pn)); if (el.classList.contains('in-plh')) clsRm(el, 'pl-'); var t = el.querySelector('.mpn-t'), ti = styleOf(eqOf(el.dataset.pn), 'title'); if (el.dataset.ttl) { if (ti) { if (!t) { t = h('small', 'mpn-t'); el.appendChild(t); } t.textContent = ti.name; t.className = 'mpn-t tr-' + (ti.rarity || 'comun'); } else if (t) t.remove(); } }
   // fila "anfitriona" de una placa: el contenedor con data-plh="<id del jugador>" se viste con su placa y el nombre de adentro va sin cajita
-  function host(el) { var pid = el.dataset.plh; clsRm(el, 'pl-'); el.classList.remove('plh'); var pl = styleOf(eqOf(pid), 'plate');
-    if (pl && STY.plate[pl.style]) { el.classList.add('plh', 'pl-' + pl.style); [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); } }
+  function host(el) { var pid = el.dataset.plh; clsRm(el, 'pl-'); el.classList.remove('plh', 'pbn-my', 'pbn-lite'); var oz = el.querySelector(':scope>.pbx'); if (oz) oz.remove(); var pl = styleOf(eqOf(pid), 'plate');
+    if (pl && STY.plate[pl.style]) { el.classList.add('plh', 'pl-' + pl.style); var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); if (MYP[pl.style]) { banner(el, pl.style, { lite: true }); el.classList.remove('pbn'); } [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); } }
+  // banner grande de placa (portada del perfil, vitrina de la tienda): el arte de la placa a lo ancho + efectos animados en las míticas
+  var MYP = { holo: 1, diamante: 1, dragon: 1, aurora: 1, trono: 1, cosmos: 1, navidad: 1 };
+  function banner(el, style, o) { o = o || {}; clsRm(el, 'pl-'); el.classList.remove('pbn', 'pbn-my', 'pbn-lite'); var old = el.querySelector(':scope>.pbx'); if (old) old.remove();
+    if (!style || !STY.plate[style]) return el;
+    el.classList.add('pbn', 'pl-' + style); if (o.lite) el.classList.add('pbn-lite'); var fx = h('div', 'pbx'); fx.setAttribute('aria-hidden', 'true'); fx.appendChild(h('i', 'pba'));
+    if (MYP[style]) { el.classList.add('pbn-my'); ['pbr', 'pbg', 'pbw'].forEach(function (c) { fx.appendChild(h('i', c)); });
+      var n = o.lite ? 7 : 16; for (var k = 0; k < n; k++) { var p = h('i', 'pbp'); p.style.cssText = '--x:' + ((k * 37 + 11) % 100) + '%;--y:' + ((k * 53 + 7) % 100) + '%;--d:-' + ((k * .71) % 4).toFixed(2) + 's;--t:' + (2.6 + (k % 5) * .7).toFixed(1) + 's;--z:' + (.6 + (k % 4) * .3).toFixed(1); fx.appendChild(p); }
+      if (!o.lite) for (k = 0; k < 2; k++) { var st = h('i', 'pbs'); st.style.cssText = '--d:-' + (k * 3.3) + 's;--y:' + (8 + k * 22) + '%'; fx.appendChild(st); } }
+    el.insertBefore(fx, el.firstChild); return el; }
   function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); }
   function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_cosmetics').then(function (r) { return r && !r.error ? r : c.rpc('player_avatars'); }); }).then(function (r) { if (!r || r.error) return; var m = {}, cm = {};
       (r.data || []).forEach(function (x) { if (x.avatar) m[x.player_id] = x.avatar; cm[x.player_id] = { eq: x.equipped || {} }; }); PAV = m; COS = cm; try { localStorage.setItem('magna_pav', JSON.stringify(m)); localStorage.setItem('magna_cos', JSON.stringify(cm)); } catch (e) {} repaint(); try { window.dispatchEvent(new Event('magna:cosloaded')); } catch (e) {} }, function () {}); }
@@ -57,7 +66,7 @@ window.MAGNA_COS = (function () {
   if (document.body) fx(); else document.addEventListener('DOMContentLoaded', fx);
   // Más liviano: los cosméticos animados que no están en pantalla se pausan (y se reanudan al volver a verse)
   var io = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('cos-off', !e.isIntersecting); }); }, { rootMargin: '120px' }) : null, seen = window.WeakSet ? new WeakSet() : null, wT = null;
-  var SEL = '[class*="fr-"],.mpn[class*="c-"],.mpn[class*="pl-"],.mpn-t.tr-legendaria,.mpn-t.tr-epica';
+  var SEL = '[class*="fr-"],.mpn[class*="c-"],.mpn[class*="pl-"],.mpn-t.tr-legendaria,.mpn-t.tr-epica,.mpn-t.tr-mitica,.pbn-my';
   function watch() { wT = null; if (!io || !seen) return; [].forEach.call(document.querySelectorAll(SEL), function (el) { if (!seen.has(el)) { seen.add(el); io.observe(el); } }); }
   function soon() { if (!wT) wT = setTimeout(watch, 350); }
   if (io && window.MutationObserver) { var startW = function () { watch(); new MutationObserver(soon).observe(document.body, { childList: true, subtree: true }); }; if (document.body) startW(); else document.addEventListener('DOMContentLoaded', startW); }
@@ -66,5 +75,5 @@ window.MAGNA_COS = (function () {
   // tocar un avatar de jugador abre su perfil (fuera del panel de administración)
   if (!/admin\.html$/.test(location.pathname)) document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('.tav[data-pid]'); if (!t || e.defaultPrevented || t.closest('a,button,[data-nolink],.ov')) return; location.href = profileUrl(t.dataset.pid); });
   if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
-  return { host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
+  return { banner: banner, MYTHIC_PLATES: MYP, host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
 })();

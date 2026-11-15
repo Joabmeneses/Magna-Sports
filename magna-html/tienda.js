@@ -4,7 +4,7 @@
   var h = M.h, I = MAGNA_INV, root = document.getElementById('tn'), acc = null, inv = null, busy = false, ready = false;
   var tab = (location.hash || '').slice(1) || 'all', q = '', sort = 'rar', afford = false;
   var TABS = [['all', '✨', 'Todo'], ['color', '🎨', 'Colores'], ['plate', '🏷️', 'Placas'], ['frame', '🖼️', 'Marcos'], ['title', '🔤', 'Títulos'], ['excl', '🔒', 'Exclusivos'], ['wish', '❤️', 'Deseos'], ['own', '🎒', 'Lo mío']];
-  var RO = { comun: 0, rara: 1, epica: 2, legendaria: 3 }, ICO = { color: '🎨', plate: '🏷️', frame: '🖼️', title: '🔤' };
+  var RO = { comun: 0, rara: 1, epica: 2, legendaria: 3, mitica: 4 }, ICO = { color: '🎨', plate: '🏷️', frame: '🖼️', title: '🔤' };
   if (!TABS.some(function (t) { return t[0] === tab; })) tab = 'all';
 
   // ---------- datos ----------
@@ -40,6 +40,7 @@
     var c = h('div', 'ts-c r-' + (it.rarity || 'comun') + (it.exclusive ? ' x' : '') + (owned(it.id) ? ' mine' : '')); c.style.animationDelay = Math.min(i, 16) * 35 + 'ms'; c.dataset.tilt = '8';
     var art = h('button', 'art'); art.type = 'button'; art.setAttribute('aria-label', 'Ver ' + it.name); art.onclick = function () { view(it); };
     art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id));
+    if (it.type === 'plate' && it.rarity === 'mitica' && window.MAGNA_COS && MAGNA_COS.banner) { MAGNA_COS.banner(art, it.style, { lite: true }); art.classList.add('art-bn'); }
     art.appendChild(h('span', 'rr', (M.RAR[it.rarity] || 'Común')));
     if (owned(it.id)) art.appendChild(h('span', 'ok', equipped(it) ? '✓ Puesto' : '✓ Tuyo'));
     var wn = (W[it.id] || []).length; if (wn) art.appendChild(h('span', 'wr', '👥 ' + wn));
@@ -54,7 +55,7 @@
   // ---------- portada ----------
   var cdT = null, countEls = {};
   function hero() {
-    var L = forSale(), C = L.filter(function (x) { return x.rarity === 'legendaria' || x.rarity === 'epica'; }), day = Math.floor(Date.now() / 864e5), next = (day + 1) * 864e5;
+    var L = forSale(), C = L.filter(function (x) { return x.rarity === 'mitica' || x.rarity === 'legendaria' || x.rarity === 'epica'; }), day = Math.floor(Date.now() / 864e5), next = (day + 1) * 864e5;
     var a = C[day % (C.length || 1)], b2 = C[(day * 7 + 3) % (C.length || 1)]; if (b2 === a) b2 = C[(C.indexOf(a) + 1) % C.length];
     var s = h('section', 'ts-h'), l = h('div', 'l');
     l.appendChild(h('div', 'ey', '🛍️ Tienda · Magna Arena'));
@@ -143,6 +144,28 @@
       var rt = h('span', 'rt'), wn = (W[it.id] || []).length; rt.appendChild(h('em', wn ? 'up' : '', wn ? '👥 ' + wn + (wn === 1 ? ' lo usa' : ' lo usan') : 'Nuevo')); rt.appendChild(bits(it.price, 14)); r.appendChild(rt); g.appendChild(r); });
     s.appendChild(g); return s;
   }
+  // vitrina premium: la Colección Mítica, aparte y con su propio estilo
+  function mythic() { var C = forSale().filter(function (x) { return x.rarity === 'mitica'; }).sort(function (a, b) { return a.price - b.price; }); if (!C.length) return null;
+    var s = h('section', 'ts-s ts-my'), hd = h('div', 'ts-sh c'), tx = h('div'); tx.appendChild(h('span', 'my-ey', '💎 Nuevo · Edición limitada')); tx.appendChild(h('h2', null, 'Colección Mítica')); tx.appendChild(h('p', null, 'Lo más exclusivo de Magna Arena. Brillan, se mueven y se ven desde lejos. Solo para quien de verdad tenga Bits.')); hd.appendChild(tx); s.appendChild(hd);
+    var spot = spotlight(C.filter(function (x) { return x.type === 'plate'; })); if (spot) s.appendChild(spot);
+    var tabs = h('div', 'my-tb'), cur = 'all', wr = h('div', 'ts-car'), tr = h('div', 'trk'), W = wearMap();
+    function fill() { tr.innerHTML = ''; C.filter(function (x) { return cur === 'all' || x.type === cur; }).forEach(function (it, i) { tr.appendChild(card(it, i, W)); }); tr.scrollLeft = 0; }
+    [['all', 'Todo'], ['color', '🎨 Nombres'], ['plate', '🏷️ Placas'], ['frame', '🖼️ Marcos'], ['title', '🔤 Títulos']].forEach(function (t) { if (t[0] !== 'all' && !C.some(function (x) { return x.type === t[0]; })) return; var b = h('button', t[0] === cur ? 'on' : null, t[1]); b.type = 'button'; b.onclick = function () { cur = t[0]; [].forEach.call(tabs.children, function (y) { y.classList.toggle('on', y === b); }); fill(); }; tabs.appendChild(b); });
+    s.appendChild(tabs); fill(); wr.appendChild(tr);
+    ['‹', '›'].forEach(function (a, k) { var b = h('button', 'ts-ar ' + (k ? 'nx' : 'pv'), a); b.type = 'button'; b.setAttribute('aria-label', k ? 'Siguiente' : 'Anterior'); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.min(tr.clientWidth * .8, 600), behavior: 'smooth' }); }; wr.appendChild(b); });
+    s.appendChild(wr); return s; }
+  // vitrina grande: las placas míticas como portada de perfil, rotando solas
+  function spotlight(P) { if (!P.length || !window.MAGNA_COS || !MAGNA_COS.banner) return null;
+    var w = h('div', 'my-sp'), bn = h('div', 'my-bn'), inf = h('div', 'my-in'), dots = h('div', 'my-dt'), i = 0, T = null, nm = acc ? acc.display_name : 'Tu nombre';
+    var big = h('div', 'my-nm'), lb = h('span', 'my-lb'), tt = h('b', 'my-tt'), pr = h('div', 'my-pr'), go = btn('big', '💎 Ver placa', function () { view(P[i]); });
+    inf.appendChild(lb); inf.appendChild(big); inf.appendChild(tt); inf.appendChild(pr); inf.appendChild(go); bn.appendChild(inf); w.appendChild(bn);
+    P.forEach(function (it, k) { var d = h('button', null); d.type = 'button'; d.setAttribute('aria-label', it.name); d.onclick = function () { show(k); auto(); }; dots.appendChild(d); }); w.appendChild(dots);
+    function show(k) { i = (k + P.length) % P.length; var it = P[i]; MAGNA_COS.banner(bn, it.style); bn.classList.remove('in'); void bn.offsetWidth; bn.classList.add('in');
+      lb.textContent = 'Así se verá tu perfil'; big.textContent = nm; tt.textContent = it.name; pr.innerHTML = ''; pr.appendChild(bits(it.price)); if (owned(it.id)) pr.appendChild(h('span', 'ok', '✓ Ya es tuya'));
+      [].forEach.call(dots.children, function (d, j) { d.classList.toggle('on', j === i); }); }
+    function auto() { clearInterval(T); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; T = setInterval(function () { if (!document.hidden && document.body.contains(w)) show(i + 1); }, 5000); }
+    bn.onmouseenter = function () { clearInterval(T); }; bn.onmouseleave = auto;
+    show(0); auto(); return w; }
   function trend() {
     var C = forSale().filter(function (x) { return x.rarity === 'legendaria'; }); if (C.length < 3) C = forSale().filter(function (x) { return x.rarity !== 'comun'; }); if (!C.length) return null;
     var s = h('section', 'ts-s ts-tn'), hd = h('div', 'ts-sh c'); hd.appendChild(h('h2', null, 'Legendarios en tendencia ⚡')); s.appendChild(hd);
@@ -157,7 +180,7 @@
   function view(it) {
     M.modal(function (b, close) { var w = h('div', 'cf r-' + (it.rarity || 'comun')), own = owned(it.id), on = own && equipped(it), W = wearMap()[it.id] || [];
       var tp = h('div', 'cf-t'); tp.appendChild(h('span', 'rr', M.RAR[it.rarity] || 'Común')); tp.appendChild(h('span', null, ICO[it.type] + ' ' + M.KIND[it.type])); w.appendChild(tp);
-      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); w.appendChild(ctx(it));
+      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); if (it.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { var vb = h('div', 'cf-bn'); vb.appendChild(h('small', null, 'Portada de tu perfil')); vb.appendChild(h('b', null, acc ? acc.display_name : 'Tu nombre')); MAGNA_COS.banner(vb, it.style); w.appendChild(vb); } w.appendChild(ctx(it));
       if (W.length) { var wr = h('div', 'cf-w'), av = h('div', 'avs'); W.slice(0, 5).forEach(function (pid) { av.appendChild(M.tierAv(pname(pid), null, 30, pid)); }); wr.appendChild(av); wr.appendChild(h('span', null, W.length === 1 ? 'Lo lleva ' + pname(W[0]) : 'Lo llevan ' + W.length + ' jugadores')); w.appendChild(wr); }
       if (it.exclusive) w.appendChild(h('p', 'sub', '🔒 ' + (MAGNA.AWARD_TXT[it.award] || 'Exclusivo: lo entrega la administración.')));
       var r2 = h('div', 'r'), no = btn('ghost', own || it.exclusive ? 'Cerrar' : 'Cancelar', close); r2.appendChild(no);
@@ -205,7 +228,7 @@
     if (!I.shop().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
     root.appendChild(hero()); root.appendChild(band());
     if (acc && inv) { var me = h('div', 'ts-me'); me.appendChild(h('small', null, 'Así te ven los demás')); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }
-    root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
+    var my = mythic(); if (my) root.appendChild(my); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
     window.scrollTo(0, y);
   }
   function boot() { render();
