@@ -529,7 +529,7 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
    Nv.3 Materia oscura: la tinta sale del centro y se traga el avatar, abre los OJOS, mira a todos lados, parpadea…
         y EXPLOTA en salpicaduras; el avatar reaparece partido en colores (glitch) */
 .fr-blackmatter{animation:none!important;box-shadow:0 0 .3em rgba(0,0,0,.6)}
-.fr-blackmatter:after,.fr-blackmatter:before{inset:-16%!important;-webkit-mask:none!important;mask:none!important;filter:drop-shadow(0 0 1.5px rgba(255,255,255,.45))!important;opacity:1!important;z-index:3!important}
+.fr-blackmatter:after,.fr-blackmatter:before{inset:-16%!important;-webkit-mask:none!important;mask:none!important;filter:drop-shadow(0 0 1px rgba(255,255,255,.25))!important;opacity:1!important;z-index:3!important}
 .fr-blackmatter:after{background:url("fx/bm-anillo1.svg") center/100% 100% no-repeat!important;animation:frSpin 20s linear infinite,bmB1 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite!important}
 .fr-blackmatter:before{background:url("fx/bm-anillo2.svg") center/100% 100% no-repeat!important;animation:frSpin 20s linear infinite,bmB2 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite!important}
 @keyframes bmBeat{0%{scale:1.035}35%{scale:.995}100%{scale:1}}
@@ -545,55 +545,60 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fr-blackmatter:not([data-lv="1"])>.fxm .o1{display:block!important;inset:0;border-radius:0;background:url("fx/bm-goteo.svg") center/100% 100% no-repeat;animation:none;z-index:2}
 .fr-blackmatter:not([data-lv="1"])>.fxm .o2{display:block!important;inset:0;border-radius:0;background:url("fx/bm-salpicadura.svg") center/100% 100% no-repeat;opacity:0;animation:bmSplat 3s cubic-bezier(.2,1.4,.5,1) infinite;z-index:3}
 @keyframes bmSplat{0%,62%{opacity:0;transform:scale(.86) rotate(0)}66%{opacity:1;transform:scale(1.02) rotate(8deg)}82%{opacity:1;transform:scale(1) rotate(8deg)}92%,100%{opacity:0;transform:scale(1.04) rotate(8deg)}}
-.fr-blackmatter:not([data-lv="1"])>.fxm .sx{display:block!important;inset:10%;border-radius:50%;overflow:hidden;background:url("fx/bm-glitch.svg") center/100% 100% no-repeat;opacity:0;animation:bmGl 2.6s steps(1) infinite;z-index:6}
+.fr-blackmatter:not([data-lv="1"])>.fxm .sx{display:block!important;inset:10%;border-radius:50%;overflow:hidden;background:url("fx/bm-glitch.svg") center/100% 100% no-repeat;opacity:0;animation:bmGl 5s steps(1) infinite;z-index:6}
 @keyframes bmGl{0%,80%{opacity:0;transform:translateX(0) scaleY(1)}81%{opacity:1;transform:translateX(-6%) scaleY(1)}83%{opacity:.8;transform:translateX(5%) scaleY(-1)}85%{opacity:1;transform:translateX(-3%) scaleY(1)}87%,100%{opacity:0}}
 .fr-blackmatter:not([data-lv="1"])>.fxm .au{animation:frSpin 20s linear infinite,bmB3 .42s steps(1) infinite,bmJit 2.6s steps(1) infinite}
 /* Nv.3 · la materia oscura se traga el avatar (ciclo de 10 s) */
 .fr-blackmatter[data-lv="3"]>.fxm{background-image:inherit;background-size:0 0;background-repeat:no-repeat}
-.fr-blackmatter[data-lv="3"]>.fxm .gem{display:block!important;left:9%;top:9%;width:82%!important;height:82%!important;margin:0!important;border-radius:50%;clip-path:none;background:url("fx/bm-gota.svg") center/100% 100% no-repeat!important;opacity:0;transform:scale(0) rotate(0);animation:bmBlob 9s cubic-bezier(.3,1.3,.5,1) infinite!important;z-index:4}
-@keyframes bmBlob{0%,28%{opacity:0;transform:scale(.6) rotate(0)}32%{opacity:1;transform:scale(1.04) rotate(-6deg)}40%{transform:scale(.98) rotate(3deg)}50%{transform:scale(1.01) rotate(-2deg)}60%{transform:scale(.98) rotate(2deg)}69%{opacity:1;transform:scale(.9) rotate(0)}72%{opacity:1;transform:scale(1.18) rotate(0)}75%,100%{opacity:0;transform:scale(1.3) rotate(0)}}
-.fr-blackmatter[data-lv="3"]>.fxm .o3{display:block!important;inset:31% 15% auto 15%;height:34%;border-radius:0;background:url("fx/bm-ojos.svg") center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(255,30,30,.75));opacity:0;animation:bmEyes 9s ease-out infinite;z-index:5}
-@keyframes bmEyes{0%,34%{opacity:0;transform:scale(.9,.02)}38%{opacity:1;transform:scale(1.08,1.1)}41%{transform:scale(1)}66%{opacity:1;transform:scale(1)}68%{opacity:1;transform:scale(1.25,.15)}70%,100%{opacity:0;transform:scale(1.2,.05)}}
-.fr-blackmatter[data-lv="3"]>.fxm .b2{display:block!important;inset:-2%;border-radius:0;-webkit-mask:none;mask:none;background:url("fx/bm-explosion.svg") center/100% 100% no-repeat;opacity:0;animation:bmBoom 9s cubic-bezier(.15,.8,.3,1) infinite;z-index:6}
-@keyframes bmBoom{0%,71%{opacity:0;transform:scale(.5) rotate(0)}73%{opacity:1;transform:scale(.8) rotate(0)}82%{opacity:1;transform:scale(1) rotate(12deg)}92%,100%{opacity:0;transform:scale(1.03) rotate(14deg)}}
-.fr-blackmatter[data-lv="3"]>.fxm .bu{display:block!important;inset:12.1%;border:0;border-radius:50%;background-image:inherit;background-size:cover;background-position:center;background-color:#ff1fd1;background-blend-mode:multiply;mix-blend-mode:screen;opacity:0;animation:bmGhost 9s steps(1) infinite;z-index:3}
-@keyframes bmGhost{0%,72%{opacity:0;translate:0 0}73%{opacity:.85;translate:-6% 0}75%{translate:5% 2%}77%{translate:-4% -2%}79%{opacity:.6;translate:3% 0}81%{translate:-2% 1%}83%{opacity:.4;translate:1% 0}85%,100%{opacity:0;translate:0 0}}
-.fr-blackmatter[data-lv="3"]>.fxm .sx{animation:bmGl3 9s steps(1) infinite}
-@keyframes bmGl3{0%,13%{opacity:0}14%{opacity:1;transform:translateX(-6%)}15%{opacity:.8;transform:translateX(5%) scaleY(-1)}16%{opacity:0}70%{opacity:0}71%{opacity:1;transform:translateX(-5%)}73%{opacity:.9;transform:translateX(6%) scaleY(-1)}75%{opacity:1;transform:translateX(-2%)}77%{opacity:.7;transform:translateX(4%) scaleY(-1)}79%,100%{opacity:0}}
+.fr-blackmatter[data-lv="3"]>.fxm .gem{display:block!important;left:9%;top:9%;width:82%!important;height:82%!important;margin:0!important;border-radius:50%;clip-path:none;background:url("fx/bm-gota.svg") center/100% 100% no-repeat!important;opacity:0;transform:scale(0) rotate(0);animation:bmBlob 14s cubic-bezier(.3,1.3,.5,1) infinite!important;z-index:4}
+@keyframes bmBlob{0%,17%{opacity:0;transform:scale(.6) rotate(0)}20%{opacity:1;transform:scale(1.04) rotate(-6deg)}26%{transform:scale(.98) rotate(3deg)}33%{transform:scale(1.01) rotate(-2deg)}39%{opacity:1;transform:scale(.9) rotate(0)}41%{opacity:1;transform:scale(1.18) rotate(0)}43%,100%{opacity:0;transform:scale(1.3) rotate(0)}}
+.fr-blackmatter[data-lv="3"]>.fxm .o3{display:block!important;inset:31% 15% auto 15%;height:34%;border-radius:0;background:url("fx/bm-ojos.svg") center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(255,30,30,.75));opacity:0;animation:bmEyes 14s ease-out infinite;z-index:5}
+@keyframes bmEyes{0%,21%{opacity:0;transform:scale(.9,.02)}24%{opacity:1;transform:scale(1.08,1.1)}26%{transform:scale(1)}37%{opacity:1;transform:scale(1)}38.5%{opacity:1;transform:scale(1.25,.15)}40%,100%{opacity:0;transform:scale(1.2,.05)}}
+.fr-blackmatter[data-lv="3"]>.fxm .b2{display:block!important;inset:-2%;border-radius:0;-webkit-mask:none;mask:none;background:url("fx/bm-explosion.svg") center/100% 100% no-repeat;opacity:0;animation:bmBoom 14s cubic-bezier(.15,.8,.3,1) infinite;z-index:6}
+@keyframes bmBoom{0%,40%{opacity:0;transform:scale(.5) rotate(0)}42%{opacity:1;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1) rotate(12deg)}58%,100%{opacity:0;transform:scale(1.03) rotate(14deg)}}
+.fr-blackmatter[data-lv="3"]>.fxm .bu{display:block!important;inset:12.1%;border:0;border-radius:50%;background-image:inherit;background-size:cover;background-position:center;background-color:#ff1fd1;background-blend-mode:multiply;mix-blend-mode:screen;opacity:0;animation:bmGhost 14s steps(1) infinite;z-index:3}
+@keyframes bmGhost{0%,41%{opacity:0;translate:0 0}42%{opacity:.85;translate:-6% 0}44%{translate:5% 2%}46%{translate:-4% -2%}48%{opacity:.6;translate:3% 0}50%{translate:-2% 1%}52%{opacity:.4;translate:1% 0}54%,100%{opacity:0;translate:0 0}}
+.fr-blackmatter[data-lv="3"]>.fxm .sx{animation:bmGl3 14s steps(1) infinite}
+@keyframes bmGl3{0%,7%{opacity:0}8%{opacity:1;transform:translateX(-6%)}9%{opacity:.8;transform:translateX(5%) scaleY(-1)}10%{opacity:0}40%{opacity:0}41%{opacity:1;transform:translateX(-5%)}43%{opacity:.9;transform:translateX(6%) scaleY(-1)}45%{opacity:1;transform:translateX(-2%)}47%{opacity:.7;transform:translateX(4%) scaleY(-1)}49%,100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){.fr-blackmatter:after,.fr-blackmatter:before,.fr-blackmatter>.fxm *{animation:none!important}.fr-blackmatter:before,.fr-blackmatter>.fxm .au,.fr-blackmatter>.fxm .o2,.fr-blackmatter>.fxm .sx,.fr-blackmatter>.fxm .gem,.fr-blackmatter>.fxm .o3,.fr-blackmatter>.fxm .b2,.fr-blackmatter>.fxm .bu{display:none!important}}
 
 /* Black Matter · llama azul y ondas de sonido */
-.fr-blackmatter>.fxm .w1,.fr-blackmatter>.fxm .w2{display:block!important;inset:0;border-radius:0;background:url("fx/bm-flama1.svg") center/100% 100% no-repeat;transform-origin:50% 50%;filter:drop-shadow(0 0 3px rgba(34,211,238,.8));z-index:0;animation:frSpin 14s linear infinite,bmFl1 .36s steps(1) infinite,bmFlS 1.6s ease-in-out infinite}
+.fr-blackmatter>.fxm .w1,.fr-blackmatter>.fxm .w2{display:block!important;inset:4%;border-radius:0;background:url("fx/bm-flama1.svg") center/100% 100% no-repeat;transform-origin:50% 50%;filter:drop-shadow(0 0 3px rgba(34,211,238,.6));z-index:0;animation:frSpin 14s linear infinite,bmFl1 .36s steps(1) infinite,bmFlS 1.6s ease-in-out infinite}
 .fr-blackmatter>.fxm .w2{background-image:url("fx/bm-flama2.svg");animation:frSpin 14s linear infinite,bmFl2 .36s steps(1) infinite,bmFlS 1.6s ease-in-out infinite}
-@keyframes bmFl1{0%{opacity:1}50%,100%{opacity:0}}
-@keyframes bmFl2{0%{opacity:0}50%,100%{opacity:1}}
+@keyframes bmFl1{0%{opacity:.6}50%,100%{opacity:0}}
+@keyframes bmFl2{0%{opacity:0}50%,100%{opacity:.6}}
 @keyframes bmFlS{0%,100%{scale:.94}50%{scale:1}}
 .fr-blackmatter[data-lv="1"]>.fxm .w1,.fr-blackmatter[data-lv="1"]>.fxm .w2{scale:.93;animation:frSpin 14s linear infinite,bmFl1 .5s steps(1) infinite}
 .fr-blackmatter[data-lv="1"]>.fxm .w2{animation:frSpin 14s linear infinite,bmFl2 .5s steps(1) infinite}
 /* ondas que salen con cada golpe (todos los niveles) */
 .fr-blackmatter>.fxm .o1{display:block!important;inset:0;border-radius:0;background:none;animation:none;z-index:2}
 .fr-blackmatter:not([data-lv="1"])>.fxm .o1{background:url("fx/bm-goteo.svg") center/100% 100% no-repeat}
-.fr-blackmatter>.fxm .o1:before,.fr-blackmatter>.fxm .o1:after{display:block!important;content:"";position:absolute;inset:11%;margin:0;width:auto;height:auto;top:11%;left:11%;background:none;border-radius:50%;border:2px solid #00e5ff;box-shadow:0 0 6px #00e5ff,inset 0 0 6px #ff1fd1;opacity:0;animation:bmWave 1s cubic-bezier(.1,.7,.3,1) infinite}
-.fr-blackmatter>.fxm .o1:after{border-color:#ff1fd1;box-shadow:0 0 6px #ff1fd1,inset 0 0 6px #00e5ff;animation-delay:.5s}
-@keyframes bmWave{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.32)}}
+.fr-blackmatter>.fxm .o1:before,.fr-blackmatter>.fxm .o1:after{display:block!important;content:"";position:absolute;inset:11%;margin:0;width:auto;height:auto;top:11%;left:11%;background:none;border-radius:50%;border:1px solid #00e5ff;box-shadow:0 0 4px #00e5ff;opacity:0;animation:bmWave 1s cubic-bezier(.1,.7,.3,1) infinite}
+.fr-blackmatter>.fxm .o1:after{border-color:#ff1f8f;box-shadow:0 0 4px #ff1f8f;animation-delay:.5s}
+@keyframes bmWave{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(1.26)}}
 /* Nv.2 y Nv.3: ecualizador que baila por dentro del borde */
-.fr-blackmatter:not([data-lv="1"])>.fxm .w3{display:block!important;inset:0;border-radius:0;background:url("fx/bm-eq1.svg") center/100% 100% no-repeat;animation:frSpin 30s linear infinite reverse;z-index:3}
+.fr-blackmatter:not([data-lv="1"])>.fxm .w3{display:block!important;inset:0;border-radius:0;background:url("fx/bm-eq1.svg") center/100% 100% no-repeat;opacity:.55;animation:frSpin 30s linear infinite reverse;z-index:3}
 .fr-blackmatter:not([data-lv="1"])>.fxm .w3:before,.fr-blackmatter:not([data-lv="1"])>.fxm .w3:after{display:block!important;content:"";position:absolute;inset:0;background:url("fx/bm-eq2.svg") center/100% 100% no-repeat;opacity:0;animation:bmEq1 .5s steps(1) infinite}
 .fr-blackmatter:not([data-lv="1"])>.fxm .w3:after{background-image:url("fx/bm-eq3.svg");animation:bmEq2 1s steps(1) infinite}
 @keyframes bmEq1{0%{opacity:1}25%{opacity:0}50%{opacity:1}62%,100%{opacity:0}}
 @keyframes bmEq2{0%{opacity:1}12%{opacity:0}50%{opacity:1}56%{opacity:0}75%{opacity:1}80%,100%{opacity:0}}
 /* Nv.3: más fuego, el ecualizador se vuelve loco y la llama estalla con la explosión */
-.fr-blackmatter[data-lv="3"]>.fxm .w1,.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl1 .24s steps(1) infinite,bmFl3 9s ease-out infinite}
-.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl2 .24s steps(1) infinite,bmFl3 9s ease-out infinite}
-@keyframes bmFl3{0%,12%{scale:1}30%{scale:.9}69%{scale:.92}72%{scale:1.14}82%{scale:1.04}100%{scale:1}}
+.fr-blackmatter[data-lv="3"]>.fxm .w1,.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl1 .24s steps(1) infinite,bmFl3 14s ease-out infinite}
+.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl2 .24s steps(1) infinite,bmFl3 14s ease-out infinite}
+@keyframes bmFl3{0%,8%{scale:1}18%{scale:.9}39%{scale:.92}41%{scale:1.14}50%{scale:1.04}60%,100%{scale:1}}
 .fr-blackmatter[data-lv="3"]>.fxm .w3:before{animation-duration:.3s}.fr-blackmatter[data-lv="3"]>.fxm .w3:after{animation-duration:.6s}
-.fr-blackmatter[data-lv="3"]>.fxm .o1:before,.fr-blackmatter[data-lv="3"]>.fxm .o1:after{border-width:3px}
+.fr-blackmatter[data-lv="3"]>.fxm .o1:before,.fr-blackmatter[data-lv="3"]>.fxm .o1:after{border-width:1.5px}
 @media(prefers-reduced-motion:reduce){.fr-blackmatter>.fxm .w1,.fr-blackmatter>.fxm .w2,.fr-blackmatter>.fxm .w3,.fr-blackmatter>.fxm .w3:before,.fr-blackmatter>.fxm .w3:after{animation:none!important}.fr-blackmatter>.fxm .w2,.fr-blackmatter>.fxm .o1:before,.fr-blackmatter>.fxm .o1:after{display:none!important}}
 
 /* Black Matter · la tinta se derrite */
 .fr-blackmatter>.fxm .w4{display:block!important;inset:0;border-radius:0;background:url("fx/bm-derrite.svg") center/100% 100% no-repeat;z-index:3}
 .fr-blackmatter[data-lv="1"]>.fxm .w4{-webkit-mask:linear-gradient(transparent 55%,#000 70%);mask:linear-gradient(transparent 55%,#000 70%)}
 .fr-blackmatter:not([data-lv="1"])>.fxm .w5{display:block!important;inset:0;border-radius:0;background:url("fx/bm-charco.svg") center/100% 100% no-repeat;z-index:3}
-.fr-blackmatter[data-lv="3"]>.fxm .w6{display:block!important;inset:12.1%;border-radius:50%;overflow:hidden;background:url("fx/bm-cortina.svg") center top/100% 100% no-repeat;transform-origin:50% 0;opacity:0;animation:bmMelt 9s cubic-bezier(.5,0,.6,1) infinite;z-index:4}
-@keyframes bmMelt{0%,12%{opacity:1;transform:scaleY(0)}30%{opacity:1;transform:scaleY(1.05)}34%,100%{opacity:0;transform:scaleY(1.05)}}
+.fr-blackmatter[data-lv="3"]>.fxm .w6{display:block!important;inset:12.1%;border-radius:50%;overflow:hidden;background:url("fx/bm-cortina.svg") center top/100% 100% no-repeat;transform-origin:50% 0;opacity:0;animation:bmMelt 14s cubic-bezier(.5,0,.6,1) infinite;z-index:4}
+@keyframes bmMelt{0%,8%{opacity:1;transform:scaleY(0)}18%{opacity:1;transform:scaleY(1.05)}21%,100%{opacity:0;transform:scaleY(1.05)}}
+
+/* Black Matter · versión fiel a la idea: lo protagonista es la tinta que hierve con su borde de colores */
+.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w1,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w2,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w3,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w5,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w6,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .sx,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .o1:before,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .o1:after{display:none!important}
+.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w4{display:none!important}
+.fr-blackmatter[data-lv="1"]:after,.fr-blackmatter[data-lv="1"]:before{animation-duration:26s,.5s,.5s!important}
 .fr-blackmatter.fxs:before{display:none!important}.fr-blackmatter.fxs:after{animation:frSpin 20s linear infinite!important}
