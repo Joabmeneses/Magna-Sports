@@ -14,8 +14,15 @@
   function equipped(it) { return !!(inv && inv.eq[it.type] === it.id); }
   // quién lleva puesto cada cosmético (sale de los cosméticos públicos de los jugadores)
   function wearMap() { var m = {}; try { var c = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; Object.keys(c).forEach(function (pid) { var eq = (c[pid] && c[pid].eq) || {}; Object.keys(eq).forEach(function (k) { if (eq[k]) (m[eq[k]] = m[eq[k]] || []).push(pid); }); }); } catch (e) {} return m; }
-  function forSale() { return I.shop().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg; }); }
-  function ups(it) { return I.shop().filter(function (x) { return x.upg === it.id && x.active !== false; }).sort(function (a, b) { return a.lv - b.lv; }); }
+  // ofertas y venta por tiempo limitado: "off" (% de descuento) hasta "saleUntil"; "until" = deja de venderse
+  function live(x) { var n = Date.now(); if (x.until && n > Date.parse(x.until)) return null; if (x.off && (!x.saleUntil || n <= Date.parse(x.saleUntil))) return Object.assign({}, x, { price0: x.price, price: Math.round(x.price * (100 - Math.min(90, Math.max(0, x.off))) / 100) }); return x; }
+  function SH() { return I.shop().map(live).filter(Boolean); }
+  function days(d) { var t = Date.parse(d) - Date.now(); if (t <= 0) return 'hoy'; var dd = Math.ceil(t / 864e5); return dd <= 1 ? 'menos de 1 día' : dd + ' días'; }
+  function fdate(d) { try { return new Date(d).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', timeZone: 'America/Bogota' }); } catch (e) { return ''; } }
+  function pbits(it, size) { if (!it.price0) return bits(it.price, size); var w = h('span', 'ts-off'); w.appendChild(h('s', null, I.fmt(it.price0))); w.appendChild(bits(it.price, size)); return w; }
+  function tags(it) { var t = []; if (it.price0) t.push(h('span', 'ts-tg sale', '🔥 −' + it.off + '%' + (it.saleUntil ? ' · ' + days(it.saleUntil) : ''))); if (it.until) t.push(h('span', 'ts-tg ltd', '⏳ Hasta el ' + fdate(it.until))); return t; }
+  function forSale() { return SH().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg; }); }
+  function ups(it) { return SH().filter(function (x) { return x.upg === it.id && x.active !== false; }).sort(function (a, b) { return a.lv - b.lv; }); }
   function topLv(it) { var lv = owned(it.id) ? 1 : 0; ups(it).forEach(function (u) { if (owned(u.id)) lv = Math.max(lv, u.lv); }); return lv; }
   function pname(pid) { var p = MAGNA.by(MAGNA.S.players, Number(pid)); return p ? p.name : ''; }
 
@@ -47,9 +54,10 @@
     art.appendChild(h('span', 'rr', (M.RAR[it.rarity] || 'Común')));
     if (owned(it.id)) art.appendChild(h('span', 'ok', equipped(it) ? '✓ Puesto' : '✓ Tuyo'));
     var wn = (W[it.id] || []).length; if (wn) art.appendChild(h('span', 'wr', '👥 ' + wn));
+    var tg = tags(it); if (tg.length) { var tw = h('span', 'ts-tgs'); tg.forEach(function (x) { tw.appendChild(x); }); art.appendChild(tw); }
     c.appendChild(art); c.appendChild(heart(it));
     var tx = h('div', 'tx'); tx.appendChild(h('b', null, it.name)); tx.appendChild(h('small', null, ICO[it.type] + ' ' + M.KIND[it.type])); c.appendChild(tx);
-    var bt = h('div', 'bot'), pr = h('div', 'pv'); pr.appendChild(h('small', null, it.exclusive ? 'Se gana' : 'Precio')); if (it.exclusive) pr.appendChild(h('span', 'ts-pr', '🏅 En la cancha')); else pr.appendChild(bits(it.price)); bt.appendChild(pr); bt.appendChild(actBtn(it, true)); c.appendChild(bt);
+    var bt = h('div', 'bot'), pr = h('div', 'pv'); pr.appendChild(h('small', null, it.exclusive ? 'Se gana' : 'Precio')); if (it.exclusive) pr.appendChild(h('span', 'ts-pr', '🏅 En la cancha')); else pr.appendChild(pbits(it)); bt.appendChild(pr); bt.appendChild(actBtn(it, true)); c.appendChild(bt);
     if (it.exclusive) { var bd = acc && acc.player_id != null && it.award !== 'manual' && MAGNA.playerBadges(acc.player_id).filter(function (z) { return z.id === it.award; })[0];
       if (bd && !owned(it.id)) { var pg = h('div', 'tn-pg'), pi = h('i'); pi.style.width = Math.round(bd.v / bd.goal * 100) + '%'; pg.appendChild(pi); pg.appendChild(h('small', null, bd.ok ? '¡Desbloqueado! Llega en breve' : 'Tu progreso: ' + bd.v + ' / ' + bd.goal)); c.appendChild(pg); } }
     return c;
@@ -90,7 +98,7 @@
   // ---------- catálogo ----------
   var gridEl = null, chipsEl = null, toolsEl = null, infoEl = null;
   function list() {
-    var L = I.shop().filter(function (x) { return !x.upg; }), W = wearMap(), ql = q.trim().toLowerCase();
+    var L = SH().filter(function (x) { return !x.upg; }), W = wearMap(), ql = q.trim().toLowerCase();
     var it = L.filter(function (x) {
       if (tab === 'own') { if (!owned(x.id)) return false; }
       else if (tab === 'wish') { if (!WISH[x.id]) return false; if (x.active === false && !owned(x.id)) return false; }
@@ -113,7 +121,7 @@
     infoEl = h('p', 'ts-inf'); s.appendChild(infoEl);
     gridEl = h('div', 'ts-g'); s.appendChild(gridEl); counts(); grid(); return s;
   }
-  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = I.shop().filter(function (x) { return !x.upg; });
+  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = SH().filter(function (x) { return !x.upg; });
     TABS.forEach(function (t) { if ((t[0] === 'own') && !acc) return;
       var n = t[0] === 'own' ? L.filter(function (x) { return owned(x.id); }).length : t[0] === 'wish' ? L.filter(function (x) { return WISH[x.id] && x.active !== false; }).length : t[0] === 'excl' ? L.filter(function (x) { return x.exclusive && x.active !== false; }).length : L.filter(function (x) { return x.active !== false && !x.exclusive && (t[0] === 'all' || x.type === t[0]); }).length;
       var b = h('button', 'ts-ch' + (tab === t[0] ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', tab === t[0]); b.appendChild(h('span', 'i', t[1])); b.appendChild(h('span', null, t[2])); b.appendChild(h('small', null, String(n))); b.onclick = function () { setTab(t[0]); }; chipsEl.appendChild(b); }); }
@@ -154,10 +162,10 @@
     var s = h('section', 'ts-s ts-sp'), hd = h('div', 'ts-sph'); hd.appendChild(h('span', 'ts-spk', '✨ Edición especial')); hd.appendChild(h('h2', null, 'Marcos que suben de nivel')); hd.appendChild(h('p', null, 'Compra el marco y desbloquea su poder nivel por nivel. Cada mejora cambia cómo lo ve toda la comunidad.')); s.appendChild(hd);
     var g = h('div', 'ts-spg'); L.forEach(function (it) { var X = SPX[it.style] || { k: 'fire', tag: '✨ Especial', pitch: '' }, U = [it].concat(ups(it)), have = topLv(it), T = LVT[it.style] || [], c = h('article', 'ts-spc ' + X.k);
       var stg = h('div', 'ts-sps'), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 128); av.classList.add('fr-' + it.style); av.dataset.lvx = '1'; av.dataset.lv = Math.max(1, have); MAGNA_COS.deco(av); stg.appendChild(av); var lvb = h('span', 'ts-spl', 'Nv.' + Math.max(1, have)); stg.appendChild(lvb); c.appendChild(stg);
-      var tx = h('div', 'ts-spt'); tx.appendChild(h('span', 'ts-spg2', X.tag)); tx.appendChild(h('h3', null, it.name)); tx.appendChild(h('p', null, X.pitch));
-      var pl = h('div', 'ts-spp'); U.forEach(function (u, i) { var lv = u.lv || i + 1, b = h('button', 'ts-spv' + (have >= lv ? ' own' : '')); b.type = 'button'; b.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); var pr = h('span'); pr.appendChild(MAGNA_BIT(11)); pr.appendChild(document.createTextNode(' ' + I.fmt(u.price))); b.appendChild(have >= lv ? h('span', null, '✓ Tuyo') : pr);
+      var tx = h('div', 'ts-spt'); tx.appendChild(h('span', 'ts-spg2', X.tag)); tx.appendChild(h('h3', null, it.name)); tx.appendChild(h('p', null, X.pitch)); if (it.price0) tx.appendChild(h('div', 'ts-spo sale', '🔥 Oferta de lanzamiento: −' + it.off + '% en los 3 niveles' + (it.saleUntil ? ' · termina en ' + days(it.saleUntil) : ''))); if (it.until) tx.appendChild(h('div', 'ts-spo ltd', '⏳ Edición limitada: se vende solo hasta el ' + fdate(it.until) + ' · quedan ' + days(it.until)));
+      var pl = h('div', 'ts-spp'); U.forEach(function (u, i) { var lv = u.lv || i + 1, b = h('button', 'ts-spv' + (have >= lv ? ' own' : '')); b.type = 'button'; b.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); var pr = h('span'); if (u.price0) pr.appendChild(h('s', null, I.fmt(u.price0) + ' ')); pr.appendChild(MAGNA_BIT(11)); pr.appendChild(document.createTextNode(' ' + I.fmt(u.price))); b.appendChild(have >= lv ? h('span', null, '✓ Tuyo') : pr);
         b.onmouseenter = b.onfocus = function () { stop(); show(lv); }; b.onmouseleave = b.onblur = function () { auto(); }; b.onclick = function () { view(it); }; pl.appendChild(b); }); tx.appendChild(pl);
-      var tot = U.reduce(function (a, u) { return a + Number(u.price || 0); }, 0); tx.appendChild(h('small', 'ts-spm', 'Completo: ' + I.fmt(tot) + ' Bits en total'));
+      var tot = U.reduce(function (a, u) { return a + Number(u.price || 0); }, 0), tot0 = U.reduce(function (a, u) { return a + Number(u.price0 || u.price || 0); }, 0); tx.appendChild(h('small', 'ts-spm', 'Completo: ' + I.fmt(tot) + ' Bits en total' + (tot0 > tot ? ' (antes ' + I.fmt(tot0) + ')' : '')));
       tx.appendChild(btn('big', have >= U.length ? '✓ Nivel máximo · Ver' : have ? '⬆️ Mejorar a Nv.' + (have + 1) : 'Comprar · ' + I.fmt(it.price) + ' Bits', function () { view(it); })); c.appendChild(tx);
       var cur = Math.max(1, have), T2 = null; function show(lv) { av.dataset.lv = lv; lvb.textContent = 'Nv.' + lv + ((T[lv - 1] && T[lv - 1][1]) ? ' · ' + T[lv - 1][1].split('· ')[1] : ''); [].forEach.call(pl.children, function (b, j) { b.classList.toggle('on', j === lv - 1); }); }
       function stop() { clearTimeout(T2); } function auto() { stop(); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; (function tick() { T2 = setTimeout(function () { if (!document.body.contains(c)) return stop(); if (!document.hidden) { cur = cur % U.length + 1; show(cur); } tick(); }, cur >= 3 ? 6500 : 3200); })(); }
@@ -177,7 +185,7 @@
   function upBox(it, close) { var box = h('div', 'cf-evo'), eh = h('div', 'cf-evh'), have = topLv(it), L = [it].concat(ups(it)), T = LVT[it.style] || [];
     eh.appendChild(h('b', null, '⬆️ Mejoras del marco')); eh.appendChild(h('small', null, 'Compra el marco y despiértalo nivel por nivel. Cada mejora se equipa sola.')); box.appendChild(eh);
     var lr = h('div', 'cf-evl'); L.forEach(function (x, i) { var lv = x.lv || i + 1, c = h('div', 'cf-lv' + (have >= lv ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + x.style); av.dataset.lv = lv; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw);
-      c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); var pr = h('span', 'cf-lvp'); pr.appendChild(MAGNA_BIT(12)); pr.appendChild(document.createTextNode(' ' + I.fmt(x.price))); c.appendChild(pr);
+      c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); var pr = h('span', 'cf-lvp'); if (x.price0) pr.appendChild(h('s', null, I.fmt(x.price0) + ' ')); pr.appendChild(MAGNA_BIT(12)); pr.appendChild(document.createTextNode(' ' + I.fmt(x.price))); c.appendChild(pr);
       if (i > 0 && acc) { if (have >= lv) { var ok = h('em', 'cf-lvk', inv && inv.eq.frame === x.id ? '✓ Puesto' : 'Tuyo'); if (!(inv && inv.eq.frame === x.id)) { ok = btn('own sm', 'Equipar', function () { close(); wear(x); }); } c.appendChild(ok); }
         else if (have === lv - 1 && have > 0) { var bb = btn('sm', Number(acc.bits) >= x.price ? 'Mejorar' : 'Te faltan ' + I.fmt(x.price - Number(acc.bits)), function () { bb.disabled = true; bb.textContent = 'Mejorando…';
             I.buy(x).then(function (nb) { acc.bits = nb; inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); close(); return I.equip(x.type, x.id).then(function () { inv.eq[x.type] = x.id; I.syncSelf(acc, inv.eq); celebrate(x); }, function () { render(); }); }, function (e) { bb.disabled = false; bb.textContent = 'Mejorar'; I.toast(e.message || 'No se pudo mejorar', true); }); });
@@ -194,7 +202,7 @@
     inf.appendChild(lb); inf.appendChild(big); inf.appendChild(tt); inf.appendChild(pr); inf.appendChild(go); bn.appendChild(inf); w.appendChild(bn);
     P.forEach(function (it, k) { var d = h('button', null); d.type = 'button'; d.setAttribute('aria-label', it.name); d.onclick = function () { show(k); auto(); }; dots.appendChild(d); }); w.appendChild(dots);
     function show(k) { i = (k + P.length) % P.length; var it = P[i]; MAGNA_COS.banner(bn, it.style); bn.classList.remove('in'); void bn.offsetWidth; bn.classList.add('in');
-      lb.textContent = 'Así se verá tu perfil'; big.textContent = nm; tt.textContent = it.name; pr.innerHTML = ''; pr.appendChild(bits(it.price)); if (owned(it.id)) pr.appendChild(h('span', 'ok', '✓ Ya es tuya'));
+      lb.textContent = 'Así se verá tu perfil'; big.textContent = nm; tt.textContent = it.name; pr.innerHTML = ''; pr.appendChild(pbits(it)); if (owned(it.id)) pr.appendChild(h('span', 'ok', '✓ Ya es tuya'));
       [].forEach.call(dots.children, function (d, j) { d.classList.toggle('on', j === i); }); }
     function auto() { clearInterval(T); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; T = setInterval(function () { if (!document.hidden && document.body.contains(w)) show(i + 1); }, 5000); }
     bn.onmouseenter = function () { clearInterval(T); }; bn.onmouseleave = auto;
@@ -263,7 +271,7 @@
   // ---------- montaje ----------
   function render() {
     var y = window.scrollY; root.innerHTML = ''; gridEl = null;
-    if (!I.shop().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
+    if (!SH().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
     root.appendChild(hero()); root.appendChild(band());
     if (acc && inv) { var me = h('div', 'ts-me'); me.appendChild(h('small', null, 'Así te ven los demás')); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }
     var spc = special(); if (spc) root.appendChild(spc); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
