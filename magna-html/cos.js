@@ -22,7 +22,7 @@ window.MAGNA_COS = (function () {
   // MARCOS MÍTICOS: capa extra con mecánicas (evolución por nivel, momento especial periódico, ráfaga al tocar y gema)
   var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
   // puntos de evolución = partidos jugados + 3 por cada MVP · Nv.2 desde 15 · Nv.3 desde 40
-  var BUYLV = { ouroboros: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
+  var BUYLV = { ouroboros: 1, navidad: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
   function evo(pid) { if (pid == null || pid === '' || !window.MAGNA || !MAGNA.playerStats || !MAGNA.S) return null; var k = (MAGNA.S.rev || 0) + ':' + (MAGNA.S.matches || []).length;
     if (LVK !== k) { LVK = k; try { LVC = MAGNA.playerStats(); } catch (e) { LVC = {}; } } var s = LVC && LVC[pid]; if (!s) return null; var pts = (s.pj || 0) + 3 * (s.mvp || 0);
     return { pts: pts, lv: pts >= 40 ? 3 : pts >= 15 ? 2 : 1, next: pts >= 40 ? null : pts >= 15 ? 40 : 15 }; }

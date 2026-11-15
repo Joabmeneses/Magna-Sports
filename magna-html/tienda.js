@@ -148,6 +148,20 @@
     s.appendChild(g); return s;
   }
   // vitrina premium: la Colección Mítica, aparte y con su propio estilo
+  // Sección especial: marcos con niveles que se compran (Dragón eterno, Navidad). Cada tarjeta muestra el marco pasando solo por sus 3 niveles.
+  var SPX = { ouroboros: { k: 'fire', tag: '🐉 Legendario', pitch: 'Un dragón de fuego que se persigue la cola alrededor de tu avatar. Despiértalo y llévalo a la furia.' }, navidad: { k: 'xmas', tag: '🎄 Edición Navidad', pitch: 'Corona de pino con esferas, luces que parpadean y, en su nivel máximo, estrella, trineo y nevada.' } };
+  function special() { var L = forSale().filter(function (x) { return x.type === 'frame' && x.lv && ups(x).length; }); if (!L.length || !window.MAGNA_COS) return null;
+    var s = h('section', 'ts-s ts-sp'), hd = h('div', 'ts-sph'); hd.appendChild(h('span', 'ts-spk', '✨ Edición especial')); hd.appendChild(h('h2', null, 'Marcos que suben de nivel')); hd.appendChild(h('p', null, 'Compra el marco y desbloquea su poder nivel por nivel. Cada mejora cambia cómo lo ve toda la comunidad.')); s.appendChild(hd);
+    var g = h('div', 'ts-spg'); L.forEach(function (it) { var X = SPX[it.style] || { k: 'fire', tag: '✨ Especial', pitch: '' }, U = [it].concat(ups(it)), have = topLv(it), T = LVT[it.style] || [], c = h('article', 'ts-spc ' + X.k);
+      var stg = h('div', 'ts-sps'), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 128); av.classList.add('fr-' + it.style); av.dataset.lvx = '1'; av.dataset.lv = Math.max(1, have); MAGNA_COS.deco(av); stg.appendChild(av); var lvb = h('span', 'ts-spl', 'Nv.' + Math.max(1, have)); stg.appendChild(lvb); c.appendChild(stg);
+      var tx = h('div', 'ts-spt'); tx.appendChild(h('span', 'ts-spg2', X.tag)); tx.appendChild(h('h3', null, it.name)); tx.appendChild(h('p', null, X.pitch));
+      var pl = h('div', 'ts-spp'); U.forEach(function (u, i) { var lv = u.lv || i + 1, b = h('button', 'ts-spv' + (have >= lv ? ' own' : '')); b.type = 'button'; b.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); var pr = h('span'); pr.appendChild(MAGNA_BIT(11)); pr.appendChild(document.createTextNode(' ' + I.fmt(u.price))); b.appendChild(have >= lv ? h('span', null, '✓ Tuyo') : pr);
+        b.onmouseenter = b.onfocus = function () { stop(); show(lv); }; b.onmouseleave = b.onblur = function () { auto(); }; b.onclick = function () { view(it); }; pl.appendChild(b); }); tx.appendChild(pl);
+      var tot = U.reduce(function (a, u) { return a + Number(u.price || 0); }, 0); tx.appendChild(h('small', 'ts-spm', 'Completo: ' + I.fmt(tot) + ' Bits en total'));
+      tx.appendChild(btn('big', have >= U.length ? '✓ Nivel máximo · Ver' : have ? '⬆️ Mejorar a Nv.' + (have + 1) : 'Comprar · ' + I.fmt(it.price) + ' Bits', function () { view(it); })); c.appendChild(tx);
+      var cur = Math.max(1, have), T2 = null; function show(lv) { av.dataset.lv = lv; lvb.textContent = 'Nv.' + lv + ((T[lv - 1] && T[lv - 1][1]) ? ' · ' + T[lv - 1][1].split('· ')[1] : ''); [].forEach.call(pl.children, function (b, j) { b.classList.toggle('on', j === lv - 1); }); }
+      function stop() { clearInterval(T2); } function auto() { stop(); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; T2 = setInterval(function () { if (!document.body.contains(c)) return stop(); if (document.hidden) return; cur = cur % U.length + 1; show(cur); }, 3200); }
+      show(cur); auto(); g.appendChild(c); }); s.appendChild(g); return s; }
   function mythic() { var C = forSale().filter(function (x) { return x.rarity === 'mitica'; }).sort(function (a, b) { return a.price - b.price; }); if (!C.length) return null;
     var s = h('section', 'ts-s ts-my'), hd = h('div', 'ts-sh c'), tx = h('div'); tx.appendChild(h('span', 'my-ey', '💎 Nuevo · Edición limitada')); tx.appendChild(h('h2', null, 'Colección Mítica')); tx.appendChild(h('p', null, 'Lo más exclusivo de Magna Arena. Brillan, se mueven y se ven desde lejos. Solo para quien de verdad tenga Bits.')); hd.appendChild(tx); s.appendChild(hd);
     var spot = spotlight(C.filter(function (x) { return x.type === 'plate'; })); if (spot) s.appendChild(spot);
@@ -158,7 +172,7 @@
     ['‹', '›'].forEach(function (a, k) { var b = h('button', 'ts-ar ' + (k ? 'nx' : 'pv'), a); b.type = 'button'; b.setAttribute('aria-label', k ? 'Siguiente' : 'Anterior'); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.min(tr.clientWidth * .8, 600), behavior: 'smooth' }); }; wr.appendChild(b); });
     s.appendChild(wr); return s; }
   // vitrina grande: las placas míticas como portada de perfil, rotando solas
-  var LVT = { ouroboros: [[1, 'Nv.1 · Dormido', 'Incluido con el marco: descansa, apagado y lento'], [2, 'Nv.2 · Despierto', 'Fuego vivo, ojo encendido y 2 brasas en órbita'], [3, 'Nv.3 · Furia', 'Llamas al rojo, aura de fuego y gira más rápido']] };
+  var LVT = { ouroboros: [[1, 'Nv.1 · Dormido', 'Incluido con el marco: descansa, apagado y lento'], [2, 'Nv.2 · Despierto', 'Fuego vivo, ojo encendido y 2 brasas en órbita'], [3, 'Nv.3 · Furia', 'Llamas al rojo, aura de fuego y gira más rápido']], navidad: [[1, 'Nv.1 · Nevada', 'Incluido con el marco: corona de pino, esferas y moño'], [2, 'Nv.2 · Encendida', 'Luces de colores que parpadean y copos en órbita'], [3, 'Nv.3 · Noche mágica', 'Estrella dorada, trineo volando alrededor y nevada']] };
   // Niveles que se compran (Dragón eterno): Nv.1 viene con el marco; Nv.2 y Nv.3 son mejoras que se pagan aparte, en orden
   function upBox(it, close) { var box = h('div', 'cf-evo'), eh = h('div', 'cf-evh'), have = topLv(it), L = [it].concat(ups(it)), T = LVT[it.style] || [];
     eh.appendChild(h('b', null, '⬆️ Mejoras del marco')); eh.appendChild(h('small', null, 'Compra el marco y despiértalo nivel por nivel. Cada mejora se equipa sola.')); box.appendChild(eh);
@@ -249,7 +263,7 @@
     if (!I.shop().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
     root.appendChild(hero()); root.appendChild(band());
     if (acc && inv) { var me = h('div', 'ts-me'); me.appendChild(h('small', null, 'Así te ven los demás')); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }
-    var my = mythic(); if (my) root.appendChild(my); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
+    var spc = special(); if (spc) root.appendChild(spc); var my = mythic(); if (my) root.appendChild(my); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
     window.scrollTo(0, y);
   }
   function boot() { render();
