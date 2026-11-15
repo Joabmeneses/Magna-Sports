@@ -10,7 +10,7 @@ window.MAGNA_COS = (function () {
   var STY = {
     color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz', holo: 'Holográfico', lava: 'Lava fundida', aurora: 'Aurora boreal', diamante: 'Diamante', oro24: 'Oro 24K', vacio: 'Vacío' },
     plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía', holo: 'Holográfica', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', trono: 'Trono', cosmos: 'Cosmos', navidad: 'Navidad' },
-    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad', magenta: 'Magenta' },
+    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad', magenta: 'Magenta', portal: 'Portal Estelar', blackmatter: 'Black Matter' },
     title: {} };
   var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria', mitica: 'Mítica' };
   function item(id) { var L = (window.MAGNA && MAGNA.S && MAGNA.S.shop) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
@@ -20,9 +20,9 @@ window.MAGNA_COS = (function () {
   function paint(el) { var u = pav(el.dataset.pid); if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has-pav'); } else { el.style.backgroundImage = ''; el.classList.remove('has-pav'); }
     clsRm(el, 'fr-'); var f = styleOf(eqOf(el.dataset.pid), 'frame'); if (f && STY.frame[f.style]) el.classList.add('fr-' + f.style); if (f && f.lv) el.dataset.lvi = f.lv; else delete el.dataset.lvi; deco(el); }
   // MARCOS MÍTICOS: capa extra con mecánicas (evolución por nivel, momento especial periódico, ráfaga al tocar y gema)
-  var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
+  var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, portal: 1, blackmatter: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
   // puntos de evolución = partidos jugados + 3 por cada MVP · Nv.2 desde 15 · Nv.3 desde 40
-  var BUYLV = { ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
+  var BUYLV = { ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, portal: 1, blackmatter: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
   function evo(pid) { if (pid == null || pid === '' || !window.MAGNA || !MAGNA.playerStats || !MAGNA.S) return null; var k = (MAGNA.S.rev || 0) + ':' + (MAGNA.S.matches || []).length;
     if (LVK !== k) { LVK = k; try { LVC = MAGNA.playerStats(); } catch (e) { LVC = {}; } } var s = LVC && LVC[pid]; if (!s) return null; var pts = (s.pj || 0) + 3 * (s.mvp || 0);
     return { pts: pts, lv: pts >= 40 ? 3 : pts >= 15 ? 2 : 1, next: pts >= 40 ? null : pts >= 15 ? 40 : 15 }; }
