@@ -11,6 +11,7 @@ window.MAGNA_INV = (function () {
   function data() { return sb().then(function (c) { return c.rpc('my_inventory'); }).then(err).then(function (r) { var L = r.data || [], eq = (L[0] && L[0].equipped) || {}; return { rows: L.filter(function (x) { return x.item_id; }), eq: eq }; }); }
   function syncSelf(acc, eq) { if (!acc || acc.player_id == null) return; try { var c = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; c[acc.player_id] = { eq: eq || {} }; localStorage.setItem('magna_cos', JSON.stringify(c)); } catch (e) {} window.dispatchEvent(new Event('magna:cos')); }
   function buy(it) { return sb().then(function (c) { return c.rpc('shop_buy', { p_item: it.id }); }).then(err).then(function (r) { if (window.MAGNA_ME && MAGNA_ME.refresh) MAGNA_ME.refresh(); return Number(r.data); }); }
+  function buyPack(id, lv) { return sb().then(function (c) { return c.rpc('shop_buy_pack', { p_pack: id, p_lv: lv }); }).then(err).then(function (r) { if (window.MAGNA_ME && MAGNA_ME.refresh) MAGNA_ME.refresh(); return Number(r.data); }); }
   function equip(slot, id) { return sb().then(function (c) { return c.rpc('equip_item', { p_slot: slot, p_item: id || null }); }).then(err); }
 
   // tarjeta con el nombre equipado tal como lo ven los demás
@@ -44,5 +45,5 @@ window.MAGNA_INV = (function () {
     load(); window.addEventListener('magna:update', function () { if (!busy) draw(); });
     return sec;
   }
-  return { data: data, buy: buy, equip: equip, syncSelf: syncSelf, mount: mount, card: card, toast: toast, fmt: fmt, shop: shop, SL: SL, ICO: ICO };
+  return { data: data, buy: buy, buyPack: buyPack, equip: equip, syncSelf: syncSelf, mount: mount, card: card, toast: toast, fmt: fmt, shop: shop, SL: SL, ICO: ICO };
 })();

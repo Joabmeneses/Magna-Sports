@@ -9,8 +9,8 @@ window.MAGNA_COS = (function () {
   var COS = {}; try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; } catch (e) {}
   var STY = {
     color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz', holo: 'Holográfico', lava: 'Lava fundida', aurora: 'Aurora boreal', diamante: 'Diamante', oro24: 'Oro 24K', vacio: 'Vacío' },
-    plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía', holo: 'Holográfica', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', trono: 'Trono', cosmos: 'Cosmos', navidad: 'Navidad' },
-    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad', magenta: 'Magenta', blackmatter: 'Black Matter' },
+    plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía', holo: 'Holográfica', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', trono: 'Trono', cosmos: 'Cosmos', navidad: 'Navidad', dragoneterno: 'Dragón eterno' },
+    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad', magenta: 'Magenta', blackmatter: 'Black Matter', garra: 'Garra Sangrienta', mira: 'Francotirador' },
     title: {} };
   var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria', mitica: 'Mítica' };
   function item(id) { var L = (window.MAGNA && MAGNA.S && MAGNA.S.shop) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
@@ -20,9 +20,9 @@ window.MAGNA_COS = (function () {
   function paint(el) { var u = pav(el.dataset.pid); if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has-pav'); } else { el.style.backgroundImage = ''; el.classList.remove('has-pav'); }
     clsRm(el, 'fr-'); var f = styleOf(eqOf(el.dataset.pid), 'frame'); if (f && STY.frame[f.style]) el.classList.add('fr-' + f.style); if (f && f.lv) el.dataset.lvi = f.lv; else delete el.dataset.lvi; deco(el); }
   // MARCOS MÍTICOS: capa extra con mecánicas (evolución por nivel, momento especial periódico, ráfaga al tocar y gema)
-  var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
+  var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1, garra: 1, mira: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
   // puntos de evolución = partidos jugados + 3 por cada MVP · Nv.2 desde 15 · Nv.3 desde 40
-  var BUYLV = { ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
+  var BUYLV = { ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1, garra: 1, mira: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
   function evo(pid) { if (pid == null || pid === '' || !window.MAGNA || !MAGNA.playerStats || !MAGNA.S) return null; var k = (MAGNA.S.rev || 0) + ':' + (MAGNA.S.matches || []).length;
     if (LVK !== k) { LVK = k; try { LVC = MAGNA.playerStats(); } catch (e) { LVC = {}; } } var s = LVC && LVC[pid]; if (!s) return null; var pts = (s.pj || 0) + 3 * (s.mvp || 0);
     return { pts: pts, lv: pts >= 40 ? 3 : pts >= 15 ? 2 : 1, next: pts >= 40 ? null : pts >= 15 ? 40 : 15 }; }
@@ -36,21 +36,25 @@ window.MAGNA_COS = (function () {
     if (!fx) { fx = h('i', 'fxm'); fx.setAttribute('aria-hidden', 'true'); ['au', 'o1', 'o2', 'o3', 'bu', 'b2', 'gem', 'sx', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6'].forEach(function (c) { fx.appendChild(h('i', c)); });
       var sd = Number(el.dataset.pid); fx.style.setProperty('--dl', '-' + (((isNaN(sd) ? Math.random() * 50 : sd) * 1.37) % 8).toFixed(2) + 's'); el.appendChild(fx); } }
   // pinta un nombre con los cosméticos de un "equipado" (eq) concreto
-  function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (c && STY.color[c.style]) el.classList.add('c-' + c.style); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
+  function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (pl && pl.lv) el.dataset.plv = pl.lv; else delete el.dataset.plv; if (c && STY.color[c.style]) el.classList.add('c-' + c.style); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
   function paintName(el) { nameStyle(el, eqOf(el.dataset.pn)); if (el.classList.contains('in-plh')) clsRm(el, 'pl-'); var t = el.querySelector('.mpn-t'), ti = styleOf(eqOf(el.dataset.pn), 'title'); if (el.dataset.ttl) { if (ti) { if (!t) { t = h('small', 'mpn-t'); el.appendChild(t); } t.textContent = ti.name; t.className = 'mpn-t tr-' + (ti.rarity || 'comun'); } else if (t) t.remove(); } }
   // fila "anfitriona" de una placa: el contenedor con data-plh="<id del jugador>" se viste con su placa y el nombre de adentro va sin cajita
-  function host(el) { var pid = el.dataset.plh; clsRm(el, 'pl-'); el.classList.remove('plh', 'pbn-my', 'pbn-lite'); var oz = el.querySelector(':scope>.pbx'); if (oz) oz.remove(); var pl = styleOf(eqOf(pid), 'plate');
-    if (pl && STY.plate[pl.style]) { el.classList.add('plh', 'pl-' + pl.style); var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); if (MYP[pl.style]) { banner(el, pl.style, { lite: true }); el.classList.remove('pbn'); } [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); } }
+  function host(el) { var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); el.classList.remove('plh'); el.dataset.plc = el.dataset.plh; card(el); if (el.classList.contains('plc')) el.classList.add('plh'); }
+  // miniatura con placa de fondo: el contenedor con data-plc="<id del jugador>" lleva su placa como fondo de toda la tarjeta
+  function card(el) { var pid = el.dataset.plc; var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); clsRm(el, 'pl-'); el.classList.remove('plc', 'pbn', 'pbn-my', 'pbn-lite');
+    var pl = pid != null && pid !== '' ? styleOf(eqOf(pid), 'plate') : null; if (!pl || !STY.plate[pl.style]) return el;
+    banner(el, pl.style, { lite: true }); el.classList.add('plc'); if (pl.lv) el.dataset.plv = pl.lv; else delete el.dataset.plv;
+    [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); return el; }
   // banner grande de placa (portada del perfil, vitrina de la tienda): el arte de la placa a lo ancho + efectos animados en las míticas
-  var MYP = { holo: 1, diamante: 1, dragon: 1, aurora: 1, trono: 1, cosmos: 1, navidad: 1 };
+  var MYP = { holo: 1, diamante: 1, dragon: 1, aurora: 1, trono: 1, cosmos: 1, navidad: 1, dragoneterno: 1 };
   function banner(el, style, o) { o = o || {}; clsRm(el, 'pl-'); el.classList.remove('pbn', 'pbn-my', 'pbn-lite'); var old = el.querySelector(':scope>.pbx'); if (old) old.remove();
     if (!style || !STY.plate[style]) return el;
     el.classList.add('pbn', 'pl-' + style); if (o.lite) el.classList.add('pbn-lite'); var fx = h('div', 'pbx'); fx.setAttribute('aria-hidden', 'true'); fx.appendChild(h('i', 'pba'));
-    if (MYP[style]) { el.classList.add('pbn-my'); ['pbr', 'pbg', 'pbw'].forEach(function (c) { fx.appendChild(h('i', c)); });
+    if (MYP[style]) { el.classList.add('pbn-my'); ['pbr', 'pbg', 'pbw', 'pbe'].forEach(function (c) { fx.appendChild(h('i', c)); });
       var n = o.lite ? 7 : 16; for (var k = 0; k < n; k++) { var p = h('i', 'pbp'); p.style.cssText = '--x:' + ((k * 37 + 11) % 100) + '%;--y:' + ((k * 53 + 7) % 100) + '%;--d:-' + ((k * .71) % 4).toFixed(2) + 's;--t:' + (2.6 + (k % 5) * .7).toFixed(1) + 's;--z:' + (.6 + (k % 4) * .3).toFixed(1); fx.appendChild(p); }
       if (!o.lite) for (k = 0; k < 2; k++) { var st = h('i', 'pbs'); st.style.cssText = '--d:-' + (k * 3.3) + 's;--y:' + (8 + k * 22) + '%'; fx.appendChild(st); } }
     el.insertBefore(fx, el.firstChild); return el; }
-  function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); }
+  function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); [].forEach.call(document.querySelectorAll('[data-plc]'), card); }
   function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_cosmetics').then(function (r) { return r && !r.error ? r : c.rpc('player_avatars'); }); }).then(function (r) { if (!r || r.error) return; var m = {}, cm = {};
       (r.data || []).forEach(function (x) { if (x.avatar) m[x.player_id] = x.avatar; cm[x.player_id] = { eq: x.equipped || {} }; }); PAV = m; COS = cm; try { localStorage.setItem('magna_pav', JSON.stringify(m)); localStorage.setItem('magna_cos', JSON.stringify(cm)); } catch (e) {} repaint(); try { window.dispatchEvent(new Event('magna:cosloaded')); } catch (e) {} }, function () {}); }
   // vista previa de un cosmético sobre un nombre (y avatar para los marcos)
@@ -91,5 +95,5 @@ window.MAGNA_COS = (function () {
   // tocar un avatar de jugador abre su perfil (fuera del panel de administración)
   if (!/admin\.html$/.test(location.pathname)) document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('.tav[data-pid]'); if (!t || e.defaultPrevented || t.closest('a,button,[data-nolink],.ov')) return; location.href = profileUrl(t.dataset.pid); });
   if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
-  return { BUYLV: BUYLV, evo: evo, deco: deco, MYF: MYF, banner: banner, MYTHIC_PLATES: MYP, host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
+  return { card: card, BUYLV: BUYLV, evo: evo, deco: deco, MYF: MYF, banner: banner, MYTHIC_PLATES: MYP, host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
 })();
