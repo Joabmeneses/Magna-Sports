@@ -90,7 +90,7 @@
   // ---------- catálogo ----------
   var gridEl = null, chipsEl = null, toolsEl = null, infoEl = null;
   function list() {
-    var L = I.shop(), W = wearMap(), ql = q.trim().toLowerCase();
+    var L = I.shop().filter(function (x) { return !x.upg; }), W = wearMap(), ql = q.trim().toLowerCase();
     var it = L.filter(function (x) {
       if (tab === 'own') { if (!owned(x.id)) return false; }
       else if (tab === 'wish') { if (!WISH[x.id]) return false; if (x.active === false && !owned(x.id)) return false; }
@@ -113,7 +113,7 @@
     infoEl = h('p', 'ts-inf'); s.appendChild(infoEl);
     gridEl = h('div', 'ts-g'); s.appendChild(gridEl); counts(); grid(); return s;
   }
-  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = I.shop();
+  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = I.shop().filter(function (x) { return !x.upg; });
     TABS.forEach(function (t) { if ((t[0] === 'own') && !acc) return;
       var n = t[0] === 'own' ? L.filter(function (x) { return owned(x.id); }).length : t[0] === 'wish' ? L.filter(function (x) { return WISH[x.id] && x.active !== false; }).length : t[0] === 'excl' ? L.filter(function (x) { return x.exclusive && x.active !== false; }).length : L.filter(function (x) { return x.active !== false && !x.exclusive && (t[0] === 'all' || x.type === t[0]); }).length;
       var b = h('button', 'ts-ch' + (tab === t[0] ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', tab === t[0]); b.appendChild(h('span', 'i', t[1])); b.appendChild(h('span', null, t[2])); b.appendChild(h('small', null, String(n))); b.onclick = function () { setTab(t[0]); }; chipsEl.appendChild(b); }); }
@@ -263,7 +263,7 @@
     if (!I.shop().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
     root.appendChild(hero()); root.appendChild(band());
     if (acc && inv) { var me = h('div', 'ts-me'); me.appendChild(h('small', null, 'Así te ven los demás')); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }
-    var spc = special(); if (spc) root.appendChild(spc); var my = mythic(); if (my) root.appendChild(my); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
+    var spc = special(); if (spc) root.appendChild(spc); root.appendChild(catalog()); var t1 = top(); if (t1) root.appendChild(t1); var t2 = trend(); if (t2) root.appendChild(t2); root.appendChild(cta());
     window.scrollTo(0, y);
   }
   function boot() { render();

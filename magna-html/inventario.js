@@ -16,7 +16,7 @@ window.MAGNA_INV = (function () {
   // tarjeta con el nombre equipado tal como lo ven los demás
   function card(acc, eq) { var w = h('div', 'inv-card'), pid = acc.player_id, p = pid != null && MAGNA.by(MAGNA.S.players, pid), x = p ? (MAGNA.playerStats()[pid] || {}) : {};
     var av = M.tierAv(acc.display_name, x.media, 72); if (acc.avatar && /^a\d\d$/.test(acc.avatar)) { av.style.backgroundImage = 'url("avatars/' + acc.avatar + '.webp")'; av.classList.add('has-pav'); }
-    var fr = eq.frame && M.item(eq.frame); if (fr && fr.type === 'frame') av.classList.add('fr-' + fr.style); w.appendChild(av);
+    var fr = eq.frame && M.item(eq.frame); if (fr && fr.type === 'frame') { av.classList.add('fr-' + fr.style); if (fr.lv) av.dataset.lvi = fr.lv; if (window.MAGNA_COS && MAGNA_COS.deco) MAGNA_COS.deco(av); } w.appendChild(av);
     var d = h('div'), n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', acc.display_name)); M.nameStyle(n, eq); var ti = eq.title && M.item(eq.title); if (ti && ti.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (ti.rarity || 'comun'), ti.name)); d.appendChild(n);
     d.appendChild(h('small', 'inv-h', 'Así te ven en rankings, alineaciones y tu perfil.')); w.appendChild(d); return w; }
 
@@ -28,6 +28,8 @@ window.MAGNA_INV = (function () {
     var st = { rows: [], eq: {} }, busy = false;
     function draw() { body.innerHTML = ''; body.appendChild(card(acc, st.eq));
       var own = st.rows.map(function (r) { var it = M.item(r.item_id); return it ? { it: it, r: r } : null; }).filter(Boolean);
+      // marcos con niveles: en el inventario solo se ve el nivel más alto que tienes (no cada mejora por separado)
+      var top = {}; own.forEach(function (o) { var fam = o.it.upg || (o.it.lv ? o.it.id : null); if (fam) top[fam] = Math.max(top[fam] || 0, o.it.lv || 1); }); own = own.filter(function (o) { var fam = o.it.upg || (o.it.lv ? o.it.id : null); return !fam || (o.it.lv || 1) === top[fam]; });
       if (!own.length) { var e = h('div', 'inv-emp'); e.appendChild(h('b', null, 'Todavía no tienes cosméticos')); e.appendChild(h('p', null, 'Compra colores de nombre, placas, marcos y títulos con tus Bits, o gánalos como regalo de la administración.')); var g = h('a', 'btn2 o', 'Ver la tienda'); g.href = 'tienda.html'; e.appendChild(g); body.appendChild(e); return; }
       SL.forEach(function (sl) { var mine = own.filter(function (o) { return o.it.type === sl; }); var bx = h('div', 'inv-sl'), t = h('div', 'inv-slh'); t.appendChild(h('b', null, ICO[sl] + ' ' + M.KIND[sl])); t.appendChild(h('small', null, mine.length ? mine.length + (mine.length === 1 ? ' artículo' : ' artículos') : 'No tienes ninguno')); bx.appendChild(t);
         var row = h('div', 'inv-row');
