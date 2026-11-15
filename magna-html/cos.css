@@ -510,3 +510,12 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 @keyframes jkSign{0%,80%{opacity:0;transform:scale(.3) rotate(-10deg)}84%{opacity:1;transform:scale(1.12) rotate(-4deg)}87%{transform:scale(1) rotate(-4deg)}94%{opacity:1;transform:scale(1) rotate(-4deg)}98%,100%{opacity:0;transform:scale(.9) rotate(-4deg)}}
 @keyframes jkCard{0%,77%{opacity:1;transform:rotate(12deg)}80%{opacity:1;transform:rotate(12deg) rotateY(90deg) scale(1.2)}82%,95%{opacity:0;transform:rotate(12deg) scale(.4)}99%,100%{opacity:1;transform:rotate(12deg)}}
 @media(prefers-reduced-motion:reduce){.fr-jackpot>.fxm *,.fr-jackpot>.fxm:before{animation:none!important}.fr-jackpot>.fxm .o3,.fr-jackpot>.fxm .gem,.fr-jackpot>.fxm .b2,.fr-jackpot>.fxm .bu,.fr-jackpot>.fxm .sx,.fr-jackpot>.fxm .gem{display:none!important}}
+
+/* marcos legendarios/míticos en avatares chiquitos (menos de 50 px): versión liviana */
+.frm.fxs>.fxm{display:none!important}
+.frm.fxs{animation:none!important}
+.fr-ouroboros.fxs:before,.fr-magenta.fxs:before{display:none!important}
+.fr-ouroboros.fxs:after,.fr-navidad.fxs:after,.fr-navidad.fxs:before,.fr-magenta.fxs:after,.fr-jackpot.fxs:after,.fr-jackpot.fxs:before{filter:none!important}
+.fr-ouroboros.fxs[data-lv="1"]:after{filter:saturate(.55) brightness(.78)!important}
+.fr-magenta.fxs:after{animation:frSpin 14s linear infinite!important}
+.fr-jackpot.fxs:before{animation:frCard 4.2s cubic-bezier(.4,0,.2,1) infinite!important}
