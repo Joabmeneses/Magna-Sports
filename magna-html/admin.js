@@ -910,6 +910,42 @@
     qi.oninput = function () { RQ.q = qi.value; draw(); }; draw();
   }
   // ---------- regalos ----------
+  // ---------- SORTEOS de marcos (inscripción con Bits; el ganador lo elige el servidor y recibe todos los niveles) ----------
+  function raffleRpc(n, a) { return window.MAGNA_SB().then(function (c) { return c.rpc(n, a); }).then(function (r) { if (r && r.error) throw r.error; return r.data; }); }
+  function raffleDlg() {
+    dialog('🎟️ Sorteos', function (b, close) {
+      var list = h('div'); list.appendChild(h('p', 'hint', 'Cargando…')); b.appendChild(list);
+      var F = (S().shop || []).filter(function (x) { return x.type === 'frame' && !x.upg && (x.lv === 1 || x.exclusive); }).sort(function (x, y) { return (y.raffle ? 1 : 0) - (x.raffle ? 1 : 0); });
+      var fm = h('div', 'box'); fm.style.marginTop = '14px'; fm.appendChild(h('h3', null, '➕ Nuevo sorteo'));
+      var ti = h('input', 'in'); ti.maxLength = 80; ti.placeholder = 'Ej.: Gran Sorteo Legendario'; var l1 = h('label', 'f', 'Nombre del sorteo'); l1.appendChild(ti); fm.appendChild(l1);
+      var pz = h('select', 'in'); F.forEach(function (x) { var U = (S().shop || []).filter(function (y) { return y.upg === x.id; }).length; var o = h('option', null, x.name + (U ? ' · ' + (U + 1) + ' niveles' : '') + (x.exclusive ? ' · exclusivo' : '')); o.value = x.id; pz.appendChild(o); }); var l2 = h('label', 'f', 'Premio (el ganador recibe todos sus niveles)'); l2.appendChild(pz); fm.appendChild(l2);
+      var co = h('input', 'in'); co.type = 'number'; co.min = 0; co.max = 1000000; co.value = 500; var l3 = h('label', 'f', 'Entrada en Bits'); l3.appendChild(co); fm.appendChild(l3);
+      var dt = h('input', 'in'); dt.type = 'datetime-local'; var d0 = new Date(Date.now() + 7 * 864e5); d0.setMinutes(0, 0, 0); dt.value = new Date(d0.getTime() - d0.getTimezoneOffset() * 6e4).toISOString().slice(0, 16); var l4 = h('label', 'f', 'Cierre de inscripciones'); l4.appendChild(dt); fm.appendChild(l4);
+      var er = h('p', 'err'); fm.appendChild(er);
+      var mk = btn('Crear sorteo y anunciarlo', function () { var t = ti.value.trim(), c = Number(co.value); er.textContent = '';
+        if (t.length < 3) return er.textContent = 'Escribe un nombre (mínimo 3 letras).'; if (/[<>]/.test(t)) return er.textContent = 'El nombre no puede tener < ni >.'; if (!Number.isInteger(c) || c < 0) return er.textContent = 'La entrada debe ser un número entero.'; if (!pz.value) return er.textContent = 'Elige un marco.';
+        var when = dt.value ? new Date(dt.value) : null; if (when && when <= new Date()) return er.textContent = 'La fecha de cierre debe ser futura.';
+        mk.disabled = true; raffleRpc('admin_raffle_create', { p_title: t, p_prize: pz.value, p_cost: c, p_closes: when ? when.toISOString() : null }).then(function () { var it = M.item(pz.value);
+          MAGNA.addNews('announcement', '🎟️ ¡Nuevo sorteo: ' + t + '! Se sortea ' + (it ? it.name : 'un marco') + ' con todos sus niveles. Inscríbete en Sorteo por ' + c.toLocaleString('es') + ' Bits.'); commit('🎟️ Sorteo creado y anunciado'); mk.disabled = false; ti.value = ''; refresh(); },
+          function (e) { mk.disabled = false; er.textContent = e.message || 'No se pudo crear'; }); }, 'o');
+      fm.appendChild(mk); b.appendChild(fm);
+      function refresh() { raffleRpc('raffle_list').then(function (L) { list.innerHTML = ''; L = L || []; if (!L.length) { list.appendChild(h('p', 'hint', 'Todavía no hay sorteos. Crea el primero abajo.')); return; }
+          L.forEach(function (r) { var it = M.item(r.prize_item), c = h('div', 'box rf-r'); var hd = h('div', 'bar2'); hd.appendChild(h('b', null, r.title)); hd.appendChild(h('span', 'chip', ({ open: '🟢 Abierto', closed: '⏳ Cerrado', drawn: '🏆 Sorteado', cancelled: '✖ Cancelado' })[r.status] || r.status)); c.appendChild(hd);
+            c.appendChild(h('p', 'hint', (it ? it.name : r.prize_item) + ' · entrada ' + Number(r.cost).toLocaleString('es') + ' Bits · ' + r.entrants + ' inscritos' + (r.closes_at ? ' · cierra ' + new Date(r.closes_at).toLocaleString('es') : '') + (r.status === 'drawn' ? ' · ganador: ' + (r.winner_name || '—') : '')));
+            var bb = h('div', 'bar2');
+            if (r.status === 'open') bb.appendChild(btn('Cerrar inscripciones', function () { raffleRpc('admin_raffle_close', { p_raffle: r.id }).then(function () { toast('Inscripciones cerradas'); refresh(); }, function (e) { toast(e.message || 'No se pudo', true); }); }, 'sm'));
+            if (r.status === 'open' || r.status === 'closed') {
+              bb.appendChild(btn('🎰 Sortear ahora', function () { if (!Number(r.entrants)) return toast('Nadie se inscribió todavía.', true);
+                confirmBox('¿Sortear "' + r.title + '"?', 'El sistema elige al azar entre ' + r.entrants + ' inscritos. El ganador recibe ' + (it ? it.name : 'el marco') + ' con todos sus niveles, ya equipado. No se puede deshacer.', 'Sortear', function () {
+                  raffleRpc('admin_raffle_draw', { p_raffle: r.id }).then(function (w) { var x = (w && w[0]) || {}; MAGNA.addNews('announcement', '🏆 ¡' + (x.winner_name || 'Alguien') + ' ganó el sorteo "' + r.title + '" y se lleva ' + (it ? it.name : 'el marco') + ' con todos sus niveles!'); commit('🏆 Sorteo realizado: ganó ' + (x.winner_name || '—')); toast('🏆 Ganó ' + (x.winner_name || '—') + '. Ábrelo en la página Sorteo para ver la ruleta.'); refresh(); },
+                    function (e) { toast(e.message || 'No se pudo sortear', true); }); }); }, 'sm o'));
+              bb.appendChild(btn('Cancelar y devolver Bits', function () { confirmBox('¿Cancelar "' + r.title + '"?', 'Se devuelven los Bits de la entrada a los ' + r.entrants + ' inscritos.', 'Cancelar sorteo', function () { raffleRpc('admin_raffle_cancel', { p_raffle: r.id }).then(function (n) { toast('Sorteo cancelado · ' + (n || 0) + ' reembolsos'); refresh(); }, function (e) { toast(e.message || 'No se pudo', true); }); }); }, 'sm d'));
+            }
+            var lk = h('a', 'btn sm', 'Ver página'); lk.href = 'sorteo.html'; lk.target = '_blank'; bb.appendChild(lk); c.appendChild(bb); list.appendChild(c); }); },
+        function (e) { list.innerHTML = ''; list.appendChild(h('p', 'err', 'No se pudieron cargar los sorteos: ' + (e.message || e))); }); }
+      refresh();
+    });
+  }
   function regalosV(b) {
     if (ACCS === null) { b.appendChild(M.skel ? M.skel(3) : h('p', 'hint', 'Cargando cuentas…')); return loadAccs(function () { if (tab === 'regalos') render(); }); }
     var A = ACCS || [], mem = A.filter(function (a) { return a.role === 'member'; }), tot = A.reduce(function (s, a) { return s + (Number(a.bits) || 0); }, 0);
@@ -918,6 +954,7 @@
     var g = h('div', 'rg-grid');
     [['coin', '#ffc53d', 'Regalar Bits', 'Elige cuentas, la cantidad y un mensaje. Atajos de 100 a 5.000.', 'Regalar Bits', function () { giftDlg(); }],
      ['bag', '#ff5fa2', 'Regalar cosmético', 'Colores de nombre, placas, marcos y títulos de la tienda, sin que paguen.', 'Elegir cosmético', function () { if (!(S().shop || []).length) { toast('Primero activa la tienda en la sección Tienda.', true); return go('tienda'); } modLoad('shop').then(function (m) { MODS.shop.done = m; m.itemGiftDlg(null); }, function () { toast('No se pudo abrir. Revisa tu conexión.', true); }); }],
+     ['gift', '#c6ff1a', 'Sorteos', 'Crea un sorteo de un marco con todos sus niveles: los miembros se inscriben pagando Bits y aquí sorteas en vivo.', 'Abrir sorteos', function () { raffleDlg(); }],
      ['star', '#b07cff', 'Entregar exclusivos', 'Revisa quién ganó títulos, MVP o hat-tricks y le entrega su cosmético exclusivo.', 'Entregar ahora', function () { syncExcl(true); }]].forEach(function (x) {
       var c = h('div', 'rg-c'); c.style.setProperty('--c', x[1]); var ic = h('span', 'rg-ic'); ic.appendChild(icon(x[0])); c.appendChild(ic); c.appendChild(h('h3', null, x[2])); c.appendChild(h('p', null, x[3])); c.appendChild(btn(x[4], x[5], 'o')); g.appendChild(c); });
     b.appendChild(g);
