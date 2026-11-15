@@ -69,8 +69,9 @@
   // ---------- 4. inclinación 3D con brillo ----------
   var TILT = '.others .mc, .hh-g, .hh-cc, .hh-n, .hh-m, .hh-box, .ts-c, .ts-f, .eqs .tc, .tq-st>div, .pf-st>div, .ck .gc, .ck article.tc, .ck article.mt, .ck .pd-tm';
   function tilt() { if (!FINE || RM) return;
-    document.addEventListener('pointermove', function (e) { var c = e.target.closest && e.target.closest(TILT); if (!c) return; var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height, k = c.classList.contains('hh-box') ? 3 : 8;
-      c.classList.add('mv-tl'); c.style.setProperty('--mx', x * 100 + '%'); c.style.setProperty('--my', y * 100 + '%'); c.style.transform = 'perspective(800px) rotateX(' + ((.5 - y) * k) + 'deg) rotateY(' + ((x - .5) * k) + 'deg) translateY(-3px)'; }, { passive: true });
+    var tq = 0, te = null; document.addEventListener('pointermove', function (ev) { te = ev; if (!tq) tq = requestAnimationFrame(tl); }, { passive: true });
+    function tl() { tq = 0; var e = te; var c = e.target.closest && e.target.closest(TILT); if (!c || c.hasAttribute('data-tilt')) return; var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height, k = c.classList.contains('hh-box') ? 3 : 8;
+      c.classList.add('mv-tl'); c.style.setProperty('--mx', x * 100 + '%'); c.style.setProperty('--my', y * 100 + '%'); c.style.transform = 'perspective(800px) rotateX(' + ((.5 - y) * k) + 'deg) rotateY(' + ((x - .5) * k) + 'deg) translateY(-3px)'; }
     document.addEventListener('pointerout', function (e) { var c = e.target.closest && e.target.closest(TILT); if (c && !c.contains(e.relatedTarget)) { c.style.transform = ''; c.classList.remove('mv-tl'); } }, { passive: true }); }
   // ---------- 5. aparición al bajar + contadores ----------
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (en) { if (!en.isIntersecting) return; var t = en.target; t.classList.add('in'); io.unobserve(t); $$('.hh-v, .hh-kp b, .mc-s:not(.up)', t).forEach(count); }); }, { rootMargin: '0px 0px -8% 0px', threshold: .08 }) : null;

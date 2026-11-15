@@ -1,4 +1,24 @@
 'use strict';
+// Modo ligero automático: si el equipo no logra mover las animaciones (menos de ~40 fps),
+// se apagan los brillos que más cuestan (pulsos de sombra, orbes de Bits) solo en esa pestaña.
+(function () {
+  var H = document.documentElement, K = 'magna_lite';
+  try { if (sessionStorage.getItem(K) === '1') H.classList.add('lite'); } catch (e) {}
+  var st = document.createElement('style'); st.id = 'magna-lite-css';
+  st.textContent = 'html.lite .bit-ic:before,html.lite .bit-ic img{animation:none!important}html.lite .bit-ic:after{display:none!important}html.lite .bit-ic img{filter:none!important}' +
+    'html.lite .frm{animation:none!important}html.lite .frm>.fxm .bu,html.lite .frm>.fxm .b2{display:none!important}' +
+    'html.lite .ts-spc:before{animation:none!important}';
+  (document.head || H).appendChild(st);
+  if (H.classList.contains('lite') || !window.requestAnimationFrame || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  setTimeout(function () {
+    if (document.hidden) return; var n = 0, t0 = 0, bad = false;
+    function vis() { bad = true; } document.addEventListener('visibilitychange', vis);
+    function f(t) { if (!t0) t0 = t; n++; if (t - t0 < 2000) return requestAnimationFrame(f);
+      document.removeEventListener('visibilitychange', vis); if (bad || document.hidden) return;
+      if (n / ((t - t0) / 1000) < 40) { H.classList.add('lite'); try { sessionStorage.setItem(K, '1'); } catch (e) {} } }
+    requestAnimationFrame(f);
+  }, 3500);
+})();
 // Menú de navegación único para todo Magna Arena (reemplaza la cabecera de cada página).
 (function () {
   var old = document.querySelector('body > header'); if (!old || old.dataset.mn) return;
@@ -76,6 +96,7 @@
     '.bit-ic img{width:100%;height:100%;display:block;animation:bitSpin 16s linear infinite;filter:drop-shadow(0 0 3px rgba(255,120,30,.7));pointer-events:none}' +
     '.bit-ic:after{content:"";position:absolute;left:43%;top:43%;width:14%;height:14%;min-width:3px;min-height:3px;border-radius:50%;background:#ffe08a;box-shadow:0 0 6px 1px #ff8a00,0 0 10px #a855f7;animation:bitOrb 3.4s linear infinite;pointer-events:none}' +
     '.bit-ic:hover img,a:hover>.bit-ic img,button:hover>.bit-ic img,.bit-ic.pop img{animation-duration:1.4s}' +
+    '.bit-ic.sm:before{animation:none;opacity:.75}.bit-ic.sm:after{display:none}.bit-ic.sm img{animation:none;filter:none}.bit-ic.sm:hover img,a:hover>.bit-ic.sm img,button:hover>.bit-ic.sm img,.bit-ic.sm.pop img{animation:bitSpin 1.4s linear infinite}' +
     '.bit-ic.pop{animation:bitPop .7s cubic-bezier(.3,1.6,.5,1)}' +
     '@keyframes bitSpin{to{transform:rotate(360deg)}}' +
     '@keyframes bitAura{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.12)}}' +
@@ -136,7 +157,7 @@
     '@media(prefers-reduced-motion:reduce){.mn,.mn-sh .mn-it{transition:none}.mn-ov.show .mn-it{animation:none;opacity:1;transform:none}.mn-links a.lv:after,.mn-btn.lv:after{animation:none}}';
   document.head.appendChild(sk);
   var bst = document.createElement('style'); bst.textContent = bcss; document.head.appendChild(bst);
-  window.MAGNA_BIT = function (size) { var s = document.createElement('span'); s.className = 'bit-ic'; if (size) s.style.setProperty('--bs', typeof size === 'number' ? size + 'px' : size); var i = document.createElement('img'); i.src = 'bits.webp'; i.alt = ''; i.width = i.height = 160; i.decoding = 'async'; s.appendChild(i); s.setAttribute('aria-hidden', 'true'); return s; };
+  window.MAGNA_BIT = function (size) { var s = document.createElement('span'); s.className = 'bit-ic' + (typeof size === 'number' && size >= 24 ? '' : ' sm'); if (size) s.style.setProperty('--bs', typeof size === 'number' ? size + 'px' : size); var i = document.createElement('img'); i.src = 'bits.webp'; i.alt = ''; i.width = i.height = 160; i.decoding = 'async'; s.appendChild(i); s.setAttribute('aria-hidden', 'true'); return s; };
   window.MAGNA_BIT.burst = function (el, n) { if (!el || !el.getBoundingClientRect) return; var ic = el.classList && el.classList.contains('bit-ic') ? el : el.querySelector && el.querySelector('.bit-ic'); if (ic) { ic.classList.remove('pop'); void ic.offsetWidth; ic.classList.add('pop'); } var r = (ic || el).getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, C = ['#ffd23f', '#ff8a00', '#ff4d1a', '#a855f7', '#fff3b0'];
     for (var k = 0; k < (n || 14); k++) { var p = document.createElement('i'), a = Math.random() * Math.PI * 2, d = 26 + Math.random() * 46; p.className = 'bit-sp'; p.style.left = (cx - 3) + 'px'; p.style.top = (cy - 3) + 'px'; p.style.background = C[k % C.length]; p.style.boxShadow = '0 0 8px ' + C[k % C.length]; p.style.setProperty('--dx', Math.cos(a) * d + 'px'); p.style.setProperty('--dy', Math.sin(a) * d + 'px'); p.style.animationDelay = (Math.random() * 120) + 'ms'; document.body.appendChild(p); setTimeout(p.remove.bind(p), 1100); } };
   if (!document.querySelector('link[rel~="icon"]')) { var fi = document.createElement('link'); fi.rel = 'icon'; fi.type = 'image/png'; fi.href = 'favicon.png'; document.head.appendChild(fi); var ap = document.createElement('link'); ap.rel = 'apple-touch-icon'; ap.href = 'favicon.png'; document.head.appendChild(ap); }
@@ -274,7 +295,7 @@
   function drawChip() {
     hd.classList.toggle('has-me', !!me); if (!me) { chip.innerHTML = ''; return; }
     var s = stats(); chip.innerHTML = ''; chip.title = 'Tu perfil'; chip.setAttribute('aria-label', 'Tu perfil: ' + me.display_name + ', ' + fmt(me.bits) + ' Bits');
-    chip.appendChild(avatar(s ? s.media : 100, s ? s.tier.color : '#ffd23f')); chip.appendChild(el('span', 'nm', me.display_name)); var btc = el('span', 'bt'); btc.appendChild(MAGNA_BIT(16)); btc.appendChild(document.createTextNode(fmt(me.bits))); chip.appendChild(btc); fitNav();
+    chip.appendChild(avatar(s ? s.media : 100, s ? s.tier.color : '#ffd23f')); chip.appendChild(el('span', 'nm', me.display_name)); var btc = el('span', 'bt'); var bi16 = MAGNA_BIT(16); bi16.classList.remove('sm'); btc.appendChild(bi16); btc.appendChild(document.createTextNode(fmt(me.bits))); chip.appendChild(btc); fitNav();
   }
   function save(a) { var prevId = me && me.id; me = a ? { id: a.id, display_name: a.display_name, username: a.username, bits: a.bits, player_id: a.player_id, role: a.role, avatar: a.avatar || null } : null; ntfBoot(); try { if (me) localStorage.setItem(ME_KEY, JSON.stringify(me)); else localStorage.removeItem(ME_KEY); } catch (e) {} drawChip(); }
   function client() { return window.MAGNA_SB ? window.MAGNA_SB() : Promise.reject(new Error('sin conexión')); }
