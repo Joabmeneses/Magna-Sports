@@ -10,7 +10,7 @@
     { k: 'goleadores', l: 'Goleadores', e: '⚽', c: '#2ee59d', unit: 'goles', hint: 'Goles en partidos narrados en vivo. Si empatan, va primero quien jugó menos partidos.' },
     { k: 'mvp', l: 'MVP', e: '🌟', c: '#ffc400', unit: 'MVP', hint: 'Veces elegido el mejor del partido. Si empatan, desempata la nota media.' },
     { k: 'bits', l: 'Bits', e: '🪙', c: '#ff8a3d', unit: 'Bits', hint: 'Saldo de Bits de cada miembro con cuenta. Se ganan acertando pronósticos en Apuestas; son una moneda ficticia sin valor real.' }];
-  var WEEK = 7 * 864e5;
+  var WEEK = 7 * 864e5, view = 'cards'; try { view = localStorage.getItem('rk_view') || 'cards'; } catch (e) {}
   function fmt(n) { return String(Math.round(Number(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
   function S() { return MAGNA.S; }
   function T() { return TABS.filter(function (x) { return x.k === tab; })[0]; }
@@ -79,10 +79,11 @@
   function go(k) { if (tab === k) return; var from = TABS.findIndex(function (x) { return x.k === tab; }), to = TABS.findIndex(function (x) { return x.k === k; }); tab = k; q = ''; tf = ''; open = {}; shown = 15; cmp = null; dir = to > from ? 1 : -1;
     try { history.replaceState(null, '', '#' + tab); } catch (e) {} if (tab === 'bits' && bitsRows === null && !bitsErr) loadBits(); if (tab === 'ricos' && richRows === null && !richErr) loadRich(); render(); var c = document.querySelector('.r2-cats'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start', behavior: RM() ? 'auto' : 'smooth' }); }
   var dir = 0;
-  function render() {
+  function render() { try { var tc = T(); if (tc) document.body.style.setProperty('--c', tc.c); } catch (e) {} setTimeout(function () { var on = document.querySelector('.r2-cat.on'), bx = on && on.parentNode; if (on && bx && bx.scrollWidth > bx.clientWidth) bx.scrollTo({ left: on.offsetLeft - (bx.clientWidth - on.offsetWidth) / 2, behavior: 'smooth' }); }, 60);
     var t = T(); document.body.style.setProperty('--ac', t.c); root.innerHTML = '';
     var hd = h('section', 'r2-h'), tx = h('div'); tx.appendChild(h('h1', null, 'Ranking')); tx.appendChild(h('p', null, 'Elige una categoría para ver quién va primero. Toca cualquier fila para ver sus números o compararlo con otro.')); hd.appendChild(tx);
     var dl = h('a', 'r2-dir', 'Ver todos los jugadores →'); dl.href = 'jugador.html'; hd.appendChild(dl); root.appendChild(hd);
+    try { var F = facts(); if (F.length) { var tk = h('div', 'r2-tk'), tr0 = h('div', 'r2-tkt'); [0, 1].forEach(function () { F.forEach(function (f) { var it = h('span', 'r2-tki'); it.appendChild(h('small', null, f[0])); it.appendChild(h('b', null, f[1])); tr0.appendChild(it); }); }); tk.appendChild(tr0); root.appendChild(tk); } } catch (e) {}
     // categorías
     var cats = h('div', 'r2-cats'); cats.setAttribute('role', 'tablist'); cats.setAttribute('aria-label', 'Categorías del ranking');
     TABS.forEach(function (x) { var b = h('button', 'r2-cat' + (x.k === tab ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', x.k === tab); b.style.setProperty('--c', x.c);
@@ -97,45 +98,107 @@
     var R = rowsFor(tab), P = past(tab);
     if (!R.length) { pn.appendChild(h('div', 'r2-emp', { equipos: 'Todavía no hay equipos.', jugadores: 'Todavía no hay jugadores.', goleadores: '⚽ Aún no hay goles. Aparecerán cuando se narren partidos.', mvp: '⭐ Aún no hay MVP. Se eligen en cada partido.', bits: 'Todavía no hay cuentas de miembros.' }[tab])); return; }
     R.forEach(function (r, i) { r.pos = i + 1; r.d = P ? (P[r.id] == null ? 'new' : P[r.id] - i) : null; });
-    summary(pn, R, P); podium(pn, R.slice(0, 3)); tools(pn, R); list(pn, R); cmpBar();
+    stage(pn, R); summary(pn, R, P); movers(pn, R, P); tools(pn, R); if (view === 'table') list(pn, R); else cards(pn, R); cmpBar();
     if (tab === 'equipos') { var leg = h('div', 'r2-leg'); leg.appendChild(h('b', null, 'Cómo se suman los puntos:')); [['Liga', 'league'], ['Champions', 'champions'], ['Mundial', 'mundial'], ['Otros torneos', 'tournament'], ['Amistoso', 'friendly']].forEach(function (x) { var s2 = h('span'); s2.appendChild(h('em', null, fmt(MAGNA.PTS[x[1]]))); s2.appendChild(document.createTextNode(' ' + x[0].toLowerCase())); leg.appendChild(s2); }); pn.appendChild(leg); }
   }
   function swipe(el) { var x0 = null, y0 = 0; el.addEventListener('touchstart', function (e) { if (e.target.closest('input,select,.r2-tbl')) return; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
     el.addEventListener('touchend', function (e) { if (x0 == null) return; var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null; if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx)) return; var i = TABS.findIndex(function (x) { return x.k === tab; }) + (dx < 0 ? 1 : -1); if (TABS[i]) go(TABS[i].k); }, { passive: true }); }
   function summary(pn, R, P) { var t = T(), sm = h('div', 'r2-sum');
     function card(lbl, main, sub, cls, on) { var c = h(on ? 'button' : 'div', 'r2-sc' + (cls ? ' ' + cls : '')); if (on) { c.type = 'button'; c.onclick = on; } c.appendChild(h('small', null, lbl)); var b = h('b'); if (typeof main === 'string') b.textContent = main; else b.appendChild(main); c.appendChild(b); if (sub) c.appendChild(h('span', null, sub)); sm.appendChild(c); }
-    var L = R[0], ln = h('span'); ln.appendChild(nameOf(L, true)); card('👑 Líder', ln, valTxt(L) + ' ' + t.unit);
+    
     var mi = R.filter(isMe)[0];
     if (mi) { var above = R[mi.pos - 2], gap = above ? (tab === 'equipos' || tab === 'bits' || tab === 'ricos' ? fmt(above.v - mi.v) : Math.max(0, Math.round((above.v - mi.v) * 10) / 10)) : null;
       card(tab === 'equipos' || tab === 'ricos' ? '🛡️ Tu equipo' : '📍 Tu puesto', '#' + mi.pos + ' de ' + R.length, mi.pos === 1 ? '¡Vas primero!' : 'A ' + gap + ' ' + t.unit + ' del #' + (mi.pos - 1), 'me', function () { jump(mi); }); }
     else card('📍 Tu puesto', me ? 'Sin puesto' : 'Entra', me ? 'Aún no apareces aquí' : 'para ver dónde vas', 'me', me ? null : function () { location.href = 'cuenta.html'; });
-    if (P) { var best = null; R.forEach(function (r) { if (typeof r.d === 'number' && r.d > 0 && (!best || r.d > best.d)) best = r; });
-      if (best) { var bn = h('span'); bn.appendChild(nameOf(best, true)); card('🚀 Mayor subida (7 días)', bn, '▲ ' + best.d + (best.d === 1 ? ' puesto' : ' puestos'), 'up'); } else card('🚀 Mayor subida (7 días)', 'Sin cambios', 'Nadie se movió esta semana'); }
-    else card('👥 En la tabla', String(R.length), tab === 'equipos' || tab === 'ricos' ? 'equipos' : tab === 'bits' ? 'miembros' : 'jugadores');
+    card('👥 En la tabla', String(R.length), tab === 'equipos' || tab === 'ricos' ? 'equipos' : tab === 'bits' ? 'miembros' : 'jugadores');
     pn.appendChild(sm); }
-  function jump(mi) { if (q || tf) { q = ''; tf = ''; } if (mi.pos > shown) shown = mi.pos + 5; render(); setTimeout(function () { var el = document.getElementById('rk-' + mi.id); if (el) { el.scrollIntoView({ behavior: RM() ? 'auto' : 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } }, 60); }
+  function jump(mi) { if (q || tf) { q = ''; tf = ''; } if (mi.pos > shown) shown = mi.pos + 5; render(); setTimeout(function () { var el = document.getElementById('rk-' + mi.id); if (el) { if (el.classList.contains('r3-card')) { el.scrollIntoView({ behavior: RM() ? 'auto' : 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); return; } el.scrollIntoView({ behavior: RM() ? 'auto' : 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } }, 60); }
   function podium(pn, top) { if (top.length < 2) return; var pod = h('div', 'r2-pod'), order = top.length === 3 ? [1, 0, 2] : [1, 0];
     order.forEach(function (i, k) { var r = top[i], href = hrefOf(r), c = h(href ? 'a' : 'div', 'r2-pc p' + (i + 1)); if (href) c.href = href; c.style.animationDelay = k * 90 + 'ms';
-      c.appendChild(h('span', 'mdl', ['🥇', '🥈', '🥉'][i])); var av = avOf(r, i === 0 ? 76 : 60); av.setAttribute('data-nolink', ''); c.appendChild(av);
+      var md = h('span', 'mdl', ['🥇', '🥈', '🥉'][i]); if (i === 0) { md.title = '¡Celebrar!'; md.onclick = function (ev) { ev.preventDefault(); ev.stopPropagation(); confetti(); }; } c.appendChild(md); var mob = innerWidth < 600, av = avOf(r, i === 0 ? (mob ? 70 : 96) : (mob ? 54 : 74)); av.setAttribute('data-nolink', ''); c.appendChild(av);
       var nb = h('b', 'nm'); nb.appendChild(nameOf(r, true)); c.appendChild(nb); c.appendChild(h('small', null, subOf(r)));
       var v = h('div', 'val'), vn = h('span', null, '0'); v.appendChild(vn); v.appendChild(h('small', null, T().unit)); c.appendChild(v); countUp(vn, r.v, tab === 'equipos' || tab === 'bits' || tab === 'ricos');
       var st = h('div', 'st'); st.appendChild(h('span', null, String(i + 1))); c.appendChild(st); pod.appendChild(c); });
     pn.appendChild(pod); }
+
+
+  // ---------- escenario: el campeón y quienes lo persiguen ----------
+  function stage(pn, R) { var t = T(), big = tab === 'equipos' || tab === 'bits' || tab === 'ricos', L = R[0], st = h('div', 'r3-stage');
+    var ch = h('div', 'r3-champ'), hrefL = hrefOf(L);
+    ch.appendChild(h('span', 'r3-crown', '👑'));
+    ch.appendChild(h('span', 'r3-tag', '#1 · ' + { equipos: 'Equipo líder', ricos: 'El más rico', jugadores: 'Mejor media', goleadores: 'Bota de oro', mvp: 'Rey del MVP', bits: 'Más Bits' }[tab]));
+    var avw = h('div', 'r3-cav'), av = avOf(L, innerWidth < 600 ? 104 : 132); av.setAttribute('data-nolink', ''); avw.appendChild(av); ch.appendChild(avw);
+    var nm = h('h3', 'r3-cn'); nm.appendChild(nameOf(L, true)); ch.appendChild(nm); ch.appendChild(h('small', 'r3-cs', subOf(L)));
+    var vl = valTxt(L).length, vv = h('div', 'r3-cv' + (vl > 6 ? ' xl' : vl > 3 ? ' lg' : '')), vn = h('b', null, '0'); vv.appendChild(vn); vv.appendChild(h('span', null, t.unit)); ch.appendChild(vv); countUp(vn, L.v, big);
+    var cps = h('div', 'r3-chips'); chips(L).forEach(function (c) { cps.appendChild(h('span', null, c)); }); ch.appendChild(cps);
+    var ac = h('div', 'r3-cact'); if (hrefL) { var a = h('a', 'pr', L.t ? 'Ver equipo' : 'Ver perfil'); a.href = hrefL; ac.appendChild(a); }
+    var cf = h('button', null, '🎉'); cf.type = 'button'; cf.title = '¡Celebrar!'; cf.onclick = confetti; ac.appendChild(cf); ch.appendChild(ac); st.appendChild(ch);
+    // los perseguidores (#2 a #5)
+    var pk = h('div', 'r3-pack'); pk.appendChild(h('div', 'r3-ph', '🏁 Lo persiguen'));
+    R.slice(1, 5).forEach(function (r, i) { var href = hrefOf(r), c = h(href ? 'a' : 'div', 'r3-pr p' + (i + 2)); if (href) c.href = href; c.style.animationDelay = (i + 1) * 80 + 'ms';
+      c.appendChild(h('span', 'r3-pn', String(i + 2))); var a2 = avOf(r, 46); a2.setAttribute('data-nolink', ''); c.appendChild(a2);
+      var w = h('span', 'r3-pw'), nb = h('b'); nb.appendChild(nameOf(r, true)); w.appendChild(nb); var gap = Math.round((L.v - r.v) * 10) / 10;
+      w.appendChild(h('small', null, gap > 0 ? 'a ' + (big ? fmt(gap) : String(gap).replace('.', ',')) + ' del líder' : '¡empatado con el líder!'));
+      var br = h('span', 'r3-pb'), bi = h('i'); br.appendChild(bi); w.appendChild(br); c.appendChild(w); c.appendChild(h('span', 'r3-pv', valTxt(r)));
+      requestAnimationFrame(function () { requestAnimationFrame(function () { bi.style.width = Math.max(4, Math.min(100, L.v ? r.v / L.v * 100 : 0)) + '%'; }); });
+      pk.appendChild(c); });
+    if (R.length >= 2 && tab !== 'bits') { var dz = h('button', 'r3-duelb', '⚔️ Duelo por el trono: ' + (R[0].t ? R[0].t.name : R[0].p ? R[0].p.name : R[0].b.display_name) + ' vs ' + (R[1].t ? R[1].t.name : R[1].p ? R[1].p.name : R[1].b.display_name)); dz.type = 'button'; dz.onclick = function () { compare(R[0], R[1]); }; pk.appendChild(dz); }
+    st.appendChild(pk); pn.appendChild(st); }
+  // ---------- movimientos de la semana ----------
+  function movers(pn, R, P) { if (!P) return; var up = R.filter(function (r) { return typeof r.d === 'number' && r.d > 0; }).sort(function (a, b) { return b.d - a.d; }).slice(0, 3), dn = R.filter(function (r) { return typeof r.d === 'number' && r.d < 0; }).sort(function (a, b) { return a.d - b.d; }).slice(0, 3), nw = R.filter(function (r) { return r.d === 'new'; }).slice(0, 3);
+    if (!up.length && !dn.length && !nw.length) return; var w = h('div', 'r3-mv');
+    [['🚀 Suben', up, 'up', function (r) { return '▲' + r.d; }], ['📉 Bajan', dn, 'dn', function (r) { return '▼' + (-r.d); }], ['🆕 Nuevos', nw, 'nw', function () { return 'nuevo'; }]].forEach(function (g) { if (!g[1].length) return; var c = h('div', 'r3-mvc ' + g[2]); c.appendChild(h('b', null, g[0]));
+      g[1].forEach(function (r) { var it = h('span', 'r3-mvi'), a = avOf(r, 26); a.setAttribute('data-nolink', ''); it.appendChild(a); var nb = h('span'); nb.appendChild(nameOf(r, true)); it.appendChild(nb); it.appendChild(h('em', null, g[3](r) + ' · #' + r.pos)); it.onclick = function () { jump(r); }; c.appendChild(it); }); w.appendChild(c); });
+    pn.appendChild(w); }
+  // ---------- vista de tarjetas ----------
+  function cards(pn, R) { var k = q.trim().toLowerCase(), F = R.filter(function (r) { if (tf === 'free' && (!r.p || r.p.teamId)) return false; if (tf && tf !== 'free' && (!r.p || String(r.p.teamId) !== tf)) return false; if (!k) return true; var n = (r.t ? r.t.name : r.b ? r.b.display_name : r.p.name) + ' ' + subOf(r); return n.toLowerCase().indexOf(k) >= 0; });
+    var g = h('div', 'r3-grid'); if (!F.length) { g.appendChild(h('div', 'r2-emp', 'Nadie coincide con tu búsqueda.')); pn.appendChild(g); return; }
+    var big = tab === 'equipos' || tab === 'bits' || tab === 'ricos', mx = Math.max.apply(null, R.map(function (r) { return r.v; }).concat([1])), lastZ = null, zoned = tab === 'jugadores' && !k && !tf, bars = [];
+    F.slice(0, shown).forEach(function (r, i) {
+      if (zoned) { var tz = MAGNA.tierOf(r.media); if (tz.id !== lastZ) { lastZ = tz.id; var zd = h('div', 'r2-zone r3-zone'); zd.style.setProperty('--zc', tz.color); zd.appendChild(h('b', null, { elite: '💎 Zona Élite', oro: '🥇 Zona Oro', plata: '🥈 Zona Plata', bronce: '🥉 Zona Bronce' }[tz.id] || tz.name)); zd.appendChild(h('small', null, { elite: 'media 80 o más', oro: 'media 60 a 79', plata: 'media 40 a 59', bronce: 'menos de 40' }[tz.id] || '')); g.appendChild(zd); } }
+      var c = h('button', 'r3-card' + (r.pos <= 3 ? ' t' + r.pos : '') + (isMe(r) ? ' me' : '') + (cmp && cmp.id === r.id ? ' cmp' : '')); c.type = 'button'; c.id = 'rk-' + r.id; c.style.animationDelay = Math.min(i, 16) * 30 + 'ms';
+      var top = h('div', 'r3-ct'); top.appendChild(h('span', 'r3-rk', '#' + r.pos)); var mv = r.d === 'new' ? ['nw', 'nuevo'] : r.d > 0 ? ['up', '▲' + r.d] : r.d < 0 ? ['dn', '▼' + (-r.d)] : null; if (mv) top.appendChild(h('i', 'r3-mvb ' + mv[0], mv[1])); c.appendChild(top);
+      var mid = h('div', 'r3-cm'), a = avOf(r, 48); a.setAttribute('data-nolink', ''); mid.appendChild(a); var tx = h('span', 'r3-ctx'), nb = h('b'); nb.appendChild(nameOf(r, true)); tx.appendChild(nb); tx.appendChild(h('small', null, subOf(r))); mid.appendChild(tx); c.appendChild(mid);
+      var bt = h('div', 'r3-cb'), vb = h('b', null, valTxt(r)); bt.appendChild(vb); bt.appendChild(h('span', null, T().unit)); var up0 = R[r.pos - 2]; if (up0 && up0.v > r.v) { var gp = Math.round((up0.v - r.v) * 10) / 10; bt.appendChild(h('em', 'r2-gap', '−' + (big ? fmt(gp) : String(gp).replace('.', ',')) + ' del #' + (r.pos - 1))); }
+      c.appendChild(bt); var br = h('span', 'r3-bar'), bi = h('i'); br.appendChild(bi); c.appendChild(br); bars.push([bi, tab === 'jugadores' ? r.v : r.v / mx * 100]);
+      c.onclick = function () { detail(r); }; g.appendChild(c); });
+    pn.appendChild(g);
+    if (F.length > shown) { var more = h('button', 'r2-more', 'Mostrar ' + Math.min(20, F.length - shown) + ' más (' + (F.length - shown) + ' restantes)'); more.type = 'button'; more.onclick = function () { shown += 20; render(); }; pn.appendChild(more); }
+    requestAnimationFrame(function () { requestAnimationFrame(function () { bars.forEach(function (x) { x[0].style.width = Math.max(2, Math.min(100, x[1])) + '%'; }); }); }); }
+  // ficha de un jugador/equipo (al tocar una tarjeta)
+  function detail(r) { M.modal(function (b, close) { var hd = h('div', 'r3-dh'), a = avOf(r, 72); a.setAttribute('data-nolink', ''); hd.appendChild(a); var w = h('div'), nb = h('h3', 'x'); nb.appendChild(nameOf(r, true)); w.appendChild(nb); w.appendChild(h('p', 'sub', '#' + r.pos + ' en ' + T().l + ' · ' + subOf(r))); hd.appendChild(w); b.appendChild(hd);
+    var sts = h('div', 'r2-sts'); stats(r).forEach(function (s2) { var d = h('div'); d.appendChild(h('b', null, String(s2[0]))); d.appendChild(h('small', null, s2[1])); sts.appendChild(d); }); b.appendChild(sts);
+    var ac = h('div', 'r2-acts'), href = hrefOf(r); if (href) { var l = h('a', 'pr', r.t ? 'Ver equipo' : 'Ver perfil'); l.href = href; ac.appendChild(l); }
+    if (r.t && !r.rich) { var bd = h('button', null, '📊 De dónde salen sus puntos'); bd.type = 'button'; bd.onclick = function () { close(); breakdown(r); }; ac.appendChild(bd); }
+    if (tab !== 'bits') { var cb = h('button', 'cm', cmp && cmp.id !== r.id ? '⚔️ Comparar con ' + (cmp.t ? cmp.t.name : cmp.p.name) : cmp && cmp.id === r.id ? 'Quitar de la comparación' : '⚔️ Comparar con otro'); cb.type = 'button';
+      cb.onclick = function () { close(); if (!cmp) { cmp = r; render(); return; } if (cmp.id === r.id) { cmp = null; render(); return; } compare(cmp, r); }; ac.appendChild(cb); }
+    b.appendChild(ac); }); }
+  // duelo por el trono: el #1 contra el #2, con la ventaja y un botón para compararlos cara a cara
+  function duel(pn, R) { if (R.length < 2) return; var a = R[0], b = R[1], t = T(), big = tab === 'equipos' || tab === 'bits' || tab === 'ricos', gap = Math.round((a.v - b.v) * 10) / 10;
+    var d = h('div', 'r2-duel'), hd = h('div', 'r2-dh'); hd.appendChild(h('span', 'r2-dk', gap === 0 ? '🔥 ¡Empate en la cima!' : gap <= Math.max(1, a.v * .05) ? '🔥 ¡Se pelean el trono!' : '👑 Duelo por el trono')); d.appendChild(hd);
+    var row = h('div', 'r2-dr'); [a, b].forEach(function (r, i) { var s = h('div', 'r2-ds' + (i ? ' b' : '')), av = avOf(r, 46); av.setAttribute('data-nolink', ''); s.appendChild(av); var nb = h('b'); nb.appendChild(nameOf(r, true)); var w = h('span'); w.appendChild(nb); w.appendChild(h('small', null, valTxt(r) + ' ' + t.unit)); s.appendChild(w); row.appendChild(s); if (!i) row.appendChild(h('span', 'r2-vs', 'VS')); }); d.appendChild(row);
+    var tot = Math.max(1e-9, Math.abs(a.v) + Math.abs(b.v)), br = h('div', 'r2-dbar'), ba = h('i', 'a'), bb = h('i', 'b'); br.appendChild(ba); br.appendChild(bb); d.appendChild(br);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { ba.style.width = (Math.abs(a.v) / tot * 100) + '%'; bb.style.width = (Math.abs(b.v) / tot * 100) + '%'; }); });
+    var ft = h('div', 'r2-df'); ft.appendChild(h('span', null, gap === 0 ? 'Mismo número: cualquier partido decide quién reina.' : (b.t ? b.t.name : b.p ? b.p.name : b.b.display_name) + ' está a ' + (big ? fmt(gap) : String(gap).replace('.', ',')) + ' ' + (tab === 'jugadores' ? 'puntos de media' : t.unit) + ' del primer puesto.'));
+    if (tab !== 'bits') { var cb = h('button', null, '⚔️ Cara a cara'); cb.type = 'button'; cb.onclick = function () { compare(a, b); }; ft.appendChild(cb); } d.appendChild(ft); pn.appendChild(d); }
   function tools(pn, R) { var bar = h('div', 'r2-tools'), sw = h('label', 'r2-q'), inp = h('input'); sw.appendChild(h('span', null, '🔎')); inp.type = 'search'; inp.placeholder = tab === 'equipos' || tab === 'ricos' ? 'Buscar equipo…' : 'Buscar por nombre o equipo…'; inp.value = q; inp.setAttribute('aria-label', 'Buscar'); sw.appendChild(inp);
     var tmr; inp.oninput = function () { clearTimeout(tmr); tmr = setTimeout(function () { q = inp.value; shown = 15; var pos = inp.selectionStart; render(); var n = document.querySelector('.r2-q input'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 180); }; bar.appendChild(sw);
     if (tab !== 'equipos' && tab !== 'bits' && tab !== 'ricos') { var sel = h('select', 'r2-sel'); sel.setAttribute('aria-label', 'Filtrar por equipo'); var o0 = h('option', null, 'Todos los equipos'); o0.value = ''; sel.appendChild(o0); var of = h('option', null, 'Agentes libres'); of.value = 'free'; sel.appendChild(of);
       S().teams.forEach(function (t) { var o = h('option', null, t.name); o.value = String(t.id); sel.appendChild(o); }); sel.value = tf; sel.onchange = function () { tf = sel.value; shown = 15; render(); }; bar.appendChild(sel); }
+    var vw = h('div', 'r3-vw'); [['cards', '▦ Tarjetas'], ['table', '☰ Tabla']].forEach(function (x) { var b = h('button', view === x[0] ? 'on' : '', x[1]); b.type = 'button'; b.onclick = function () { view = x[0]; try { localStorage.setItem('rk_view', view); } catch (e) {} render(); }; vw.appendChild(b); }); bar.appendChild(vw);
     pn.appendChild(bar); }
   function list(pn, R) { var k = q.trim().toLowerCase(), F = R.filter(function (r) { if (tf === 'free' && (!r.p || r.p.teamId)) return false; if (tf && tf !== 'free' && (!r.p || String(r.p.teamId) !== tf)) return false; if (!k) return true; var n = (r.t ? r.t.name : r.b ? r.b.display_name : r.p.name) + ' ' + subOf(r); return n.toLowerCase().indexOf(k) >= 0; });
     var cols = SEC[tab], tb = h('div', 'r2-tbl'); tb.style.setProperty('--nc', cols.length);
     var th = h('div', 'r2-th'); th.appendChild(h('span', 'n', '#')); th.appendChild(h('span', 'w', tab === 'equipos' || tab === 'ricos' ? 'Equipo' : tab === 'bits' ? 'Miembro' : 'Jugador')); th.appendChild(h('span', 'v', T().unit)); cols.forEach(function (c) { th.appendChild(h('span', 'x', c[0])); }); th.appendChild(h('span')); tb.appendChild(th);
     if (!F.length) { tb.appendChild(h('div', 'r2-emp', 'Nadie coincide con tu búsqueda.')); pn.appendChild(tb); return; }
     var mx = Math.max.apply(null, R.map(function (r) { return r.v; }).concat([1])), bars = [];
-    F.slice(0, shown).forEach(function (r, i) { var c = h('div', 'r2-r' + (r.pos <= 3 ? ' t' + r.pos : '') + (isMe(r) ? ' me' : '') + (open[r.id] ? ' open' : '') + (cmp && cmp.id === r.id ? ' cmp' : '')); c.id = 'rk-' + r.id; c.style.animationDelay = Math.min(i, 14) * 25 + 'ms';
+    var lastZ = null, zoned = tab === 'jugadores' && !k && !tf;
+    F.slice(0, shown).forEach(function (r, i) { if (zoned) { var tz = MAGNA.tierOf(r.media); if (tz.id !== lastZ) { lastZ = tz.id; var zd = h('div', 'r2-zone'); zd.style.setProperty('--zc', tz.color); zd.appendChild(h('b', null, { elite: '💎 Zona Élite', oro: '🥇 Zona Oro', plata: '🥈 Zona Plata', bronce: '🥉 Zona Bronce' }[tz.id] || tz.name)); zd.appendChild(h('small', null, { elite: 'media 80 o más', oro: 'media 60 a 79', plata: 'media 40 a 59', bronce: 'menos de 40' }[tz.id] || '')); tb.appendChild(zd); } }
+      var c = h('div', 'r2-r' + (r.pos <= 3 ? ' t' + r.pos : '') + (isMe(r) ? ' me' : '') + (open[r.id] ? ' open' : '') + (cmp && cmp.id === r.id ? ' cmp' : '')); c.id = 'rk-' + r.id; c.style.animationDelay = Math.min(i, 14) * 25 + 'ms';
       var row = h('button', 'r2-row'); row.type = 'button'; row.setAttribute('aria-expanded', !!open[r.id]);
       var n = h('span', 'n'); n.appendChild(h('b', null, String(r.pos))); var mv = r.d === 'new' ? ['nw', 'nuevo'] : r.d > 0 ? ['up', '▲' + r.d] : r.d < 0 ? ['dn', '▼' + (-r.d)] : null; if (mv) n.appendChild(h('i', mv[0], mv[1])); row.appendChild(n);
       var w = h('span', 'w'), av = avOf(r, 38); av.setAttribute('data-nolink', ''); w.appendChild(av); var tx = h('span', 'tx'), b = h('b'); b.appendChild(nameOf(r, true)); tx.appendChild(b); tx.appendChild(h('small', null, subOf(r))); w.appendChild(tx); row.appendChild(w);
-      var v = h('span', 'v'); v.appendChild(h('b', null, valTxt(r))); var tr = h('span', 'bar'), fi = h('i'); tr.appendChild(fi); v.appendChild(tr); bars.push([fi, tab === 'jugadores' ? r.v : r.v / mx * 100]); row.appendChild(v);
+      var v = h('span', 'v'), vb0 = h('b', null, valTxt(r)); v.appendChild(vb0); var up0 = R[r.pos - 2]; if (up0 && up0.v > r.v) { var gp = Math.round((up0.v - r.v) * 10) / 10; vb0.appendChild(h('em', 'r2-gap', '−' + (tab === 'equipos' || tab === 'bits' || tab === 'ricos' ? fmt(gp) : String(gp).replace('.', ',')))); } else if (r.pos === 1) vb0.appendChild(h('em', 'r2-gap top', '👑')); var tr = h('span', 'bar'), fi = h('i'); tr.appendChild(fi); v.appendChild(tr); bars.push([fi, tab === 'jugadores' ? r.v : r.v / mx * 100]); row.appendChild(v);
       cols.forEach(function (cc) { row.appendChild(h('span', 'x', String(cc[1](r)))); }); row.appendChild(h('span', 'chev', '›'));
       row.onclick = function () { open[r.id] = !open[r.id]; c.classList.toggle('open', !!open[r.id]); row.setAttribute('aria-expanded', !!open[r.id]); };
       c.appendChild(row); if (r.p && window.MAGNA_COS) { row.dataset.plh = r.p.id; MAGNA_COS.host(row); }
