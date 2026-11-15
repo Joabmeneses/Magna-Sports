@@ -375,3 +375,6 @@ body.neo .rl-r time{color:var(--muted);font:700 12.5px "JetBrains Mono",monospac
 body.neo .rl-av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:800 13px Archivo,sans-serif;color:#fff;background:linear-gradient(135deg,#ff9a4c,#ff4d6d)}
 body.neo .rl-t b{display:block;font-weight:600;font-size:14px;line-height:1.35}body.neo .rl-t small{color:var(--muted);font-size:12px}body.neo .rl-t em{font-style:normal;color:var(--c);font-weight:700}
 @media(max-width:600px){body.neo .rl-r{grid-template-columns:44px minmax(0,1fr)}body.neo .rl-av{display:none}body.neo .rl-kp{gap:6px}}
+body.neo .my-box{border-color:rgba(216,180,254,.5);background:radial-gradient(70% 140% at 0 0,rgba(196,181,253,.22),transparent 70%),#17110e}
+body.neo .rar.rar-mitica{color:#160a2b}
+.cb.w{border-color:#a78bfa;color:#c4b5fd}
