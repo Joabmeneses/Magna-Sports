@@ -186,7 +186,7 @@ var MAGNA = (function () {
       if (m.type !== 'tournament' || m.cid !== c.id || m.group !== g.name || m.status !== 'finished') return;
       var a = r[m.home], b = r[m.away]; if (!a || !b) return;
       a.pj++; b.pj++; a.gf += m.hs; a.gc += m.as; b.gf += m.as; b.gc += m.hs;
-      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3;
+      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3; if (c.format === 'champions') w[1].pts += 1; // Champions: victoria 3, derrota 1
     });
     return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.team.localeCompare(y.team, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; });
   }

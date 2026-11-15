@@ -20,7 +20,7 @@ window.PRED = (function () {
   function zoneDone(c) { var ph = (c.state && c.state.phase) || ''; return hasLeague(c) && ph !== '' && ph !== 'groups' && ph !== 'league'; }
   function leagueTable(c) { var r = {}; (c.teamIds || []).forEach(function (t) { r[t] = { id: t, n: MAGNA.teamName(t), pj: 0, pts: 0, gf: 0, gc: 0 }; });
     MAGNA.S.matches.forEach(function (m) { if (m.type !== 'tournament' || m.cid !== c.id || !m.group || m.status !== 'finished') return; var a = r[m.home], b = r[m.away]; if (!a || !b) return;
-      a.pj++; b.pj++; a.gf += m.hs; a.gc += m.as; b.gf += m.as; b.gc += m.hs; (m.hs > m.as ? a : b).pts += 3; });
+      a.pj++; b.pj++; a.gf += m.hs; a.gc += m.as; b.gf += m.as; b.gc += m.hs; (m.hs > m.as ? a : b).pts += 3; if (c.format === 'champions') (m.hs > m.as ? b : a).pts += 1; });
     return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.n.localeCompare(y.n, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; }); }
   function zoneOf(c) { var L = zLim(c), z = {}; leagueTable(c).forEach(function (x) { z[x.id] = x.pos <= L.d ? 1 : x.pos <= L.d + L.p ? 2 : 3; }); return z; }
   // picks: [{k:'match'|'champion'|'zone', r, p}] → { pts, hits, tries }
