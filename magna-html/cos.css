@@ -420,7 +420,7 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fr-magenta:not([data-lv="1"]){animation:fxMgB 5s ease-in-out infinite!important}
 .fr-magenta:not([data-lv="1"])>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 12%,rgba(255,79,216,.85) 42%,#fff 46.7%,rgba(255,214,247,.55) 47.7%,transparent 49.3% 62%,rgba(255,79,216,.85) 92%,#fff 96.7%,rgba(255,214,247,.55) 97.7%,transparent 99.3%);animation:fxChase 5s cubic-bezier(.55,0,.25,1) infinite}
 .fr-magenta:not([data-lv="1"])>.fxm .o1{opacity:.34;animation:frSpin 26s linear infinite reverse,fxInv 5s ease-in-out infinite}
-.fr-magenta:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;animation:fxArc 5s steps(1) infinite;background:url("fx/magenta-rayos.svg") center/100% 100% no-repeat;filter:drop-shadow(0 0 2px #ff4fd8);z-index:6}
+.fr-magenta:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;animation:fxArc 5s steps(1) infinite;background:url("fx/magenta-chispas2.svg") center/100% 100% no-repeat,url("fx/magenta-rayos.svg") center/100% 100% no-repeat;filter:drop-shadow(0 0 2px #ff4fd8);z-index:6}
 .fr-magenta>.fxm .o2:before,.fr-magenta>.fxm .o2:after{display:none}
 .fr-magenta:not([data-lv="1"])>.fxm .b2{display:block;inset:13%;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px #ff4fd8,inset 0 0 10px #ff4fd8;background:none;-webkit-mask:none;mask:none;opacity:0;animation:fxShock 5s ease-out infinite;z-index:7}
 .fr-magenta:not([data-lv="1"])>.fxm .bu{display:block;inset:1%;border:0;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 7deg,#fff 0 1.4deg,transparent 1.4deg 12deg),repeating-conic-gradient(#ff4fd8 0 2.4deg,transparent 2.4deg 17deg);-webkit-mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);animation:fxSpark 5s ease-out infinite;z-index:7}
@@ -431,7 +431,7 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .fr-magenta[data-lv="3"]{animation:fxMgB3 3.2s ease-in-out infinite!important}
 .fr-magenta[data-lv="3"]>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 8%,rgba(255,79,216,.9) 28%,#fff 31.5%,rgba(255,214,247,.55) 32.5%,transparent 34.1% 41%,rgba(255,79,216,.9) 61%,#fff 64.8%,rgba(255,214,247,.55) 65.8%,transparent 67.4% 74%,rgba(255,79,216,.9) 94%,#fff 98.0%,rgba(255,214,247,.55) 99.0%,transparent 100.6%);animation:fxChase3 3.2s cubic-bezier(.55,0,.25,1) infinite}
 .fr-magenta[data-lv="3"]>.fxm .o1{opacity:.44;animation:frSpin 18s linear infinite reverse,fxInv 3.2s ease-in-out infinite}
-.fr-magenta[data-lv="3"]>.fxm .o2{animation:none;opacity:1}
+.fr-magenta[data-lv="3"]>.fxm .o2{animation:frSpin 6s linear infinite;opacity:1;background-image:url("fx/magenta-chispas3.svg"),url("fx/magenta-rayos.svg");filter:drop-shadow(0 0 2px #ff4fd8) drop-shadow(0 0 1px #fff)}
 .fr-magenta[data-lv="3"]>.fxm .b2,.fr-magenta[data-lv="3"]>.fxm .bu,.fr-magenta[data-lv="3"]>.fxm .sx{animation-duration:3.2s}
 .fr-magenta[data-lv="3"]>.fxm .au{display:block;inset:0!important;opacity:.9;background:url("fx/magenta-3.webp") center/100% 100% no-repeat!important;mix-blend-mode:screen;animation:frSpin 7s linear infinite,fxMgH 3.2s ease-in-out infinite!important;z-index:1}
 /* la ola acelera mientras carga y da el último giro en el estallido */
