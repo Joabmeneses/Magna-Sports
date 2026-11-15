@@ -33,7 +33,7 @@ window.MAGNA_COS = (function () {
     el.classList.add('frm');
     // avatares chiquitos (listas, alineaciones): sin la capa de mecánicas, que casi no se ve y es lo que más pesa
     var sz = parseFloat(el.style.getPropertyValue('--s')) || el.offsetWidth || 0; el.classList.toggle('fxs', sz > 0 && sz < 50);
-    if (!fx) { fx = h('i', 'fxm'); fx.setAttribute('aria-hidden', 'true'); ['au', 'o1', 'o2', 'o3', 'bu', 'b2', 'gem', 'sx'].forEach(function (c) { fx.appendChild(h('i', c)); });
+    if (!fx) { fx = h('i', 'fxm'); fx.setAttribute('aria-hidden', 'true'); ['au', 'o1', 'o2', 'o3', 'bu', 'b2', 'gem', 'sx', 'w1', 'w2', 'w3'].forEach(function (c) { fx.appendChild(h('i', c)); });
       var sd = Number(el.dataset.pid); fx.style.setProperty('--dl', '-' + (((isNaN(sd) ? Math.random() * 50 : sd) * 1.37) % 8).toFixed(2) + 's'); el.appendChild(fx); } }
   // pinta un nombre con los cosméticos de un "equipado" (eq) concreto
   function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (c && STY.color[c.style]) el.classList.add('c-' + c.style); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
