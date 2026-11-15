@@ -41,6 +41,11 @@ body.srp:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
 .sr-cf{position:fixed;top:-12px;width:9px;height:14px;z-index:101;pointer-events:none;animation:srFall linear forwards}
 @keyframes srFall{to{transform:translateY(110vh) rotate(720deg)}}
 @media(max-width:760px){.sr-h{grid-template-columns:1fr;justify-items:center;text-align:center}.sr-st{justify-content:center}.sr-stage{width:250px;height:250px;order:-1}.sr-stage .tav{--s:140px!important}}
+.sr-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px;scrollbar-width:none}
+.sr-tabs button{flex:none;display:grid;gap:2px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:inherit;cursor:pointer;font:inherit}
+.sr-tabs button b{font-weight:900}
+.sr-tabs button small{opacity:.75;font-size:12px}
+.sr-tabs button.on{border-color:#ffd23f;background:rgba(255,210,63,.12)}
 </style>
 </head>
 <body class="srp ac"><header class="top" id="top"></header><script src="nav.js"></script>
