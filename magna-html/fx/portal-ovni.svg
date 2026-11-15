@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 64"><defs>
+<radialGradient id="d" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#ecfeff"/><stop offset=".5" stop-color="#67e8f9"/><stop offset="1" stop-color="#0e7490"/></radialGradient>
+<linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#94a3b8"/><stop offset="1" stop-color="#475569"/></linearGradient></defs>
+<ellipse cx="60" cy="26" rx="22" ry="20" fill="url(#d)" stroke="#164e63" stroke-width="2.5"/>
+<ellipse cx="54" cy="16" rx="7" ry="4" fill="#fff" opacity=".7"/>
+<path d="M60 22 q-5 0 -5 6 q0 5 5 5 q5 0 5 -5 q0 -6 -5 -6z" fill="#4ade80" stroke="#14532d" stroke-width="1.2"/><circle cx="58" cy="27" r="1.4" fill="#000"/><circle cx="62" cy="27" r="1.4" fill="#000"/>
+<ellipse cx="60" cy="40" rx="56" ry="14" fill="url(#h)" stroke="#1e293b" stroke-width="2.5"/>
+<ellipse cx="60" cy="36" rx="44" ry="6" fill="#cbd5e1" opacity=".6"/>
+<g><circle cx="22" cy="42" r="3.5" fill="#fde047"><animate attributeName="fill" values="#fde047;#f472b6;#22d3ee;#fde047" dur=".9s" repeatCount="indefinite"/></circle>
+<circle cx="41" cy="47" r="3.5" fill="#f472b6"><animate attributeName="fill" values="#f472b6;#22d3ee;#fde047;#f472b6" dur=".9s" repeatCount="indefinite"/></circle>
+<circle cx="60" cy="49" r="3.5" fill="#22d3ee"><animate attributeName="fill" values="#22d3ee;#fde047;#f472b6;#22d3ee" dur=".9s" repeatCount="indefinite"/></circle>
+<circle cx="79" cy="47" r="3.5" fill="#fde047"><animate attributeName="fill" values="#fde047;#f472b6;#22d3ee;#fde047" dur=".9s" repeatCount="indefinite"/></circle>
+<circle cx="98" cy="42" r="3.5" fill="#f472b6"><animate attributeName="fill" values="#f472b6;#22d3ee;#fde047;#f472b6" dur=".9s" repeatCount="indefinite"/></circle></g></svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+<g><ellipse cx="30" cy="25" rx="13" ry="15" fill="#fff"/><ellipse cx="70" cy="25" rx="13" ry="15" fill="#fff"/>
+<g><circle cx="30" cy="27" r="6.5" fill="#141414"/><circle cx="70" cy="27" r="6.5" fill="#141414"/><circle cx="28" cy="24" r="2" fill="#fff"/><circle cx="68" cy="24" r="2" fill="#fff"/>
+<animateTransform attributeName="transform" type="translate" values="0 0;-5 0;-5 0;5 1;5 1;0 0" keyTimes="0;.2;.4;.6;.85;1" dur="2.4s" repeatCount="indefinite"/></g>
+<rect x="10" y="0" width="80" height="0" fill="#141414"><animate attributeName="height" values="0;0;30;0;0;30;0" keyTimes="0;.42;.47;.52;.86;.9;.94" dur="2.4s" repeatCount="indefinite"/></rect></g></svg>
