@@ -627,3 +627,5 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 @keyframes bmJit3{0%,66%{translate:0 0}70%{translate:-2.5% 1%}74%{translate:2% -1.5%}78%{translate:-1% -2%}82%{translate:2.5% 1%}86%,100%{translate:0 0}}
 .fr-blackmatter.frm[data-lv="3"]{box-shadow:0 0 .5em rgba(255,30,30,.45)}
 .fr-blackmatter.fxs:before{display:none!important}.fr-blackmatter.fxs:after{animation:frSpin 20s linear infinite!important}
+/* pausa fuera de pantalla: gana sobre reglas de marcos con !important */
+.cos-off:not(#zq),.cos-off:not(#zq):before,.cos-off:not(#zq):after,.cos-off:not(#zq) *,.cos-off:not(#zq) *:before,.cos-off:not(#zq) *:after{animation-play-state:paused!important}
