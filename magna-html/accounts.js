@@ -24,6 +24,8 @@ window.ACCOUNTS = (function () {
   function placeBet(matchId, side, stake) { return sb().then(function (c) { return c.rpc('place_bet', { p_match: matchId, p_side: side, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
   // parleys: combinadas de 2 a 8 partidos (Bits ficticios)
   function myParlays() { return sb().then(function (c) { return c.from('parlays').select('*, parlay_legs(*)').order('created_at', { ascending: false }).limit(50).then(chk).then(function (r) { return r.data || []; }); }); }
+  // mercados extra del parley (marcador exacto y goleador) de un partido próximo
+  function parlayMarkets(mid) { return sb().then(function (c) { return c.rpc('parlay_markets', { p_match: mid }).then(chk).then(function (r) { return r.data || { open: false }; }); }); }
   function placeParlay(legs, stake) { return sb().then(function (c) { return c.rpc('place_parlay', { p_legs: legs, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
   // rol de juez: valoraciones, goleadores y MVP
   function isJudge() { return sb().then(function (c) { return c.rpc('is_judge').then(function (r) { return r.data === true; }); }); }
@@ -48,5 +50,5 @@ window.ACCOUNTS = (function () {
     function done() { var t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(function () { btn.textContent = t; }, 1600); }
     (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject()).then(done, function () { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); });
   }
-  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, myParlays: myParlays, placeParlay: placeParlay, isJudge: isJudge, rateJudge: rateJudge, judgeStars: judgeStars, judgeSave: judgeSave, judgeNote: judgeNote, betBoard: betBoard, adminJudges: adminJudges, setJudge: setJudge, cashOut: cashOut, codeBox: codeBox, copy: copy };
+  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, parlayMarkets: parlayMarkets, myParlays: myParlays, placeParlay: placeParlay, isJudge: isJudge, rateJudge: rateJudge, judgeStars: judgeStars, judgeSave: judgeSave, judgeNote: judgeNote, betBoard: betBoard, adminJudges: adminJudges, setJudge: setJudge, cashOut: cashOut, codeBox: codeBox, copy: copy };
 })();
