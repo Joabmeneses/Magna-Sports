@@ -27,6 +27,9 @@ window.ACCOUNTS = (function () {
   function placeParlay(legs, stake) { return sb().then(function (c) { return c.rpc('place_parlay', { p_legs: legs, p_stake: stake }).then(chk).then(function (r) { return r.data; }); }); }
   // rol de juez: valoraciones, goleadores y MVP
   function isJudge() { return sb().then(function (c) { return c.rpc('is_judge').then(function (r) { return r.data === true; }); }); }
+  function judgeNote(matchId, text) { return sb().then(function (c) { return c.rpc('judge_note', { p_match: matchId, p_note: text || '' }).then(chk).then(function () { return true; }); }); }
+  // quién apostó por quién y cuánto en esos partidos (apuestas simples)
+  function betBoard(ids) { return sb().then(function (c) { return c.rpc('bet_board', { p_matches: ids }).then(chk).then(function (r) { return r.data || []; }); }); }
   function judgeSave(matchId, ratings, goals, mvp) { return sb().then(function (c) { return c.rpc('judge_save', { p_match: matchId, p_ratings: ratings, p_goals: goals, p_mvp: mvp == null ? null : mvp }).then(chk).then(function () { return true; }); }); }
   function rateJudge(matchId, stars) { return sb().then(function (c) { return c.rpc('rate_judge', { p_match: matchId, p_stars: stars }).then(chk); }); }
   function judgeStars(matchId) { return sb().then(function (c) { return c.rpc('judge_stars', { p_match: matchId == null ? null : matchId }).then(chk).then(function (r) { return r.data || []; }); }); }
@@ -45,5 +48,5 @@ window.ACCOUNTS = (function () {
     function done() { var t = btn.textContent; btn.textContent = '¡Copiado!'; setTimeout(function () { btn.textContent = t; }, 1600); }
     (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject()).then(done, function () { var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) {} ta.remove(); });
   }
-  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, myParlays: myParlays, placeParlay: placeParlay, isJudge: isJudge, rateJudge: rateJudge, judgeStars: judgeStars, judgeSave: judgeSave, adminJudges: adminJudges, setJudge: setJudge, cashOut: cashOut, codeBox: codeBox, copy: copy };
+  return { login: login, me: me, logout: logout, list: list, manage: manage, setBits: setBits, gift: gift, coach: coach, pullState: pullState, playerBits: playerBits, myBets: myBets, placeBet: placeBet, myParlays: myParlays, placeParlay: placeParlay, isJudge: isJudge, rateJudge: rateJudge, judgeStars: judgeStars, judgeSave: judgeSave, judgeNote: judgeNote, betBoard: betBoard, adminJudges: adminJudges, setJudge: setJudge, cashOut: cashOut, codeBox: codeBox, copy: copy };
 })();
