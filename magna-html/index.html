@@ -403,7 +403,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <p class="maphint mono">Toca el mapa para interactuar</p></div></div>
 <div class="pk" id="pk" hidden><div class="pkc" role="dialog" aria-modal="true" aria-label="Elegir reacción"><div class="pkh"><b class="x" id="pkt"></b><button id="pkx" aria-label="Cerrar">×</button></div><div class="pkb" id="pkb"></div><div class="pkg" id="pkg"></div></div></div>
 <div id="fx"></div><div id="ov"></div><div id="toast" role="status"></div>
-<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script><script src="home-hub.js" defer></script><script src="home-lineups.js" defer></script><script src="mov.js" defer></script><script src="accounts.js" defer></script><script src="juez-voto.js" defer></script><script src="vivo.js" defer></script>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="home-data.js"></script><script src="home-hub.js" defer></script><script src="home-lineups.js" defer></script><script src="mov.js" defer></script><script src="accounts.js" defer></script><script src="juez-voto.js" defer></script><script src="vivo.js" defer></script><script src="marcador-fx.js" defer></script>
 <script>
 (function(){
 if(!window.__HOME_N){document.body.classList.add('vacio');return}
@@ -541,11 +541,11 @@ function openPick(k,el){pkSide=k;pkEl=el||null;var m=M[cur];
  T('#pkt','Elige tu reacción');pkGrid();var o=$('#pk');o.hidden=false;requestAnimationFrame(function(){o.classList.add('show')})}
 $('#pkx').addEventListener('click',closePick);$('#pk').addEventListener('click',function(e){if(e.target===this)closePick()});addEventListener('keydown',function(e){if(e.key==='Escape')closePick()});
 var LET=["img/208ff95c46.webp", "img/b4fe267e97.webp", "img/58ff117863.webp", "img/0a53ef1793.webp"];
-function goalFx(k){var m=M[cur],name=k==='h'?m.h:m.a,cr=(k==='h'?m.hi:m.ai)||'e',cols=[COL[k],'#fff','#ffd23f','#000'];
+function goalFx(k,gi){var m=M[cur],name=k==='h'?m.h:m.a,cr=(k==='h'?m.hi:m.ai)||'e',cols=[COL[k],'#fff','#ffd23f','#000'];
  [$('.banner'),$('.desk .card')].filter(function(h){return h&&h.offsetParent}).forEach(function(h){
   var o=document.createElement('div');o.className='gl';
-  o.innerHTML='<div class="gl-r"></div><svg class="gl-z" width="100%" height="100%" aria-hidden="true"><defs><pattern id="chv" width="64" height="44" patternUnits="userSpaceOnUse"><path d="M0 34L32 8l32 26" fill="none" stroke="#fff" stroke-width="3"/></pattern></defs><rect class="gl-zr" width="100%" height="140%" fill="url(#chv)"/></svg><div class="gl-w">'+LET.map(function(u){return '<img class="gl-l" alt="" src="'+u+'">'}).join('')+'</div><div class="gl-t"><span class="mc-c"><span class="im '+cr+'"></span></span><b class="x"></b></div><div class="gl-f"></div>';
-  $('.gl-t b',o).textContent=name;h.appendChild(o);
+  o.innerHTML='<div class="gl-r"></div><svg class="gl-z" width="100%" height="100%" aria-hidden="true"><defs><pattern id="chv" width="64" height="44" patternUnits="userSpaceOnUse"><path d="M0 34L32 8l32 26" fill="none" stroke="#fff" stroke-width="3"/></pattern></defs><rect class="gl-zr" width="100%" height="140%" fill="url(#chv)"/></svg><div class="gl-w">'+LET.map(function(u){return '<img class="gl-l" alt="" src="'+u+'">'}).join('')+'</div><div class="gl-t"><span class="mc-c"><span class="im '+cr+'"></span></span><span class="gl-n"><b class="x"></b><em class="gl-s"></em></span></div><div class="gl-f"></div>';
+  $('.gl-t b',o).textContent=name;if(gi)$('.gl-s',o).textContent=[gi.who?'⚽ '+gi.who:'',gi.min?gi.min+'’':'',gi.score||''].filter(Boolean).join(' · ');h.appendChild(o);
   if(RM){$$('.gl-l',o).forEach(function(e){e.style.opacity=1});$('.gl-t',o).style.opacity=1}
   else{
    o.animate([{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}],{duration:280,easing:'cubic-bezier(.7,0,.2,1)'});
@@ -572,6 +572,7 @@ function formB(el,t){el.innerHTML='';var w=(t.match(/V/g)||[]).length,l=(t.match
  for(var i=0;i<4;i++){var c=t[i],b=document.createElement('i');b.className=c==='V'?'w':c==='D'?'l':'e';b.title=c==='V'?'Victoria':c==='D'?'Derrota':'Sin datos';b.style.animationDelay=i*70+'ms';el.appendChild(b)}
  el.setAttribute('role','img');el.setAttribute('aria-label',t?'Últimos 4 partidos: '+w+' victorias y '+l+' derrota':'Sin historial')}
 cards();select(0,false);
+window.MAGNA_BN={M:M,cur:function(){return cur},render:render,goalFx:goalFx};
 if(!RM&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(function(){t.classList.remove('rv','in');t.style.transitionDelay=''},1300)}})},{threshold:.12});
  $$('.hero .meta,.hero h1,.hero p,.hero .cta,.hero .vs,.banner,.desk .card,.mc,.note').forEach(function(e,i){if(e.offsetParent===null)return;e.classList.add('rv');e.style.transitionDelay=(i%5)*70+'ms';io.observe(e)})}
 })();

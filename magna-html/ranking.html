@@ -203,7 +203,8 @@ body.r2:has(.r2-cb) .mlv{bottom:84px!important}
 .r3-mv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0 0 18px}
 .r3-mvc{display:grid;gap:6px;padding:12px;border:2px solid #0d0d10;border-radius:14px;box-shadow:3px 3px 0 #0d0d10;background:#171a23}
 .r3-mvc>b{font:900 italic 14px Archivo,sans-serif;text-transform:uppercase}.r3-mvc.up>b{color:#2ee59d}.r3-mvc.dn>b{color:#ff5d6c}.r3-mvc.nw>b{color:#ffc83a}
-.r3-mvi{display:flex;align-items:center;gap:8px;cursor:pointer;min-width:0}.r3-mvi span{min-width:0;flex:1;font:800 13px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r3-mvi em{font:800 11px "JetBrains Mono",monospace;font-style:normal;color:var(--mu)}
+.r3-mvi{display:flex;align-items:center;gap:8px;cursor:pointer;min-width:0}.r3-mvi>:first-child{flex:none!important;width:var(--s,26px)!important;height:var(--s,26px)!important;min-width:var(--s,26px)}
+.r3-mvi>span:nth-child(2){min-width:0;flex:1;font:800 13px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r3-mvi em{font:800 11px "JetBrains Mono",monospace;font-style:normal;color:var(--mu)}
 .r3-mvi:hover span{text-decoration:underline}
 /* selector de vista */
 .r3-vw{display:flex;border:2px solid #0d0d10;border-radius:12px;overflow:hidden;box-shadow:3px 3px 0 #0d0d10}

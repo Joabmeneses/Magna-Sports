@@ -862,3 +862,84 @@ body:not(.adm-body) .tav[data-pid]{cursor:pointer}
 .pl-dragoneterno[data-plv="3"] .pbs{animation:deB 1.6s ease-in-out infinite!important}
 @keyframes deA{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes deB{0%,100%{opacity:.35}50%{opacity:1}}
+/* ===== Marco legendario Sierra Infernal · 3 niveles =====
+   Nv1 Forjada: la sierra avanza a golpes (trinquete), fuego tenue que respira.
+   Nv2 Encendida: gira sin parar, el fuego arde y titila, halo naranja y brasas que suben.
+   Nv3 Desatada: acelera y frena como un motor, estela de giro, segundo fuego en contra, chispas, destello y temblor. */
+.fr-sierra{animation:none!important;box-shadow:none}
+.fr-sierra.frm:after,.fr-sierra.frm:before{border-radius:0!important;filter:none!important;background-position:center!important;background-size:100% 100%!important;background-repeat:no-repeat!important;inset:-42%!important}
+.fr-sierra.frm:after{background-image:url("fx/sierra-metal.webp")!important;z-index:3!important;animation:siTick 24s steps(12,end) infinite!important}
+.fr-sierra.frm:before{display:block!important;content:""!important;background:radial-gradient(closest-side,transparent 50%,rgba(255,110,10,.6) 64%,rgba(255,60,0,.18) 80%,transparent 96%)!important;z-index:0!important;opacity:.25;animation:siGlow 3.4s ease-in-out infinite!important}
+.fr-sierra>.fxm{inset:-42%!important;border-radius:0;z-index:4}
+.fr-sierra>.fxm>i{display:none!important;inset:auto;border-radius:0;animation:none;will-change:auto;background-color:transparent;background-position:center;background-size:100% 100%;background-repeat:no-repeat;clip-path:none;margin:0;-webkit-mask:none;mask:none;border:0;filter:none;box-shadow:none}
+.fr-sierra>.fxm>i:before,.fr-sierra>.fxm>i:after{display:none!important}
+.fr-sierra.frm>.fxm>.au{display:block!important;inset:0;background-image:url("fx/sierra-fuego.webp");z-index:1;opacity:.45;animation:siTick 24s steps(12,end) infinite,siBreath 3.4s ease-in-out infinite!important}
+@keyframes siTick{to{transform:rotate(360deg)}}
+@keyframes siSpin{to{transform:rotate(360deg)}}
+@keyframes siSpinR{to{transform:rotate(-360deg)}}
+@keyframes siBreath{0%,100%{opacity:.25}50%{opacity:.6}}
+@keyframes siGlow{0%,100%{opacity:.08}50%{opacity:.26}}
+/* Nv2 */
+.fr-sierra.frm[data-lv="2"]:after,.fr-sierra.frm[data-lv="2"]>.fxm>.au{animation:siSpin 9s linear infinite!important}
+.fr-sierra.frm[data-lv="2"]>.fxm>.au{opacity:1}
+.fr-sierra.frm[data-lv="2"]>.fxm>.w2{display:block!important;inset:0;background-image:url("fx/sierra-fuego.webp");z-index:2;opacity:0;animation:siSpin 9s linear infinite,siFlick 1.3s steps(1) infinite!important}
+.fr-sierra.frm[data-lv="2"]:before{opacity:.55;animation:siGlow2 2s ease-in-out infinite!important}
+@keyframes siGlow2{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:.85;transform:scale(1.03)}}
+@keyframes siFlick{0%{opacity:0}12%{opacity:.55}20%{opacity:.15}38%{opacity:.7}50%{opacity:.25}63%{opacity:.6}80%{opacity:.1}90%{opacity:.45}}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o1,.fr-sierra.frm:not([data-lv="1"])>.fxm>.o2,.fr-sierra.frm:not([data-lv="1"])>.fxm>.o3{display:block!important;width:4%;height:4%;border-radius:50%;background:radial-gradient(circle,#fff6c8 0 25%,#ffa526 45%,rgba(255,90,0,.5) 65%,transparent 72%);z-index:5;opacity:0;animation:siEmber 2.4s ease-out infinite!important}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o1{left:26%;top:30%}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o2{left:70%;top:26%;animation-delay:.8s!important}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o3{left:48%;top:20%;animation-delay:1.6s!important}
+@keyframes siEmber{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(30%,-260%) scale(1.2)}}
+/* Nv3 */
+.fr-sierra.frm[data-lv="3"]{animation:siShake 3s linear infinite!important}
+.fr-sierra.frm[data-lv="3"]:after,.fr-sierra.frm[data-lv="3"]>.fxm>.au{animation:siRev 3s cubic-bezier(.65,0,.35,1) infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.au{opacity:1}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w1{display:block!important;inset:0;background-image:url("fx/sierra-metal.webp");z-index:0;opacity:.32;animation:siRev 3s cubic-bezier(.65,0,.35,1) -.07s infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w2{display:block!important;inset:-3%;background-image:url("fx/sierra-fuego.webp");z-index:2;opacity:.7;animation:siSpinR 2.2s linear infinite,siFlick 1s steps(1) infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w3{display:block!important;inset:4%;background-image:url("fx/sierra-chispas.svg");z-index:6;animation:siSpin .9s linear infinite,siSpark 3s linear infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w4{display:block!important;inset:-2%;background-image:url("fx/sierra-chispas2.svg");z-index:6;transform:rotate(17deg);animation:siSpin 1.3s linear infinite,siSpark 3s linear -1.5s infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.sx{display:block!important;inset:12%;border-radius:50%;background:radial-gradient(closest-side,transparent 55%,rgba(255,240,190,.95) 68%,rgba(255,120,20,.6) 80%,transparent 100%);z-index:5;opacity:0;animation:siFlash 3s ease-out infinite!important}
+.fr-sierra.frm[data-lv="3"]:before{opacity:.9;background:radial-gradient(closest-side,transparent 46%,rgba(255,150,30,.75) 60%,rgba(255,50,0,.35) 78%,transparent 98%)!important;animation:siGlow3 3s ease-in-out infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.o1,.fr-sierra.frm[data-lv="3"]>.fxm>.o2,.fr-sierra.frm[data-lv="3"]>.fxm>.o3{animation-duration:1.5s!important;width:5%;height:5%}
+@keyframes siRev{0%{transform:rotate(0)}100%{transform:rotate(1440deg)}}
+@keyframes siSpark{0%,30%{opacity:0}40%,62%{opacity:1}72%,100%{opacity:0}}
+@keyframes siFlash{0%,40%{opacity:0;transform:scale(.92)}50%{opacity:1;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.12)}}
+@keyframes siGlow3{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes siShake{0%,42%,58%,100%{translate:0 0}45%{translate:1.5% -1%}48%{translate:-1.5% 1%}51%{translate:1% 1.5%}54%{translate:-1% -1%}}
+/* marcos pequeños: solo sierra y fuego */
+.fr-sierra.fxs>.fxm>i:not(.au){display:none!important}
+.fr-sierra.fxs{animation:none!important}
+@media(prefers-reduced-motion:reduce){.fr-sierra.frm,.fr-sierra:before,.fr-sierra:after,.fr-sierra>.fxm>i{animation:none!important}}
+/* Nv1: ceniza sobre el anillo de fuego, brasa que respira */
+.fr-sierra.frm[data-lv="1"]>.fxm>.w1{display:block!important;inset:0;border-radius:50%;background:radial-gradient(closest-side,transparent 50.5%,rgba(22,12,8,.82) 52.5%,rgba(30,16,10,.74) 58%,rgba(22,12,8,.82) 63%,transparent 65%);z-index:0;animation:siTick 24s steps(12,end) infinite,siAsh 3.4s ease-in-out infinite!important}
+@keyframes siAsh{0%,100%{opacity:1}50%{opacity:.55}}
+.fr-sierra.frm[data-lv="1"]>.fxm>.au{z-index:1}
+/* ===== Color legendario «Punk»: cambia la tipografía a letra gastada de fotocopia (Rubik Dirt, licencia libre OFL) =====
+   Letras blancas con contorno de tinta y doble impresión roja/cian; cada 3 s la copia "falla": tiembla, se desfasan
+   los colores y pasa la luz del escáner. Se lee en fondo claro y oscuro. La fuente se carga sola (cos.js). */
+.c-punk .mpn-n{font-family:"Rubik Dirt","Arial Black",Impact,sans-serif;font-weight:400;font-style:normal;letter-spacing:.02em;padding:0 .12em;color:#fbf8f0;-webkit-text-stroke:.03em #0d0d10;paint-order:stroke fill;text-shadow:.06em .04em 0 rgba(255,42,85,.85),-.05em -.02em 0 rgba(34,224,255,.8);animation:pkGlitch 3s steps(1) infinite}
+.mpn.c-punk:not([class*="pl-"]){position:relative;overflow:hidden}
+.mpn.c-punk:not([class*="pl-"]):after{content:"";position:absolute;top:0;bottom:0;left:0;width:.35em;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(198,255,26,.75),rgba(255,255,255,.9),rgba(198,255,26,.75),transparent);mix-blend-mode:screen;opacity:0;animation:pkScan 3s linear infinite}
+@keyframes pkScan{0%,60%{left:-.5em;opacity:0}62%,88%{opacity:1}90%,100%{left:100%;opacity:0}}
+@keyframes pkGlitch{0%,62%,100%{transform:none;text-shadow:.06em .04em 0 rgba(255,42,85,.85),-.05em -.02em 0 rgba(34,224,255,.8)}
+  64%{transform:translateX(.04em) skewX(-6deg);text-shadow:.16em .02em 0 rgba(255,42,85,.9),-.14em -.03em 0 rgba(34,224,255,.85)}
+  67%{transform:translateX(-.05em);text-shadow:-.12em .05em 0 rgba(255,42,85,.9),.12em -.04em 0 rgba(34,224,255,.85)}
+  70%{transform:translateY(-.03em) skewX(4deg);text-shadow:.09em -.05em 0 rgba(255,42,85,.9),-.1em .05em 0 rgba(34,224,255,.85)}
+  73%{transform:none;text-shadow:.2em 0 0 rgba(255,42,85,.6),-.2em 0 0 rgba(34,224,255,.6)}}
+@media(prefers-reduced-motion:reduce){.c-punk .mpn-n,.mpn.c-punk:after{animation:none;opacity:0}}
+/* ===== Color legendario «Dragón eterno» (colección con el marco y la placa) =====
+   Letra épica (Cinzel Decorative, licencia libre OFL) rellena con las escamas de la placa, lava que fluye por las grietas,
+   tinte de oro fundido y filo dorado; cada 4 s un destello de oro recorre el nombre. Si el nombre no lleva placa,
+   le suben brasas por encima. La fuente se carga sola (cos.js). */
+.c-dragoneterno .mpn-n{font-family:"Cinzel Decorative","Cinzel",Georgia,serif;font-weight:900;font-style:normal;font-size:.85em;line-height:1.25;letter-spacing:0;padding:0 .06em;color:transparent;background:linear-gradient(100deg,transparent 0 42%,rgba(255,250,220,.95) 48%,#fff 50%,rgba(255,250,220,.95) 52%,transparent 58% 100%) 130% 0/300% 100% no-repeat,url("fx/placa-ouro-lava.webp") 0 0/2.6em 2.6em repeat,linear-gradient(180deg,rgba(255,214,90,.62) 15%,rgba(255,120,30,.45) 55%,rgba(150,30,0,.25) 85%),url("fx/placa-ouro-escamas.webp") center/2.2em 2.2em repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:.025em #ffd25a;paint-order:stroke fill;filter:drop-shadow(0 0 .1em rgba(255,120,20,.85)) drop-shadow(0 .06em 0 #2a0800);animation:deName 4s linear infinite}
+@keyframes deName{0%{background-position:130% 0,0 0,0 0,center}55%{background-position:130% 0,0 -1.3em,0 0,center}80%{background-position:-30% 0,0 -1.9em,0 0,center}100%{background-position:-30% 0,0 -2.6em,0 0,center}}
+.mpn.c-dragoneterno:not([class*="pl-"]){position:relative;isolation:isolate}
+.mpn.c-dragoneterno:not([class*="pl-"]):after{content:"";position:absolute;left:0;right:0;bottom:50%;height:1.1em;pointer-events:none;background:radial-gradient(circle,#fff3c4 0 .03em,#ff8a1f .06em,transparent .09em) .2em 100%/1.5em 1.1em repeat-x,radial-gradient(circle,#ffd25a 0 .025em,#ff4d00 .05em,transparent .08em) .9em 100%/2.1em 1.1em repeat-x;opacity:0;animation:mtEmber 2.6s linear infinite}
+@keyframes mtEmber{0%{opacity:0;transform:translateY(.5em)}20%{opacity:1}100%{opacity:0;transform:translateY(-.4em)}}
+/* letra por letra (cos.js parte el nombre): cada letra lleva su relleno; el destello y una ola de fuego la recorren:
+   la letra salta, crece y su filo pasa de dorado a blanco caliente, una tras otra */
+.c-dragoneterno .mpn-n[data-sp]{background:none;animation:none}
+.c-dragoneterno .mpn-n>i{font-style:normal;display:inline-block;white-space:pre;color:transparent;background:linear-gradient(100deg,transparent 0 42%,rgba(255,250,220,.95) 48%,#fff 50%,rgba(255,250,220,.95) 52%,transparent 58% 100%) 130% 0/300% 100% no-repeat,url("fx/placa-ouro-lava.webp") 0 0/2.6em 2.6em repeat,linear-gradient(180deg,rgba(255,214,90,.62) 15%,rgba(255,120,30,.45) 55%,rgba(150,30,0,.25) 85%),url("fx/placa-ouro-escamas.webp") center/2.2em 2.2em repeat;-webkit-background-clip:text;background-clip:text;transform-origin:50% 80%;animation:deName 4s linear infinite,deWave 4s ease-in-out infinite;animation-delay:calc(var(--i,0) * .07s)}
+@keyframes deWave{0%,58%,76%,100%{transform:none;-webkit-text-stroke-color:#ffd25a}66%{transform:translateY(-.14em) scale(1.16) rotate(-4deg);-webkit-text-stroke-color:#fff6d8}71%{transform:translateY(.02em) scale(.97);-webkit-text-stroke-color:#ffb020}}
+@media(prefers-reduced-motion:reduce){.c-dragoneterno .mpn-n,.c-dragoneterno .mpn-n>i,.mpn.c-dragoneterno:after{animation:none}}
