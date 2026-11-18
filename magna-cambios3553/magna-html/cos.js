@@ -1,0 +1,116 @@
+'use strict';
+// Cosméticos de Magna Arena (foto de perfil, color y placa del nombre, marco del avatar y título) y enlaces a perfiles.
+// Lo cargan todas las páginas públicas; no depende de site.js.
+window.MAGNA_COS = (function () {
+  function h(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  var PAV = {}; try { PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {}
+  function pav(pid) { var id = pid != null && PAV[pid]; return id && /^a\d\d$/.test(id) ? 'avatars/' + id + '.webp' : null; }
+  // Cosméticos equipados (color de nombre, placa, marco del avatar, título) de cada jugador con cuenta
+  var COS = {}; try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; } catch (e) {}
+  var STY = {
+    color: { oro: 'Oro', 'neon-rosa': 'Neón rosa', 'neon-cian': 'Neón cian', 'neon-verde': 'Neón verde', fuego: 'Fuego', hielo: 'Hielo', galaxia: 'Galaxia', arcoiris: 'Arcoíris', sangre: 'Carmesí', menta: 'Menta', estrella: 'Estrella fugaz', holo: 'Holográfico', lava: 'Lava fundida', aurora: 'Aurora boreal', diamante: 'Diamante', oro24: 'Oro 24K', vacio: 'Vacío', punk: 'Punk', dragoneterno: 'Dragón eterno' },
+    plate: { sakura: 'Sakura', magna: 'Magna', oro: 'Oro', plata: 'Plata', galaxia: 'Galaxia', fuego: 'Fuego', neon: 'Neón', selva: 'Selva', noche: 'Medianoche', campeon: 'Campeón', dinastia: 'Dinastía', holo: 'Holográfica', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', trono: 'Trono', cosmos: 'Cosmos', navidad: 'Navidad', dragoneterno: 'Dragón eterno' },
+    frame: { oro: 'Oro', neon: 'Neón', fuego: 'Fuego', hielo: 'Hielo', arcoiris: 'Arcoíris', corona: 'Corona', elite: 'Élite', toxico: 'Tóxico', balon: 'Balón de Oro', jackpot: 'Jackpot', leyenda: 'Leyenda', fundador: 'Fundador', holo: 'Holográfico', diamante: 'Diamante', dragon: 'Dragón', aurora: 'Aurora', vacio: 'Vacío', rayo: 'Rayo', ouroboros: 'Dragón eterno', navidad: 'Navidad', magenta: 'Magenta', blackmatter: 'Black Matter', garra: 'Garra Sangrienta', mira: 'Francotirador', sierra: 'Sierra Infernal' },
+    title: {} };
+  var KIND = { color: 'Color de nombre', plate: 'Placa', frame: 'Marco', title: 'Título' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria', mitica: 'Mítica' };
+  function item(id) { var L = (window.MAGNA && MAGNA.S && MAGNA.S.shop) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
+  function eqOf(pid) { var c = pid != null && COS[pid]; return (c && c.eq) || {}; }
+  function styleOf(eq, k) { var it = eq && eq[k] ? item(eq[k]) : null; return it && it.type === k ? it : null; }
+  function clsRm(el, pre) { (el.className.baseVal != null ? [] : el.className.split(/\s+/)).forEach(function (c) { if (c.indexOf(pre) === 0) el.classList.remove(c); }); }
+  function paint(el) { var u = pav(el.dataset.pid); if (u) { el.style.backgroundImage = 'url("' + u + '")'; el.classList.add('has-pav'); } else { el.style.backgroundImage = ''; el.classList.remove('has-pav'); }
+    clsRm(el, 'fr-'); var f = styleOf(eqOf(el.dataset.pid), 'frame'); if (f && STY.frame[f.style]) el.classList.add('fr-' + f.style); if (f && f.lv) el.dataset.lvi = f.lv; else delete el.dataset.lvi; deco(el); }
+  // MARCOS MÍTICOS: capa extra con mecánicas (evolución por nivel, momento especial periódico, ráfaga al tocar y gema)
+  var MYF = { holo: 1, diamante: 1, dragon: 1, aurora: 1, vacio: 1, rayo: 1, ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1, garra: 1, mira: 1, sierra: 1 }, LVC = null, LVK = null, MYSEL = Object.keys(MYF).map(function (k) { return '.fr-' + k; }).join(',');
+  // puntos de evolución = partidos jugados + 3 por cada MVP · Nv.2 desde 15 · Nv.3 desde 40
+  var BUYLV = { ouroboros: 1, navidad: 1, magenta: 1, jackpot: 1, blackmatter: 1, garra: 1, mira: 1, sierra: 1 }; // marcos cuyos niveles se compran en la tienda (no suben con puntos)
+  function evo(pid) { if (pid == null || pid === '' || !window.MAGNA || !MAGNA.playerStats || !MAGNA.S) return null; var k = (MAGNA.S.rev || 0) + ':' + (MAGNA.S.matches || []).length;
+    if (LVK !== k) { LVK = k; try { LVC = MAGNA.playerStats(); } catch (e) { LVC = {}; } } var s = LVC && LVC[pid]; if (!s) return null; var pts = (s.pj || 0) + 3 * (s.mvp || 0);
+    return { pts: pts, lv: pts >= 40 ? 3 : pts >= 15 ? 2 : 1, next: pts >= 40 ? null : pts >= 15 ? 40 : 15 }; }
+  function myStyle(el) { var m = /(?:^|\s)fr-([a-z0-9-]+)/.exec(typeof el.className === 'string' ? el.className : ''); return m && MYF[m[1]] ? m[1] : null; }
+  function deco(el) { if (!el || el.tagName === 'IMG' || typeof el.className !== 'string') return; var st = myStyle(el), fx = el.querySelector(':scope>.fxm');
+    if (!st) { if (fx) fx.remove(); el.classList.remove('frm'); if (!el.dataset.lvx) delete el.dataset.lv; return; }
+    if (el.dataset.lvi) el.dataset.lv = el.dataset.lvi; else if (!el.dataset.lvx) { var e = null; if (BUYLV[st]) { var q = el.dataset.pid != null ? styleOf(eqOf(el.dataset.pid), 'frame') : null; if (q && q.style === st && q.lv) e = { lv: q.lv }; } else e = evo(el.dataset.pid); el.dataset.lv = e ? e.lv : 1; }
+    el.classList.add('frm');
+    // avatares chiquitos (listas, alineaciones): sin la capa de mecánicas, que casi no se ve y es lo que más pesa
+    var sz = parseFloat(el.style.getPropertyValue('--s')) || el.offsetWidth || 0; el.classList.toggle("fxs", sz > 0 && sz < 44);
+    if (!fx) { fx = h('i', 'fxm'); fx.setAttribute('aria-hidden', 'true'); ['au', 'o1', 'o2', 'o3', 'bu', 'b2', 'gem', 'sx', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6'].forEach(function (c) { fx.appendChild(h('i', c)); });
+      var sd = Number(el.dataset.pid); fx.style.setProperty('--dl', '-' + (((isNaN(sd) ? Math.random() * 50 : sd) * 1.37) % 8).toFixed(2) + 's'); el.appendChild(fx); } }
+  // colores que cambian la tipografía: la fuente se carga solo la primera vez que aparece un nombre con ese color
+  var FONT = { punk: 'Rubik+Dirt', dragoneterno: 'Cinzel+Decorative:wght@900' }, FONTS = {};
+  function font(st) { if (FONTS[st]) return; FONTS[st] = 1; var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + FONT[st] + '&display=swap'; (document.head || document.documentElement).appendChild(l); }
+  // colores animados letra por letra: el nombre se parte en <i> (cada una con --i) y se vuelve a unir si cambia el color
+  var SPLIT = { dragoneterno: 1 };
+  function letters(el, on) { var n = el.querySelector(':scope>.mpn-n'); if (!n) return; if (on) { var t = n.textContent; if (n.dataset.sp === t) return; n.textContent = ''; Array.from(t).forEach(function (ch, i) { var x = document.createElement('i'); x.textContent = ch; x.style.setProperty('--i', i); n.appendChild(x); }); n.dataset.sp = t; } else if (n.dataset.sp != null) { n.textContent = n.textContent; delete n.dataset.sp; } }
+  // pinta un nombre con los cosméticos de un "equipado" (eq) concreto
+  function nameStyle(el, eq) { clsRm(el, 'c-'); clsRm(el, 'pl-'); var c = styleOf(eq, 'color'), pl = styleOf(eq, 'plate'); if (pl && pl.lv) el.dataset.plv = pl.lv; else delete el.dataset.plv; if (c && STY.color[c.style]) { el.classList.add('c-' + c.style); if (FONT[c.style]) font(c.style); } letters(el, c && SPLIT[c.style]); if (pl && STY.plate[pl.style]) el.classList.add('pl-' + pl.style); return el; }
+  function paintName(el) { nameStyle(el, eqOf(el.dataset.pn)); if (el.classList.contains('in-plh')) clsRm(el, 'pl-'); var t = el.querySelector('.mpn-t'), ti = styleOf(eqOf(el.dataset.pn), 'title'); if (el.dataset.ttl) { if (ti) { if (!t) { t = h('small', 'mpn-t'); el.appendChild(t); } t.textContent = ti.name; t.className = 'mpn-t tr-' + (ti.rarity || 'comun'); } else if (t) t.remove(); } }
+  // fila "anfitriona" de una placa: el contenedor con data-plh="<id del jugador>" se viste con su placa y el nombre de adentro va sin cajita
+  function host(el) { var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); el.classList.remove('plh'); el.dataset.plc = el.dataset.plh; card(el); if (el.classList.contains('plc')) el.classList.add('plh'); }
+  // miniatura con placa de fondo: el contenedor con data-plc="<id del jugador>" lleva su placa como fondo de toda la tarjeta
+  function card(el) { var pid = el.dataset.plc; var ox = el.querySelector(':scope>.pbx'); if (ox) ox.remove(); clsRm(el, 'pl-'); el.classList.remove('plc', 'pbn', 'pbn-my', 'pbn-lite');
+    var pl = pid != null && pid !== '' ? styleOf(eqOf(pid), 'plate') : null; if (!pl || !STY.plate[pl.style]) return el;
+    banner(el, pl.style, { lite: true }); el.classList.add('plc'); if (pl.lv) el.dataset.plv = pl.lv; else delete el.dataset.plv;
+    [].forEach.call(el.querySelectorAll('[data-pn="' + pid + '"]'), function (n) { clsRm(n, 'pl-'); n.classList.add('in-plh'); }); return el; }
+  // banner grande de placa (portada del perfil, vitrina de la tienda): el arte de la placa a lo ancho + efectos animados en las míticas
+  var MYP = { holo: 1, diamante: 1, dragon: 1, aurora: 1, trono: 1, cosmos: 1, navidad: 1, dragoneterno: 1 };
+  function banner(el, style, o) { o = o || {}; clsRm(el, 'pl-'); el.classList.remove('pbn', 'pbn-my', 'pbn-lite'); var old = el.querySelector(':scope>.pbx'); if (old) old.remove();
+    if (!style || !STY.plate[style]) return el;
+    el.classList.add('pbn', 'pl-' + style); if (o.lite) el.classList.add('pbn-lite'); var fx = h('div', 'pbx'); fx.setAttribute('aria-hidden', 'true'); fx.appendChild(h('i', 'pba'));
+    if (MYP[style]) { el.classList.add('pbn-my'); ['pbr', 'pbg', 'pbw', 'pbe'].forEach(function (c) { fx.appendChild(h('i', c)); });
+      var n = o.lite ? 3 : 16; for (var k = 0; k < n; k++) { var p = h('i', 'pbp'); p.style.cssText = '--x:' + ((k * 37 + 11) % 100) + '%;--y:' + ((k * 53 + 7) % 100) + '%;--d:-' + ((k * .71) % 4).toFixed(2) + 's;--t:' + (2.6 + (k % 5) * .7).toFixed(1) + 's;--z:' + (.6 + (k % 4) * .3).toFixed(1); fx.appendChild(p); }
+      if (!o.lite) for (k = 0; k < 2; k++) { var st = h('i', 'pbs'); st.style.cssText = '--d:-' + (k * 3.3) + 's;--y:' + (8 + k * 22) + '%'; fx.appendChild(st); } }
+    el.insertBefore(fx, el.firstChild); return el; }
+  function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); [].forEach.call(document.querySelectorAll('[data-plc]'), card); }
+  function loadPav() { if (!window.MAGNA_SB) return; window.MAGNA_SB().then(function (c) { return c.rpc('player_cosmetics').then(function (r) { return r && !r.error ? r : c.rpc('player_avatars'); }); }).then(function (r) { if (!r || r.error) return; var m = {}, cm = {};
+      (r.data || []).forEach(function (x) { if (x.avatar) m[x.player_id] = x.avatar; cm[x.player_id] = { eq: x.equipped || {} }; }); PAV = m; COS = cm; try { localStorage.setItem('magna_pav', JSON.stringify(m)); localStorage.setItem('magna_cos', JSON.stringify(cm)); } catch (e) {} repaint(); try { window.dispatchEvent(new Event('magna:cosloaded')); } catch (e) {} }, function () {}); }
+  // vista previa de un cosmético sobre un nombre (y avatar para los marcos)
+  // nombre de jugador que enlaza a su perfil público y lleva sus cosméticos. o: {title:true, plain:true}
+  function pn(name, pid, o) { o = o || {}; var a = h(pid != null && !o.plain ? 'a' : 'span', 'mpn'); a.appendChild(h('span', 'mpn-n', name || '—')); if (pid == null) return a; if (a.tagName === 'A') a.href = 'jugador.html?id=' + pid; a.dataset.pn = pid; if (o.title) a.dataset.ttl = '1'; paintName(a); return a; }
+  function profileUrl(pid) { return 'jugador.html?id=' + pid; }
+  // filtros SVG de los marcos de energía: recortan el anillo y lo deforman con ruido (plasma, llamas, partículas).
+  // Todo va en unidades relativas a la caja, así que se ve igual en un avatar de 24 px que en el retrato del perfil.
+  function fx() { if (document.getElementById('mg-fx')) return; var d = document.createElement('div'); d.id = 'mg-fx'; d.setAttribute('aria-hidden', 'true'); d.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
+    var enc = function (x) { return 'data:image/svg+xml,' + encodeURIComponent(x); };
+    var ring = function (st) { return enc("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><defs><radialGradient id='g'>" + st.map(function (o) { return "<stop offset='" + o[0] + "' stop-color='#fff' stop-opacity='" + o[1] + "'/>"; }).join('') + "</radialGradient></defs><rect width='100' height='100' fill='url(#g)'/></svg>"); };
+    var noise = function (fq, oc, sd) { return enc("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><filter id='t' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='" + fq + "' numOctaves='" + oc + "' seed='" + sd + "'/></filter><rect width='100' height='100' filter='url(#t)'/></svg>"); };
+    var f = function (id, st, fq, oc, sc, bl, sd) { return '<filter id="' + id + '" x="-30%" y="-30%" width="160%" height="160%" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">' +
+      '<feImage href="' + ring(st) + '" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="r"/><feComposite in="SourceGraphic" in2="r" operator="in" result="c"/>' +
+      '<feImage href="' + noise(fq, oc, sd || 3) + '" x="-.3" y="-.3" width="1.6" height="1.6" preserveAspectRatio="none" result="n"/>' +
+      '<feDisplacementMap in="c" in2="n" scale="' + sc + '" xChannelSelector="R" yChannelSelector="G" result="d"/>' +
+      '<feGaussianBlur in="d" stdDeviation="' + bl + '" result="b"/><feMerge result="m"><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="d"/></feMerge>' +
+      '<feImage href="' + hole + '" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="h"/><feComposite in="m" in2="h" operator="in"/></filter>'; };
+    // nada de energía encima de la cara: solo del borde del avatar hacia afuera
+    var hole = ring([[.745, 0], [.757, 1], [1, 1]]);
+    d.innerHTML = '<svg width="0" height="0">' +
+      f('mgf-plasma', [[.73, 0], [.762, 1], [.8, 1], [.86, 0]], '.22', 3, '.035', '.012', 5) +
+      f('mgf-fire', [[.72, 0], [.765, 1], [.82, 1], [.93, 0]], '.08 .2', 4, '.09', '.012', 2) +
+      f('mgf-wisp', [[.72, 0], [.765, 1], [.85, 1], [.97, 0]], '.15', 3, '.11', '.006', 4) +
+      f('mgf-clean', [[.752, 0], [.758, 1], [.9, 1], [.906, 0]], '.1', 1, '0', '.003', 1) +
+      f('mgf-dust', [[.7, 0], [.77, 1], [.9, 1], [1, 0]], '.2', 2, '.2', '.004', 9) +
+      f('mgf-dustin', [[.42, 0], [.54, 1], [.66, 1], [.69, 0]], '.2', 2, '.14', '.004', 6) + '</svg>';
+    (document.body || document.documentElement).appendChild(d); }
+  if (document.body) fx(); else document.addEventListener('DOMContentLoaded', fx);
+  // Más liviano: los cosméticos animados que no están en pantalla se pausan (y se reanudan al volver a verse)
+  // Presupuesto de animación: los nombres y placas animados se repintan en cada cuadro, así que solo se animan
+  // los primeros visibles (8, o 3 en modo ligero); el resto queda quieto con sus colores. Los marcos van aparte
+  // porque se mueven en la tarjeta gráfica y casi no cuestan.
+  var VIS = window.Set ? new Set() : null, bT = null;
+  function heavy(el) { return !/(?:^|\s)fr-/.test(typeof el.className === 'string' ? el.className : '') || el.classList.contains('mpn'); }
+  function budget() { bT = null; if (!VIS) return; var max = document.documentElement.classList.contains('lite') ? 3 : 8, L = [];
+    VIS.forEach(function (e) { if (e.isConnected) L.push(e); else VIS.delete(e); });
+    L.sort(function (a, b) { return a.compareDocumentPosition(b) & 4 ? -1 : 1; });
+    L.forEach(function (e, i) { e.classList.toggle('cos-off', i >= max); }); }
+  var io = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (e) { var t = e.target;
+      if (VIS && heavy(t)) { if (e.isIntersecting) VIS.add(t); else { VIS.delete(t); t.classList.add('cos-off'); } } else t.classList.toggle('cos-off', !e.isIntersecting); });
+    if (!bT) bT = setTimeout(budget, 60); }, { rootMargin: '120px' }) : null, seen = window.WeakSet ? new WeakSet() : null, wT = null;
+  var SEL = '[class*="fr-"],.mpn[class*="c-"],.mpn[class*="pl-"],.mpn-t.tr-legendaria,.mpn-t.tr-epica,.mpn-t.tr-mitica,.pbn-my';
+  function watch() { wT = null; [].forEach.call(document.querySelectorAll(MYSEL), function (el) { if (!el.querySelector(':scope>.fxm')) deco(el); }); if (!io || !seen) return; [].forEach.call(document.querySelectorAll(SEL), function (el) { if (!seen.has(el)) { seen.add(el); io.observe(el); } }); }
+  function soon() { if (!wT) wT = setTimeout(watch, 350); }
+  if (io && window.MutationObserver) { var startW = function () { watch(); new MutationObserver(soon).observe(document.body, { childList: true, subtree: true }); }; if (document.body) startW(); else document.addEventListener('DOMContentLoaded', startW); }
+  window.addEventListener('magna:update', function () { setTimeout(repaint, 0); });
+  window.addEventListener('magna:cos', function () { try { COS = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; PAV = JSON.parse(localStorage.getItem('magna_pav') || '{}') || {}; } catch (e) {} repaint(); });
+  // tocar un avatar de jugador abre su perfil (fuera del panel de administración)
+  if (!/admin\.html$/.test(location.pathname)) document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('.tav[data-pid]'); if (!t || e.defaultPrevented || t.closest('a,button,[data-nolink],.ov')) return; location.href = profileUrl(t.dataset.pid); });
+  if (document.readyState === 'complete') setTimeout(loadPav, 300); else addEventListener('load', function () { setTimeout(loadPav, 300); });
+  return { letters: letters, card: card, BUYLV: BUYLV, evo: evo, deco: deco, MYF: MYF, banner: banner, MYTHIC_PLATES: MYP, host: host, pav: pav, paint: paint, pn: pn, nameStyle: nameStyle, profileUrl: profileUrl, item: item, eqOf: eqOf, repaint: repaint, reload: loadPav, STY: STY, KIND: KIND, RAR: RAR };
+})();
