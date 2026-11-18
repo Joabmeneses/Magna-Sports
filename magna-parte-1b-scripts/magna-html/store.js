@@ -77,11 +77,11 @@ var MAGNA = (function () {
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
   // Colección Mítica: lo más premium y caro de la tienda
   var SHOP_MITICA = [
-    ['m-c-holo', 'color', 'Holográfico', 8000, 'holo'], ['m-c-aurora', 'color', 'Aurora boreal', 9000, 'aurora'], ['m-c-lava', 'color', 'Lava fundida', 10000, 'lava'], ['m-c-diamante', 'color', 'Diamante', 12000, 'diamante'], ['m-c-oro24', 'color', 'Oro 24K', 15000, 'oro24'], ['m-c-vacio', 'color', 'Vacío', 18000, 'vacio'],
+    ['m-c-holo', 'color', 'Holográfico', 8000, 'holo'], ['m-c-aurora', 'color', 'Aurora boreal', 9000, 'aurora'], ['m-c-lava', 'color', 'Lava fundida', 10000, 'lava'], ['m-c-diamante', 'color', 'Diamante', 12000, 'diamante'], ['m-c-oro24', 'color', 'Oro 24K', 15000, 'oro24'], ['m-c-vacio', 'color', 'Vacío', 18000, 'vacio'], ['m-c-punk', 'color', 'Punk', 12000, 'punk', { rarity: 'legendaria' }], ['m-c-dragoneterno', 'color', 'Nombre Dragón eterno', 6000, 'dragoneterno', { rarity: 'legendaria' }],
     ['m-p-holo', 'plate', 'Placa holográfica', 10000, 'holo'], ['m-p-aurora', 'plate', 'Placa Aurora', 11000, 'aurora'], ['m-p-cosmos', 'plate', 'Placa Cosmos', 12000, 'cosmos'], ['m-p-diamante', 'plate', 'Placa de diamante', 14000, 'diamante'], ['m-p-dragon', 'plate', 'Placa del Dragón', 16000, 'dragon'], ['m-p-trono', 'plate', 'Placa del Trono', 20000, 'trono'],
     ['m-p-navidad', 'plate', 'Placa Navidad', 18000, 'navidad'],
     ['m-f-holo', 'frame', 'Marco holográfico', 12000, 'holo'], ['m-f-aurora', 'frame', 'Marco Aurora', 13000, 'aurora'], ['m-f-rayo', 'frame', 'Marco Rayo', 15000, 'rayo'], ['m-f-diamante', 'frame', 'Marco de diamante', 18000, 'diamante'], ['m-f-dragon', 'frame', 'Marco del Dragón', 20000, 'dragon'], ['m-f-vacio', 'frame', 'Marco del Vacío', 25000, 'vacio'],
-    ['m-f-navidad', 'frame', 'Marco Navidad', 6000, 'navidad', { lv: 1 }], ['m-f-navidad-2', 'frame', 'Navidad · Encendida', 9000, 'navidad', { lv: 2, upg: 'm-f-navidad', req: 'm-f-navidad' }], ['m-f-navidad-3', 'frame', 'Navidad · Noche mágica', 15000, 'navidad', { lv: 3, upg: 'm-f-navidad', req: 'm-f-navidad-2' }], ['m-f-magenta', 'frame', 'Marco Magenta', 7000, 'magenta', { rarity: 'legendaria', lv: 1 }], ['m-f-magenta-2', 'frame', 'Magenta · Corriente', 10000, 'magenta', { rarity: 'legendaria', lv: 2, upg: 'm-f-magenta', req: 'm-f-magenta' }], ['m-f-magenta-3', 'frame', 'Magenta · Singularidad', 20000, 'magenta', { rarity: 'legendaria', lv: 3, upg: 'm-f-magenta', req: 'm-f-magenta-2' }], ['m-f-blackmatter', 'frame', 'Marco Black Matter', 8000, 'blackmatter', { rarity: 'legendaria', lv: 1 }], ['m-f-blackmatter-2', 'frame', 'Black Matter · Derrame', 16000, 'blackmatter', { rarity: 'legendaria', lv: 2, upg: 'm-f-blackmatter', req: 'm-f-blackmatter' }], ['m-f-blackmatter-3', 'frame', 'Black Matter · Materia oscura', 24000, 'blackmatter', { rarity: 'legendaria', lv: 3, upg: 'm-f-blackmatter', req: 'm-f-blackmatter-2' }], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 7000, 'ouroboros', { rarity: 'legendaria', lv: 1 }], ['m-f-ouroboros-2', 'frame', 'Dragón eterno · Despierto', 10000, 'ouroboros', { rarity: 'legendaria', lv: 2, upg: 'm-f-ouroboros', req: 'm-f-ouroboros' }], ['m-f-ouroboros-3', 'frame', 'Dragón eterno · Furia', 20000, 'ouroboros', { rarity: 'legendaria', lv: 3, upg: 'm-f-ouroboros', req: 'm-f-ouroboros-2' }],
+    ['m-f-navidad', 'frame', 'Marco Navidad', 6000, 'navidad', { lv: 1 }], ['m-f-navidad-2', 'frame', 'Navidad · Encendida', 9000, 'navidad', { lv: 2, upg: 'm-f-navidad', req: 'm-f-navidad' }], ['m-f-navidad-3', 'frame', 'Navidad · Noche mágica', 15000, 'navidad', { lv: 3, upg: 'm-f-navidad', req: 'm-f-navidad-2' }], ['m-f-magenta', 'frame', 'Marco Magenta', 7000, 'magenta', { rarity: 'legendaria', lv: 1 }], ['m-f-magenta-2', 'frame', 'Magenta · Corriente', 10000, 'magenta', { rarity: 'legendaria', lv: 2, upg: 'm-f-magenta', req: 'm-f-magenta' }], ['m-f-magenta-3', 'frame', 'Magenta · Singularidad', 20000, 'magenta', { rarity: 'legendaria', lv: 3, upg: 'm-f-magenta', req: 'm-f-magenta-2' }], ['m-f-blackmatter', 'frame', 'Marco Black Matter', 8000, 'blackmatter', { rarity: 'legendaria', lv: 1 }], ['m-f-blackmatter-2', 'frame', 'Black Matter · Derrame', 16000, 'blackmatter', { rarity: 'legendaria', lv: 2, upg: 'm-f-blackmatter', req: 'm-f-blackmatter' }], ['m-f-blackmatter-3', 'frame', 'Black Matter · Materia oscura', 24000, 'blackmatter', { rarity: 'legendaria', lv: 3, upg: 'm-f-blackmatter', req: 'm-f-blackmatter-2' }], ['m-p-dragoneterno', 'plate', 'Placa Dragón eterno', 5000, 'dragoneterno', { rarity: 'legendaria', lv: 1 }], ['m-p-dragoneterno-2', 'plate', 'Placa Dragón eterno · Despierta', 8000, 'dragoneterno', { rarity: 'legendaria', lv: 2, upg: 'm-p-dragoneterno', req: 'm-p-dragoneterno' }], ['m-p-dragoneterno-3', 'plate', 'Placa Dragón eterno · Furia', 15000, 'dragoneterno', { rarity: 'legendaria', lv: 3, upg: 'm-p-dragoneterno', req: 'm-p-dragoneterno-2' }], ['m-f-garra', 'frame', 'Marco Garra Sangrienta', 7000, 'garra', { rarity: 'legendaria', lv: 1 }], ['m-f-garra-2', 'frame', 'Garra · Herida', 10000, 'garra', { rarity: 'legendaria', lv: 2, upg: 'm-f-garra', req: 'm-f-garra' }], ['m-f-garra-3', 'frame', 'Garra · Pacto de sangre', 20000, 'garra', { rarity: 'legendaria', lv: 3, upg: 'm-f-garra', req: 'm-f-garra-2' }], ['m-f-mira', 'frame', 'Marco Francotirador', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 1 }], ['m-f-mira-2', 'frame', 'Francotirador · En la mira', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 2, upg: 'm-f-mira', req: 'm-f-mira' }], ['m-f-mira-3', 'frame', 'Francotirador · Headshot', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 3, upg: 'm-f-mira', req: 'm-f-mira-2' }], ['m-f-sierra', 'frame', 'Marco Sierra Infernal', 7000, 'sierra', { rarity: 'legendaria', lv: 1 }], ['m-f-sierra-2', 'frame', 'Sierra · Encendida', 10000, 'sierra', { rarity: 'legendaria', lv: 2, upg: 'm-f-sierra', req: 'm-f-sierra' }], ['m-f-sierra-3', 'frame', 'Sierra · Desatada', 20000, 'sierra', { rarity: 'legendaria', lv: 3, upg: 'm-f-sierra', req: 'm-f-sierra-2' }], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 7000, 'ouroboros', { rarity: 'legendaria', lv: 1 }], ['m-f-ouroboros-2', 'frame', 'Dragón eterno · Despierto', 10000, 'ouroboros', { rarity: 'legendaria', lv: 2, upg: 'm-f-ouroboros', req: 'm-f-ouroboros' }], ['m-f-ouroboros-3', 'frame', 'Dragón eterno · Furia', 20000, 'ouroboros', { rarity: 'legendaria', lv: 3, upg: 'm-f-ouroboros', req: 'm-f-ouroboros-2' }],
     ['m-t-magnate', 'title', 'Magnate', 6000, ''], ['m-t-inmortal', 'title', 'Inmortal', 8000, ''], ['m-t-elegido', 'title', 'El Elegido', 10000, ''], ['m-t-dios', 'title', 'Dios del balón', 12000, ''], ['m-t-emperador', 'title', 'Emperador de Magna', 15000, '']
   ].map(function (x) { return Object.assign({ id: x[0], type: x[1], name: x[2], rarity: 'mitica', price: x[3], style: x[4], active: true }, x[5] || {}); });
   // Cosméticos exclusivos: no se compran; se entregan solos al desbloquear la insignia indicada en "award" (o los da la administración si es "manual")
@@ -186,13 +186,29 @@ var MAGNA = (function () {
       if (m.type !== 'tournament' || m.cid !== c.id || m.group !== g.name || m.status !== 'finished') return;
       var a = r[m.home], b = r[m.away]; if (!a || !b) return;
       a.pj++; b.pj++; a.gf += m.hs; a.gc += m.as; b.gf += m.as; b.gc += m.hs;
-      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3;
+      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3; if (c.format === 'champions') w[1].pts += 1; // Champions: victoria 3, derrota 1
     });
     return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.team.localeCompare(y.team, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; });
   }
   // Formato Champions: liga ida y vuelta → los D primeros directo, los K siguientes al play-off (D = K/2), el resto fuera.
   // K es la mayor potencia de 2 que no supera la mitad de los equipos (36 → 8 directo + 16 play-off, como la Champions real).
   function champSplit(n) { if (n < 3) return null; var k = 2; while (k * 2 <= n / 2) k *= 2; return { direct: k / 2, playoff: k, out: n - k / 2 - k }; }
+  // Eliminatoria a ida y vuelta: cada llave con su ida, su vuelta, el global y el desempate (si el global quedó igual).
+  // Las rondas que todavía no se juegan salen con los ganadores que se van conociendo (o vacías).
+  function koTies(c) {
+    if (!c || c.format !== 'knockout' || c.legs !== 2) return null;
+    var R = {}, st = c.state || {}, n = c.teamIds.length, size = 1; while (size < n) size *= 2;
+    S.matches.forEach(function (m) { if (m.type !== 'tournament' || m.cid !== c.id || m.status === 'cancelled' || !m.leg) return; var r = String(m.round || '').split(' · ')[0], T = R[r] = R[r] || {}; (T[m.tie] = T[m.tie] || {})[m.leg] = m; });
+    var g = function (m, t) { return m.home === t ? Number(m.hs) || 0 : Number(m.as) || 0; }, fin = function (m) { return m && m.status === 'finished'; }, out = [], prev = null;
+    for (var s = size; s >= 2; s /= 2) { var rn = koName(s), T = R[rn] || {}, ties = [];
+      for (var i = 0; i < s / 2; i++) { var L = T[i] || {}, a = null, b = null;
+        if (L[1]) { a = L[1].home; b = L[1].away; } else if (st.round === rn && st.ties && st.ties[i]) { a = st.ties[i][0]; b = st.ties[i][1]; } else if (prev) { a = prev[2 * i].win; b = prev[2 * i + 1].win; }
+        var t = { a: a, b: b, ida: L[1] || null, vta: L[2] || null, des: L[3] || null, ga: 0, gb: 0, win: null, live: [L[1], L[2], L[3]].some(function (m) { return m && m.status === 'live'; }) };
+        [L[1], L[2]].forEach(function (m) { if (fin(m)) { t.ga += g(m, a); t.gb += g(m, b); } });
+        if (fin(L[1]) && fin(L[2])) { if (t.ga !== t.gb) t.win = t.ga > t.gb ? a : b; else if (fin(L[3]) && L[3].hs !== L[3].as) t.win = L[3].hs > L[3].as ? L[3].home : L[3].away; }
+        ties.push(t); }
+      out.push({ round: rn, ties: ties }); prev = ties; }
+    return out; }
   function koName(n) { return n === 2 ? 'Final' : n === 4 ? 'Semifinales' : n === 8 ? 'Cuartos de final' : n === 16 ? 'Octavos de final' : 'Ronda de ' + n; }
   // Orden de los clasificados para el primer cruce: en la lista, el puesto i juega contra el puesto n-1-i.
   // Con 2 por grupo se cruzan grupos (1.º A vs 2.º B, 1.º B vs 2.º A...). Los primeros reciben los pases directos si sobran equipos.
@@ -240,7 +256,7 @@ var MAGNA = (function () {
   }
   function compOut(c, kind) {
     var o = { id: c.id, name: c.name, description: c.description || '', status: c.status, has_logo: false, teams: c.teamIds.map(function (t) { return { id: t, name: teamName(t) }; }),
-      config: { format: kind === 'leagues' ? 'round_robin' : c.format, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
+      config: { format: kind === 'leagues' ? 'round_robin' : c.format, legs: c.legs || 1, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
     if (kind === 'leagues') { o.standings = standings(Object.assign({ kind: 'league' }, c)); }
     else { o.bracket = c.state ? { phase: c.state.phase, round: c.state.round, champion: c.state.champion ? { id: c.state.champion, name: teamName(c.state.champion) } : undefined, groups: c.groups ? c.groups.map(function (g) { return { name: g.name, table: groupTable(c, g) }; }) : undefined } : null; }
     return o;
@@ -253,7 +269,8 @@ var MAGNA = (function () {
   function tierRank(id) { for (var i = 0; i < TIERS.length; i++) if (TIERS[i][0] === id) return i; return 1; }
   // ---------- nivel de los equipos (para saber si el rival era fuerte o débil) ----------
   // Cada equipo empieza en 1000 puntos de nivel. Ganar suma y perder resta, más o menos según el rival (sistema tipo Elo).
-  function byTime(a, b) { return String(a.at || '').localeCompare(String(b.at || '')) || a.id - b.id; }
+  // fechas 'AAAA-MM-DD HH:MM:SS': se ordenan comparando el texto directo (mucho más rápido que localeCompare)
+  function byTime(a, b) { var x = String(a.at || ''), y = String(b.at || ''); return x < y ? -1 : x > y ? 1 : a.id - b.id; }
   // ---------- historial (torneos jugados antes del sitio) ----------
   // Sus marcadores cuentan para el nivel de los equipos; sus campeones suman títulos. No tienen alineaciones ni valoraciones.
   function hnk(x) { return String(x || '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase(); }
@@ -350,7 +367,7 @@ var MAGNA = (function () {
   load();
   return {
     get S() { return S; }, load: load, save: save, hasLocal: hasLocal, discardLocal: discardLocal, id: id, now: now, by: by, addNews: addNews, teamName: teamName, standings: standings, clone: clone, EMPTY: EMPTY,
-    MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
+    koTies: koTies, MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
     trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_MITICA: SHOP_MITICA, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,

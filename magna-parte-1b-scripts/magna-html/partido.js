@@ -77,6 +77,7 @@
     var best = ['h', 'a'].map(function (sd) { return st[sd].top; }).filter(Boolean).sort(function (a, b) { return b[1] - a[1]; })[0];
     if (best) { var bn = h('div', 'pt-hc nota'); bn.appendChild(h('span', 'e', '📈')); var t3 = h('div'); t3.appendChild(h('small', null, 'Mejor nota')); t3.appendChild(h('b', null, (MAGNA.playerName(best[0]) || '—') + ' · ' + fmtN(best[1]))); bn.appendChild(t3); hl.appendChild(bn); }
     if (L.judged) { var jd = h('div', 'pt-hc juez'); jd.appendChild(h('span', 'e', '⚖️')); var t4 = h('div'); t4.appendChild(h('small', null, 'Juez del partido')); t4.appendChild(h('b', null, L.judged.by || 'Juez')); jd.appendChild(t4); hl.appendChild(jd); }
+    if (L.note && L.note.text) { var nt = h('div', 'pt-hc pt-note'); nt.appendChild(h('span', 'e', '🗒️')); var t5 = h('div'); t5.appendChild(h('small', null, 'Comentario del juez · ' + (L.note.by || 'Juez'))); t5.appendChild(h('p', null, L.note.text)); nt.appendChild(t5); hl.appendChild(nt); }
     if (L.mode && !(m.sets && m.sets.length)) { var md2 = h('div', 'pt-hc modo'); md2.appendChild(h('span', 'e', '🎮')); var t5 = h('div'); t5.appendChild(h('small', null, 'Modo de juego')); t5.appendChild(h('b', null, L.mode + (L.map ? ' · ' + L.map : ''))); md2.appendChild(t5); hl.appendChild(md2); }
     if (hl.children.length) w.appendChild(hl);
     return w; }

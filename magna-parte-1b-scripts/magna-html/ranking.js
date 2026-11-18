@@ -132,7 +132,7 @@
     var vl = valTxt(L).length, vv = h('div', 'r3-cv' + (vl > 6 ? ' xl' : vl > 3 ? ' lg' : '')), vn = h('b', null, '0'); vv.appendChild(vn); vv.appendChild(h('span', null, t.unit)); ch.appendChild(vv); countUp(vn, L.v, big);
     var cps = h('div', 'r3-chips'); chips(L).forEach(function (c) { cps.appendChild(h('span', null, c)); }); ch.appendChild(cps);
     var ac = h('div', 'r3-cact'); if (hrefL) { var a = h('a', 'pr', L.t ? 'Ver equipo' : 'Ver perfil'); a.href = hrefL; ac.appendChild(a); }
-    var cf = h('button', null, '🎉'); cf.type = 'button'; cf.title = '¡Celebrar!'; cf.onclick = confetti; ac.appendChild(cf); ch.appendChild(ac); st.appendChild(ch);
+    var cf = h('button', null, '🎉'); cf.type = 'button'; cf.title = '¡Celebrar!'; cf.onclick = confetti; ac.appendChild(cf); ch.appendChild(ac); st.appendChild(ch); if (L && L.p && window.MAGNA_COS && MAGNA_COS.card) { ch.dataset.plc = L.p.id; MAGNA_COS.card(ch); }
     // los perseguidores (#2 a #5)
     var pk = h('div', 'r3-pack'); pk.appendChild(h('div', 'r3-ph', '🏁 Lo persiguen'));
     R.slice(1, 5).forEach(function (r, i) { var href = hrefOf(r), c = h(href ? 'a' : 'div', 'r3-pr p' + (i + 2)); if (href) c.href = href; c.style.animationDelay = (i + 1) * 80 + 'ms';
@@ -141,7 +141,7 @@
       w.appendChild(h('small', null, gap > 0 ? 'a ' + (big ? fmt(gap) : String(gap).replace('.', ',')) + ' del líder' : '¡empatado con el líder!'));
       var br = h('span', 'r3-pb'), bi = h('i'); br.appendChild(bi); w.appendChild(br); c.appendChild(w); c.appendChild(h('span', 'r3-pv', valTxt(r)));
       requestAnimationFrame(function () { requestAnimationFrame(function () { bi.style.width = Math.max(4, Math.min(100, L.v ? r.v / L.v * 100 : 0)) + '%'; }); });
-      pk.appendChild(c); });
+      pk.appendChild(c); if (r.p && window.MAGNA_COS && MAGNA_COS.card) { c.dataset.plc = r.p.id; MAGNA_COS.card(c); } });
     if (R.length >= 2 && tab !== 'bits') { var dz = h('button', 'r3-duelb', '⚔️ Duelo por el trono: ' + (R[0].t ? R[0].t.name : R[0].p ? R[0].p.name : R[0].b.display_name) + ' vs ' + (R[1].t ? R[1].t.name : R[1].p ? R[1].p.name : R[1].b.display_name)); dz.type = 'button'; dz.onclick = function () { compare(R[0], R[1]); }; pk.appendChild(dz); }
     st.appendChild(pk); pn.appendChild(st); }
   // ---------- movimientos de la semana ----------
@@ -161,7 +161,7 @@
       var mid = h('div', 'r3-cm'), a = avOf(r, 48); a.setAttribute('data-nolink', ''); mid.appendChild(a); var tx = h('span', 'r3-ctx'), nb = h('b'); nb.appendChild(nameOf(r, true)); tx.appendChild(nb); tx.appendChild(h('small', null, subOf(r))); mid.appendChild(tx); c.appendChild(mid);
       var bt = h('div', 'r3-cb'), vb = h('b', null, valTxt(r)); bt.appendChild(vb); bt.appendChild(h('span', null, T().unit)); var up0 = R[r.pos - 2]; if (up0 && up0.v > r.v) { var gp = Math.round((up0.v - r.v) * 10) / 10; bt.appendChild(h('em', 'r2-gap', '−' + (big ? fmt(gp) : String(gp).replace('.', ',')) + ' del #' + (r.pos - 1))); }
       c.appendChild(bt); var br = h('span', 'r3-bar'), bi = h('i'); br.appendChild(bi); c.appendChild(br); bars.push([bi, tab === 'jugadores' ? r.v : r.v / mx * 100]);
-      c.onclick = function () { detail(r); }; g.appendChild(c); });
+      c.onclick = function () { detail(r); }; g.appendChild(c); if (r.p && window.MAGNA_COS && MAGNA_COS.card) { c.dataset.plc = r.p.id; MAGNA_COS.card(c); } });
     pn.appendChild(g);
     if (F.length > shown) { var more = h('button', 'r2-more', 'Mostrar ' + Math.min(20, F.length - shown) + ' más (' + (F.length - shown) + ' restantes)'); more.type = 'button'; more.onclick = function () { shown += 20; render(); }; pn.appendChild(more); }
     requestAnimationFrame(function () { requestAnimationFrame(function () { bars.forEach(function (x) { x[0].style.width = Math.max(2, Math.min(100, x[1])) + '%'; }); }); }); }

@@ -280,11 +280,14 @@
     secs.forEach(function (sx) { var tt = (sx.querySelector('h2') || {}).textContent || '', g = TABS.filter(function (x) { return x[2].test(tt); })[0]; var id = g ? g[0] : 'cancha'; (groups[id] = groups[id] || []).push(sx); sx.dataset.tab = id; body.appendChild(sx); });
     if (!groups[ETAB]) ETAB = Object.keys(groups)[0];
     TABS.forEach(function (x) { if (!groups[x[0]]) return; var b = h('button', 'tq-tab' + (x[0] === ETAB ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', x[0] === ETAB); b.appendChild(document.createTextNode(x[1])); if (CN[x[0]]) b.appendChild(h('small', null, String(CN[x[0]])));
-      b.onclick = function () { if (ETAB === x[0]) return; ETAB = x[0]; try { history.replaceState(null, '', '#' + ETAB); } catch (e) {} show(); [].forEach.call(wrap.children, function (c) { c.classList.toggle('on', c === b); c.setAttribute('aria-selected', c === b); }); b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); var y = wrap.getBoundingClientRect().top + window.scrollY - 90; if (window.scrollY > y) window.scrollTo({ top: y, behavior: 'smooth' }); }; wrap.appendChild(b); });
-    function show() { box.id = ETAB; secs.forEach(function (sx) { var on = sx.dataset.tab === ETAB; sx.hidden = !on; if (on) { sx.classList.remove('tq-in'); void sx.offsetWidth; sx.classList.add('tq-in'); } }); window.dispatchEvent(new Event('resize')); }
-    show(); }
+      b.onclick = function () { if (ETAB === x[0]) return; ETAB = x[0]; try { history.replaceState(null, '', '#' + ETAB); } catch (e) {} show(true); [].forEach.call(wrap.children, function (c) { c.classList.toggle('on', c === b); c.setAttribute('aria-selected', c === b); }); b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); var y = wrap.getBoundingClientRect().top + window.scrollY - 90; if (window.scrollY > y) window.scrollTo({ top: y, behavior: 'smooth' }); }; wrap.appendChild(b); });
+    // al cambiar de pestaña la sección entra animada; al cargar no (evita recalcular todo el diseño de golpe)
+    function show(anim) { box.id = ETAB; secs.forEach(function (sx) { var on = sx.dataset.tab === ETAB; sx.hidden = !on; sx.classList.remove('tq-in'); if (on && anim) requestAnimationFrame(function () { sx.classList.add('tq-in'); }); });
+      if (anim) requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); }); }
+    show(false); }
   document.addEventListener('click', function () { var o = document.querySelector('.tq-pop.on'); if (o) { o.classList.remove('on'); var f = o.querySelector('.tq-xp i'); if (f) f.style.width = '0'; } });
   function draw() { render(); tabify(); }
   draw();
-  window.addEventListener('magna:update', draw);
+  // las actualizaciones en vivo llegan seguidas: se redibuja una sola vez por tanda
+  var dT = null; window.addEventListener('magna:update', function () { clearTimeout(dT); dT = setTimeout(draw, 250); });
 })();

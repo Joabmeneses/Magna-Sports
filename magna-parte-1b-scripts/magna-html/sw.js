@@ -1,8 +1,8 @@
 'use strict';
 // Service worker de Magna Arena: la app abre rápido y funciona aunque la conexión sea mala.
 // Páginas: primero la red (para ver siempre lo último) y, si no hay, la copia guardada o la página sin conexión.
-// Estilos, scripts e imágenes: se sirven al instante desde la copia y se actualizan en segundo plano.
-var V = 'magna-v3', CORE = ['offline.html', 'site.css', 'cos.css', 'arena.css', 'nav.js', 'store.js', 'cos.js', 'site.js', 'logo-nav.webp', 'bits.webp', 'img/app/icon-192.png'];
+// Scripts y estilos: primero la red. Imágenes: al instante desde la copia y se actualizan en segundo plano.
+var V = 'magna-v5', CORE = ['offline.html', 'site.css', 'cos.css', 'arena.css', 'nav.js', 'store.js', 'cos.js', 'site.js', 'logo-nav.webp', 'bits.webp', 'img/app/icon-192.png'];
 self.addEventListener('install', function (e) { e.waitUntil(caches.open(V).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); })); });
 self.addEventListener('activate', function (e) { e.waitUntil(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return k !== V; }).map(function (k) { return caches.delete(k); })); }).then(function () { return self.clients.claim(); })); });
 function put(req, res) { if (res && res.ok && res.type === 'basic') { var cp = res.clone(); caches.open(V).then(function (c) { c.put(req, cp); }); } return res; }
@@ -13,6 +13,9 @@ self.addEventListener('fetch', function (e) {
   if (r.mode === 'navigate' || /\.html$/.test(u.pathname) || u.pathname.slice(-1) === '/') {
     e.respondWith(fetch(r).then(function (res) { return put(r, res); }).catch(function () { var o = { ignoreSearch: true, ignoreVary: true }, f = u.pathname.split('/').pop() || 'index.html'; return caches.match(r, o).then(function (m) { return m || caches.match(f, o); }).then(function (m) { return m || caches.match('offline.html'); }); }));
     return; }
+  // scripts y estilos: primero la red (así un cambio se ve apenas se publica) y la copia solo si no hay conexión
+  if (/\.(js|css)$/.test(u.pathname)) { e.respondWith(fetch(r).then(function (res) { return put(r, res); }).catch(function () { return caches.match(r, { ignoreSearch: true }); })); return; }
+  // imágenes y demás: al instante desde la copia y se actualizan en segundo plano
   e.respondWith(caches.match(r).then(function (m) { var net = fetch(r).then(function (res) { return put(r, res); }).catch(function () { return m; }); return m || net; }));
 });
 // tocar un aviso abre (o enfoca) la página del partido

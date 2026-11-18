@@ -80,11 +80,14 @@
   if (!window.MAGNA_SB || MAGNA.cloud.source !== 'cloud') return;
   // revisa (máximo cada 5 min, lo controla la base de datos) si hay coaches por avisar antes de su partido
   setTimeout(function () { window.MAGNA_SB().then(function (sb) { return sb.rpc('remind_tick'); }).catch(function () {}); }, 6000);
+  var uT = null, uPrev = null;
   window.MAGNA_SB().then(function (sb) {
     sb.channel('magna-site').on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'site_state' }, function (p) {
       var data = p.new && p.new.data; if (!data || !data.v) return;
       var prev = MAGNA.S, c = changed(prev, data); MAGNA.cloud.applyRemote(data); refreshList(); pills();
-      try { window.dispatchEvent(new CustomEvent('magna:update', { detail: { prev: prev } })); } catch (e) {}
+      // varias actualizaciones seguidas (goles, narración, cronómetro) se juntan: las páginas se redibujan una vez
+      // por tanda, con el estado de antes de la primera para que las animaciones de gol sigan funcionando
+      if (!uT) { uPrev = prev; uT = setTimeout(function () { var pv = uPrev; uT = null; uPrev = null; try { window.dispatchEvent(new CustomEvent('magna:update', { detail: { prev: pv } })); } catch (e) {} }, 150); }
       if (c.goal) [].forEach.call(bar.children, function (b) { b.classList.add('flash'); setTimeout(function () { b.classList.remove('flash'); }, 2000); });
       if (openId) { var m = MAGNA.by(MAGNA.S.matches, openId); if (m && m.status === 'live') open(m); else if (curOv) { curOv.remove(); curOv = null; openId = null; } }
       if (c.other && !note) { note = el('button', 'mlvn', 'Hay novedades · Toca para actualizar'); note.onclick = function () { location.reload(); }; document.body.appendChild(note); }

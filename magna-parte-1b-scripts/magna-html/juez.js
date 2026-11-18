@@ -2,7 +2,7 @@
 // Panel del juez: valoraciones (con rúbrica), goleadores y MVP de partidos en juego o terminados.
 // Solo guarda eso (judge_save en la base de datos); el marcador y lo demás del partido no se tocan.
 (function () {
-  var app = document.getElementById('jzapp'), S = function () { return MAGNA.S; }, cur = null, D = null, dirty = false;
+  var app = document.getElementById('jzapp'), S = function () { return MAGNA.S; }, cur = null, D = null, dirty = false, FL = null, Q = '';
   function h(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
   function toast(t, bad) { var e = document.getElementById('jzt'); e.textContent = t; e.className = bad ? 'on bad' : 'on'; clearTimeout(toast.i); toast.i = setTimeout(function () { e.className = ''; }, 2800); }
   function rt(v) { return v == null ? '—' : Number(v).toFixed(1).replace('.', ','); }
@@ -29,22 +29,33 @@
     var o = h('button', null, 'Salir'); o.type = 'button'; o.onclick = function () { ACCOUNTS.logout().then(login); }; b.appendChild(o); app.appendChild(b); }
 
   function matches() { return S().matches.filter(function (m) { return m.status === 'live' || m.status === 'finished'; })
-    .sort(function (a, b) { return (b.status === 'live') - (a.status === 'live') || String(b.at || '').localeCompare(String(a.at || '')); }).slice(0, 40); }
+    .sort(function (a, b) { return (b.status === 'live') - (a.status === 'live') || String(b.at || '').localeCompare(String(a.at || '')); }).slice(0, 80); }
   function sidePlayers(m, sd) { var tid = sd === 'h' ? m.home : m.away, L = m.live || {}, ids = [];
     ((L.lineup && L.lineup[sd]) || []).forEach(function (id) { if (ids.indexOf(id) < 0) ids.push(id); });
     S().players.forEach(function (p) { if (p.teamId === tid && ids.indexOf(p.id) < 0) ids.push(p.id); });
     return ids.map(function (id) { return MAGNA.by(S().players, id); }).filter(Boolean); }
+  function prog(m, d) { var L = m.live || {}, R = d ? d.R : (L.ratings || {}), ps = sidePlayers(m, 'h').concat(sidePlayers(m, 'a')), rated = ps.filter(function (p) { return R[p.id] != null; }).length;
+    var G = d ? d.G : load(m).G, gt = (m.hs || 0) + (m.as || 0), ga = G.h.filter(function (x) { return x != null; }).length + G.a.filter(function (x) { return x != null; }).length;
+    return { rated: rated, all: ps.length, gt: gt, ga: ga, mvp: d ? d.mvp != null : L.mvp != null, note: d ? !!(d.note || '').trim() : !!(L.note && L.note.text) }; }
+  function stateOf(m) { return m.status === 'live' ? 'live' : (m.live && m.live.judged) ? 'done' : 'pend'; }
   function load(m) { var L = m.live || {}, g = { h: [], a: [] }; (L.ev || []).forEach(function (e) { if (e.k === 'goal' && (e.side === 'h' || e.side === 'a')) g[e.side].push(e.player || null); });
     g.h = g.h.slice(0, m.hs || 0); g.a = g.a.slice(0, m.as || 0);
-    return { R: Object.assign({}, L.ratings || {}), G: g, mvp: L.mvp || null }; }
+    return { R: Object.assign({}, L.ratings || {}), G: g, mvp: L.mvp || null, note: (L.note && L.note.text) || '', note0: (L.note && L.note.text) || '' }; }
 
   function draw() {
     app.innerHTML = ''; var L = matches(); var wrap = h('div', 'jz-l');
     var lb = h('div', 'jz-box'); lb.style.setProperty('--sh', '#ff4fa3'); lb.appendChild(h('h2', null, 'Partidos')); var ms = h('div', 'jz-ms');
+    var cnt = { pend: 0, live: 0, done: 0 }; L.forEach(function (m) { cnt[stateOf(m)]++; }); if (!FL) FL = cnt.pend ? 'pend' : cnt.live ? 'live' : 'all';
+    var tabs = h('div', 'jz-ft'); [['pend', '⏳ Pendientes', cnt.pend], ['live', '● En juego', cnt.live], ['done', '✓ Calificados', cnt.done], ['all', 'Todos', L.length]].forEach(function (t) { var b = h('button', FL === t[0] ? 'on' : null); b.type = 'button'; b.appendChild(document.createTextNode(t[1] + ' ')); b.appendChild(h('em', null, String(t[2]))); b.onclick = function () { FL = t[0]; draw(); }; tabs.appendChild(b); }); lb.appendChild(tabs);
+    var sq = h('input', 'jz-q'); sq.type = 'search'; sq.placeholder = '🔎 Buscar equipo…'; sq.value = Q; sq.oninput = function () { Q = sq.value; var k = Q.trim().toLowerCase(); [].forEach.call(ms.children, function (b) { if (b.dataset.t) b.hidden = k && b.dataset.t.indexOf(k) < 0; }); }; lb.appendChild(sq);
+    var LV = L.filter(function (m) { return FL === 'all' || stateOf(m) === FL; });
     if (!L.length) ms.appendChild(h('p', 'jz-tip', 'No hay partidos en juego ni terminados todavía.'));
-    L.forEach(function (m) { var b = h('button', 'jz-m' + (cur === m.id ? ' on' : '')); b.type = 'button'; var t = h('span', 't'); t.appendChild(h('b', null, MAGNA.teamName(m.home) + ' ' + (m.hs || 0) + '-' + (m.as || 0) + ' ' + MAGNA.teamName(m.away))); b.appendChild(t);
+    else if (!LV.length) ms.appendChild(h('p', 'jz-tip', FL === 'pend' ? '🎉 No tienes partidos pendientes. ¡Todo calificado!' : 'No hay partidos en esta lista.'));
+    LV.forEach(function (m) { var b = h('button', 'jz-m' + (cur === m.id ? ' on' : '')); b.type = 'button'; var t = h('span', 't'); t.appendChild(h('b', null, MAGNA.teamName(m.home) + ' ' + (m.hs || 0) + '-' + (m.as || 0) + ' ' + MAGNA.teamName(m.away))); b.appendChild(t);
       var c = MAGNA.compOf(m), sm = h('small', null, (c ? c.name : 'Amistoso') + (m.round ? ' · ' + m.round : '')); b.appendChild(sm);
-      var st = h('span'); if (m.status === 'live') st.appendChild(h('span', 'jz-ok jz-lv', '● En juego')); if (m.live && m.live.judged) st.appendChild(h('span', 'jz-ok', '✓ Calificado')); b.appendChild(st);
+      var st = h('span'); if (m.status === 'live') st.appendChild(h('span', 'jz-ok jz-lv', '● En juego')); if (m.live && m.live.judged) st.appendChild(h('span', 'jz-ok', '✓ Calificado' + (ME && m.live.judged.id === ME.id ? ' por ti' : ''))); else if (m.status === 'finished') st.appendChild(h('span', 'jz-ok jz-pd', '⏳ Pendiente'));
+      var pg = prog(m); st.appendChild(h('span', 'jz-ok jz-pg', '📝 ' + pg.rated + '/' + pg.all)); b.appendChild(st);
+      b.dataset.t = (MAGNA.teamName(m.home) + ' ' + MAGNA.teamName(m.away)).toLowerCase(); if (Q.trim() && b.dataset.t.indexOf(Q.trim().toLowerCase()) < 0) b.hidden = true;
       b.onclick = function () { if (dirty && cur !== m.id && !confirm('Tienes cambios sin guardar. ¿Cambiar de partido igual?')) return; cur = m.id; D = load(m); dirty = false; draw(); };
       ms.appendChild(b); });
     var mys = h('div', 'jz-my'); mys.textContent = '⭐ Tus estrellas: cargando…'; lb.insertBefore(mys, lb.children[1]); myStars(mys);
@@ -69,7 +80,10 @@
     var hd = h('div', 'jz-hd'); hd.appendChild(h('b', null, MAGNA.teamName(m.home))); hd.appendChild(h('em', null, (m.hs || 0) + ' - ' + (m.as || 0))); hd.appendChild(h('b', null, MAGNA.teamName(m.away))); box.appendChild(hd);
     var L = m.live || {}; box.appendChild(h('p', 'jz-sub', (m.status === 'live' ? 'En juego' : 'Terminado') + (L.judged ? ' · última calificación de ' + L.judged.by : ' · aún sin calificar')));
     // 1 · notas
-    var qk = h('button', 'jz-qk', '⚡ Modo rápido: un jugador por pantalla'); qk.type = 'button'; qk.onclick = function () { quick(m); }; box.appendChild(qk);
+    var pg = prog(m, D), ck = h('div', 'jz-ck'); [[pg.rated === pg.all && pg.all > 0, '📝 Notas ' + pg.rated + '/' + pg.all], [pg.ga === pg.gt, '⚽ Goles ' + pg.ga + '/' + pg.gt], [pg.mvp, pg.mvp ? '🏅 MVP elegido' : '🏅 Falta MVP'], [pg.note, pg.note ? '🗒️ Con comentario' : '🗒️ Sin comentario']].forEach(function (x) { ck.appendChild(h('span', x[0] ? 'ok' : 'no', x[1])); }); box.appendChild(ck);
+    var tl = h('div', 'jz-tools'), qk = h('button', 'jz-qk', '⚡ Modo rápido: un jugador por pantalla'); qk.type = 'button'; qk.onclick = function () { quick(m); }; tl.appendChild(qk);
+    if (pg.rated < pg.all) { var f6 = h('button', 'jz-qk2', '6️⃣ Poner 6 a los que faltan'); f6.type = 'button'; f6.onclick = function () { sidePlayers(m, 'h').concat(sidePlayers(m, 'a')).forEach(function (p) { if (D.R[p.id] == null) D.R[p.id] = 6; }); dirty = true; draw(); }; tl.appendChild(f6); }
+    box.appendChild(tl);
     box.appendChild(h('h3', null, '1 · Valoraciones (1 a 10)'));
     var two = h('div', 'jz-two'); ['h', 'a'].forEach(function (sd) { var col = h('div', 'jz-tm'), tid = sd === 'h' ? m.home : m.away, t4 = h('h4'), dot = h('i'); dot.style.setProperty('--tc', MAGNA.teamColor ? MAGNA.teamColor(tid) : '#8b5cf6'); t4.appendChild(dot); t4.appendChild(document.createTextNode(MAGNA.teamName(tid))); col.appendChild(t4);
       var ps = sidePlayers(m, sd); if (!ps.length) col.appendChild(h('p', 'jz-none', 'Este equipo no tiene jugadores registrados.'));
@@ -87,14 +101,19 @@
     var none = h('button', D.mvp == null ? 'on' : '', 'Sin MVP'); none.type = 'button'; none.onclick = function () { D.mvp = null; dirty = true; draw(); }; mv.appendChild(none);
     all.forEach(function (p) { var b = h('button', D.mvp === p.id ? 'on' : '', p.name + (D.R[p.id] != null ? ' · ' + rt(D.R[p.id]) : '')); b.type = 'button'; b.onclick = function () { D.mvp = p.id; dirty = true; draw(); }; mv.appendChild(b); });
     var best = all.slice().sort(function (a, b) { return (D.R[b.id] || 0) - (D.R[a.id] || 0); })[0];
-    if (best && D.R[best.id] != null && D.mvp !== best.id) { var sg = h('p', 'jz-tip'); sg.innerHTML = '💡 Sugerencia por nota: <b>' + best.name + '</b> (' + rt(D.R[best.id]) + ').'; box.appendChild(mv); box.appendChild(sg); } else box.appendChild(mv);
+    if (best && D.R[best.id] != null && D.mvp !== best.id) { var sg = h('p', 'jz-tip'); sg.innerHTML = '💡 Sugerencia por nota: <b>' + best.name + '</b> (' + rt(D.R[best.id]) + '). '; var us = h('button', 'jz-use', 'Usar'); us.type = 'button'; us.onclick = function () { D.mvp = best.id; dirty = true; draw(); }; sg.appendChild(us); box.appendChild(mv); box.appendChild(sg); } else box.appendChild(mv);
+    // 4 · comentario
+    box.appendChild(h('h3', null, '4 · Comentario del juez (opcional)')); var ta = h('textarea', 'jz-note'); ta.maxLength = 400; ta.rows = 3; ta.placeholder = 'Ej.: Partido muy parejo, Leo decidió con dos capturas al final. (Se muestra en la página del partido)'; ta.value = D.note || '';
+    var nc = h('small', 'jz-nc', (D.note || '').length + '/400'); ta.oninput = function () { D.note = ta.value; dirty = true; nc.textContent = ta.value.length + '/400'; upd(); }; box.appendChild(ta); box.appendChild(nc);
     // guardar
     var sv = h('div', 'jz-save'), info = h('span', null, dirty ? 'Tienes cambios sin guardar' : 'Todo guardado'); sv.appendChild(info); var go = h('button', null, '💾 Guardar planilla'); go.type = 'button';
     go.onclick = function () { go.disabled = true; go.textContent = 'Guardando…'; var R = {}; Object.keys(D.R).forEach(function (k) { if (D.R[k] != null) R[k] = D.R[k]; });
       var G = { h: D.G.h.slice(0, m.hs || 0), a: D.G.a.slice(0, m.as || 0) }; while (G.h.length && G.h[G.h.length - 1] == null) G.h.pop(); while (G.a.length && G.a[G.a.length - 1] == null) G.a.pop();
-      ACCOUNTS.judgeSave(m.id, R, G, D.mvp).then(function () { dirty = false; toast('✓ Planilla guardada: ya se ve en la web'); if (ACCOUNTS.pullState) ACCOUNTS.pullState().then(function () { D = load(MAGNA.by(S().matches, m.id) || m); draw(); }, draw); else draw(); },
+      ACCOUNTS.judgeSave(m.id, R, G, D.mvp).then(function () { return (D.note || '').trim() !== (D.note0 || '').trim() && ACCOUNTS.judgeNote ? ACCOUNTS.judgeNote(m.id, (D.note || '').trim()) : true; }).then(function () { if (go.dataset.next) { var nx = matches().filter(function (x) { return x.id !== m.id && stateOf(x) === 'pend'; })[0]; if (nx) { cur = nx.id; D = load(nx); } } dirty = false; toast('✓ Planilla guardada: ya se ve en la web'); if (ACCOUNTS.pullState) ACCOUNTS.pullState().then(function () { D = load(MAGNA.by(S().matches, cur) || m); draw(); }, draw); else draw(); },
         function (e) { go.disabled = false; go.textContent = '💾 Guardar planilla'; toast(e.message || 'No se pudo guardar', true); }); };
-    sv.appendChild(go); box.appendChild(sv); root.appendChild(box);
+    sv.appendChild(go); var nxt = matches().filter(function (x) { return x.id !== m.id && stateOf(x) === 'pend'; })[0];
+    if (nxt) { var gn = h('button', 'jz-nx', '💾 Guardar y siguiente pendiente →'); gn.type = 'button'; gn.onclick = function () { go.dataset.next = '1'; go.click(); }; sv.appendChild(gn); }
+    box.appendChild(sv); root.appendChild(box);
   }
   function prow(p) { var r = h('div', 'jz-p'), nm = h('div', 'nm', p.name); nm.appendChild(h('small', null, MAGNA.roleName ? MAGNA.roleName(p) : '')); r.appendChild(nm);
     var st = h('div', 'jz-st'), v = D.R[p.id], val = h('span', 'jz-v' + (v == null ? ' na' : ''), v == null ? 'Sin nota' : rt(v)); val.style.setProperty('--vc', vcol(v));

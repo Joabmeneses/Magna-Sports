@@ -10,6 +10,7 @@ window.MAGNA_LIGAS = function () {
       return { id: id, n: MAGNA.teamName(id), i: u ? 'url:' + u : null, g: g, p: p, gf: gf, gc: gc, f: mine.slice(0, 4).map(function (m) { var h = m.home === id; return (h ? m.hs > m.as : m.as > m.hs) ? 'V' : 'D'; }).join(''),
         live: S.matches.some(function (m) { return m.status === 'live' && m.type === 'league' && m.cid === l.id && (m.home === id || m.away === id); }) ? 1 : 0 };
     });
-    return { n: l.name, jn: '', c: COL[k % COL.length], z: Math.min(2, Math.max(1, T.length - 1)), T: T };
+    var cf = l.config && l.config.win != null ? l.config : { win: 3, loss: 0 };
+    return { n: l.name, jw: Number(cf.win) || 0, jl: Number(cf.loss) || 0, jn: '', c: COL[k % COL.length], z: Math.min(2, Math.max(1, T.length - 1)), T: T };
   }).filter(function (l) { return l.T.length; });
 };

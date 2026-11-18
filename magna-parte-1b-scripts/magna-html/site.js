@@ -10,7 +10,8 @@ var M = (function () {
     else { var im = document.createElement('img'); im.alt = ''; im.src = u; im.onerror = function () { im.remove(); c.textContent = name.slice(0, 2).toUpperCase(); }; c.appendChild(im); }
     return c;
   }
-  function fdt(s) { return s ? new Date(s.replace(' ', 'T') + 'Z').toLocaleString('es', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sin fecha'; }
+  var FDT = null; try { FDT = new Intl.DateTimeFormat('es', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) {}
+  function fdt(s) { if (!s) return 'Sin fecha'; var d = new Date(s.replace(' ', 'T') + 'Z'); return FDT ? FDT.format(d) : d.toLocaleString('es'); }
   function modal(build) {
     var ov = h('div', 'ov'), b = h('div', 'md'); function close() { ov.remove(); document.removeEventListener('keydown', k); } function k(e) { if (e.key === 'Escape') close(); }
     ov.onclick = function (e) { if (e.target === ov) close(); }; document.addEventListener('keydown', k);
@@ -37,6 +38,7 @@ var M = (function () {
   var C = window.MAGNA_COS, pav = C.pav, paint = C.paint, pn = C.pn, nameStyle = C.nameStyle, profileUrl = C.profileUrl, item = C.item, eqOf = C.eqOf, repaint = C.repaint, loadPav = C.reload, STY = C.STY, KIND = C.KIND, RAR = C.RAR;
   function cosPreview(it, name, pid) { var w = h('div', 'cos-prev'), nm = name || 'Tu nombre';
     if (it.type === 'frame') { var a = tierAv(nm, 60, 58); if (pid != null) { a.dataset.pid = pid; var u = pav(pid); if (u) { a.style.backgroundImage = 'url("' + u + '")'; a.classList.add('has-pav'); } } a.classList.add('fr-' + it.style); if (it.lv) a.dataset.lvi = it.lv; w.appendChild(a); }
+    else if (it.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { w.classList.add('cp-pl'); w.appendChild(tierAv(nm, 70, 42, pid)); var tx = h('div', 'cp-tx'); tx.appendChild(h('b', null, nm)); tx.appendChild(h('small', null, 'Así se ve tu tarjeta')); w.appendChild(tx); MAGNA_COS.banner(w, it.style, { lite: true }); w.classList.add('plc'); if (it.lv) w.dataset.plv = it.lv; }
     else { var eq = {}; eq[it.type] = it.id; var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); if (it.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (it.rarity || 'comun'), it.name)); else nameStyle(n, eq); w.appendChild(n); }
     return w; }
   function photo(el, pid) { if (pid == null) return el; el.dataset.pid = pid; paint(el); return el; }
