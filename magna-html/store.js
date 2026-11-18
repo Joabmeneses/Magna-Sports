@@ -193,6 +193,22 @@ var MAGNA = (function () {
   // Formato Champions: liga ida y vuelta → los D primeros directo, los K siguientes al play-off (D = K/2), el resto fuera.
   // K es la mayor potencia de 2 que no supera la mitad de los equipos (36 → 8 directo + 16 play-off, como la Champions real).
   function champSplit(n) { if (n < 3) return null; var k = 2; while (k * 2 <= n / 2) k *= 2; return { direct: k / 2, playoff: k, out: n - k / 2 - k }; }
+  // Eliminatoria a ida y vuelta: cada llave con su ida, su vuelta, el global y el desempate (si el global quedó igual).
+  // Las rondas que todavía no se juegan salen con los ganadores que se van conociendo (o vacías).
+  function koTies(c) {
+    if (!c || c.format !== 'knockout' || c.legs !== 2) return null;
+    var R = {}, st = c.state || {}, n = c.teamIds.length, size = 1; while (size < n) size *= 2;
+    S.matches.forEach(function (m) { if (m.type !== 'tournament' || m.cid !== c.id || m.status === 'cancelled' || !m.leg) return; var r = String(m.round || '').split(' · ')[0], T = R[r] = R[r] || {}; (T[m.tie] = T[m.tie] || {})[m.leg] = m; });
+    var g = function (m, t) { return m.home === t ? Number(m.hs) || 0 : Number(m.as) || 0; }, fin = function (m) { return m && m.status === 'finished'; }, out = [], prev = null;
+    for (var s = size; s >= 2; s /= 2) { var rn = koName(s), T = R[rn] || {}, ties = [];
+      for (var i = 0; i < s / 2; i++) { var L = T[i] || {}, a = null, b = null;
+        if (L[1]) { a = L[1].home; b = L[1].away; } else if (st.round === rn && st.ties && st.ties[i]) { a = st.ties[i][0]; b = st.ties[i][1]; } else if (prev) { a = prev[2 * i].win; b = prev[2 * i + 1].win; }
+        var t = { a: a, b: b, ida: L[1] || null, vta: L[2] || null, des: L[3] || null, ga: 0, gb: 0, win: null, live: [L[1], L[2], L[3]].some(function (m) { return m && m.status === 'live'; }) };
+        [L[1], L[2]].forEach(function (m) { if (fin(m)) { t.ga += g(m, a); t.gb += g(m, b); } });
+        if (fin(L[1]) && fin(L[2])) { if (t.ga !== t.gb) t.win = t.ga > t.gb ? a : b; else if (fin(L[3]) && L[3].hs !== L[3].as) t.win = L[3].hs > L[3].as ? L[3].home : L[3].away; }
+        ties.push(t); }
+      out.push({ round: rn, ties: ties }); prev = ties; }
+    return out; }
   function koName(n) { return n === 2 ? 'Final' : n === 4 ? 'Semifinales' : n === 8 ? 'Cuartos de final' : n === 16 ? 'Octavos de final' : 'Ronda de ' + n; }
   // Orden de los clasificados para el primer cruce: en la lista, el puesto i juega contra el puesto n-1-i.
   // Con 2 por grupo se cruzan grupos (1.º A vs 2.º B, 1.º B vs 2.º A...). Los primeros reciben los pases directos si sobran equipos.
@@ -240,7 +256,7 @@ var MAGNA = (function () {
   }
   function compOut(c, kind) {
     var o = { id: c.id, name: c.name, description: c.description || '', status: c.status, has_logo: false, teams: c.teamIds.map(function (t) { return { id: t, name: teamName(t) }; }),
-      config: { format: kind === 'leagues' ? 'round_robin' : c.format, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
+      config: { format: kind === 'leagues' ? 'round_robin' : c.format, legs: c.legs || 1, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
     if (kind === 'leagues') { o.standings = standings(Object.assign({ kind: 'league' }, c)); }
     else { o.bracket = c.state ? { phase: c.state.phase, round: c.state.round, champion: c.state.champion ? { id: c.state.champion, name: teamName(c.state.champion) } : undefined, groups: c.groups ? c.groups.map(function (g) { return { name: g.name, table: groupTable(c, g) }; }) : undefined } : null; }
     return o;
@@ -253,7 +269,8 @@ var MAGNA = (function () {
   function tierRank(id) { for (var i = 0; i < TIERS.length; i++) if (TIERS[i][0] === id) return i; return 1; }
   // ---------- nivel de los equipos (para saber si el rival era fuerte o débil) ----------
   // Cada equipo empieza en 1000 puntos de nivel. Ganar suma y perder resta, más o menos según el rival (sistema tipo Elo).
-  function byTime(a, b) { return String(a.at || '').localeCompare(String(b.at || '')) || a.id - b.id; }
+  // fechas 'AAAA-MM-DD HH:MM:SS': se ordenan comparando el texto directo (mucho más rápido que localeCompare)
+  function byTime(a, b) { var x = String(a.at || ''), y = String(b.at || ''); return x < y ? -1 : x > y ? 1 : a.id - b.id; }
   // ---------- historial (torneos jugados antes del sitio) ----------
   // Sus marcadores cuentan para el nivel de los equipos; sus campeones suman títulos. No tienen alineaciones ni valoraciones.
   function hnk(x) { return String(x || '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase(); }
@@ -350,7 +367,7 @@ var MAGNA = (function () {
   load();
   return {
     get S() { return S; }, load: load, save: save, hasLocal: hasLocal, discardLocal: discardLocal, id: id, now: now, by: by, addNews: addNews, teamName: teamName, standings: standings, clone: clone, EMPTY: EMPTY,
-    MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
+    koTies: koTies, MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
     trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_MITICA: SHOP_MITICA, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,

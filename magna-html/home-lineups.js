@@ -153,8 +153,27 @@
     '.al-nr .al-rb{position:static;transform:none;font-size:15px;min-width:46px;padding:5px 8px}' +
     '.al-e{padding:22px;text-align:center;color:#a9afc8;border-radius:18px;border:1px dashed rgba(255,255,255,.2)}' +
     // banca
-    '.al-bn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.al-bn>div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px;border-radius:16px;background:rgba(255,255,255,.03);border:1px dashed color-mix(in srgb,var(--tc) 45%,transparent)}.al-bn>div>small{flex:1 1 100%;font:900 11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--tc);filter:brightness(1.4)}' +
-    '.al-bn a{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 5px;border-radius:999px;background:rgba(255,255,255,.06);color:inherit;text-decoration:none;font:700 12.5px Archivo,sans-serif;transition:background-color .15s}.al-bn a:hover{background:rgba(255,255,255,.14)}.al-bn a i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:900 9px Archivo,sans-serif;font-style:normal;background:var(--tc)}.al-bn a.dt{background:rgba(255,210,63,.14);color:#ffd23f}' +
+    '.al-bn{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}' +
+    '.bq-t{min-width:0;border-radius:18px;background:#fff;border:3px solid #0d0d10;box-shadow:5px 5px 0 #0d0d10;overflow:hidden;color:#0d0d10}' +
+    '.bq-h{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:3px solid #0d0d10;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 22%,#fff),#fff)}' +
+    '.bq-h .cr{flex:none;width:30px;height:30px;border-radius:50%;background:var(--tc) center/cover no-repeat;border:2px solid #0d0d10;display:grid;place-items:center;font:900 11px Archivo,sans-serif;font-style:normal;color:#fff}' +
+    '.bq-h b{flex:1;min-width:0;font:900 14px/1.1 Archivo,sans-serif;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.bq-h span{flex:none;font:800 10.5px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#5b6079}' +
+    '.bq-cols{display:grid;grid-template-columns:minmax(0,1fr) 44px 30px 30px 30px;gap:6px;padding:6px 12px 2px;font:800 9.5px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:#8a8fa8;text-align:center}.bq-cols>:first-child{text-align:left}' +
+    '.bq-r{display:grid;grid-template-columns:minmax(0,1fr) 44px 30px 30px 30px;gap:6px;align-items:center;padding:7px 12px;color:#0d0d10;text-decoration:none;border-top:1px solid #ece8da;transition:background-color .15s}.bq-r:hover{background:#f6f9e6}' +
+    '.bq-n{display:flex;align-items:center;gap:9px;min-width:0}.bq-n>i{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:900 11px Archivo,sans-serif;font-style:normal;color:#fff;background:var(--tc);border:2px solid #0d0d10}' +
+    '.bq-n>span{display:grid;min-width:0;line-height:1.15}.bq-n b{font:800 13.5px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bq-n small{font:700 10.5px Archivo,sans-serif;color:#7a7f99}.bq-n small.in{color:#0f8a5f}' +
+    '.bq-r>em{font:900 13px Archivo,sans-serif;font-style:normal;text-align:center;padding:4px 0;border-radius:8px;background:#0d0d10;color:#fff}.bq-r>em.t1{background:#2ee59d;color:#062417}.bq-r>em.t2{background:#ffd23f}.bq-r>em.t3{background:#ff8a3d}' +
+    '.bq-r>span{font:800 13px "JetBrains Mono",monospace;text-align:center;color:#3d4260}' +
+    // con placa: la fila lleva de fondo la placa del jugador y el texto pasa a claro
+    '.bq-r.plc{border-top-color:#0d0d10}.bq-r.plc .bq-n b{color:#fff}.bq-r.plc>span{color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9)}.bq-r.plc .bq-n small{color:rgba(255,255,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.8)}.bq-r.plc .bq-n small.in{color:#7dffc4}.bq-r.plc>em{box-shadow:0 0 0 2px rgba(255,255,255,.7)}.bq-r.plc:hover{filter:brightness(1.12)}' +
+    '.bq-r.plc .pba{background-size:auto 72%;opacity:.5}' +
+    '.bq-e{padding:12px;font:700 13px Archivo,sans-serif;color:#7a7f99;border-top:1px solid #ece8da}' +
+    '.bq-dt{display:flex;align-items:center;gap:9px;padding:9px 12px;border-top:3px solid #0d0d10;background:#fff8db;color:#0d0d10;text-decoration:none}.bq-dt:hover{background:#ffef9e}' +
+    '.bq-dt>i{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-style:normal;background:#0d0d10;border:2px solid #0d0d10}' +
+    '.bq-dt>span{display:grid;min-width:0;line-height:1.15;flex:1}.bq-dt small{font:800 10px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:#7a5200}.bq-dt b{font:800 13.5px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.bq-dt>em{flex:none;font:800 11px "JetBrains Mono",monospace;font-style:normal;color:#7a5200}' +
+    '@media(max-width:640px){.al-bn{grid-template-columns:1fr}}' +
     '.al-ar.vert{height:500px;background:radial-gradient(100% 55% at 50% 0,color-mix(in srgb,var(--hc) 45%,transparent),transparent 72%),radial-gradient(100% 55% at 50% 100%,color-mix(in srgb,var(--ac) 45%,transparent),transparent 72%),repeating-linear-gradient(180deg,#17704c 0 9.09%,#135f41 9.09% 18.18%)}.al-ar.vert .al-zn.h{left:28px;top:24px;bottom:auto}.al-ar.vert .al-zn.a{right:28px;bottom:24px}' +
     '@media(max-width:640px){.al-tm{grid-template-columns:1fr 1fr}.al-sc{display:none}.al-t{padding:8px}.al-t small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.al-pa{grid-template-columns:1fr 1fr!important}.al-pp{padding:6px 7px;gap:6px}.al-pp span{font-size:12px}.al-pp.a{flex-direction:row-reverse!important;text-align:right!important}.al-pp.a .al-rb{margin-left:0!important;margin-right:auto!important}.al-pp .al-rb{font-size:10.5px;min-width:28px}.al-k{width:78px}.al-k .hx{width:50px;height:55px}.al-k .hx .av{width:43px;height:48px;font-size:14px}.al-rb{top:42px;font-size:11px}.al-vs{width:66px;height:66px;margin:-33px 0 0 -33px}.al-vs b{font-size:19px}.al-t i{width:34px;height:34px}.al-t b{font-size:14px}.al-sc{min-width:58px}.al-tabs{width:100%}.al-tabs button{flex:1;padding:9px 6px}.al-bn{grid-template-columns:1fr}.al-cmp{grid-template-columns:36px 1fr auto 1fr 36px}.al-cmp>span{min-width:70px;font-size:9.5px}.al-cmp>b{font-size:15px}.al-pa>em{display:none}}' +
     '@media(prefers-reduced-motion:reduce){.al *{animation:none!important;transition:none!important}}';
@@ -290,10 +309,18 @@
     box.appendChild(tm);
     box.appendChild(VIEW === 'duelo' ? duelView(m, D) : VIEW === 'notas' ? notesView(m, D) : arenaView(m, D));
     var ky = keys(m, D); if (ky) box.appendChild(ky);
-    var bn2 = h('div', 'al-bn'); ['h', 'a'].forEach(function (sd) { var X = D[sd], d = h('div'); d.style.setProperty('--tc', col(X.tid)); d.appendChild(h('small', null, '🪑 Banca · ' + MAGNA.teamName(X.tid)));
-      if (!X.bench.length && !X.dt) d.appendChild(h('span', null, 'Sin suplentes'));
-      X.bench.forEach(function (pid) { var p = by(S().players, pid); if (!p) return; var a = h('a'); a.href = MAGNA_COS.profileUrl(pid); a.appendChild(pic(h('i', null, ini(p.name)), pid)); a.appendChild(document.createTextNode(p.name + (D.goals[pid] ? ' ⚽' : '') + (D.R[pid] != null ? ' · ' + rt(D.R[pid]) : ''))); d.appendChild(a); });
-      if (X.dt) { var dt = h('a', 'dt'); dt.href = MAGNA_COS.profileUrl(X.dt.id); dt.appendChild(pic(h('i', null, '🧢'), X.dt.id)); dt.appendChild(document.createTextNode('DT · ' + X.dt.name)); d.appendChild(dt); }
+    var bn2 = h('div', 'al-bn'), PS = MAGNA.playerStats ? MAGNA.playerStats() : {};
+    ['h', 'a'].forEach(function (sd) { var X = D[sd], d = h('div', 'bq-t'); d.style.setProperty('--tc', col(X.tid));
+      var hd = h('div', 'bq-h'), cr = h('i', 'cr'), u = MAGNA.crestUrl(X.tid); if (u) cr.style.backgroundImage = 'url("' + u + '")'; else cr.textContent = MAGNA.teamName(X.tid).slice(0, 2).toUpperCase(); hd.appendChild(cr); hd.appendChild(h('b', null, MAGNA.teamName(X.tid)));
+      hd.appendChild(h('span', null, '🪑 Banca · ' + X.bench.length)); d.appendChild(hd);
+      if (!X.bench.length) d.appendChild(h('div', 'bq-e', 'Sin suplentes para este partido.'));
+      else { var cl = h('div', 'bq-cols'); ['Suplente', 'Media', 'PJ', 'G', 'MVP'].forEach(function (x) { cl.appendChild(h('span', null, x)); }); d.appendChild(cl); }
+      X.bench.forEach(function (pid) { var p = by(S().players, pid); if (!p) return; var st = PS[pid] || {}, played = D.R[pid] != null, a = h('a', 'bq-r'); a.href = MAGNA_COS.profileUrl(pid);
+        var n = h('div', 'bq-n'); n.appendChild(pic(h('i', null, ini(p.name)), pid)); var tx = h('span'), nb = h('b'); nb.appendChild(MAGNA_COS.pn ? MAGNA_COS.pn(p.name, pid, { plain: true }) : document.createTextNode(p.name)); if (D.goals[pid]) nb.appendChild(document.createTextNode(' ⚽')); tx.appendChild(nb); tx.appendChild(h('small', played ? 'in' : null, played ? '▲ Entró · nota ' + rt(D.R[pid]) : 'En la banca')); n.appendChild(tx); a.appendChild(n);
+        var md = st.media != null ? Math.round(st.media) : null, em = h('em', md == null ? null : md >= 80 ? 't1' : md >= 60 ? 't2' : md >= 40 ? 't3' : null, md == null ? '—' : String(md)); a.appendChild(em);
+        [st.pj || 0, st.g || 0, st.mvp || 0].forEach(function (v) { a.appendChild(h('span', null, String(v))); }); d.appendChild(a); if (MAGNA_COS.host) { a.dataset.plh = pid; MAGNA_COS.host(a); } });
+      if (X.dt) { var dt = h('a', 'bq-dt'); dt.href = MAGNA_COS.profileUrl(X.dt.id); dt.appendChild(pic(h('i', null, '🧢'), X.dt.id)); var tt = h('span'); tt.appendChild(h('small', null, 'Director técnico')); tt.appendChild(h('b', null, X.dt.name)); dt.appendChild(tt);
+        var w = 0, l = 0; S().matches.forEach(function (x) { if (x.status !== 'finished' || (x.home !== X.tid && x.away !== X.tid)) return; var me = x.home === X.tid ? x.hs : x.as, op = x.home === X.tid ? x.as : x.hs; if (me > op) w++; else if (me < op) l++; }); if (w + l) dt.appendChild(h('em', null, w + 'V · ' + l + 'D')); d.appendChild(dt); }
       bn2.appendChild(d); }); box.appendChild(bn2);
   }
 

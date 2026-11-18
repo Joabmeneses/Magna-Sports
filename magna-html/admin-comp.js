@@ -121,6 +121,7 @@ ADMIN_MOD('comp', function (A) {
     if (f === 'champions') return { ok: true, t: '<b>' + n + ' equipos</b> en una sola tabla. <b>No se genera ningún partido:</b> tú creas cada jornada de la fase de liga y después cada cruce de la eliminatoria.' };
     if (f === 'groups_knockout') { if (n < g * 2) return { ok: false, t: 'Con ' + g + ' grupos necesitas al menos ' + g * 2 + ' equipos.' }; if (Math.floor(n / g) < q) return { ok: false, t: 'Con ' + n + ' equipos en ' + g + ' grupos no pueden clasificar ' + q + ' por grupo.' }; if (g * q < 2) return { ok: false, t: 'Con 1 grupo deben clasificar al menos 2.' };
       var lo = Math.floor(n / g), hi = Math.ceil(n / g), size = 1; while (size < g * q) size *= 2; return { ok: true, t: '<b>' + n + ' equipos</b> en ' + g + ' grupo' + (g > 1 ? 's' : '') + ' de ' + (lo === hi ? lo : lo + '–' + hi) + ' (sorteo automático). Pasan ' + q + ' por grupo → ' + MAGNA.koName(size).toLowerCase() + '.' }; }
+    if (f === 'knockout' && legs === 2) { if (n & (n - 1)) return { ok: false, t: 'Con ida y vuelta el número de equipos tiene que ser 2, 4, 8 o 16 (llevas ' + n + ').' }; return { ok: true, t: '<b>' + n + ' equipos</b> · ' + (n / 2) + (n === 2 ? ' llave' : ' llaves') + ' de ' + MAGNA.koName(n).toLowerCase() + ' a <b>ida y vuelta</b> (tú eliges los cruces). Pasa quien meta más goles en el global; si queda igual, se juega un partido de desempate.' }; }
     if (f === 'knockout') { var s = 1; while (s < n) s *= 2; return { ok: true, t: '<b>' + n + ' equipos</b> · primera ronda: ' + MAGNA.koName(s).toLowerCase() + (s > n ? ' (' + (s - n) + ' pasan directo a la siguiente ronda)' : '') + '.' }; }
     return { ok: true, t: '<b>' + n + ' equipos</b> · ' + rrRounds(n) + ' jornadas (' + n * (n - 1) / 2 + ' partidos). Al terminar, el líder es campeón.' };
   }
@@ -147,6 +148,8 @@ ADMIN_MOD('comp', function (A) {
       var bo = h('select', 'in'); [[1, 'A 1 partida'], [3, 'Al mejor de 3'], [5, 'Al mejor de 5'], [7, 'Al mejor de 7']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; if (x[0] === 3) o.selected = true; bo.appendChild(o); });
       var lgs = h('select', 'in'); [[2, 'Ida y vuelta (cada pareja juega 2 veces)'], [1, 'Solo ida (cada pareja juega 1 vez)']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; lgs.appendChild(o); });
       var ll = h('label', 'f', 'Fase de liga'); ll.appendChild(lgs); b.appendChild(ll); lgs.onchange = function () { upd(); };
+      var kl = h('select', 'in'); [[2, 'Ida y vuelta (2 partidos; desempate si el global queda igual)'], [1, 'Partido único']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; kl.appendChild(o); });
+      var lk = h('label', 'f', 'Cada llave se juega'); lk.appendChild(kl); b.appendChild(lk); kl.onchange = function () { upd(); };
       var lb = h('label', 'f', 'Cada partido se juega'); lb.appendChild(bo); b.appendChild(lb);
       var sec = h('div', 'tf-sec'), cnt = h('span'), sp = h('span', 'sp'); sec.appendChild(document.createTextNode('2 · Equipos ')); sec.appendChild(cnt); sec.appendChild(sp);
       var boxes = [], all = btn('Todos', function () { boxes.forEach(function (i) { i.checked = true; }); upd(); }), none = btn('Ninguno', function () { boxes.forEach(function (i) { i.checked = false; }); upd(); });
@@ -159,14 +162,14 @@ ADMIN_MOD('comp', function (A) {
       var err = h('p', 'err'), cbtn = null; b.appendChild(err);
       Object.keys($.TF).forEach(function (k) { var x = $.TF[k], c = h('button', 'tf-card'); c.type = 'button'; c.dataset.f = k; c.appendChild(h('em', null, x.i)); c.appendChild(h('b', null, x.n)); c.appendChild(h('span', null, x.d)); c.onclick = function () { f = k; upd(); }; grid.appendChild(c); });
       function ids() { return boxes.filter(function (i) { return i.checked; }).map(function (i) { return Number(i.value); }); }
-      function upd() { [].forEach.call(grid.children, function (c) { c.classList.toggle('on', c.dataset.f === f); }); gOpt.style.display = f === 'groups_knockout' ? '' : 'none'; ll.style.display = 'none'; if (cbtn) cbtn.textContent = f === 'champions' ? 'Crear y empezar fase de liga' : 'Crear y generar calendario';
-        var n = ids().length, p = plan(f, n, Number(gs.value), Number(qs.value), Number(lgs.value)); cnt.textContent = '(' + n + ' de ' + S().teams.length + ')'; pl.innerHTML = p.t; pl.classList.toggle('bad', !p.ok); return p; }
+      function upd() { [].forEach.call(grid.children, function (c) { c.classList.toggle('on', c.dataset.f === f); }); gOpt.style.display = f === 'groups_knockout' ? '' : 'none'; ll.style.display = 'none'; lk.style.display = f === 'knockout' ? '' : 'none'; if (cbtn) cbtn.textContent = f === 'champions' ? 'Crear y empezar fase de liga' : 'Crear y generar calendario';
+        var n = ids().length, p = plan(f, n, Number(gs.value), Number(qs.value), f === 'knockout' ? Number(kl.value) : Number(lgs.value)); cnt.textContent = '(' + n + ' de ' + S().teams.length + ')'; pl.innerHTML = p.t; pl.classList.toggle('bad', !p.ok); return p; }
       gs.onchange = upd; qs.onchange = upd; upd();
       function create(gen) {
         var n = okName(name.value, 2, 40); if (!n) { err.textContent = 'Escribe un nombre (2 a 40 caracteres).'; name.focus(); return; }
         var ed = edInfo(n); n = ed.name;
         var p = upd(); if (gen && !p.ok) { err.textContent = p.t.replace(/<[^>]+>/g, ''); return; }
-        var c = { id: MAGNA.id(), name: n, description: (de.value || '').slice(0, 500), status: gen ? 'active' : 'draft', teamIds: ids(), format: f, best_of: Number(bo.value), legs: f === 'champions' ? Number(lgs.value) : undefined, rules: (ru.value || '').slice(0, 2000), state: null };
+        var c = { id: MAGNA.id(), name: n, description: (de.value || '').slice(0, 500), status: gen ? 'active' : 'draft', teamIds: ids(), format: f, best_of: Number(bo.value), legs: f === 'champions' ? Number(lgs.value) : f === 'knockout' ? Number(kl.value) : undefined, rules: (ru.value || '').slice(0, 2000), state: null };
         if (f === 'groups_knockout') c.gcfg = { n: Number(gs.value), q: Number(qs.value) };
         ed.number(); S().tournaments.push(c); MAGNA.addNews('tournament_created', ed.n > 1 ? 'Arranca ' + ed.name + ', la edición ' + MAGNA.toRoman(ed.n) + ' de ' + ed.base + '.' : 'Se crea el torneo: ' + n + '.');
         if (gen) { var e = generate(c); if (e) { c.status = 'draft'; err.textContent = e; MAGNA.save(); return; } MAGNA.addNews('tournament_bracket', 'Arranca ' + n + ': ya está el calendario.'); }
@@ -182,7 +185,7 @@ ADMIN_MOD('comp', function (A) {
     if (st.phase === 'groups' || st.phase === 'league') return 2; if (st.phase === 'playoff') return 3; return s.length - 2; }
   function phaseLabel(c) { if (c.state && c.state.phase === 'done') return '🏆 ' + MAGNA.teamName(c.state.champion); if (c.state && c.state.round && c.state.phase !== 'groups') return c.state.round; return steps(c)[stepIx(c)]; }
   function phaseMatches(c) { var st = c.state, ms = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.status !== 'cancelled'; });
-    if (st.phase === 'groups') return ms.filter(function (m) { return m.group; }); if (st.phase === 'league') return ms; if (st.phase === 'ko') return ms.filter(function (m) { return !m.group; }); return ms.filter(function (m) { return m.round === st.round; }); }
+    if (st.phase === 'groups') return ms.filter(function (m) { return m.group; }); if (st.phase === 'league') return ms; if (st.phase === 'ko') return ms.filter(function (m) { return !m.group; }); return ms.filter(function (m) { return m.round === st.round || String(m.round || '').indexOf(st.round + ' · ') === 0; }); }
   function proclaim(c) { var ms = phaseMatches(c); if (ms.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos sin terminar.'; var t = MAGNA.groupTable(c, { teamIds: c.teamIds })[0]; if (!t) return 'No hay equipos.';
     c.state = { phase: 'done', champion: t.team_id }; MAGNA.addNews('tournament_bracket', t.team + ' es campeón de ' + c.name + '.'); return null; }
   function tourDlg(cid) {
@@ -206,6 +209,7 @@ ADMIN_MOD('comp', function (A) {
           else { card(c.status === 'finished' ? 'Este torneo se cerró sin calendario' : 'Paso 2: genera el calendario', (c.status === 'finished' ? 'Se marcó como finalizado antes de crear los partidos, por eso no aparece en la web. ' : '') + p.t.replace(/<[^>]+>/g, ''));
             if (c.format === 'champions') { var lsel = h('select', 'in'); lsel.style.cssText = 'margin:0;max-width:340px'; [[2, 'Fase de liga: ida y vuelta'], [1, 'Fase de liga: solo ida']].forEach(function (x) { var o = h('option', null, x[1]); o.value = x[0]; if ((c.legs || 2) === x[0]) o.selected = true; lsel.appendChild(o); }); lsel.onchange = function () { c.legs = Number(lsel.value); MAGNA.save(); draw(); }; act.appendChild(lsel); }
             var gb = btn(c.status === 'finished' ? 'Reabrir y generar calendario' : 'Generar calendario', regen, 'o'); gb.disabled = !p.ok; act.appendChild(gb); act.appendChild(btn('Cambiar equipos', function () { pickTeams(c, 'tournament', draw); })); }
+        } else if (st.phase === 'knockout' && c.legs === 2 && !st.ties) { pickTies(c, nx, act, card, done);
         } else if (st.phase === 'done') {
           card('🏆 Campeón: ' + MAGNA.teamName(st.champion), c.status === 'finished' ? 'Torneo cerrado. El título ya cuenta en la vitrina del equipo.' : 'El título ya cuenta en la vitrina del equipo. Cierra el torneo cuando quieras archivarlo.');
           if (c.status !== 'finished') act.appendChild(btn('Cerrar torneo', function () { c.status = 'finished'; MAGNA.addNews('tournament_finished', 'Finaliza ' + c.name + '.'); done(null, 'Torneo cerrado'); }, 'o'));
@@ -215,8 +219,8 @@ ADMIN_MOD('comp', function (A) {
             act.appendChild(btn('Cargar resultados', function () { $.MF = 'tournament:' + c.id; close(); go('partidos'); }, 'o')); }
           else {
             var nl = st.phase === 'groups' ? (c.format === 'champions' ? 'Pasar al play-off' : 'Pasar a la eliminatoria') : st.phase === 'league' ? 'Proclamar campeón' : st.phase === 'playoff' ? 'Pasar a ' + MAGNA.koName(st.direct.length * 2).toLowerCase() : (st.round === 'Final' ? 'Proclamar campeón' : 'Pasar a la siguiente ronda');
-            card('✓ Resultados completos: ' + ph.replace(/^la /, ''), st.phase === 'groups' && c.format === 'champions' ? chTxt(c) + '.' : 'Todos los partidos tienen resultado. Los cruces siguientes se arman solos.', 1);
-            act.appendChild(btn(nl, function () { done(st.phase === 'groups' ? toKnockout(c) : st.phase === 'league' ? proclaim(c) : advance(c)); }, 'o'));
+            card('✓ Resultados completos: ' + ph.replace(/^la /, ''), st.phase === 'groups' && c.format === 'champions' ? chTxt(c) + '.' : (c.legs === 2 && c.format === 'knockout' ? 'Ida y vuelta completas. Pasa quien tenga más goles en el global; si alguna llave queda igual, se crea su partido de desempate.' : 'Todos los partidos tienen resultado. Los cruces siguientes se arman solos.'), 1);
+            act.appendChild(btn(nl, function () { var r = st.phase === 'groups' ? toKnockout(c) : st.phase === 'league' ? proclaim(c) : advance(c); if (r && r.info) done(null, r.info); else done(r); }, 'o'));
           }
         }
         if (st && c.format === 'champions' && c.groups) { var sp = MAGNA.champSplit(c.groups[0].teamIds.length); box.appendChild(h('h2', 'x', 'Fase de liga')); box.appendChild(h('p', 'sub', '✓ directo a ' + (sp.direct === 1 ? 'la final' : MAGNA.koName(sp.direct * 2).toLowerCase()) + ' · ▶ play-off' + (sp.out ? ' · sin marca: eliminado' : '')));
@@ -371,7 +375,44 @@ ADMIN_MOD('comp', function (A) {
       if (c.teamIds.length < 3) return 'El formato Champions necesita al menos 3 equipos.';
       if (!c.groups || !c.groups.length) c.groups = [{ name: 'Liga', teamIds: c.teamIds.slice() }]; c.manual = true; c.state = { phase: 'groups' };
     }
+    else if (c.legs === 2) { var nt = c.teamIds.length; if (nt & (nt - 1)) return 'Con ida y vuelta necesitas 2, 4, 8 o 16 equipos.'; c.state = { phase: 'knockout', round: rname(nt), byes: [], ties: null }; }
     else koRound(c, c.teamIds.slice()); return null;
+  }
+  // ---------- eliminatoria a ida y vuelta ----------
+  // cada llave: ida (local el 1.º) y vuelta (local el 2.º). Los ganadores de las llaves 1 y 2 se cruzan en la ronda siguiente, y así.
+  function addLeg(c, round, a, b, tie, leg) { addM(c, round, a, b); var m = S().matches[S().matches.length - 1]; m.tie = tie; m.leg = leg; }
+  function legs2(c, rn, pairs) { c.state = { phase: 'knockout', round: rn, byes: [], ties: pairs }; pairs.forEach(function (p, i) { addLeg(c, rn + ' · Ida', p[0], p[1], i, 1); addLeg(c, rn + ' · Vuelta', p[1], p[0], i, 2); }); }
+  function advance2(c) {
+    var st = c.state; if (!st.ties) return 'Primero arma las llaves de ' + st.round.toLowerCase() + '.';
+    if (phaseMatches(c).some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de esta ronda sin terminar.';
+    var R = (MAGNA.koTies(c) || []).filter(function (r) { return r.round === st.round; })[0]; if (!R) return 'No encuentro las llaves de esta ronda.';
+    var win = [], extra = [];
+    R.ties.forEach(function (t, i) { if (!t.ida || !t.vta) return win.push(undefined); if (t.win != null) return win.push(t.win);
+      if (!t.des) { addLeg(c, st.round + ' · Desempate', t.a, t.b, i, 3); extra.push(MAGNA.teamName(t.a) + ' vs ' + MAGNA.teamName(t.b) + ' (' + t.ga + '-' + t.gb + ')'); } win.push(null); });
+    if (win.some(function (w) { return w === undefined; })) return 'Falta la ida o la vuelta de alguna llave (¿se canceló?). Prográmala de nuevo desde Reiniciar o pide ayuda.';
+    if (extra.length) { MAGNA.addNews('tournament_bracket', c.name + ': global empatado en ' + extra.join(', ') + '. Se juega partido de desempate.'); return { info: '⚖ Global empatado: se ' + (extra.length === 1 ? 'creó 1 partido' : 'crearon ' + extra.length + ' partidos') + ' de desempate. Ponle fecha en Partidos.' }; }
+    if (win.some(function (w) { return w == null; })) return 'Un partido de desempate quedó empatado: corrige el resultado (alguien tiene que ganar).';
+    if (win.length === 1) { c.state = { phase: 'done', champion: win[0] }; MAGNA.addNews('tournament_bracket', MAGNA.teamName(win[0]) + ' es campeón de ' + c.name + '.'); return null; }
+    var pairs = []; for (var i = 0; i < win.length; i += 2) pairs.push([win[i], win[i + 1]]);
+    var rn = rname(win.length); legs2(c, rn, pairs); MAGNA.addNews('tournament_bracket', c.name + ': comienzan ' + rn.toLowerCase() + ' · ' + pairs.map(function (p) { return MAGNA.teamName(p[0]) + ' vs ' + MAGNA.teamName(p[1]); }).join(' · ') + '.'); return null;
+  }
+  // la administración elige los cruces de la primera ronda (o los sortea)
+  function pickTies(c, nx, act, card, done) {
+    var st = c.state, k = c.teamIds.length / 2, sels = [];
+    card('Paso 3: arma las llaves de ' + st.round.toLowerCase(), 'Elige quién juega contra quién. El de la izquierda es local en la ida y el de la derecha en la vuelta. Los ganadores de las llaves 1 y 2 se cruzan en la siguiente ronda; los de la 3 y 4, también, y así.');
+    var gw = h('div'); gw.style.cssText = 'display:grid;gap:8px;margin:4px 0 10px';
+    for (var i = 0; i < k; i++) { var r = h('div'); r.style.cssText = 'display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center'; r.appendChild(h('b', null, 'Llave ' + (i + 1)));
+      [0, 1].forEach(function (j) { var se = h('select', 'in'); se.style.margin = '0'; var o0 = h('option', null, '— elegir —'); o0.value = ''; se.appendChild(o0);
+        c.teamIds.forEach(function (t) { var o = h('option', null, MAGNA.teamName(t)); o.value = t; se.appendChild(o); }); se.onchange = mark; sels.push(se); r.appendChild(se); if (!j) r.appendChild(h('span', null, 'vs')); });
+      gw.appendChild(r); }
+    var er = h('p', 'err'); gw.appendChild(er); nx.insertBefore(gw, act);
+    function mark() { var cnt = {}; sels.forEach(function (x) { if (x.value) cnt[x.value] = (cnt[x.value] || 0) + 1; }); sels.forEach(function (x) { x.style.borderColor = x.value && cnt[x.value] > 1 ? 'var(--red,#ff4d6d)' : ''; }); er.textContent = Object.keys(cnt).some(function (t) { return cnt[t] > 1; }) ? 'Hay un equipo repetido.' : ''; }
+    act.appendChild(btn('🎲 Sorteo al azar', function () { var ids = c.teamIds.slice(); for (var i = ids.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = ids[i]; ids[i] = ids[j]; ids[j] = t; } sels.forEach(function (x, i) { x.value = ids[i]; }); mark(); }));
+    act.appendChild(btn('Crear llaves (ida y vuelta)', function () { var v = sels.map(function (x) { return Number(x.value) || null; });
+      if (v.some(function (x) { return x == null; })) return er.textContent = 'Completa todas las llaves.'; if (new Set(v).size !== v.length) return er.textContent = 'Hay un equipo repetido.';
+      var pairs = []; for (var i = 0; i < v.length; i += 2) pairs.push([v[i], v[i + 1]]); legs2(c, st.round, pairs);
+      MAGNA.addNews('tournament_bracket', 'Arranca ' + c.name + ': ' + st.round.toLowerCase() + ' a ida y vuelta · ' + pairs.map(function (p) { return MAGNA.teamName(p[0]) + ' vs ' + MAGNA.teamName(p[1]); }).join(' · ') + '.');
+      done(null, 'Llaves creadas: ' + pairs.length * 2 + ' partidos. Ponles fecha en Partidos.'); }, 'o'));
   }
   function toPlayoff(c) {
     var gm = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.group && m.status !== 'cancelled'; });
@@ -402,6 +443,7 @@ ADMIN_MOD('comp', function (A) {
       koRound(c, st.direct.concat(win)); MAGNA.addNews('tournament_bracket', c.name + ': termina el play-off y comienzan ' + c.state.round.toLowerCase() + '.'); return null;
     }
     if (!st || st.phase !== 'knockout') return 'No hay ronda que avanzar.';
+    if (c.legs === 2) return advance2(c);
     var ms = S().matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.round === st.round && m.status !== 'cancelled'; });
     if (ms.some(function (m) { return m.status !== 'finished'; })) return 'Aún hay partidos de esta ronda sin terminar.';
     var alive = st.byes.concat(ms.map(function (m) { return m.hs > m.as ? m.home : m.away; }));

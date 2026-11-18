@@ -147,7 +147,7 @@
 
   // ---------- utilidades y arranque ----------
   function toast(t) { var w = $('.vv-toasts') || document.body.appendChild(h('div', 'vv-toasts')), x = h('div', 'vv-toast', t); w.appendChild(x); setTimeout(function () { x.classList.add('out'); setTimeout(function () { x.remove(); }, 400); }, 2400); }
-  function controls() { var row = $('#marcador .bn-row'); if (row && !row.querySelector('.vv-tv')) { var g = h('div', 'vv-ctl'); g.appendChild(tvBtn()); g.appendChild(sndBtn()); row.appendChild(g); }
+  function controls() { var row = $('#marcador .bn-row'); if (row && !row.querySelector('.vv-tv')) { var g = h('div', 'vv-ctl'), bl = row.querySelector('#bell'); if (bl) g.appendChild(bl); g.appendChild(tvBtn()); g.appendChild(sndBtn()); row.appendChild(g); }
     $$('#bN1, #bN2').forEach(function (b) { if (!b.dataset.vv) { b.dataset.vv = '1'; b.setAttribute('role', 'button'); b.tabIndex = 0; b.title = 'Ver ficha del equipo'; b.addEventListener('keydown', function (e) { if (e.key === 'Enter') b.click(); }); } }); }
   function run() { crests(); controls(); }
   var tm = null, mo = new MutationObserver(function () { clearTimeout(tm); tm = setTimeout(run, 200); });

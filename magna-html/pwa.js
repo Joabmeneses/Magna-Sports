@@ -83,5 +83,5 @@
     if (!standalone) { var a = el('button', 'mn-adm mn-app'); a.type = 'button'; a.innerHTML = SVG.phone; a.appendChild(document.createTextNode('Instalar la app')); a.onclick = function () { show(true); }; f.insertBefore(a, f.firstChild); }
     var s = sw(); s.classList.add('mn-app'); f.insertBefore(s, f.firstChild); }).observe(document.body, { childList: true });
 
-  window.MAGNA_PWA = { show: function () { show(true); }, avisos: toggleAvisos, standalone: standalone };
+  window.MAGNA_PWA = { show: function () { show(true); }, avisos: toggleAvisos, standalone: standalone, notify: notify, avisosOn: avisosOn };
 })();
