@@ -111,7 +111,7 @@
     '.mv-r{left:50%;top:50%;width:min(80%,320px);aspect-ratio:1;margin-left:calc(min(80%,320px)/-2);transform:translateY(-50%);border-radius:50%;background:repeating-conic-gradient(rgba(255,210,63,.55) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,transparent 18%,#000 20%,transparent 70%);mask:radial-gradient(circle,transparent 18%,#000 20%,transparent 70%);animation:jgS .6s .2s cubic-bezier(.2,1.6,.4,1) both,jgR 6s .8s linear}' +
     // gol: marcador que salta al final
     '.gl-n{display:grid;gap:2px;line-height:1.05}.gl-s{font:700 clamp(10px,3vw,13px)/1.2 "JetBrains Mono",ui-monospace,monospace;font-style:normal;color:#c6ff1a;letter-spacing:.04em;text-transform:uppercase}.gl-s:empty{display:none}' +
-    '.bn-demo{flex-wrap:wrap}.bn-demo [data-fx]{font-size:11px;padding:6px 10px}' +
+    '#marcador .bn-demo,.demo.mono{display:none!important}' +
     '@media(prefers-reduced-motion:reduce){.bfx *,.bfx:before{animation:none!important}.bfx{animation:none!important}.nf-b,.sv-b,.ca-l,.mu-b,.cf,.af-y,.nf-u,.nf-x,.sv-r,.in-r{display:none}}';
   var st = h('style'); st.textContent = CSS; document.head.appendChild(st);
 
@@ -204,16 +204,5 @@
   window.addEventListener('magna:homesel', function () { Q.length = 0; var m = mt(); mark(m); syncBanner(m); });
   var m0 = mt(); mark(m0); syncBanner(m0);
 
-  // ---------- botones de prueba (solo administración) ----------
-  var DEMO = [['near', '🔥 Casi gol'], ['save', '🧤 Atajada'], ['play', '💥 Jugada'], ['counter', '⚡ Contra'], ['contro', '😱 Polémica'], ['wall', '🛡️ Muro'], ['crowd', '📣 Afición'], ['clock', '⏱️ Últ. minuto'], ['say', '🎙️ Narración'], ['sub', '⇄ Cambio'], ['start', '▶ Inicio'], ['ht', '⏸ Medio t.'], ['resume', '▶ 2.º t.'], ['end', '🏁 Final'], ['mode', '🎮 Modo'], ['mvp', '⭐ MVP']];
-  function demoEv(k) { var m = mt(), L = (m && m.live) || {}, ids = ((L.lineup && L.lineup.h) || []), sd = Math.random() > .5 ? 'a' : 'h';
-    if (k === 'sub') { var lh = (L.lineup && L.lineup[sd]) || []; return { k: 'sub', side: sd, in: lh[1] || lh[0], out: lh[0] }; }
-    if (k === 'say') return { k: 'say', side: sd, text: '¡Qué partidazo se está jugando en Magna Arena!' };
-    if (k === 'mode') { var ms = Object.keys(MAGNA.MODE_COLOR || {}); return { k: 'mode', mode: ms[Math.floor(Math.random() * ms.length)] || 'Balón Brawl' }; }
-    if (k === 'mvp') return { k: 'mvp', pid: L.mvp || ids[0] };
-    return { k: k, side: sd }; }
-  function demo() { var row = document.querySelector('#marcador .bn-demo'); if (!row || row.querySelector('[data-fx]')) return;
-    DEMO.forEach(function (d) { var b = h('button', 'pill mono', d[1]); b.type = 'button'; b.dataset.fx = d[0]; b.onclick = function () { var m = mt(), ev = demoEv(d[0]); if (d[0] === 'say') push(function () { return FX.say(m, ev.side, ev.text); }); else push(function () { return FX[d[0]](m, ev.side, ev); }); }; row.appendChild(b); }); }
-  demo();
   window.MAGNA_BNFX = { play: function (ev) { play(mt(), ev); }, fx: FX };
 })();

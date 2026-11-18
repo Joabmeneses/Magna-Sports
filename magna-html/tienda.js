@@ -21,7 +21,10 @@
   function fdate(d) { try { return new Date(d).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', timeZone: 'America/Bogota' }); } catch (e) { return ''; } }
   function pbits(it, size) { if (!it.price0) return bits(it.price, size); var w = h('span', 'ts-off'); w.appendChild(h('s', null, I.fmt(it.price0))); w.appendChild(bits(it.price, size)); return w; }
   function tags(it) { var t = []; if (it.price0) t.push(h('span', 'ts-tg sale', '🔥 −' + it.off + '%' + (it.saleUntil ? ' · ' + days(it.saleUntil) : ''))); if (it.until) t.push(h('span', 'ts-tg ltd', '⏳ Hasta el ' + fdate(it.until))); return t; }
-  function forSale() { return SH().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg; }); }
+  function forSale() { return SH().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg && !x.packOnly; }); }
+  // cosméticos que solo se venden dentro de un pack (colección): se ven en Lo mío, pero se compran en su pack
+  function packOf(it) { var P = (MAGNA.S && MAGNA.S.packs) || []; for (var i = 0; i < P.length; i++) { var L = P[i].levels || {}; for (var k in L) if ((L[k] || []).indexOf(it.id) >= 0) return P[i]; } return null; }
+  function goPack(it, close) { var pk = packOf(it); if (close) close(); setTimeout(function () { var el = pk && document.querySelector('[data-pack="' + pk.id + '"]'); if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.classList.remove('pk-hl'); void el.offsetWidth; el.classList.add('pk-hl'); } else I.toast('Búscalo en su pack, en la sección de especiales'); }, 60); }
   function ups(it) { return SH().filter(function (x) { return x.upg === it.id && x.active !== false; }).sort(function (a, b) { return a.lv - b.lv; }); }
   function topLv(it) { var lv = owned(it.id) ? 1 : 0; ups(it).forEach(function (u) { if (owned(u.id)) lv = Math.max(lv, u.lv); }); return lv; }
   function pname(pid) { var p = MAGNA.by(MAGNA.S.players, Number(pid)); return p ? p.name : ''; }
@@ -101,11 +104,13 @@
     var it = L.filter(function (x) {
       if (tab === 'own') { if (!owned(x.id)) return false; }
       else if (tab === 'wish') { if (!WISH[x.id]) return false; if (x.active === false && !owned(x.id)) return false; }
-      else { if (x.active === false && !owned(x.id)) return false; if (tab === 'excl') { if (!x.exclusive) return false; } else { if (x.exclusive) return false; if (tab !== 'all' && x.type !== tab) return false; } }
+      else { if (x.active === false && !owned(x.id)) return false; if (x.packOnly && !owned(x.id)) return false; if (tab === 'excl') { if (!x.exclusive) return false; } else { if (x.exclusive) return false; if (tab !== 'all' && x.type !== tab) return false; } }
       if (ql && (x.name + ' ' + M.KIND[x.type] + ' ' + (M.RAR[x.rarity] || '')).toLowerCase().indexOf(ql) < 0) return false;
       if (afford && acc && (x.exclusive || owned(x.id) || Number(x.price) > Number(acc.bits))) return false;
       return true; });
-    var S = { rar: function (a, b) { return (RO[b.rarity] || 0) - (RO[a.rarity] || 0) || (b.price || 0) - (a.price || 0); }, asc: function (a, b) { return (a.price || 0) - (b.price || 0); }, desc: function (a, b) { return (b.price || 0) - (a.price || 0); }, pop: function (a, b) { return (W[b.id] || []).length - (W[a.id] || []).length || (RO[b.rarity] || 0) - (RO[a.rarity] || 0); }, az: function (a, b) { return a.name.localeCompare(b.name, 'es'); } };
+    // lo que viene en un pack activo (colección) va de primero en su fila, para que no quede escondido al final
+    var PK = {}; packs().forEach(function (pk) { Object.keys(pk.levels || {}).forEach(function (k) { (pk.levels[k] || []).forEach(function (id) { PK[id] = 1; }); }); });
+    var S = { rar: function (a, b) { return (PK[b.id] ? 1 : 0) - (PK[a.id] ? 1 : 0) || (RO[b.rarity] || 0) - (RO[a.rarity] || 0) || (b.price || 0) - (a.price || 0); }, asc: function (a, b) { return (a.price || 0) - (b.price || 0); }, desc: function (a, b) { return (b.price || 0) - (a.price || 0); }, pop: function (a, b) { return (W[b.id] || []).length - (W[a.id] || []).length || (RO[b.rarity] || 0) - (RO[a.rarity] || 0); }, az: function (a, b) { return a.name.localeCompare(b.name, 'es'); } };
     return it.sort(S[sort] || S.rar);
   }
   function catalog() {
@@ -120,7 +125,7 @@
     infoEl = h('p', 'ts-inf'); s.appendChild(infoEl);
     gridEl = h('div', 'ts-g'); s.appendChild(gridEl); counts(); grid(); return s;
   }
-  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = SH().filter(function (x) { return !x.upg; });
+  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = SH().filter(function (x) { return !x.upg && (!x.packOnly || owned(x.id)); });
     TABS.forEach(function (t) { if ((t[0] === 'own') && !acc) return;
       var n = t[0] === 'own' ? L.filter(function (x) { return owned(x.id); }).length : t[0] === 'wish' ? L.filter(function (x) { return WISH[x.id] && x.active !== false; }).length : t[0] === 'excl' ? L.filter(function (x) { return x.exclusive && x.active !== false; }).length : L.filter(function (x) { return x.active !== false && !x.exclusive && (t[0] === 'all' || x.type === t[0]); }).length;
       var b = h('button', 'ts-ch' + (tab === t[0] ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', tab === t[0]); b.appendChild(h('span', 'i', t[1])); b.appendChild(h('span', null, t[2])); b.appendChild(h('small', null, String(n))); b.onclick = function () { setTab(t[0]); }; chipsEl.appendChild(b); }); }
@@ -164,12 +169,15 @@
   function packQuote(pk, lv) { var ids = pk.levels[lv] || [], items = ids.map(byId), miss = items.filter(function (x) { return x && !owned(x.id); }), sum = 0, pay = 0, off = Math.min(60, Math.max(0, pk.off || 0));
     miss.forEach(function (x) { var pr = Number(x.price || 0); sum += pr; pay += miss.length > 1 ? Math.round(pr * (100 - off) / 100) : pr; }); return { items: items, miss: miss, sum: sum, pay: pay, all: items.reduce(function (a, x) { return a + Number(x.price || 0); }, 0) }; }
   function packHave(pk) { var have = 0; Object.keys(pk.levels).sort().forEach(function (k) { if (pk.levels[k].every(owned)) have = Math.max(have, Number(k)); }); return have; }
-  function packCard(pk) { var lvs = Object.keys(pk.levels).map(Number).sort(), have = packHave(pk), cur = Math.min(lvs.length, have + 1), c = h('article', 'ts-spc fire ts-pk');
-    var fr = byId(pk.levels[1][0]), pl = byId(pk.levels[1][1]); var stg = h('div', 'ts-sps pl'), prev = M.cosPreview(pl, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); prev.classList.add('sp-pl'); stg.appendChild(prev);
+  function packCard(pk) { var lvs = Object.keys(pk.levels).map(Number).sort(), have = packHave(pk), cur = Math.min(lvs.length, have + 1), c = h('article', 'ts-spc fire ts-pk'); c.dataset.pack = pk.id;
+    var L1 = pk.levels[1].map(byId), ty = function (t) { return L1.filter(function (x) { return x && x.type === t; })[0]; }, fr = ty('frame'), pl = ty('plate'), cl = ty('color');
+    var stg = h('div', 'ts-sps pl'), prev = M.cosPreview(pl, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); prev.classList.add('sp-pl'); stg.appendChild(prev);
+    // el nombre de la tarjeta lleva el color del pack (si trae uno)
+    var nb = cl && prev.querySelector('.cp-tx b'); if (nb) { var nm = h('span', 'mpn'); nm.appendChild(h('span', 'mpn-n', nb.textContent)); var eq = {}; eq.color = cl.id; M.nameStyle(nm, eq); if (MAGNA_COS.letters) MAGNA_COS.letters(nm, true); nb.replaceWith(nm); }
     var av = prev.querySelector('.tav'); if (av && fr) { av.style.setProperty('--s', '62px'); av.classList.add('fr-' + fr.style); av.dataset.lvx = '1'; av.dataset.lv = cur; MAGNA_COS.deco(av); }
     var lvb = h('span', 'ts-spl', 'Nv.' + cur); stg.appendChild(lvb); c.appendChild(stg);
-    var tx = h('div', 'ts-spt'); tx.appendChild(h('span', 'ts-spg2', '🎁 Pack · marco + placa')); tx.appendChild(h('h3', null, pk.name)); tx.appendChild(h('p', null, pk.desc || ''));
-    tx.appendChild(h('div', 'ts-spo sale', '🔥 −' + (pk.off || 0) + '% si te llevas el marco y la placa juntos'));
+    var tx = h('div', 'ts-spt'); var kinds = [fr && 'marco', pl && 'placa', cl && 'nombre'].filter(Boolean); tx.appendChild(h('span', 'ts-spg2', '🎁 Pack · ' + kinds.join(' + '))); tx.appendChild(h('h3', null, pk.name)); tx.appendChild(h('p', null, pk.desc || ''));
+    tx.appendChild(h('div', 'ts-spo sale', '🔥 −' + (pk.off || 0) + '% si te llevas ' + (kinds.length > 2 ? 'las ' + kinds.length + ' piezas juntas' : 'el marco y la placa juntos')));
     var pl2 = h('div', 'ts-spp'); lvs.forEach(function (lv) { var q = packQuote(pk, lv), b = h('button', 'ts-spv' + (q.miss.length ? '' : ' own')); b.type = 'button'; b.appendChild(h('b', null, 'Pack Nv.' + lv)); var pr = h('span');
       if (!q.miss.length) pr.textContent = '✓ Lo tienes'; else { if (q.pay < q.sum) pr.appendChild(h('s', null, I.fmt(q.sum) + ' ')); pr.appendChild(MAGNA_BIT(13)); pr.appendChild(document.createTextNode(' ' + I.fmt(q.pay))); }
       b.appendChild(pr); b.onmouseenter = b.onfocus = function () { show(lv); }; b.onclick = function () { buyPackView(pk, lv); }; pl2.appendChild(b); }); tx.appendChild(pl2);
@@ -180,7 +188,7 @@
   function buyPackView(pk, lv) { var q = packQuote(pk, lv), have = packHave(pk);
     M.modal(function (b, close) { var w = h('div', 'cf r-legendaria'); w.appendChild(h('h3', null, pk.name + ' · Nv.' + lv));
       if (lv > have + 1) { w.appendChild(h('p', 'sub', 'Primero necesitas el Pack Nv.' + (have + 1) + '.')); var r0 = h('div', 'r'); r0.appendChild(btn('ghost', 'Cerrar', close)); w.appendChild(r0); b.appendChild(w); return; }
-      var ul = h('div', 'cf-pk'); q.items.forEach(function (x) { ul.appendChild(h('div', owned(x.id) ? 'own' : '', (x.type === 'frame' ? '🖼️ ' : '🏷️ ') + x.name + (owned(x.id) ? ' · ya lo tienes' : ' · ' + I.fmt(x.price) + ' Bits'))); }); w.appendChild(ul);
+      var ul = h('div', 'cf-pk'); q.items.forEach(function (x) { ul.appendChild(h('div', owned(x.id) ? 'own' : '', ({ frame: '🖼️ ', plate: '🏷️ ', color: '🎨 ' }[x.type] || '✨ ') + x.name + (owned(x.id) ? ' · ya lo tienes' : ' · ' + I.fmt(x.price) + ' Bits'))); }); w.appendChild(ul);
       if (!q.miss.length) { w.appendChild(h('p', 'sub', '✓ Ya tienes todo este pack.')); var r1 = h('div', 'r'); r1.appendChild(btn('ghost', 'Cerrar', close)); w.appendChild(r1); b.appendChild(w); return; }
       var r2 = h('div', 'r'); r2.appendChild(btn('ghost', 'Cancelar', close));
       if (!acc) { r2.appendChild(btn('', 'Entrar para comprar', function () { location.href = 'cuenta.html'; })); w.appendChild(r2); b.appendChild(w); return; }
@@ -188,8 +196,8 @@
       if (after < 0) { w.appendChild(h('p', 'sub', 'Te faltan ' + I.fmt(-after) + ' Bits. Puedes ganarlos en Apuestas.')); r2.appendChild(btn('', '🎯 Ganar Bits', function () { location.href = 'apuestas.html'; })); }
       else { var go = btn('', 'Comprar pack y equipar', function () { go.disabled = true; go.textContent = 'Comprando…';
         I.buyPack(pk.id, lv).then(function (nb) { acc.bits = nb; q.miss.forEach(function (x) { inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); }); close();
-          var fr = q.items.filter(function (x) { return x.type === 'frame'; })[0], pl = q.items.filter(function (x) { return x.type === 'plate'; })[0];
-          return Promise.all([fr ? I.equip('frame', fr.id) : 0, pl ? I.equip('plate', pl.id) : 0]).then(function () { if (fr) inv.eq.frame = fr.id; if (pl) inv.eq.plate = pl.id; I.syncSelf(acc, inv.eq); render(); I.toast('🎉 ¡' + pk.name + ' Nv.' + lv + ' es tuyo y ya lo llevas puesto!'); }, function () { render(); I.toast('Comprado. Equípalo desde Lo mío.'); }); },
+          var fr = q.items.filter(function (x) { return x.type === 'frame'; })[0], pl = q.items.filter(function (x) { return x.type === 'plate'; })[0], cl = q.items.filter(function (x) { return x.type === 'color'; })[0];
+          return Promise.all([fr ? I.equip('frame', fr.id) : 0, pl ? I.equip('plate', pl.id) : 0, cl ? I.equip('color', cl.id) : 0]).then(function () { if (fr) inv.eq.frame = fr.id; if (pl) inv.eq.plate = pl.id; if (cl) inv.eq.color = cl.id; I.syncSelf(acc, inv.eq); render(); I.toast('🎉 ¡' + pk.name + ' Nv.' + lv + ' es tuyo y ya lo llevas puesto!'); }, function () { render(); I.toast('Comprado. Equípalo desde Lo mío.'); }); },
           function (e) { go.disabled = false; go.textContent = 'Comprar pack y equipar'; I.toast(e.message || 'No se pudo comprar', true); }); }); r2.appendChild(go); }
       w.appendChild(r2); b.appendChild(w); }); }
   function special() { var L = forSale().filter(function (x) { return (x.type === 'frame' || x.type === 'plate') && x.lv && ups(x).length; }); if ((!L.length && !packs().length) || !window.MAGNA_COS) return null;
@@ -221,6 +229,7 @@
     var lr = h('div', 'cf-evl'); L.forEach(function (x, i) { var lv = x.lv || i + 1, c = h('div', 'cf-lv' + (have >= lv ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + x.style); av.dataset.lv = lv; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw);
       c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); var pr = h('span', 'cf-lvp'); if (x.price0) pr.appendChild(h('s', null, I.fmt(x.price0) + ' ')); pr.appendChild(MAGNA_BIT(12)); pr.appendChild(document.createTextNode(' ' + I.fmt(x.price))); c.appendChild(pr);
       if (i > 0 && acc) { if (have >= lv) { var ok = h('em', 'cf-lvk', inv && inv.eq.frame === x.id ? '✓ Puesto' : 'Tuyo'); if (!(inv && inv.eq.frame === x.id)) { ok = btn('own sm', 'Equipar', function () { close(); wear(x); }); } c.appendChild(ok); }
+        else if (have === lv - 1 && have > 0 && x.packOnly) c.appendChild(btn('sm', '📦 En el pack', function () { goPack(x, close); }));
         else if (have === lv - 1 && have > 0) { var bb = btn('sm', Number(acc.bits) >= x.price ? 'Mejorar' : 'Te faltan ' + I.fmt(x.price - Number(acc.bits)), function () { bb.disabled = true; bb.textContent = 'Mejorando…';
             I.buy(x).then(function (nb) { acc.bits = nb; inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); close(); return I.equip(x.type, x.id).then(function () { inv.eq[x.type] = x.id; I.syncSelf(acc, inv.eq); celebrate(x); }, function () { render(); }); }, function (e) { bb.disabled = false; bb.textContent = 'Mejorar'; I.toast(e.message || 'No se pudo mejorar', true); }); });
           if (Number(acc.bits) < x.price) bb.disabled = true; c.appendChild(bb); }
@@ -264,7 +273,8 @@
       if (W.length) { var wr = h('div', 'cf-w'), av = h('div', 'avs'); W.slice(0, 5).forEach(function (pid) { av.appendChild(M.tierAv(pname(pid), null, 30, pid)); }); wr.appendChild(av); wr.appendChild(h('span', null, W.length === 1 ? 'Lo lleva ' + pname(W[0]) : 'Lo llevan ' + W.length + ' jugadores')); w.appendChild(wr); }
       if (it.exclusive) { if (it.raffle) { var rf = h('p', 'sub', '🎟️ Exclusivo: solo se gana en el Sorteo, con sus 3 niveles. '); var ra = h('a', null, 'Ir al sorteo →'); ra.href = 'sorteo.html'; rf.appendChild(ra); w.appendChild(rf); } else w.appendChild(h('p', 'sub', '🔒 ' + (MAGNA.AWARD_TXT[it.award] || 'Exclusivo: lo entrega la administración.'))); }
       var r2 = h('div', 'r'), no = btn('ghost', own || it.exclusive ? 'Cerrar' : 'Cancelar', close); r2.appendChild(no);
-      if (!it.exclusive && !own && acc) {
+      if (it.packOnly && !own) { w.appendChild(h('p', 'sub', '📦 Este cosmético es parte de una colección: solo se consigue comprando su pack.')); r2.appendChild(btn('', '📦 Ver el pack', function () { goPack(it, close); })); }
+      else if (!it.exclusive && !own && acc) {
         var after = Number(acc.bits) - Number(it.price || 0), sm = h('div', 'sum'); [['Precio', I.fmt(it.price)], ['Tu saldo', I.fmt(acc.bits)], ['Te quedan', after < 0 ? '—' : I.fmt(after)]].forEach(function (x) { sm.appendChild(h('span', null, x[0])); var v = h('b'); v.appendChild(MAGNA_BIT(14)); v.appendChild(document.createTextNode(' ' + x[1])); sm.appendChild(v); }); w.insertBefore(sm, null);
         var mt = h('div', 'cf-m'), mi = h('i'); mi.style.width = Math.min(100, Math.round(Number(acc.bits) / Math.max(1, it.price) * 100)) + '%'; mt.appendChild(mi); w.appendChild(mt);
         if (after < 0) { w.appendChild(h('p', 'sub', 'Te faltan ' + I.fmt(-after) + ' Bits. Puedes ganarlos en Apuestas.')); r2.appendChild(btn('', '🎯 Ganar Bits', function () { location.href = 'apuestas.html'; })); }

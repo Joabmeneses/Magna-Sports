@@ -6,9 +6,40 @@
     var w = h('div', 'pn tw'), tb = h('table'), th = h('tr'); cols.forEach(function (c) { th.appendChild(h('th', null, c[0])); }); tb.appendChild(th);
     rows.forEach(function (r) { var tr = h('tr', r.pos && r.pos <= 3 ? 'top3' : ''); cols.forEach(function (c, i) { tr.appendChild(h('td', i > 1 ? 'n' : '', r[c[1]])); }); tb.appendChild(tr); }); w.appendChild(tb); return w;
   }
+  var LP = null;
+  function needPoster(cb) { if (window.LlavesPoster) return cb(); if (!LP) { LP = []; var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=JetBrains+Mono:wght@700&display=swap'; document.head.appendChild(l);
+      var sc = document.createElement('script'); sc.src = 'llaves-poster.js'; sc.onload = function () { var q = LP; LP = null; q.forEach(function (f) { f(); }); }; document.head.appendChild(sc); } if (LP) LP.push(cb); }
+  // cuadro de una eliminatoria a ida y vuelta: ida, vuelta, global y desempate de cada llave
+  function tiesDom(c) {
+    var R = MAGNA.koTies(c); if (!R) return null; var w = h('div', 'kt'), sc = h('div', 'kt-sc'); w.appendChild(sc);
+    var tn = function (t) { return t == null ? 'Por definir' : MAGNA.teamName(t); }, num = function (m, t) { return m && m.status === 'finished' ? String(m.home === t ? m.hs : m.as) : m && m.status === 'live' ? '•' : '–'; };
+    R.forEach(function (r, ri) { var col = h('div', 'kt-c'); col.style.setProperty('--n', ri); var RCX = { 'Cuartos de final': ['🔥 Cuartos', 'q'], 'Semifinales': ['⚡ Semis', 's'], 'Final': ['👑 Final', 'f'], 'Octavos de final': ['🌀 Octavos', 'o'] }[r.round] || [r.round, 'o']; col.classList.add('kt-' + RCX[1]); col.appendChild(h('h4', 'kt-rh', RCX[0]));
+      r.ties.forEach(function (t, i) { var chP = c.state && c.state.champion != null && t.win === c.state.champion, cd = h('div', 'kt-t' + (chP ? ' cp' : '') + (t.win != null ? ' done' : '') + (t.live ? ' live' : '') + (t.a == null && t.b == null ? ' tbd' : '')), hd = h('div', 'kt-h mono');
+        var bd = window.LlavesPoster ? LlavesPoster.badges(t) : []; hd.appendChild(h('span', null, (r.round === 'Final' ? 'Gran final' : 'Llave ' + (i + 1)) + (t.live ? ' · 🔴 en vivo' : '') + (bd.length ? ' · ' + bd[0][0] : ''))); ['Ida', 'Vta', 'Global'].forEach(function (x) { hd.appendChild(h('span', null, x)); }); cd.appendChild(hd);
+        [[t.a, t.ga], [t.b, t.gb]].forEach(function (x) { var row = h('div', 'kt-r' + (t.win != null ? (t.win === x[0] ? ' w' : ' l') : '')), nm = h('div', 'kt-n');
+          if (x[0] != null) nm.appendChild(M.crest(x[0], MAGNA.teamName(x[0]), 22)); nm.appendChild(h('span', null, tn(x[0]))); row.appendChild(nm);
+          row.appendChild(h('span', null, num(t.ida, x[0]))); row.appendChild(h('span', null, num(t.vta, x[0]))); row.appendChild(h('b', null, t.ida && t.ida.status === 'finished' ? String(x[1]) : '–')); cd.appendChild(row); });
+        if (t.des) cd.appendChild(h('div', 'kt-d', '⚖ Desempate: ' + (t.des.status === 'finished' ? MAGNA.teamName(t.des.home) + ' ' + t.des.hs + ' - ' + t.des.as + ' ' + MAGNA.teamName(t.des.away) : 'por jugar')));
+        else if (t.ida && t.vta && t.ida.status === 'finished' && t.vta.status === 'finished' && t.win == null) cd.appendChild(h('div', 'kt-d', '⚖ Global empatado: habrá desempate'));
+        col.appendChild(cd); });
+      sc.appendChild(col); });
+    var ch = c.state && c.state.champion; if (ch != null) { var cc = h('div', 'kt-ch'); cc.appendChild(M.trophyImg(c.name, 'torneo', 92)); var tx = h('div'); tx.appendChild(h('small', 'mono', 'Campeón')); tx.appendChild(h('b', null, MAGNA.teamName(ch))); cc.appendChild(tx); w.insertBefore(cc, sc); }
+    return w; }
+  // las llaves + botón para compartir el cuadro como foto (póster de colores 1080×1350)
+  function ties(c) { var w = tiesDom(c); if (!w) return null; var sb = h('button', 'btn kt-sh', '📸 Compartir el cuadro'); w.insertBefore(sb, w.firstChild); needPoster(function () {});
+    sb.onclick = function () { sb.disabled = true; sb.textContent = '📸 Preparando la foto…'; needPoster(function () { var st = c.state || {}, IM = {}, art = MAGNA.trophyArt(c.name, 'torneo'), tro = new Image(), wait = [];
+      var ld = function (im, u) { wait.push(new Promise(function (ok) { im.onload = im.onerror = ok; im.src = u; })); return im; };
+      if (art) ld(tro, art.src); c.teamIds.forEach(function (id) { var u = MAGNA.crestUrl(id); IM[id] = { name: MAGNA.teamName(id), color: MAGNA.teamColor(id), img: u ? ld(new Image(), u) : null }; });
+      var fo = document.fonts && document.fonts.load ? [document.fonts.load('900 40px Archivo'), document.fonts.load('900 extra-condensed 23px Archivo'), document.fonts.load('700 20px "JetBrains Mono"')] : [];
+      Promise.all(wait.concat(fo).map(function (p) { return p.catch ? p.catch(function () {}) : p; })).then(function () { var cv = document.createElement('canvas');
+        LlavesPoster.draw(cv, { title: c.name, sub: c.teamIds.length + ' equipos · llaves a ida y vuelta', status: c.status === 'finished' || st.phase === 'done' ? '🏆 TERMINADO' : st.ties ? '🔴 EN JUEGO · ' + String(st.round || '').toUpperCase() : '⏳ POR SORTEAR', brand: 'Magna Arena', trophy: tro, rounds: MAGNA.koTies(c), team: function (id) { return IM[id] || { name: MAGNA.teamName(id), color: MAGNA.teamColor(id) }; }, champ: st.champion != null ? st.champion : null });
+        cv.toBlob(function (bl) { sb.disabled = false; sb.textContent = '📸 Compartir el cuadro'; if (!bl) return; var fn = c.name.replace(/[^\w]+/g, '-').toLowerCase() + '-cuadro.png', f = window.File ? new File([bl], fn, { type: 'image/png' }) : null;
+          if (f && navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], title: c.name, text: 'Así va el cuadro de ' + c.name + ' en Magna Arena 🔥' }).catch(function () {});
+          var a = document.createElement('a'); a.href = URL.createObjectURL(bl); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }, 'image/png'); }); }); };
+    return w; }
   function detail(k, it) {
     M.modal(function (b) {
-      b.appendChild(h('h3', 'x', it.name)); var s = h('p', 'sub'); s.appendChild(h('span', 'badge ' + ST[it.status][1], ST[it.status][0])); s.appendChild(document.createTextNode(' ' + FM[it.config.format])); b.appendChild(s);
+      b.appendChild(h('h3', 'x', it.name)); var s = h('p', 'sub'); s.appendChild(h('span', 'badge ' + ST[it.status][1], ST[it.status][0])); s.appendChild(document.createTextNode(' ' + FM[it.config.format] + (it.config.legs === 2 && it.config.format === 'knockout' ? ' a ida y vuelta' : ''))); b.appendChild(s);
       if (it.description) b.appendChild(h('p', 'sub', it.description));
       if (k === 'leagues') {
         b.appendChild(h('h2', 'x', 'Clasificación')); b.appendChild(it.standings.length ? table(it.standings, [['#', 'pos'], ['Equipo', 'team'], ['PJ', 'pj'], ['G', 'g'], ['P', 'p'], ['DG', 'dg'], ['Pts', 'pts']]) : h('p', 'em', 'Sin equipos todavía.'));
@@ -17,6 +48,7 @@
         if (br) {
           b.appendChild(h('p', 'sub', br.champion ? 'Campeón: ' + br.champion.name : br.round ? 'Ronda actual: ' + br.round : br.phase === 'groups' ? (it.config.format === 'champions' ? 'Fase de liga (ida y vuelta)' : 'Fase de grupos') : ''));
           if (it.config.format === 'champions') { var cl = h('a', 'btn', 'Ver tabla y cuadro de la Champions →'); cl.href = 'champions.html?t=' + it.id; b.appendChild(cl); }
+          var c2 = it.config.format === 'knockout' && it.config.legs === 2 && MAGNA.by(MAGNA.S.tournaments, it.id), kt = c2 && ties(c2); if (kt) { b.appendChild(h('h2', 'x', 'Llaves · ida y vuelta')); b.appendChild(kt); }
           (br.groups || []).forEach(function (g) { b.appendChild(h('h2', 'x', g.name === 'Liga' ? 'Fase de liga' : 'Grupo ' + g.name)); b.appendChild(table(g.table, [['#', 'pos'], ['Equipo', 'team'], ['G', 'g'], ['P', 'p'], ['DG', 'dg'], ['Pts', 'pts']])); });
         } else b.appendChild(h('p', 'sub', 'Series al mejor de ' + it.config.best_of + ' · ' + it.teams.length + ' equipos inscritos.'));
         b.appendChild(h('h2', 'x', 'Partidos')); var l = h('div', 'ml'); b.appendChild(l);
@@ -63,7 +95,8 @@
       var lg = h('div', 'lg mono'); lg.appendChild(h('span', null, kind === 'leagues' ? 'Liga' : 'Torneo')); lg.appendChild(h('span', 'badge ' + ST[it.status][1], ST[it.status][0])); c.appendChild(lg);
       var cr = h('div', 'cr'); cr.style.width = cr.style.height = '88px'; cr.style.fontSize = '28px';
       if (it.has_logo) { var im = document.createElement('img'); im.alt = ''; im.src = '/api/public/' + kind + '/' + it.id + '/logo'; cr.appendChild(im); } else cr.textContent = it.name.slice(0, 2).toUpperCase(); c.appendChild(cr);
-      c.appendChild(h('h3', 'x', it.name)); var rk = h('div', 'ranks'); [[it.teams.length, 'Equipos'], [FM[it.config.format], 'Formato']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
+      if (!it.has_logo && MAGNA.trophyArt(it.name, 'torneo') && kind === 'tournaments') { cr.textContent = ''; cr.style.background = 'none'; cr.style.border = '0'; cr.appendChild(M.trophyImg(it.name, 'torneo', 88)); }
+      c.appendChild(h('h3', 'x', it.name)); var rk = h('div', 'ranks'); [[it.teams.length, 'Equipos'], [it.config.format === 'knockout' && it.config.legs === 2 ? 'Ida y vuelta' : FM[it.config.format], 'Formato']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
       c.onclick = function () { detail(kind, it); }; g.appendChild(c);
     });
   }

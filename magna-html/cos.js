@@ -32,7 +32,7 @@ window.MAGNA_COS = (function () {
     if (el.dataset.lvi) el.dataset.lv = el.dataset.lvi; else if (!el.dataset.lvx) { var e = null; if (BUYLV[st]) { var q = el.dataset.pid != null ? styleOf(eqOf(el.dataset.pid), 'frame') : null; if (q && q.style === st && q.lv) e = { lv: q.lv }; } else e = evo(el.dataset.pid); el.dataset.lv = e ? e.lv : 1; }
     el.classList.add('frm');
     // avatares chiquitos (listas, alineaciones): sin la capa de mecánicas, que casi no se ve y es lo que más pesa
-    var sz = parseFloat(el.style.getPropertyValue('--s')) || el.offsetWidth || 0; el.classList.toggle('fxs', sz > 0 && sz < 50);
+    var sz = parseFloat(el.style.getPropertyValue('--s')) || el.offsetWidth || 0; el.classList.toggle("fxs", sz > 0 && sz < 44);
     if (!fx) { fx = h('i', 'fxm'); fx.setAttribute('aria-hidden', 'true'); ['au', 'o1', 'o2', 'o3', 'bu', 'b2', 'gem', 'sx', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6'].forEach(function (c) { fx.appendChild(h('i', c)); });
       var sd = Number(el.dataset.pid); fx.style.setProperty('--dl', '-' + (((isNaN(sd) ? Math.random() * 50 : sd) * 1.37) % 8).toFixed(2) + 's'); el.appendChild(fx); } }
   // colores que cambian la tipografía: la fuente se carga solo la primera vez que aparece un nombre con ese color
@@ -57,7 +57,7 @@ window.MAGNA_COS = (function () {
     if (!style || !STY.plate[style]) return el;
     el.classList.add('pbn', 'pl-' + style); if (o.lite) el.classList.add('pbn-lite'); var fx = h('div', 'pbx'); fx.setAttribute('aria-hidden', 'true'); fx.appendChild(h('i', 'pba'));
     if (MYP[style]) { el.classList.add('pbn-my'); ['pbr', 'pbg', 'pbw', 'pbe'].forEach(function (c) { fx.appendChild(h('i', c)); });
-      var n = o.lite ? 7 : 16; for (var k = 0; k < n; k++) { var p = h('i', 'pbp'); p.style.cssText = '--x:' + ((k * 37 + 11) % 100) + '%;--y:' + ((k * 53 + 7) % 100) + '%;--d:-' + ((k * .71) % 4).toFixed(2) + 's;--t:' + (2.6 + (k % 5) * .7).toFixed(1) + 's;--z:' + (.6 + (k % 4) * .3).toFixed(1); fx.appendChild(p); }
+      var n = o.lite ? 3 : 16; for (var k = 0; k < n; k++) { var p = h('i', 'pbp'); p.style.cssText = '--x:' + ((k * 37 + 11) % 100) + '%;--y:' + ((k * 53 + 7) % 100) + '%;--d:-' + ((k * .71) % 4).toFixed(2) + 's;--t:' + (2.6 + (k % 5) * .7).toFixed(1) + 's;--z:' + (.6 + (k % 4) * .3).toFixed(1); fx.appendChild(p); }
       if (!o.lite) for (k = 0; k < 2; k++) { var st = h('i', 'pbs'); st.style.cssText = '--d:-' + (k * 3.3) + 's;--y:' + (8 + k * 22) + '%'; fx.appendChild(st); } }
     el.insertBefore(fx, el.firstChild); return el; }
   function repaint() { [].forEach.call(document.querySelectorAll('[data-pid]'), paint); [].forEach.call(document.querySelectorAll('[data-pn]'), paintName); [].forEach.call(document.querySelectorAll('[data-plh]'), host); [].forEach.call(document.querySelectorAll('[data-plc]'), card); }
@@ -91,7 +91,18 @@ window.MAGNA_COS = (function () {
     (document.body || document.documentElement).appendChild(d); }
   if (document.body) fx(); else document.addEventListener('DOMContentLoaded', fx);
   // Más liviano: los cosméticos animados que no están en pantalla se pausan (y se reanudan al volver a verse)
-  var io = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('cos-off', !e.isIntersecting); }); }, { rootMargin: '120px' }) : null, seen = window.WeakSet ? new WeakSet() : null, wT = null;
+  // Presupuesto de animación: los nombres y placas animados se repintan en cada cuadro, así que solo se animan
+  // los primeros visibles (8, o 3 en modo ligero); el resto queda quieto con sus colores. Los marcos van aparte
+  // porque se mueven en la tarjeta gráfica y casi no cuestan.
+  var VIS = window.Set ? new Set() : null, bT = null;
+  function heavy(el) { return !/(?:^|\s)fr-/.test(typeof el.className === 'string' ? el.className : '') || el.classList.contains('mpn'); }
+  function budget() { bT = null; if (!VIS) return; var max = document.documentElement.classList.contains('lite') ? 3 : 8, L = [];
+    VIS.forEach(function (e) { if (e.isConnected) L.push(e); else VIS.delete(e); });
+    L.sort(function (a, b) { return a.compareDocumentPosition(b) & 4 ? -1 : 1; });
+    L.forEach(function (e, i) { e.classList.toggle('cos-off', i >= max); }); }
+  var io = window.IntersectionObserver ? new IntersectionObserver(function (es) { es.forEach(function (e) { var t = e.target;
+      if (VIS && heavy(t)) { if (e.isIntersecting) VIS.add(t); else { VIS.delete(t); t.classList.add('cos-off'); } } else t.classList.toggle('cos-off', !e.isIntersecting); });
+    if (!bT) bT = setTimeout(budget, 60); }, { rootMargin: '120px' }) : null, seen = window.WeakSet ? new WeakSet() : null, wT = null;
   var SEL = '[class*="fr-"],.mpn[class*="c-"],.mpn[class*="pl-"],.mpn-t.tr-legendaria,.mpn-t.tr-epica,.mpn-t.tr-mitica,.pbn-my';
   function watch() { wT = null; [].forEach.call(document.querySelectorAll(MYSEL), function (el) { if (!el.querySelector(':scope>.fxm')) deco(el); }); if (!io || !seen) return; [].forEach.call(document.querySelectorAll(SEL), function (el) { if (!seen.has(el)) { seen.add(el); io.observe(el); } }); }
   function soon() { if (!wT) wT = setTimeout(watch, 350); }
