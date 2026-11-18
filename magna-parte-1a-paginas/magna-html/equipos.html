@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>Magna Arena · Equipos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="calle.css">
+<link rel="stylesheet" href="equipos.css">
+</head>
+<body class="ac eqx">
+<header>
+<div class="wrap hd">
+<div class="logo x"><i></i>Magna Arena</div>
+<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html" class="on">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+
+</div>
+</header><script src="nav.js"></script>
+<main class="wrap" id="top">
+<header class="ex-h">
+  <h1>Equipos</h1>
+  <p>Elige una categoría y desliza para ver los equipos de 3 en 3. <b>Toca la tarjeta</b> para entrar a su página.</p>
+</header>
+<div class="ex-tabs" id="tabs" role="tablist" aria-label="Categorías"></div>
+<section class="ex-car" aria-label="Equipos de la categoría" aria-roledescription="carrusel">
+  <button class="ex-ar l" id="pv" type="button" aria-label="Equipo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="ex-track" id="track"></div>
+  <button class="ex-ar r" id="nx" type="button" aria-label="Equipo siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+</section>
+<div class="ex-nav"><div class="ex-dots" id="dots"></div><span class="ex-ct" id="ct"></span></div>
+</main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script>
+<script src="equipos-panel.js" defer></script><script src="mov.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+MAGNA ARENA (versión HTML, sin Node)
+1. Abre index.html con doble clic (portada, Ligas, Champions, Apuestas, Calendario, Equipos, Fichajes). Panel: admin.html.
+2. Edita en admin.html. Los cambios se guardan en TU navegador.
+3. Para publicarlos: admin.html > "Datos y publicación" > Descargar data.js y reemplaza data.js en tu sitio.
+4. GitHub Pages: sube esta carpeta a un repositorio > Settings > Pages > Deploy from branch.
+Aviso: admin.html no tiene contraseña (es un sitio estático). Quien tenga el enlace puede abrir el panel, pero sus cambios solo se ven en su navegador; el sitio público solo cambia al subir un nuevo data.js.
+Magna Sports es independiente y no está afiliada a Supercell. Los Bits son ficticios.

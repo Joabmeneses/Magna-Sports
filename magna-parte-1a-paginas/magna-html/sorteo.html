@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>Magna Arena · Sorteo</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="calle.css">
+<style>
+body.srp{background:#0e0b1f}
+body.srp:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(45% 35% at 0 0,rgba(255,176,32,.2),transparent 70%),radial-gradient(45% 35% at 100% 10%,rgba(176,124,255,.28),transparent 70%)}
+.sr-h{position:relative;margin-top:26px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:center;padding:clamp(18px,4vw,34px);border-radius:28px;border:3px solid #0d0d10;box-shadow:8px 8px 0 #0d0d10;overflow:hidden;isolation:isolate;background:radial-gradient(90% 120% at 100% 50%,rgba(255,176,32,.35),transparent 60%),linear-gradient(150deg,#1d1440,#0f0b24 60%,#24102e)}
+.sr-h:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:repeating-conic-gradient(from 0deg at 82% 50%,rgba(255,210,63,.08) 0 3deg,transparent 3deg 12deg);animation:frSpin 60s linear infinite}
+.sr-k{display:inline-flex;gap:6px;align-items:center;padding:5px 12px;border-radius:999px;font:900 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#1a1200;background:linear-gradient(110deg,#fff1c2,#ffd23f 50%,#ffb020);border:2px solid #0d0d10}
+.sr-h h1{margin:10px 0 6px;font:italic 900 clamp(30px,5.4vw,56px)/.95 Archivo,sans-serif;font-stretch:115%;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 #0d0d10}
+.sr-pz{margin:0 0 14px;color:#e6e2f5;font-size:15px}.sr-pz b{color:#ffd23f}
+.sr-st{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.sr-st>div{min-width:96px;padding:10px 14px;border-radius:16px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14)}
+.sr-st b{display:block;font:900 22px Archivo,sans-serif;color:#fff}.sr-st small{color:#b9bedf;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.sr-cd b{font-variant-numeric:tabular-nums;color:#c6ff1a!important}
+.sr-b{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border-radius:16px;border:3px solid #0d0d10;background:#c6ff1a;color:#0d0d10;font:900 17px Archivo,sans-serif;cursor:pointer;box-shadow:4px 4px 0 #0d0d10;transition:transform .1s;text-decoration:none}
+.sr-b:hover{transform:translate(-1px,-1px)}.sr-b:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #0d0d10}.sr-b[disabled]{opacity:.6;cursor:default;transform:none}
+.sr-b.ok{background:#2ee59d}.sr-b.gh{background:#f1ead8}
+.sr-note{margin:10px 0 0;color:#b9bedf;font-size:12.5px}
+.sr-stage{position:relative;display:grid;place-items:center;width:300px;height:300px}
+.sr-stage .tav{--s:170px!important;font-size:54px}
+.sr-lv{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:5px 12px;border-radius:999px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.35);color:#fff;font:800 11px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;z-index:9}
+.sr-all{position:absolute;top:6px;right:0;z-index:9;padding:5px 10px;border-radius:12px;background:#ffd23f;color:#1a1200;border:2px solid #0d0d10;font:900 11px Archivo,sans-serif;transform:rotate(6deg)}
+.sr-s{margin-top:30px}.sr-s>h2.x{margin:0 0 12px;font-size:clamp(22px,3.6vw,30px)}
+.sr-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.sr-p{display:grid;justify-items:center;gap:6px;padding:12px 6px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);text-align:center}
+.sr-p.me{border-color:#c6ff1a;background:rgba(198,255,26,.08)}.sr-p small{font-weight:800;font-size:12.5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr-emp{padding:22px;border-radius:18px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.2);color:var(--muted);text-align:center}
+.sr-win{display:flex;align-items:center;gap:18px;padding:18px;border-radius:22px;border:3px solid #0d0d10;background:linear-gradient(120deg,#ffd23f,#ffb020);color:#1a1200;box-shadow:6px 6px 0 #0d0d10}
+.sr-win .tav{--s:84px!important}.sr-win h3{margin:0;font:italic 900 clamp(22px,3.4vw,32px) Archivo,sans-serif;text-transform:uppercase}.sr-win p{margin:2px 0 0;font-weight:700}
+.sr-hist{display:grid;gap:8px}.sr-hi{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}.sr-hi em{margin-left:auto;font-style:normal;color:var(--muted);font-size:12.5px}
+.sr-ov{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(6,4,18,.88);backdrop-filter:blur(4px)}
+.sr-rl{width:min(92vw,460px);text-align:center;color:#fff}
+.sr-rl h3{margin:0 0 14px;font:italic 900 28px Archivo,sans-serif;text-transform:uppercase;color:#ffd23f}
+.sr-win2{position:relative;height:84px;overflow:hidden;border-radius:18px;border:3px solid #ffd23f;background:#120d2b;box-shadow:0 0 30px rgba(255,210,63,.4)}
+.sr-win2:before,.sr-win2:after{content:"";position:absolute;left:0;right:0;height:22px;z-index:2;pointer-events:none}.sr-win2:before{top:0;background:linear-gradient(#120d2b,transparent)}.sr-win2:after{bottom:0;background:linear-gradient(transparent,#120d2b)}
+.sr-reel{position:absolute;left:0;right:0;top:0}.sr-reel div{height:84px;display:grid;place-items:center;font:900 30px Archivo,sans-serif;text-transform:uppercase}
+.sr-done{margin-top:18px;display:grid;justify-items:center;gap:10px;animation:srPop .6s cubic-bezier(.2,1.6,.4,1) both}.sr-done .tav{--s:150px!important;font-size:46px}
+@keyframes srPop{from{opacity:0;transform:scale(.6)}}
+.sr-cf{position:fixed;top:-12px;width:9px;height:14px;z-index:101;pointer-events:none;animation:srFall linear forwards}
+@keyframes srFall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:760px){.sr-h{grid-template-columns:1fr;justify-items:center;text-align:center}.sr-st{justify-content:center}.sr-stage{width:250px;height:250px;order:-1}.sr-stage .tav{--s:140px!important}}
+.sr-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:6px;scrollbar-width:none}
+.sr-tabs button{flex:none;display:grid;gap:2px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:inherit;cursor:pointer;font:inherit}
+.sr-tabs button b{font-weight:900}
+.sr-tabs button small{opacity:.75;font-size:12px}
+.sr-tabs button.on{border-color:#ffd23f;background:rgba(255,210,63,.12)}
+</style>
+</head>
+<body class="srp ac"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="sr"></main>
+<p class="foot wrap">Magna Sports es una comunidad independiente y gratuita. Los Bits son ficticios y no tienen valor real. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="site.js"></script><script src="sorteo.js" defer></script><script src="mov.js" defer></script></body></html>

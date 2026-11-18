@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>MAGNA - LIGAS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--blue:#3b4bff;--orange:#ff5a36;--purple:#8b5cf6;--green:#2ee59d;--red:#ff4d5e;--gray:#8b93ad;--card:#0f1326;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f5fb;--fg:#0a0d18;--muted:#5a6078;--line:#dcdfec;--card:#fff;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f4f5fb;--fg:#0a0d18;--muted:#5a6078;--line:#dcdfec;--card:#fff;color-scheme:light}
+:root[data-theme="dark"]{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--card:#0f1326;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 Archivo,system-ui,sans-serif;overflow-x:hidden;transition:background-color .4s,color .4s}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(60% 40% at 50% 0%,rgba(139,92,246,.16),transparent 70%)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px;position:relative}
+.mono{font:500 12px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.x{font-stretch:125%;font-weight:900;text-transform:uppercase}
+header{border-bottom:1px solid var(--line);position:relative}
+.hd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:18px}
+.logo{display:flex;align-items:center;gap:12px;font-size:clamp(22px,6.6vw,34px);white-space:nowrap}
+.logo i{width:16px;height:16px;border-radius:50%;background:var(--orange)}
+#theme{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg);cursor:pointer;display:grid;place-items:center;transition:transform .15s}
+#theme:active{transform:scale(.92)}#theme svg{transition:transform .45s cubic-bezier(.3,1.4,.5,1)}#theme.flip svg{transform:rotate(180deg)}
+nav{order:3;width:100%;display:flex;gap:26px;padding:10px 10px 16px;overflow-x:auto}
+nav a{color:var(--fg);text-decoration:none;font-weight:600;font-size:17px;white-space:nowrap;opacity:.8;transition:opacity .2s,color .2s}
+nav a:hover{opacity:1}nav a.on{opacity:1;color:var(--orange)}
+.top{padding:34px 0 18px}
+.tag{display:inline-flex;align-items:center;gap:10px;color:var(--muted)}
+.lv{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;flex:none;animation:blink 1.3s ease-in-out infinite}
+@keyframes blink{50%{opacity:.15}}
+h1{margin:14px 0 10px;font-size:clamp(34px,9.5vw,76px);line-height:.98}
+.sub{margin:0;color:var(--muted);max-width:560px}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:22px 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 13px Archivo,sans-serif;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background-color .25s,color .25s}
+.seg button.on{background:var(--blue);color:#fff}
+.leg{display:flex;gap:6px 16px;flex-wrap:wrap;color:var(--muted);font-size:12px;align-items:center}
+.leg span{display:inline-flex;align-items:center;gap:6px}.leg i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.tb{--cols:minmax(0,1fr) 36px 44px 46px 78px;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;transition:background-color .4s,border-color .4s}
+.tb.full{--cols:178px repeat(7,42px) 78px}
+.sc{overflow-x:auto}.tb.full .in{min-width:610px}
+.r{display:grid;grid-template-columns:var(--cols);align-items:center;min-height:58px}
+.hrw{--rb:color-mix(in srgb,var(--fg) 5%,var(--card));background:var(--rb)}
+.hrw .r{min-height:44px}
+.rw{--rb:var(--card);border-top:1px solid var(--line);cursor:pointer;outline:none;transition:background-color .2s}
+.rw:hover,.rw:focus-visible{--rb:color-mix(in srgb,var(--fg) 5%,var(--card))}
+.rw.open{--rb:color-mix(in srgb,var(--blue) 9%,var(--card))}
+.rw{background:var(--rb)}
+.c1{position:sticky;left:0;z-index:1;background:var(--rb);display:flex;align-items:center;gap:10px;min-width:0;padding:8px 6px 8px 16px;align-self:stretch}
+.rw.z .c1::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--blue)}
+.pos{width:20px;text-align:center;font:700 14px "JetBrains Mono",monospace;flex:none}
+.cr{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:none;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.rw:hover .cr{transform:scale(1.12) rotate(-4deg)}
+.nm{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c{text-align:center;font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.c.pts{font-weight:900;font-size:17px;color:var(--fg)}
+.c.dgp{color:var(--green)}.c.dgn{color:var(--red)}
+.c.fm{padding-right:14px}
+.hc,.hcl{font:500 11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:14px 0;background:none;border:0}
+.hcl.c1{justify-content:flex-start;padding-top:0;padding-bottom:0}
+.hc{cursor:pointer;display:flex;justify-content:center;align-items:center;gap:4px;transition:color .2s}
+.hc:hover{color:var(--fg)}.hc.on{color:var(--fg)}
+.hc i{width:0;height:0;border:4px solid transparent;border-top:5px solid currentColor;border-bottom:0;opacity:0;transition:transform .3s,opacity .2s}
+.hc.on i{opacity:1}.hc.on.asc i{transform:rotate(180deg)}
+.im{display:block;width:100%;height:100%;background:center/cover no-repeat}
+.im.r{background-image:url(img/adfbaa0919.webp)}.im.v{background-image:url(img/b060c51ad2.webp)}
+.im.e{border:2px dashed var(--purple);background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.form{display:flex;gap:5px;justify-content:center;align-items:center}
+.form i{width:12px;height:12px;border-radius:50%;display:grid;place-items:center;animation:fpop .45s cubic-bezier(.3,1.8,.5,1) both;transition:transform .2s;font:700 11px/1 Archivo,sans-serif;font-style:normal;color:#0a0d18}
+.form i:hover{transform:scale(1.5)}
+.form i.w{background:var(--green)}.form i.l{background:var(--red)}.form i.d{background:var(--gray)}
+.form.big{justify-content:flex-start;gap:8px}.form.big i{width:28px;height:28px}
+@keyframes fpop{from{transform:scale(0)}}
+.dt{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
+.rw.open .dt{grid-template-rows:1fr}
+.dti{overflow:hidden;min-height:0}
+.dtc{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px 28px;padding:6px 18px 20px;cursor:default;opacity:0;transition:opacity .3s .1s}
+.rw.open .dtc{opacity:1}
+.bk h4{margin:0 0 10px;font:500 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bk p{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.bar{display:flex;height:12px;border-radius:99px;overflow:hidden;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+.bar b{display:block;height:100%;width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.gr{margin-bottom:10px}.gr span{display:block;font-size:13px;margin-bottom:5px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:20px 0 4px}
+.chip{flex:none;border:1px solid var(--line);background:transparent;color:var(--fg);font:600 14px Archivo,sans-serif;padding:10px 18px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color .25s,border-color .25s,transform .15s}
+.chip:active{transform:scale(.95)}.chip i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.chip.on{background:color-mix(in srgb,var(--c) 30%,transparent);border-color:var(--c)}
+.form i.e{border:1.5px dashed currentColor;opacity:.45;color:var(--muted)}
+.rw.z2 .c1::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--orange)}
+.lk{margin:16px 0 0;text-align:center}.lk a{color:var(--fg);font-weight:700;text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:2px}
+.note{color:var(--muted);font-size:13px;text-align:center;margin:22px 0 40px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:999px;font:600 14px Archivo,sans-serif;opacity:0;pointer-events:none;transition:.3s;z-index:60;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (min-width:900px){
+.wrap{padding:0 40px}
+.hd{flex-wrap:nowrap;padding-block:16px}
+.logo{font-size:26px}
+nav{order:0;width:auto;padding:0;gap:30px}
+nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+#theme{width:42px;height:42px}
+.tb,.tb.full{--cols:minmax(220px,1.6fr) repeat(7,minmax(56px,.5fr)) 120px}
+.tb .xc{display:block!important}.tb .hc.xc{display:flex!important}
+.seg{display:none}
+.top{padding-top:48px}
+}
+.tb:not(.full) .xc{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.im.ga{background-image:url(img/70e8658481.webp)}
+.im.sp{background-image:url(img/3e4899dd02.webp)}
+.im.to{background-image:url(img/8c21c73f29.webp)}
+.im.wk{background-image:url(img/eac5d71284.webp)}
+.im.dp{background-image:url(img/fed5796a51.webp)}
+.im.kg{background-image:url(img/b2cb61fd1c.webp)}
+.im.my{background-image:url(img/0c470d47d7.webp)}
+.im.vd{background-image:url(img/8eafcc1365.webp)}
+</style>
+<style>nav{gap:16px!important}@media(min-width:900px){.logo{font-size:22px!important}}span.p{position:absolute}
+@media(max-width:420px){.tb:not(.full){--cols:minmax(0,1fr) 40px 38px 58px}.tb:not(.full) .c.pj,.tb:not(.full) .hc[data-k="pj"]{display:none}.c1{gap:6px;padding-left:10px}.cr{width:26px;height:26px}.nm{font-size:14px}.form{gap:3px}.form i{width:10px;height:10px}.pos{width:16px}.lgd{display:none}}
+</style><link rel="stylesheet" href="cos.css">
+<link rel="stylesheet" href="calle.css"></head>
+<body class="ac ck">
+<header>
+<div class="wrap hd">
+<div class="logo x"><i></i>Magna Arena</div>
+<nav><a href="index.html">Partidos</a><a href="ligas.html" class="on">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<a class="pill o mono enter" href="admin.html" style="padding:9px 14px">Administración</a>
+</div>
+</header><script src="nav.js"></script>
+<main class="wrap">
+<section class="top">
+<div class="tag mono"><i class="lv"></i><span id="ltag">Liga Magna · Jornada 7</span></div>
+<h1 class="x">Ligas</h1>
+<p class="sub">Elige la división arriba. Toca un equipo para ver su página o descarga la tabla como imagen.</p>
+<div class="chips" id="lgs" role="tablist" aria-label="Ligas"></div>
+<div class="ctl">
+<div class="seg" role="group" aria-label="Vista"><button class="on" data-v="s">Resumen</button><button data-v="f">Completa</button></div>
+<div class="leg"><span><i style="background:var(--blue)"></i>Zona de clasificación</span><span id="lz2" hidden><i style="background:var(--orange)"></i>Playoffs</span><span><i style="background:var(--green)"></i>Victoria</span><span><i style="background:var(--red)"></i>Derrota</span><span><i class="lv"></i>Jugando ahora</span></div>
+</div>
+<div class="tb" id="tb"><div class="sc"><div class="in">
+<div class="hrw"><div class="r"><div class="c1 hcl">Equipo</div><button class="hc" data-k="pj">PJ<i></i></button><button class="hc xc" data-k="g">G<i></i></button><button class="hc xc" data-k="p">P<i></i></button><button class="hc xc" data-k="gf">GF<i></i></button><button class="hc xc" data-k="gc">GC<i></i></button><button class="hc" data-k="dg">DG<i></i></button><button class="hc on" data-k="pts">Pts<i></i></button><div class="hcl">Forma</div></div></div>
+<div id="rows"></div>
+</div></div></div>
+<p class="lk" id="lk" hidden><a href="champions.html">Ver playoffs y llaves de Champions →</a></p>
+<p class="note">Posiciones calculadas con los partidos terminados. No hay empates.</p>
+</section>
+</main>
+<div id="toast" role="status"></div>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="ligas-data.js"></script><script src="tabla-img.js"></script>
+<script>
+(function(){
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var LG=window.MAGNA_LIGAS();
+if(!LG.length){document.querySelector('main').innerHTML='<p class="note" style="padding:80px 0;font-size:16px">Todavía no hay ligas. Créalas desde el panel de administración.</p>';return}
+var T=[],MAX=1,sk='pts',sd=-1,host=$('#rows');
+function ci(e,k){if(k&&k.indexOf('url:')===0){e.className='im';e.style.backgroundImage='url('+k.slice(4)+')'}else{e.className='im '+(k||'e');e.style.backgroundImage=''}}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.i);toast.i=setTimeout(function(){t.classList.remove('on')},1800)}
+function pl(n,a,b){return n+' '+(n===1?a:b)}
+function formH(el,s,big){el.innerHTML='';for(var i=0;i<4;i++){var c=s[i],b=document.createElement('i');b.className=c==='V'?'w':c==='D'?'l':'e';b.title=c==='V'?'Victoria':c==='D'?'Derrota':'Sin partido';if(big&&c)b.textContent=c;b.style.animationDelay=i*70+'ms';el.appendChild(b)}
+ el.setAttribute('role','img');el.setAttribute('aria-label','Últimos partidos: '+pl((s.match(/V/g)||[]).length,'victoria','victorias')+' y '+pl((s.match(/D/g)||[]).length,'derrota','derrotas'))}
+function cnt(el,to,del){if(RM){el.textContent=to;return}var t0=performance.now()+del;el.textContent=0;(function f(n){var k=Math.min(1,Math.max(0,(n-t0)/700));el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}
+function build(li,anim){var L=LG[li];T=L.T;sk='pts';sd=-1;host.innerHTML='';
+ T.forEach(function(t){t.pj=t.g+t.p;t.dg=t.gf-t.gc;t.pts=(L.jw!=null?L.jw:3)*t.g+(L.jl||0)*t.p});
+ T.slice().sort(function(a,b){return b.pts-a.pts||b.dg-a.dg||b.gf-a.gf}).forEach(function(t,i){t.rk=i+1});
+ MAX=Math.max.apply(null,T.map(function(t){return Math.max(t.gf,t.gc)}));
+ $$('.hc').forEach(function(h){h.classList.toggle('on',h.dataset.k==='pts');h.classList.remove('asc')});
+ $('#ltag').textContent=[L.n,L.jn].filter(Boolean).join(' · ');$('#lz2').hidden=!L.z2;$('#lk').hidden=L.n!=='Champions';
+ T.slice().sort(function(a,b){return a.rk-b.rk}).forEach(function(t,ix){
+  var r=document.createElement('div');r.className='rw'+(t.rk<=L.z?' z':t.rk<=(L.z2||0)?' z2':'');r.tabIndex=0;r.setAttribute('role','button');r.setAttribute('aria-expanded','false');
+  r.innerHTML='<div class="r"><div class="c1"><span class="pos"></span><span class="cr"><span class="im"></span></span><span class="nm"></span>'+(t.live?'<i class="lv" title="Jugando ahora"></i>':'')+'</div><div class="c pj"></div><div class="c xc g"></div><div class="c xc p"></div><div class="c xc gf"></div><div class="c xc gc"></div><div class="c dg"></div><div class="c pts"></div><div class="c fm"><div class="form"></div></div></div><div class="dt"><div class="dti"><div class="dtc"><div class="bk"><h4>Últimos partidos</h4><div class="form big"></div><p class="fp"></p></div><div class="bk"><h4>Rendimiento</h4><div class="bar"><b style="background:var(--green)"></b><b style="background:var(--red)"></b></div><p class="rp"></p></div><div class="bk"><h4>Goles</h4><div class="gr"><span class="a"></span><div class="bar"><b style="background:var(--blue)"></b></div></div><div class="gr"><span class="b"></span><div class="bar"><b style="background:var(--orange)"></b></div></div></div></div></div></div>';
+  $('.pos',r).textContent=t.rk;ci($('.im',r),t.i);$('.nm',r).textContent=t.n;
+  ['pj','g','p','gf','gc'].forEach(function(k){$('.c.'+k,r).textContent=t[k]});
+  var d=$('.dg',r);d.textContent=(t.dg>0?'+':'')+t.dg;d.classList.add(t.dg>0?'dgp':t.dg<0?'dgn':'dgz');
+  formH($('.fm .form',r),t.f);formH($('.big',r),t.f,1);
+  var w=(t.f.match(/V/g)||[]).length,l=(t.f.match(/D/g)||[]).length;
+  $('.fp',r).textContent=pl(w,'victoria','victorias')+' · '+pl(l,'derrota','derrotas');
+  $('.rp',r).textContent=t.g+' G · '+t.p+' P · '+(t.pts/t.pj).toFixed(2).replace('.',',')+' pts por partido';
+  $('.a',r).textContent='A favor: '+t.gf;$('.b',r).textContent='En contra: '+t.gc;
+  function bars(on){var b=$$('.bar b',r),v=on?[t.g/t.pj*100,t.p/t.pj*100,t.gf/MAX*100,t.gc/MAX*100]:[0,0,0,0];b.forEach(function(x,i){x.style.width=v[i]+'%'})}
+  function toggle(){var o=!r.classList.contains('open');$$('.rw.open').forEach(function(x){if(x!==r)x._close()});r.classList.toggle('open',o);r.setAttribute('aria-expanded',o);if(o){formH($('.big',r),t.f,1);setTimeout(function(){bars(1)},60)}else bars(0)}
+  r._close=function(){r.classList.remove('open');r.setAttribute('aria-expanded',false);bars(0)};
+  r.addEventListener('click',function(e){if(e.target.closest('.dtc'))return;toggle()});
+  r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  t.el=r;host.appendChild(r);
+  if(anim){if(!RM)r.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:520,delay:ix*70,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});cnt($('.pts',r),t.pts,ix*70)}else $('.pts',r).textContent=t.pts})}
+function order(){return T.slice().sort(function(a,b){var c=sd<0?b[sk]-a[sk]:a[sk]-b[sk];return c||a.rk-b.rk})}
+function sortBy(k){if(sk===k)sd=-sd;else{sk=k;sd=-1}
+ $$('.hc').forEach(function(h){h.classList.toggle('on',h.dataset.k===sk);h.classList.toggle('asc',h.dataset.k===sk&&sd>0)});
+ var rs=T.map(function(t){return t.el}),t0=rs.map(function(r){return r.getBoundingClientRect().top});
+ order().forEach(function(t){host.appendChild(t.el)});
+ if(!RM)rs.forEach(function(r,i){var d=t0[i]-r.getBoundingClientRect().top;if(d)r.animate([{transform:'translateY('+d+'px)'},{transform:'none'}],{duration:500,easing:'cubic-bezier(.2,.9,.2,1)'})})}
+$$('.hc').forEach(function(h){h.addEventListener('click',function(){sortBy(h.dataset.k)})});
+$$('.seg button').forEach(function(b){b.addEventListener('click',function(){$$('.seg button').forEach(function(x){x.classList.toggle('on',x===b)});$('#tb').classList.toggle('full',b.dataset.v==='f')})});
+LG.forEach(function(L,i){var b=document.createElement('button');b.className='chip'+(i?'':' on');b.style.setProperty('--c',L.c);b.setAttribute('role','tab');b.setAttribute('aria-selected',i===0);b.innerHTML='<i></i>'+L.n;
+ b.addEventListener('click',function(){$$('.chip').forEach(function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});build(i,true)});$('#lgs').appendChild(b)});
+$$('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();toast('Próximamente')})});
+/* tabla estilo Champions (UCL) con descarga de imagen */
+function ucl(li){var L=LG[li];if(!L||!window.ustCard)return;var tb=$('#tb');if(!tb)return;tb.style.display='none';var c=$('.ctl');if(c)c.style.display='none';var old=$('#ucl');if(old)old.remove();
+ var LV={},rows=L.T.slice().sort(function(a,b){return a.rk-b.rk}).map(function(t){if(t.live)LV[t.id]=1;return{pos:t.rk,team:t.n,team_id:t.id,pj:t.pj,g:t.g,p:t.p,dg:t.dg,pts:t.pts}});
+ var lg=MAGNA.S.leagues.filter(function(x){return x.name===L.n})[0],gm=lg?MAGNA.S.matches.filter(function(m){return m.type==='league'&&m.cid===lg.id&&m.status!=='cancelled'}).sort(jsort):null;
+ rows.forEach(function(r){r.zone=r.pos<=L.z?'d':'e'});var w=tntCard({title:L.n,kicker:'Liga Magna · '+pl(L.T.length,'equipo','equipos'),rows:rows,legend:{d:'Clasifican'},live:LV,gm:gm});w.id='ucl';var top=tb.closest('section.top');if(top)top.parentNode.insertBefore(w,top.nextSibling);else tb.parentNode.insertBefore(w,tb)}
+var _build=build;build=function(li,anim){_build(li,anim);ucl(li)};
+build(0,true);
+})();
+</script>
+<script src="mov.js" defer></script>
+</body>
+</html>

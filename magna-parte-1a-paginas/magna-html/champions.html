@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>Magna Arena · Champions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--blue:#3b4bff;--orange:#ff5a36;--purple:#8b5cf6;--green:#2ee59d;--red:#ff4d5e;--gray:#8b93ad;--card:#0f1326;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f5fb;--fg:#0a0d18;--muted:#5a6078;--line:#dcdfec;--card:#fff;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f4f5fb;--fg:#0a0d18;--muted:#5a6078;--line:#dcdfec;--card:#fff;color-scheme:light}
+:root[data-theme="dark"]{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--card:#0f1326;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.5 Archivo,system-ui,sans-serif;overflow-x:hidden;transition:background-color .4s,color .4s}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(60% 40% at 50% 0%,rgba(139,92,246,.16),transparent 70%)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px;position:relative}
+.mono{font:500 12px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.x{font-stretch:125%;font-weight:900;text-transform:uppercase}
+header{border-bottom:1px solid var(--line);position:relative}
+.hd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:18px}
+.logo{display:flex;align-items:center;gap:12px;font-size:clamp(22px,6.6vw,34px);white-space:nowrap}
+.logo i{width:16px;height:16px;border-radius:50%;background:var(--orange)}
+#theme{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg);cursor:pointer;display:grid;place-items:center;transition:transform .15s}
+#theme:active{transform:scale(.92)}#theme svg{transition:transform .45s cubic-bezier(.3,1.4,.5,1)}#theme.flip svg{transform:rotate(180deg)}
+nav{order:3;width:100%;display:flex;gap:26px;padding:10px 10px 16px;overflow-x:auto}
+nav a{color:var(--fg);text-decoration:none;font-weight:600;font-size:17px;white-space:nowrap;opacity:.8;transition:opacity .2s,color .2s}
+nav a:hover{opacity:1}nav a.on{opacity:1;color:var(--orange)}
+.top{padding:34px 0 18px}
+.tag{display:inline-flex;align-items:center;gap:10px;color:var(--muted)}
+.lv{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;flex:none;animation:blink 1.3s ease-in-out infinite}
+@keyframes blink{50%{opacity:.15}}
+h1{margin:14px 0 10px;font-size:clamp(34px,9.5vw,76px);line-height:.98}
+.sub{margin:0;color:var(--muted);max-width:560px}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:22px 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 13px Archivo,sans-serif;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background-color .25s,color .25s}
+.seg button.on{background:var(--blue);color:#fff}
+.leg{display:flex;gap:6px 16px;flex-wrap:wrap;color:var(--muted);font-size:12px;align-items:center}
+.leg span{display:inline-flex;align-items:center;gap:6px}.leg i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.tb{--cols:minmax(0,1fr) 36px 44px 46px 78px;background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;transition:background-color .4s,border-color .4s}
+.tb.full{--cols:178px repeat(7,42px) 78px}
+.sc{overflow-x:auto}.tb.full .in{min-width:610px}
+.r{display:grid;grid-template-columns:var(--cols);align-items:center;min-height:58px}
+.hrw{--rb:color-mix(in srgb,var(--fg) 5%,var(--card));background:var(--rb)}
+.hrw .r{min-height:44px}
+.rw{--rb:var(--card);border-top:1px solid var(--line);cursor:pointer;outline:none;transition:background-color .2s}
+.rw:hover,.rw:focus-visible{--rb:color-mix(in srgb,var(--fg) 5%,var(--card))}
+.rw.open{--rb:color-mix(in srgb,var(--blue) 9%,var(--card))}
+.rw{background:var(--rb)}
+.c1{position:sticky;left:0;z-index:1;background:var(--rb);display:flex;align-items:center;gap:10px;min-width:0;padding:8px 6px 8px 16px;align-self:stretch}
+.rw.z .c1::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--blue)}
+.pos{width:20px;text-align:center;font:700 14px "JetBrains Mono",monospace;flex:none}
+.cr{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:none;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.rw:hover .cr{transform:scale(1.12) rotate(-4deg)}
+.nm{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c{text-align:center;font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.c.pts{font-weight:900;font-size:17px;color:var(--fg)}
+.c.dgp{color:var(--green)}.c.dgn{color:var(--red)}
+.c.fm{padding-right:14px}
+.hc,.hcl{font:500 11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:14px 0;background:none;border:0}
+.hcl.c1{justify-content:flex-start;padding-top:0;padding-bottom:0}
+.hc{cursor:pointer;display:flex;justify-content:center;align-items:center;gap:4px;transition:color .2s}
+.hc:hover{color:var(--fg)}.hc.on{color:var(--fg)}
+.hc i{width:0;height:0;border:4px solid transparent;border-top:5px solid currentColor;border-bottom:0;opacity:0;transition:transform .3s,opacity .2s}
+.hc.on i{opacity:1}.hc.on.asc i{transform:rotate(180deg)}
+.im{display:block;width:100%;height:100%;background:center/cover no-repeat}
+.im.r{background-image:url(img/adfbaa0919.webp)}.im.v{background-image:url(img/b060c51ad2.webp)}
+.im.e{border:2px dashed var(--purple);background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.form{display:flex;gap:5px;justify-content:center;align-items:center}
+.form i{width:12px;height:12px;border-radius:50%;display:grid;place-items:center;animation:fpop .45s cubic-bezier(.3,1.8,.5,1) both;transition:transform .2s;font:700 11px/1 Archivo,sans-serif;font-style:normal;color:#0a0d18}
+.form i:hover{transform:scale(1.5)}
+.form i.w{background:var(--green)}.form i.l{background:var(--red)}.form i.d{background:var(--gray)}
+.form.big{justify-content:flex-start;gap:8px}.form.big i{width:28px;height:28px}
+@keyframes fpop{from{transform:scale(0)}}
+.dt{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)}
+.rw.open .dt{grid-template-rows:1fr}
+.dti{overflow:hidden;min-height:0}
+.dtc{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px 28px;padding:6px 18px 20px;cursor:default;opacity:0;transition:opacity .3s .1s}
+.rw.open .dtc{opacity:1}
+.bk h4{margin:0 0 10px;font:500 11px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bk p{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.bar{display:flex;height:12px;border-radius:99px;overflow:hidden;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+.bar b{display:block;height:100%;width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.gr{margin-bottom:10px}.gr span{display:block;font-size:13px;margin-bottom:5px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:20px 0 4px}
+.chip{flex:none;border:1px solid var(--line);background:transparent;color:var(--fg);font:600 14px Archivo,sans-serif;padding:10px 18px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color .25s,border-color .25s,transform .15s}
+.chip:active{transform:scale(.95)}.chip i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.chip.on{background:color-mix(in srgb,var(--c) 30%,transparent);border-color:var(--c)}
+.form i.e{border:1.5px dashed currentColor;opacity:.45;color:var(--muted)}
+.rw.z2 .c1::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--orange)}
+.lk{margin:16px 0 0;text-align:center}.lk a{color:var(--fg);font-weight:700;text-decoration:none;border-bottom:2px solid var(--orange);padding-bottom:2px}
+.note{color:var(--muted);font-size:13px;text-align:center;margin:22px 0 40px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:999px;font:600 14px Archivo,sans-serif;opacity:0;pointer-events:none;transition:.3s;z-index:60;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media (min-width:900px){
+.wrap{padding:0 40px}
+.hd{flex-wrap:nowrap;padding-block:16px}
+.logo{font-size:26px}
+nav{order:0;width:auto;padding:0;gap:30px}
+nav a{font:500 12px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+#theme{width:42px;height:42px}
+.tb,.tb.full{--cols:minmax(220px,1.6fr) repeat(7,minmax(56px,.5fr)) 120px}
+.tb .xc{display:block!important}.tb .hc.xc{display:flex!important}
+.seg{display:none}
+.top{padding-top:48px}
+}
+.tb:not(.full) .xc{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.im.ga{background-image:url(img/70e8658481.webp)}
+.im.sp{background-image:url(img/3e4899dd02.webp)}
+.im.to{background-image:url(img/8c21c73f29.webp)}
+.im.wk{background-image:url(img/eac5d71284.webp)}
+.im.dp{background-image:url(img/fed5796a51.webp)}
+.im.kg{background-image:url(img/b2cb61fd1c.webp)}
+.im.my{background-image:url(img/0c470d47d7.webp)}
+.im.vd{background-image:url(img/8eafcc1365.webp)}
+
+[hidden]{display:none!important}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:4px;margin-top:22px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 14px Archivo,sans-serif;padding:11px 22px;border-radius:999px;cursor:pointer;transition:background-color .25s,color .25s}
+.tabs button.on{background:var(--blue);color:#fff}
+.pn{animation:pnin .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes pnin{from{opacity:0;transform:translateY(14px)}}
+.prog{display:flex;align-items:center;gap:14px;margin:18px 0 4px;color:var(--muted)}
+.pr{flex:1;height:8px;border-radius:99px;background:color-mix(in srgb,var(--fg) 10%,transparent);overflow:hidden}
+.pr i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.zcs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.zc{border:1px solid var(--line);background:transparent;color:var(--fg);font:600 13px Archivo,sans-serif;padding:9px 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color .25s,border-color .25s,transform .15s}
+.zc:active{transform:scale(.95)}.zc i{width:10px;height:10px;border-radius:50%;background:var(--c)}.zc b{font:700 12px "JetBrains Mono",monospace;opacity:.7}
+.zc.on{background:color-mix(in srgb,var(--c) 28%,transparent);border-color:var(--c)}
+.rw.zd .c1::before,.rw.zp .c1::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--blue)}
+.rw.zp .c1::before{background:var(--orange)}
+.tb.def .rw.s4,.tb.def .rw.s12{border-bottom:2px dashed color-mix(in srgb,var(--fg) 30%,transparent)}
+.tb[data-hl="d"] .rw:not(.zd),.tb[data-hl="p"] .rw:not(.zp),.tb[data-hl="e"] .rw:not(.ze){opacity:.28}
+.rw{transition:opacity .3s,background-color .2s}
+.rw.dim2{opacity:.28}
+.lgf{flex-wrap:nowrap;overflow-x:auto}.lgf .zc{flex:none}
+.lgd{width:8px;height:8px;border-radius:50%;flex:none;opacity:.9}
+.bar2{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 6px}
+.bch{display:flex;gap:8px;overflow-x:auto}
+.bch button{flex:none;border:1px solid var(--line);background:transparent;color:var(--fg);font:600 13px Archivo,sans-serif;padding:9px 16px;border-radius:999px;cursor:pointer;transition:background-color .25s}
+.bch button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.acts{display:flex;gap:8px}
+.pb{border:0;border-radius:999px;padding:11px 18px;background:linear-gradient(135deg,#ff8a5c,#ff5a36);color:#fff;font:700 14px Archivo,sans-serif;cursor:pointer;transition:transform .15s}
+.pb:active{transform:scale(.95)}.pb.g{background:transparent;border:1px solid var(--line);color:var(--fg)}
+.sub2{margin:8px 0 14px;color:var(--muted);font-size:14px}
+.bs{overflow-x:auto;padding:8px 0 16px;scroll-snap-type:x proximity}
+.bg{--bw:232px;--bh:66px;--ln:color-mix(in srgb,var(--fg) 28%,transparent);display:grid;grid-template-columns:repeat(5,var(--bw));grid-template-rows:auto repeat(8,var(--bh));column-gap:48px;width:max-content}
+.rt{color:var(--muted);padding:0 4px 12px;scroll-snap-align:start}
+.cell{position:relative;display:flex;align-items:center}
+.cell.out::after{content:"";position:absolute;right:-24px;top:50%;width:24px;border-top:2px solid var(--ln)}
+.cell.inn::before{content:"";position:absolute;left:-24px;top:50%;width:24px;border-top:2px solid var(--ln)}
+.cell.pair::before{content:"";position:absolute;left:-24px;top:25%;bottom:25%;width:24px;border:2px solid var(--ln);border-left:0}
+.tie{width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:7px 7px 6px;display:flex;flex-direction:column;gap:3px;transition:border-color .3s,background-color .4s}
+.tl{color:var(--muted);font-size:10px;padding:0 4px 3px}
+.tm{display:flex;align-items:center;gap:8px;border:0;background:color-mix(in srgb,var(--fg) 5%,transparent);color:var(--fg);padding:5px 8px 5px 6px;border-radius:10px;cursor:pointer;font:700 13px Archivo,sans-serif;text-align:left;width:100%;transition:background-color .25s,opacity .3s,transform .15s;position:relative}
+.tm:hover:not(:disabled){background:color-mix(in srgb,var(--fg) 11%,transparent)}.tm:active:not(:disabled){transform:scale(.97)}
+.tm .sd{width:18px;text-align:center;font:500 11px "JetBrains Mono",monospace;color:var(--muted);flex:none}
+.tm .cr{width:24px;height:24px}
+.tm .tn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm .ts{font:800 14px Archivo,sans-serif;min-width:12px;text-align:right}
+.tm.tbd{color:var(--muted);cursor:default;font-weight:500}.tm.tbd .tn{font-style:italic}
+.tm.win{background:color-mix(in srgb,var(--green) 22%,transparent);box-shadow:inset 3px 0 0 var(--green)}
+.tm.lose{opacity:.4}
+.champ{width:100%;border:1px solid var(--line);border-radius:22px;background:var(--card);padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:var(--muted);transition:box-shadow .5s,border-color .5s}
+.champ svg{width:34px;height:34px;opacity:.5;transition:opacity .4s,transform .6s cubic-bezier(.3,1.6,.5,1)}
+.champ .cr.big{width:84px;height:84px;transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.champ .cn{font-size:16px;color:var(--fg)}
+.champ.on{border-color:var(--yellow);box-shadow:0 0 0 2px var(--yellow),0 0 40px rgba(255,210,63,.35);color:var(--yellow)}
+.champ.on svg{opacity:1;color:var(--yellow);transform:scale(1.3) rotate(-8deg)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+span.p{position:absolute;width:9px;height:14px;border-radius:2px}
+@media (min-width:1100px){.bg{--bw:minmax(0,1fr);width:100%}.bch{display:none}.bar2{justify-content:flex-end}}
+
+.lockko{text-align:center;padding:34px 18px 28px;border-radius:24px;border:1px dashed rgba(255,255,255,.22);background:radial-gradient(70% 90% at 50% 0,rgba(34,211,238,.16),transparent 70%),rgba(255,255,255,.03);display:grid;gap:12px;justify-items:center}.lockko h3{margin:0;font-size:clamp(20px,3vw,26px)}.lockko p{margin:0;color:var(--muted);max-width:52ch}.lk-i{font-size:42px}
+.lk-p{width:min(420px,100%);height:10px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden}.lk-p i{display:block;height:100%;background:linear-gradient(90deg,#22d3ee,#8b5cf6)}.lockko small{color:var(--muted);font-size:13px}
+.lk-s{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}.lk-s span{display:grid;gap:2px;padding:8px 14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:12px;color:var(--muted)}.lk-s b{color:var(--fg);font-size:14px}
+</style>
+<style>nav{gap:16px!important}@media(min-width:900px){.logo{font-size:22px!important}}
+@media(max-width:420px){.tb:not(.full){--cols:minmax(0,1fr) 40px 38px 58px}.tb:not(.full) .c.pj,.tb:not(.full) .hc[data-k="pj"]{display:none}.c1{gap:6px;padding-left:10px}.cr{width:26px;height:26px}.nm{font-size:14px}.form{gap:3px}.form i{width:10px;height:10px}.pos{width:16px}.lgd{display:none}}
+</style><link rel="stylesheet" href="cos.css">
+<link rel="stylesheet" href="calle.css"></head>
+<body class="ac ck">
+<header>
+<div class="wrap hd">
+<div class="logo x"><i></i>Magna Arena</div>
+<nav><a href="index.html">Partidos</a><a href="ligas.html">Ligas</a><a href="competiciones.html">Torneos</a><a href="mundial.html">Mundial</a><a href="champions.html" class="on">Champions</a><a href="apuestas.html">Apuestas</a><a href="calendario.html">Calendario</a><a href="equipos.html">Equipos</a><a href="mercado.html">Fichajes</a></nav>
+<a class="pill o mono enter" href="admin.html" style="padding:9px 14px">Administración</a>
+</div>
+</header><script src="nav.js"></script>
+<main class="wrap">
+<section class="top">
+<div class="tag mono"><i class="lv"></i><span id="ctag">Champions · Fase de liga</span></div>
+<h1 class="x">Champions</h1>
+<p class="sub">Todos los equipos en una sola tabla, calculada con los resultados que registra el administrador. Los 4 primeros pasan directo a cuartos y del 5.º al 12.º juegan los playoffs.</p>
+<a href="prediccion.html" style="display:inline-flex;align-items:center;gap:8px;margin:4px 0 14px;border-radius:999px;padding:10px 16px;background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#fff;font:800 14px Archivo,sans-serif;text-decoration:none;box-shadow:0 6px 20px rgba(34,211,238,.3)">🔮 Predice la llave y gana Bits →</a>
+<div class="tabs" role="tablist"><button class="on" data-p="1" role="tab">Fase de liga</button><button data-p="2" role="tab">Eliminatorias</button></div>
+</section>
+<section id="p1" class="pn">
+<div class="zcs lgf" id="lgf"></div>
+<div class="zcs" id="zcs"><button class="zc" data-z="d" style="--c:var(--blue)"><i></i>Directo a cuartos <b>4</b></button><button class="zc" data-z="p" style="--c:var(--orange)"><i></i>Playoffs <b>8</b></button><button class="zc" data-z="e" style="--c:var(--gray)"><i></i>Eliminados <b>9</b></button></div>
+<div class="ctl"><div class="seg" role="group" aria-label="Vista"><button class="on" data-v="s">Resumen</button><button data-v="f">Completa</button></div><div class="leg"><span><i style="background:var(--green)"></i>Victoria</span><span><i style="background:var(--red)"></i>Derrota</span><span><i class="lv"></i>Jugando ahora</span></div></div>
+<div class="tb def" id="tb"><div class="sc"><div class="in">
+<div class="hrw"><div class="r"><div class="c1 hcl">Equipo</div><button class="hc" data-k="pj">PJ<i></i></button><button class="hc xc" data-k="g">G<i></i></button><button class="hc xc" data-k="p">P<i></i></button><button class="hc xc" data-k="gf">GF<i></i></button><button class="hc xc" data-k="gc">GC<i></i></button><button class="hc" data-k="dg">DG<i></i></button><button class="hc on" data-k="pts">Pts<i></i></button><div class="hcl">Forma</div></div></div>
+<div id="rows"></div>
+</div></div></div>
+<p class="note">Tabla calculada con los partidos terminados. Victoria = 3 pts · Derrota = 1 pt · No hay empates.</p>
+</section>
+<section id="p2" class="pn" hidden>
+<div class="bar2"><div class="bch" id="bch"></div><div class="acts"><button class="pb" id="sim">Simular llaves</button><button class="pb g" id="rst">Reiniciar</button></div></div>
+<p class="sub2">Proyección con la tabla actual (no es el cuadro oficial). Toca un equipo para avanzarlo.</p>
+<div class="bs" id="bs"><div class="bg" id="bg"></div></div>
+<p class="note">Los ganadores de cada cruce pasan a la siguiente ronda. Aquí no hay empates.</p>
+</section>
+</main>
+<div id="fx"></div>
+<div id="toast" role="status"></div>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="champions-data.js"></script><script src="tabla-img.js"></script>
+<script>
+(function(){
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var TEAMS=window.MAGNA_CH_TEAMS();
+if(!TEAMS.length){document.getElementById('p1').innerHTML='<p class="note" style="padding:50px 0">Todavía no hay partidos jugados. La tabla se calcula con los resultados que registre el administrador.</p>';document.querySelector('.tabs').style.display='none';return}
+TEAMS.forEach(function(t){t.pj=t.g+t.p;t.dg=t.gf-t.gc;t.pts=3*t.g+t.p});
+var ORD=TEAMS.slice().sort(function(a,b){return b.pts-a.pts||b.dg-a.dg||b.gf-a.gf||a.n.localeCompare(b.n,'es')});ORD.forEach(function(t,i){t.rk=i+1});
+var CFG=window.MAGNA_CH_CFG,SP=MAGNA.champSplit(ORD.length)||{direct:ORD.length,playoff:0,out:0},D=SP.direct,K=SP.playoff,KN=MAGNA.koName(D*2),KL=D===1?'la final':KN.toLowerCase();
+(function(){var pl2=function(n,a,b){return n+' '+(n===1?a:b)};if(CFG){$('h1.x').textContent=CFG.name}
+ $('.top .sub').textContent=(CFG?(CFG.legs===1?'Fase de liga: todos contra todos a una vuelta. ':'Fase de liga con ida y vuelta: todos contra todos dos veces. '):'Todos los equipos en una sola tabla, calculada con los resultados que registra el administrador. ')+(K?(D===1?'El 1.º pasa':'Los '+D+' primeros pasan')+' directo a '+KL+', del '+(D+1)+'.º al '+(D+K)+'.º juegan el play-off'+(SP.out?' y el resto queda eliminado.':'.')+' Eliminatoria a partido único.':'Se necesitan al menos 3 equipos para el play-off.');
+ var z=$$('#zcs .zc');z[0].innerHTML='<i></i>Directo a '+KL+' <b>'+D+'</b>';z[1].innerHTML='<i></i>Play-off <b>'+K+'</b>';z[2].innerHTML='<i></i>Eliminados <b>'+SP.out+'</b>';if(!K)z[1].hidden=true;if(!SP.out)z[2].hidden=true;
+ if(!K)$('.tabs').style.display='none';if(CFG&&!CFG.phase){$('.top .sub').textContent+=' El calendario aún no se ha generado: la tabla se llenará con los primeros resultados.'}})();
+var SEED=[null].concat(ORD),MAX=Math.max.apply(null,TEAMS.map(function(t){return Math.max(t.gf,t.gc)})),sk='pts',sd=-1,host=$('#rows');
+function ci(e,k){if(k&&k.indexOf('url:')===0){e.className='im';e.style.backgroundImage='url('+k.slice(4)+')'}else{e.className='im '+(k||'e');e.style.backgroundImage=''}}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.i);toast.i=setTimeout(function(){t.classList.remove('on')},1800)}
+function pl(n,a,b){return n+' '+(n===1?a:b)}
+function zn(r){return r<=D?'d':r<=D+K?'p':'e'}
+var LGC=window.MAGNA_CH_LGC,ZT={d:'Directo a '+KL,p:'Va al play-off',e:'Eliminado'};
+function formH(el,s,big){el.innerHTML='';for(var i=0;i<4;i++){var c=s[i],b=document.createElement('i');b.className=c==='V'?'w':c==='D'?'l':'e';b.title=c==='V'?'Victoria':c==='D'?'Derrota':'Sin partido';if(big&&c)b.textContent=c;b.style.animationDelay=i*70+'ms';el.appendChild(b)}el.setAttribute('role','img');el.setAttribute('aria-label','Últimos partidos: '+pl((s.match(/V/g)||[]).length,'victoria','victorias')+' y '+pl((s.match(/D/g)||[]).length,'derrota','derrotas'))}
+function cnt(el,to,del){if(RM){el.textContent=to;return}var t0=performance.now()+del;el.textContent=0;(function f(n){var k=Math.min(1,Math.max(0,(n-t0)/700));el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}
+function burst(x,y,cols,n){if(RM)return;for(var i=0;i<n;i++)(function(i){var p=document.createElement('span'),a=Math.random()*6.283,d=80+Math.random()*220;p.className='p';p.style.left=x+'px';p.style.top=y+'px';p.style.background=cols[i%cols.length];$('#fx').appendChild(p);
+ p.animate([{transform:'translate(-50%,-50%) scale(.4)',opacity:1},{transform:'translate(calc(-50% + '+Math.cos(a)*d+'px),calc(-50% + '+(Math.sin(a)*d-50)+'px)) rotate('+(Math.random()*720-360)+'deg)',opacity:1,offset:.7},{transform:'translate(calc(-50% + '+Math.cos(a)*d*1.1+'px),calc(-50% + '+(Math.sin(a)*d+90)+'px))',opacity:0}],{duration:1200+Math.random()*600,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=function(){p.remove()}})(i)}
+ORD.forEach(function(t,ix){
+ var r=document.createElement('div');r.className='rw z'+zn(t.rk)+(t.rk===D&&K?' s4':'')+(t.rk===D+K&&SP.out?' s12':'');r.tabIndex=0;r.setAttribute('role','button');r.setAttribute('aria-expanded','false');
+ r.innerHTML='<div class="r"><div class="c1"><span class="pos"></span><span class="cr"><span class="im"></span></span><span class="nm"></span><i class="lgd"></i>'+(t.live?'<i class="lv" title="Jugando ahora"></i>':'')+'</div><div class="c pj"></div><div class="c xc g"></div><div class="c xc p"></div><div class="c xc gf"></div><div class="c xc gc"></div><div class="c dg"></div><div class="c pts"></div><div class="c fm"><div class="form"></div></div></div><div class="dt"><div class="dti"><div class="dtc"><div class="bk"><h4>Últimos partidos</h4><div class="form big"></div><p class="fp"></p><p class="zt"></p></div><div class="bk"><h4>Rendimiento</h4><div class="bar"><b style="background:var(--green)"></b><b style="background:var(--red)"></b></div><p class="rp"></p></div><div class="bk"><h4>Goles</h4><div class="gr"><span class="a"></span><div class="bar"><b style="background:var(--blue)"></b></div></div><div class="gr"><span class="b"></span><div class="bar"><b style="background:var(--orange)"></b></div></div></div></div></div></div>';
+ $('.pos',r).textContent=t.rk;ci($('.im',r),t.i);$('.nm',r).textContent=t.n;
+ ['pj','g','p','gf','gc'].forEach(function(k){$('.c.'+k,r).textContent=t[k]});
+ var d=$('.dg',r);d.textContent=(t.dg>0?'+':'')+t.dg;d.classList.add(t.dg>0?'dgp':t.dg<0?'dgn':'dgz');
+ formH($('.fm .form',r),t.f);formH($('.big',r),t.f,1);
+ var w=(t.f.match(/V/g)||[]).length,l=(t.f.match(/D/g)||[]).length;
+ $('.fp',r).textContent=pl(w,'victoria','victorias')+' · '+pl(l,'derrota','derrotas');$('.zt',r).textContent=ZT[zn(t.rk)]+' · '+t.lg;var ld=$('.lgd',r);ld.style.background=LGC[t.lg];ld.title=t.lg;r.dataset.lg=t.lg;
+ $('.rp',r).textContent=t.g+' G · '+t.p+' P · '+(t.pj?t.pts/t.pj:0).toFixed(2).replace('.',',')+' pts por partido';
+ $('.a',r).textContent='A favor: '+t.gf;$('.b',r).textContent='En contra: '+t.gc;
+ function bars(on){var b=$$('.bar b',r),v=on?[t.g/(t.pj||1)*100,t.p/(t.pj||1)*100,t.gf/(MAX||1)*100,t.gc/(MAX||1)*100]:[0,0,0,0];b.forEach(function(x,i){x.style.width=v[i]+'%'})}
+ function toggle(){var o=!r.classList.contains('open');$$('.rw.open').forEach(function(x){if(x!==r)x._close()});r.classList.toggle('open',o);r.setAttribute('aria-expanded',o);if(o){formH($('.big',r),t.f,1);setTimeout(function(){bars(1)},60)}else bars(0)}
+ r._close=function(){r.classList.remove('open');r.setAttribute('aria-expanded',false);bars(0)};
+ r.addEventListener('click',function(e){if(e.target.closest('.dtc'))return;toggle()});
+ r.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+ t.el=r;host.appendChild(r);
+ if(!RM)r.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:480,delay:Math.min(ix,12)*45,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});cnt($('.pts',r),t.pts,Math.min(ix,12)*45)});
+function order(){return TEAMS.slice().sort(function(a,b){var c=sd<0?b[sk]-a[sk]:a[sk]-b[sk];return c||a.rk-b.rk})}
+function sortBy(k){if(sk===k)sd=-sd;else{sk=k;sd=-1}
+ $$('.hc').forEach(function(h){h.classList.toggle('on',h.dataset.k===sk);h.classList.toggle('asc',h.dataset.k===sk&&sd>0)});$('#tb').classList.toggle('def',sk==='pts'&&sd<0);
+ var rs=TEAMS.map(function(t){return t.el}),t0=rs.map(function(r){return r.getBoundingClientRect().top});
+ order().forEach(function(t){host.appendChild(t.el)});
+ if(!RM)rs.forEach(function(r,i){var d=t0[i]-r.getBoundingClientRect().top;if(d)r.animate([{transform:'translateY('+d+'px)'},{transform:'none'}],{duration:500,easing:'cubic-bezier(.2,.9,.2,1)'})})}
+$$('.hc').forEach(function(h){h.addEventListener('click',function(){sortBy(h.dataset.k)})});
+$$('.seg button').forEach(function(b){b.addEventListener('click',function(){$$('.seg button').forEach(function(x){x.classList.toggle('on',x===b)});$('#tb').classList.toggle('full',b.dataset.v==='f')})});
+$$('#zcs .zc').forEach(function(b){b.addEventListener('click',function(){var o=!b.classList.contains('on');$$('#zcs .zc').forEach(function(x){x.classList.remove('on')});b.classList.toggle('on',o);if(o)$('#tb').dataset.hl=b.dataset.z;else delete $('#tb').dataset.hl})});
+(['Todas'].concat(Object.keys(LGC))).forEach(function(n,i){var b=document.createElement('button');b.className='zc'+(i?'':' on');b.style.setProperty('--c',i?LGC[n]:'var(--muted)');b.innerHTML='<i></i>'+n;b.addEventListener('click',function(){$$('#lgf .zc').forEach(function(x){x.classList.toggle('on',x===b)});TEAMS.forEach(function(t){t.el.classList.toggle('dim2',!!i&&t.lg!==n)})});$('#lgf').appendChild(b)});
+/* --- llaves --- */
+var DEF=[],RT=[['Play-off',1]],NR=Math.round(Math.log(D*2)/Math.LN2),FK='k'+(NR-1)+'_0',CC=NR+2;
+(function(){function lv(r,i){if(!r)return[i];var mp=2*D/Math.pow(2,r-1)/2;return lv(r-1,i).concat(lv(r-1,mp-1-i))}
+ var pos={};lv(NR-1,0).forEach(function(x,k){pos[x]=k});
+ for(var j=0;j<D;j++){var a=D+1+j,b=3*D-j;DEF.push({k:'po'+j,c:1,r:1+2*pos[D-1-j],n:2,a:a,b:b,t:'Play-off · '+a+'.º vs '+b+'.º',cl:'out'})}
+ for(var r=0;r<NR;r++){var m=D/Math.pow(2,r),nm=MAGNA.koName(m*2);RT.push([nm,r+2]);
+  for(var i=0;i<m;i++){var L=lv(r,i).map(function(x){return pos[x]}),d={k:'k'+r+'_'+i,c:r+2,r:1+2*Math.min.apply(null,L),n:2*L.length,t:m===1?'Final':nm};
+   if(!r){d.a=i+1;d.fb='po'+(D-1-i);d.cl='inn out'}else{d.fa='k'+(r-1)+'_'+i;d.fb='k'+(r-1)+'_'+(2*m-1-i);d.cl='pair out'}DEF.push(d)}}
+ RT.push(['Campeón',CC])})();
+var W={},SC={},SN={},busy=0,prevCh=null;
+function slot(d,s){if(s===0)return d.a?SEED[d.a]:d.fa?W[d.fa]:null;return d.b?SEED[d.b]:d.fb?W[d.fb]:null}
+var g=$('#bg');g.style.gridTemplateColumns='repeat('+CC+',var(--bw))';g.style.gridTemplateRows='auto repeat('+2*D+',var(--bh))';
+RT.forEach(function(r){var h=document.createElement('div');h.className='rt mono';h.style.gridColumn=r[1];h.style.gridRow=1;h.textContent=r[0];g.appendChild(h)});
+DEF.forEach(function(d){var c=document.createElement('div');c.className='cell '+d.cl;c.style.gridColumn=d.c;c.style.gridRow=(d.r+1)+' / span '+d.n;
+ c.innerHTML='<div class="tie"><div class="tl mono"></div>'+[0,1].map(function(s){return'<button class="tm" data-s="'+s+'"><span class="sd"></span><span class="cr"><span class="im"></span></span><span class="tn"></span><span class="ts"></span></button>'}).join('')+'</div>';
+ $('.tl',c).textContent=d.t;$$('.tm',c).forEach(function(b){b.addEventListener('click',function(){if(busy)return;pick(d,+b.dataset.s)})});d.el=c;g.appendChild(c)});
+var cc=document.createElement('div');cc.className='cell inn';cc.style.gridColumn=CC;cc.style.gridRow='2 / span '+2*D;
+cc.innerHTML='<div class="champ" id="champ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h10v3a5 5 0 0 1-4 4.9V15h3v2H8v-2h3v-3.1A5 5 0 0 1 7 7zM4 5h2v3a3 3 0 0 1-2-3zm16 0h-2v3a3 3 0 0 0 2-3z"/></svg><div class="mono">Campeón</div><span class="cr big"><span class="im e"></span></span><b class="x cn">Por definir</b></div>';g.appendChild(cc);
+function render(){DEF.forEach(function(d){var t=$('.tie',d.el),w=W[d.k];[0,1].forEach(function(s){var b=$$('.tm',t)[s],tm=slot(d,s);
+  $('.tn',b).textContent=tm?tm.n:'Por definir';ci($('.im',b),tm?tm.i:null);$('.sd',b).textContent=tm?tm.rk:'–';
+  b.classList.toggle('tbd',!tm);b.classList.toggle('win',!!tm&&w===tm);b.classList.toggle('lose',!!tm&&!!w&&w!==tm);b.disabled=!tm;b.setAttribute('aria-label',tm?'Avanzar a '+tm.n:'Por definir');
+  var sc=SC[d.k];$('.ts',b).textContent=sc&&tm&&w?sc[s]:'';
+  var key=d.k+s,nm=tm?tm.n:'';if(SN[key]!==nm&&nm&&!RM)b.animate([{transform:'translateX(-16px)',opacity:0},{transform:'none',opacity:1}],{duration:420,easing:'cubic-bezier(.2,1.2,.4,1)'});SN[key]=nm})});
+ var ch=W[FK],ce=$('#champ');$('.cn',ce).textContent=ch?ch.n:'Por definir';ci($('.im',ce),ch?ch.i:null);ce.classList.toggle('on',!!ch);
+ if(ch&&ch!==prevCh){if(!RM)$('.cr',ce).animate([{transform:'scale(.4) rotate(-20deg)'},{transform:'scale(1.15)',offset:.6},{transform:'none'}],{duration:800,easing:'cubic-bezier(.2,1.2,.4,1)'});var r=ce.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,['#ffd23f','#fff','#3b4bff','#ff5a36'],60)}
+ prevCh=ch}
+function fix(){DEF.forEach(function(d){var w=W[d.k];if(w&&w!==slot(d,0)&&w!==slot(d,1)){delete W[d.k];delete SC[d.k]}})}
+function pick(d,s){var tm=slot(d,s);if(!tm||d.lock)return;
+ if(W[d.k]===tm){delete W[d.k];delete SC[d.k]}else{W[d.k]=tm;var w=1+Math.floor(Math.random()*3),l=Math.floor(Math.random()*w);SC[d.k]=s===0?[w,l]:[l,w]}
+ fix();render()}
+function real(){if(!CFG)return;var by={};ORD.forEach(function(t){by[t.id]=t});DEF.forEach(function(d){d.lock=0;var a=slot(d,0),b=slot(d,1);if(!a||!b)return;
+ var m=CFG.ko.filter(function(x){return x.status==='finished'&&((x.home===a.id&&x.away===b.id)||(x.home===b.id&&x.away===a.id))})[0];if(!m)return;
+ var sa=m.home===a.id?m.hs:m.as,sb=m.home===a.id?m.as:m.hs;W[d.k]=sa>sb?a:b;SC[d.k]=[sa,sb];d.lock=1})}
+function reset(){W={};SC={};SN={};real();render()}
+$('#rst').addEventListener('click',function(){if(!busy)reset()});
+$('#sim').addEventListener('click',function(){if(busy)return;busy=1;reset();var q=DEF.filter(function(d){return!d.lock});if(!q.length){busy=0;toast('El cuadro ya está completo');return}
+ q.forEach(function(d,i){setTimeout(function(){var a=slot(d,0),b=slot(d,1),pa=(1/a.rk)/(1/a.rk+1/b.rk);pick(d,Math.random()<pa?0:1);if(i===q.length-1)busy=0},i*520)})});
+var bs=$('#bs');
+RT.slice(0,-1).forEach(function(r,i){var b=document.createElement('button');b.textContent=r[0];if(!i)b.className='on';b.addEventListener('click',function(){bs.scrollTo({left:$$('.rt')[i].offsetLeft-4,behavior:RM?'auto':'smooth'})});$('#bch').appendChild(b)});
+bs.addEventListener('scroll',function(){var x=bs.scrollLeft,best=0,bd=1e9;$$('.rt').slice(0,-1).forEach(function(h,i){var dd=Math.abs(h.offsetLeft-4-x);if(dd<bd){bd=dd;best=i}});$$('#bch button').forEach(function(b,i){b.classList.toggle('on',i===best)})});
+real();render();
+/* la eliminatoria solo se muestra cuando la administración cierra la fase de liga */
+(function(){var open=CFG&&CFG.phase&&CFG.phase!=='groups';if(open)return;var p2=$('#p2');[].forEach.call(p2.children,function(x){x.hidden=true});
+ var ms=CFG?MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}):[],fin=ms.filter(function(m){return m.status==='finished'}).length;
+ var c=document.createElement('div');c.className='lockko';var RN=[];for(var n=D*2;n>=2;n/=2)RN.push(MAGNA.koName(n));
+ c.innerHTML='<div class="lk-i">🔒</div><h3 class="x">La eliminatoria aún no está definida</h3><p>Se arma cuando la administración cierre la fase de liga. Hasta entonces la tabla puede cambiar en cualquier jornada.</p>'+
+  (ms.length?'<div class="lk-p"><i style="width:'+Math.round(fin/ms.length*100)+'%"></i></div><small>'+fin+' de '+ms.length+' partidos de la fase de liga jugados</small>':'')+
+  (K?'<div class="lk-s"><span><b>'+(D===1?'1.º':'1.º–'+D+'.º')+'</b>Directo a '+KL+'</span><span><b>'+(D+1)+'.º–'+(D+K)+'.º</b>Play-off</span>'+RN.map(function(r){return'<span><b>'+r+'</b>Partido único</span>'}).join('')+'</div>':'');
+ p2.appendChild(c);var b=document.createElement('button');b.className='pb';b.textContent='Ver la fase de liga';b.onclick=function(){$('.tabs button[data-p="1"]').click()};c.appendChild(b);
+ $('.tabs button[data-p="2"]').innerHTML='🔒 Eliminatorias'})();
+
+/* --- Champions a mano: jornadas y cruces los crea la administración --- */
+(function(){if(!CFG||!CFG.manual)return;var z=$('#zcs');if(z)z.hidden=true;var pa=document.querySelector('a[href="prediccion.html"]');if(pa){pa.href='prediccion.html?t='+CFG.id;pa.removeAttribute('style');pa.className='ch-pl';pa.textContent='🔮 Predice al campeón y gana Bits →';var ps=document.createElement('style');ps.textContent='.ch-pl{display:table;margin:4px 0 16px;font:800 14px Archivo,sans-serif;color:#0d0d10!important;text-decoration:underline;text-decoration-color:#ff6a00;text-decoration-thickness:3px;text-underline-offset:4px}.ch-pl:hover{color:#ff6a00!important}';document.head.appendChild(ps)}
+ var GS=CFG.groups||[],MG=GS.length>1;
+ $('.top .sub').textContent='Fase de liga en una sola tabla con todos los equipos: la administración define cada jornada. Después llegan los cruces de la eliminatoria, también elegidos por la administración.';
+ if(GS.length){var p1=$('#p1');[].forEach.call(p1.children,function(x){x.hidden=true});
+  var T=MAGNA.S.tournaments.filter(function(t){return t.id===CFG.id})[0],ALL=MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}),LV={};ALL.forEach(function(m){if(m.status==='live'){LV[m.home]=1;LV[m.away]=1}});
+  // todos los equipos en una sola tabla (aunque la administración haya armado las jornadas por grupos)
+  var rows=[];if(T)GS.forEach(function(g){rows=rows.concat(MAGNA.groupTable(T,g))});
+  rows.sort(function(x,y){return y.pts-x.pts||y.dg-x.dg||y.gf-x.gf||x.team.localeCompare(y.team,'es')});rows.forEach(function(x,i){x.pos=i+1});
+  var Z=(!MG&&CFG.zones)||(function(){var sp=MAGNA.champSplit(rows.length)||{direct:1,playoff:0};return{d:sp.direct,p:sp.playoff}})();
+  ustStyle('760');var box=document.createElement('div');box.className='ust-w';
+  box.appendChild(ustCard('Clasificación',rows.length+' equipos',rows,Z,LV,ALL.slice().sort(jsort)));
+  p1.appendChild(box)}
+ if(!CFG.phase||CFG.phase==='groups'){var lk=$('#p2 .lockko');if(lk){var s=lk.querySelector('.lk-s');if(s)s.remove();var pp=lk.querySelector('p');if(pp)pp.textContent='La administración armará los cruces cuando cierre la fase de liga. Hasta entonces la tabla puede cambiar en cualquier jornada.'}return}
+ var p2=$('#p2');[].forEach.call(p2.children,function(x){x.hidden=true});$('.tabs button[data-p="2"]').textContent='Eliminatorias';
+ var ORDR=['Play-off','Dieciseisavos de final','Octavos de final','Cuartos de final','Semifinales','Tercer puesto','Final'],G={},ks=[];
+ CFG.ko.slice().sort(function(a,b){var x=ORDR.indexOf(a.round),y=ORDR.indexOf(b.round);return(x<0?50:x)-(y<0?50:y)||String(a.at||'').localeCompare(String(b.at||''))}).forEach(function(m){if(!G[m.round]){G[m.round]=[];ks.push(m.round)}G[m.round].push(m)});
+ var st=document.createElement('style');st.textContent='.mko{display:grid;gap:22px;margin-top:22px}.mko-ch{display:flex;align-items:center;gap:14px;padding:14px 18px;background:#ffd23f;color:#0d0d10;border:3px solid #0d0d10;border-radius:10px;box-shadow:6px 6px 0 #0d0d10;font:900 18px Archivo,sans-serif;text-transform:uppercase;font-style:italic;transform:rotate(-1deg);justify-self:start}.mko-ch span{font-size:30px;font-style:normal}.mko h3,.mbk h3{margin:0 0 12px;font:italic 900 17px Archivo,sans-serif;text-transform:uppercase;color:#fff;text-shadow:3px 3px 0 #ff6a00;white-space:nowrap}.mbk{overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin}.mbk-in{display:flex;gap:44px;min-width:max-content}.mbk-c{display:flex;flex-direction:column;width:250px}.mbk-b{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:16px}.mbk-g{position:relative;display:flex;flex-direction:column;gap:16px}.mbk-g.bnx:after{content:"";position:absolute;right:-24px;top:50%;width:24px;border-top:3px solid #c6ff1a}.mbk-g.bpr:before{content:"";position:absolute;right:-24px;top:25%;bottom:25%;width:12px;border:3px solid #c6ff1a;border-left:0;border-radius:0 8px 8px 0}.mbk-g.bpr:after{right:-44px;width:20px}.mko-l{display:grid;grid-template-columns:repeat(auto-fill,250px);gap:14px}.mko-m{position:relative;display:grid;gap:4px;padding:10px 12px 8px;background:#f1ead8;color:#0d0d10;border:3px solid #0d0d10;border-radius:10px;box-shadow:5px 5px 0 #22b8ff;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.3px);background-size:7px 7px}.mko-m.lv{box-shadow:5px 5px 0 #ff3b47}.mko-m.tbd{background:rgba(241,234,216,.18);border-style:dashed;border-color:#f1ead8;box-shadow:none;color:#f1ead8}.mko-r{display:flex;align-items:center;gap:8px}.mko-t{display:flex;align-items:center;gap:8px;min-width:0;flex:1;font:800 14px Archivo,sans-serif}.mko-t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mko-t.w span{font-weight:900;background:#c6ff1a;padding:0 4px}.mko-t.l{opacity:.5}.mko-t.tbd{opacity:.8;font-style:italic}.mko-t i{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #0d0d10;background:center/cover #8b5cf6;display:grid;place-items:center;font:900 9px Archivo,sans-serif;font-style:normal;color:#fff}.mko-t.tbd i{background:transparent;border-color:currentColor;color:inherit;font-size:12px}.mko-n{min-width:22px;text-align:right;font:italic 900 18px Archivo,sans-serif}.mko-f{display:block;border-top:2px dashed rgba(13,13,16,.2);padding-top:4px;font:700 10px "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:#5b574c}.mko-m.tbd .mko-f{color:#cfc9b8;border-color:rgba(241,234,216,.25)}.mko-m.lv .mko-f{color:#ff3b47}.mko-e{padding:22px;text-align:center;background:#f1ead8;color:#3a372f;border:3px dashed #0d0d10;border-radius:10px;font-weight:700}@media(max-width:640px){.mbk-c{width:210px}.mbk-in{gap:36px}.mbk-g.bnx:after{right:-18px;width:18px}.mbk-g.bpr:before{right:-18px}.mbk-g.bpr:after{right:-36px;width:18px}}';document.head.appendChild(st);
+ var w=document.createElement('div');w.className='mko';
+ if(CFG.champion){var ch=document.createElement('div');ch.className='mko-ch';ch.innerHTML='<span>🏆</span><div></div>';ch.querySelector('div').textContent='Campeón: '+MAGNA.teamName(CFG.champion);w.appendChild(ch)}
+ function tm(id,cls){var d=document.createElement('div');d.className='mko-t '+cls;if(id==null){d.className+=' tbd';d.innerHTML='<i>?</i><span>Por definir</span>';return d}var i=document.createElement('i'),u=MAGNA.crestUrl(id),n=MAGNA.teamName(id);if(u)i.style.backgroundImage='url('+u+')';else{i.textContent=n.slice(0,2).toUpperCase();if(MAGNA.teamColor)i.style.background=MAGNA.teamColor(id)}var s=document.createElement('span');s.textContent=n;d.appendChild(i);d.appendChild(s);return d}
+ function sc(m,side){var b=document.createElement('b');b.className='mko-n';if(m&&(m.status==='finished'||m.status==='live'))b.textContent=side?m.as:m.hs;return b}
+ function mcard(m){var c=document.createElement('div');c.className='mko-m'+(m&&m.status==='live'?' lv':'')+(m?'':' tbd');var f=m&&m.status==='finished',hw=f&&m.hs>m.as,aw=f&&m.as>m.hs;
+  var r1=document.createElement('div');r1.className='mko-r';r1.appendChild(tm(m?m.home:null,f?(hw?'w':'l'):''));r1.appendChild(sc(m,0));
+  var r2=document.createElement('div');r2.className='mko-r';r2.appendChild(tm(m?m.away:null,f?(aw?'w':'l'):''));r2.appendChild(sc(m,1));c.appendChild(r1);c.appendChild(r2);
+  var ft=document.createElement('small');ft.className='mko-f';ft.textContent=!m?'Por jugar':m.status==='live'?'● En vivo':f?'Final':m.at?new Date(m.at.replace(' ','T')+'Z').toLocaleString('es',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'Por jugar';c.appendChild(ft);return c}
+ if(!ks.length){var e=document.createElement('div');e.className='mko-e';e.textContent='La fase de liga terminó. Pronto la administración publicará los cruces.';w.appendChild(e);p2.appendChild(w);return}
+ // columnas del cuadro: las rondas creadas + las que faltan hasta la final (por definir)
+ var cols=ks.filter(function(k){return k!=='Tercer puesto'}).map(function(k){return{n:k,ms:G[k]}}),SZ={'Dieciseisavos de final':16,'Octavos de final':8,'Cuartos de final':4,'Semifinales':2,'Final':1};
+ var last=cols[cols.length-1];if(last&&SZ[last.n]&&last.n!=='Final'){var n=Math.max(last.ms.length,SZ[last.n]),idx=ORDR.indexOf(last.n);while(n>1){n=Math.ceil(n/2);idx++;while(ORDR[idx]==='Tercer puesto')idx++;var nm=ORDR[idx]||'Final';cols.push({n:nm,ms:new Array(n).fill(null),tbd:1});if(nm==='Final')break}}
+ var bk=document.createElement('div');bk.className='mbk';var inner=document.createElement('div');inner.className='mbk-in';bk.appendChild(inner);
+ cols.forEach(function(c,ci){var col=document.createElement('div');col.className='mbk-c'+(ci===cols.length-1?' last':'');var h3=document.createElement('h3');h3.textContent=c.n;col.appendChild(h3);var body=document.createElement('div');body.className='mbk-b';
+  var nxt=cols[ci+1],pairUp=nxt&&nxt.ms.length*2>=c.ms.length&&nxt.ms.length<c.ms.length;
+  for(var k=0;k<c.ms.length;k+=pairUp?2:1){var g=document.createElement('div');g.className='mbk-g'+(pairUp&&c.ms[k+1]!==undefined?' bpr':'')+(nxt?' bnx':'');g.appendChild(mcard(c.ms[k]));if(pairUp&&c.ms[k+1]!==undefined)g.appendChild(mcard(c.ms[k+1]));body.appendChild(g)}
+  col.appendChild(body);inner.appendChild(col)});
+ w.appendChild(bk);
+ if(G['Tercer puesto']){var tp=document.createElement('section'),th=document.createElement('h3');th.textContent='Tercer puesto';tp.appendChild(th);var l=document.createElement('div');l.className='mko-l';G['Tercer puesto'].forEach(function(m){l.appendChild(mcard(m))});tp.appendChild(l);w.appendChild(tp)}
+ p2.appendChild(w)})();
+if(CFG&&!CFG.manual&&CFG.phase&&CFG.phase!=='groups'){$('.sub2').textContent='Cuadro oficial de '+CFG.name+': los cruces jugados muestran su resultado real. Los que faltan son proyección: toca un equipo para avanzarlo.'}
+
+(function(){var pa=document.querySelector('a[href^="prediccion.html"]');if(!pa||pa.className==='ch-pl')return;pa.removeAttribute('style');pa.className='ch-pl';pa.textContent='🔮 Predice la llave y gana Bits →';var ps=document.createElement('style');ps.textContent='.ch-pl{display:table;margin:4px 0 16px;font:800 14px Archivo,sans-serif;color:#0d0d10!important;text-decoration:underline;text-decoration-color:#ff6a00;text-decoration-thickness:3px;text-underline-offset:4px}.ch-pl:hover{color:#ff6a00!important}';document.head.appendChild(ps)})();
+/* --- tabla estilo UCL también en el modo automático (o sin torneo) --- */
+(function(){if(CFG&&CFG.manual&&CFG.groups&&CFG.groups.length)return;var p1=$('#p1');if(!p1||!ORD.length)return;[].forEach.call(p1.children,function(x){x.hidden=true});
+ var LV={};ORD.forEach(function(t){if(t.live)LV[t.id]=1});var rows=ORD.map(function(t){return{pos:t.rk,team:t.n,team_id:t.id,pj:t.pj,g:t.g,p:t.p,dg:t.dg,pts:t.pts}});
+ var gm=CFG?MAGNA.S.matches.filter(function(m){return m.type==='tournament'&&m.cid===CFG.id&&m.group&&m.status!=='cancelled'}).sort(jsort):null;
+ ustStyle('760');var box=document.createElement('div');box.className='ust-w';box.appendChild(ustCard('Clasificación',rows.length+' equipos',rows,{d:D,p:K,dl:'Directo a '+KL},LV,gm));p1.appendChild(box)})();
+/* --- pestañas --- */
+$$('.tabs button').forEach(function(b){b.addEventListener('click',function(){var p=b.dataset.p;$$('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('#p1').hidden=p!=='1';$('#p2').hidden=p!=='2';$('#ctag').textContent=p==='1'?'Champions · Fase de liga':'Champions · Eliminatorias'})});
+$$('a[href="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();toast('Próximamente')})});
+
+})();
+</script>
+<script src="mov.js" defer></script>
+</body>
+</html>

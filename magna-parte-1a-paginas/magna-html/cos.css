@@ -1,0 +1,949 @@
+/* ===== Cosméticos de Magna Arena: color del nombre, placa, marco del avatar y título =====
+   Todo se mide en "em" para verse igual en una tabla pequeña y en el perfil grande. */
+a.mpn{color:inherit;text-decoration:none}a.mpn:hover .mpn-n{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.mpn{display:inline-flex;flex-direction:column;align-items:flex-start;max-width:100%;vertical-align:baseline;transition:transform .18s,filter .18s}
+.mpn .mpn-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+a.mpn:hover{filter:brightness(1.15)}
+@keyframes cosSlide{to{background-position:200% 0}}
+@keyframes cosShine{0%{background-position:150% 0}55%,100%{background-position:-50% 0}}
+
+/* ---------- TÍTULOS (debajo del nombre) ---------- */
+.mpn-t{display:inline-flex;align-items:center;gap:.3em;margin-top:.18em;padding:.12em .5em .1em;border-radius:.35em;font:800 .56em/1.2 "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;color:#ffd23f;-webkit-text-fill-color:currentColor;background:rgba(255,210,63,.12);border:1px solid rgba(255,210,63,.35)}
+.mpn-t:before{content:"";flex:none;display:inline-block;width:.75em;height:.75em;background:currentColor}
+.mpn-t.tr-comun{color:#cbd5e1;background:rgba(203,213,225,.08);border-color:rgba(203,213,225,.25)}.mpn-t.tr-comun:before{width:.55em;height:.55em;opacity:.75;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.mpn-t.tr-rara{color:#7dd3fc;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.45)}.mpn-t.tr-rara:before{clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+.mpn-t.tr-epica{color:#f0abfc;background:linear-gradient(90deg,rgba(192,38,211,.28),rgba(124,58,237,.28));border-color:rgba(232,121,249,.6);box-shadow:0 0 .6em rgba(217,70,239,.35)}.mpn-t.tr-epica:before{background:#fde047;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.mpn-t.tr-legendaria{position:relative;overflow:hidden;color:#1a1200;-webkit-text-fill-color:#1a1200;background:linear-gradient(100deg,#b8860b,#ffe27a 30%,#fff7d1 45%,#ffd23f 60%,#b8860b);background-size:250% 100%;border-color:#fff3b0;box-shadow:0 0 .8em rgba(255,196,0,.55);animation:cosShine 3.2s ease-in-out infinite}.mpn-t.tr-legendaria:before{width:.85em;height:.62em;background:#5c3d00;clip-path:polygon(0 100%,0 22%,24% 58%,50% 0,76% 58%,100% 22%,100% 100%)}
+
+/* ---------- COLORES DEL NOMBRE ---------- */
+/* Comunes: sólidos con carácter */
+.c-sangre .mpn-n{color:#ff2e4d;filter:drop-shadow(0 .06em 0 #6b0014) drop-shadow(0 0 .35em rgba(255,30,60,.45))}
+.c-menta .mpn-n{background:linear-gradient(180deg,#f0fff9 0%,#5effc8 45%,#00b386 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #00523d) drop-shadow(0 0 .3em rgba(94,255,200,.35))}
+/* Raras: metal y hielo con destello que cruza */
+.c-oro .mpn-n{background:linear-gradient(100deg,#a87300 0%,#ffd23f 20%,#fff8dc 30%,#ffd23f 40%,#a87300 60%,#ffe27a 80%,#a87300 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .06em 0 #4a3000) drop-shadow(0 0 .3em rgba(255,196,0,.45));animation:cosShine 3.5s ease-in-out infinite}
+.c-hielo .mpn-n{background:linear-gradient(100deg,#4fb3ff 0%,#dff6ff 25%,#ffffff 32%,#a8e6ff 45%,#3b9dff 70%,#e6f8ff 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #0b3c6b) drop-shadow(0 0 .4em rgba(150,220,255,.7));animation:cosShine 4.5s ease-in-out infinite}
+/* Épicas: tubos de neón reales, con parpadeo */
+.c-neon-rosa .mpn-n{color:#ffe1f7;filter:drop-shadow(0 0 .08em #ff2bd6) drop-shadow(0 0 .25em #ff2bd6) drop-shadow(0 0 .6em rgba(255,43,214,.7));animation:cosNeon 5s linear infinite}
+.c-neon-cian .mpn-n{color:#e0fdff;filter:drop-shadow(0 0 .08em #00e5ff) drop-shadow(0 0 .25em #00e5ff) drop-shadow(0 0 .6em rgba(0,229,255,.7));animation:cosNeon 6s linear infinite .8s}
+.c-neon-verde .mpn-n{color:#e3ffe9;filter:drop-shadow(0 0 .08em #2bff6a) drop-shadow(0 0 .25em #2bff6a) drop-shadow(0 0 .6em rgba(43,255,106,.7));animation:cosNeon 5.5s linear infinite 1.6s}
+@keyframes cosNeon{0%,17%,21%,24%,60%,63%,100%{opacity:1}19%,22.5%,61.5%{opacity:.45}}
+/* Legendarias: animadas, cada una con su propio movimiento */
+.c-fuego .mpn-n{background:linear-gradient(0deg,#ff2d00 0%,#ff7a18 25%,#ffd23f 45%,#fff6c2 55%,#ffd23f 65%,#ff7a18 80%,#ff2d00 100%);background-size:100% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 -.05em .12em rgba(255,122,24,.9)) drop-shadow(0 0 .45em rgba(255,45,0,.55));animation:cosRise 1.6s linear infinite}
+@keyframes cosRise{to{background-position:0 -200%}}
+.c-galaxia .mpn-n{background:radial-gradient(circle,#fff 0 .035em,transparent .06em) 0 0/1.1em .9em,linear-gradient(90deg,#c4b5fd,#f472b6,#60a5fa,#a78bfa,#f9a8d4,#c4b5fd);background-size:1.1em .9em,300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .3em rgba(167,139,250,.75));animation:cosGal 7s linear infinite}
+@keyframes cosGal{to{background-position:1.1em 1.8em,300% 0}}
+.c-arcoiris .mpn-n{background:linear-gradient(90deg,#ff3d3d,#ffb23d,#fff23d,#3dff7a,#3dcfff,#9b3dff,#ff3dd2,#ff3d3d);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:cosSlide 3s linear infinite,cosHue 3s linear infinite;filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em rgba(255,61,210,.6))}
+@keyframes cosHue{0%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #ff3dd2)}33%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #3dcfff)}66%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #fff23d)}100%{filter:drop-shadow(0 .05em 0 rgba(0,0,0,.5)) drop-shadow(0 0 .35em #ff3dd2)}}
+/* Exclusiva: estrella fugaz (destello blanco-dorado que cruza rápido) */
+.c-estrella .mpn-n{background:linear-gradient(100deg,#ffe27a 0%,#ffe27a 38%,#fff 46%,#7ad7ff 50%,#fff 54%,#ffe27a 62%,#ffe27a 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .2em rgba(255,226,122,.8)) drop-shadow(0 0 .5em rgba(122,215,255,.45));animation:cosShine 2.2s ease-in-out infinite}
+
+/* ---------- PLACAS: banners con escena ilustrada ----------
+   Fondo oscuro con la escena a la derecha que se funde hacia el nombre (a la izquierda).
+   ::before = partículas animadas propias de cada escena; ::after = brillo/destello. En la alineación no se muestran. */
+.mpn[class*="pl-"]{--b0:#0b0d16;position:relative;isolation:isolate;overflow:hidden;min-width:8.2em;padding:.24em 3.3em .24em .7em;border-radius:.32em;border:1px solid rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 .15em .45em rgba(0,0,0,.5);font-weight:900;background:linear-gradient(90deg,var(--b0) 0 30%,transparent 80%),var(--art) right center/auto 100% no-repeat,var(--bg,var(--b0))}
+.mpn[class*="pl-"]>*{position:relative;z-index:1}
+.mpn[class*="pl-"]:before,.mpn[class*="pl-"]:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.mpn[class*="pl-"]:before{z-index:0;-webkit-mask:linear-gradient(90deg,transparent 25%,#000 70%);mask:linear-gradient(90deg,transparent 25%,#000 70%)}
+.mpn[class*="pl-"]:after{z-index:2;background:linear-gradient(180deg,rgba(255,255,255,.1),transparent 50%)}
+a.mpn[class*="pl-"]:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.pl-magna.mpn:after,.pl-fuego.mpn:after,.pl-neon.mpn:after,.pl-oro.mpn:after,.pl-galaxia.mpn:after,.pl-sakura.mpn:after,.pl-campeon.mpn:after,.pl-dinastia.mpn:after{background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%) 150% 0/250% 100% no-repeat,linear-gradient(180deg,rgba(255,255,255,.1),transparent 50%);animation:plShine 5s ease-in-out infinite}
+@keyframes plShine{0%,55%{background-position:150% 0,0 0}100%{background-position:-60% 0,0 0}}
+@keyframes plTwk{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes plRise{to{background-position:0 -1.6em}}
+@keyframes plFall{to{background-position:-1.2em 1.8em,-.8em 1.4em}}
+
+/* comunes */
+.pl-noche:is(.mpn,.plh,.pbn){--b0:#080d24;--bg:linear-gradient(90deg,#080d24,#16204a);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cpath d=%22M0 40 L18 26 L30 33 L46 20 L62 31 L76 22 L92 32 L106 24 L120 30 L120 40Z%22 fill=%22%230b1433%22/%3E%3Cpath d=%22M40 40 L58 30 L72 36 L88 27 L104 35 L120 31 L120 40Z%22 fill=%22%23141f4a%22/%3E%3Ccircle cx=%2296%22 cy=%2212%22 r=%227%22 fill=%22%23fdf6c3%22/%3E%3Ccircle cx=%2299%22 cy=%2210%22 r=%226.2%22 fill=%22%2316204a%22/%3E%3Cg fill=%22%23fff%22%3E%3Ccircle cx=%2270%22 cy=%228%22 r=%22.8%22/%3E%3Ccircle cx=%2282%22 cy=%2218%22 r=%22.6%22/%3E%3Ccircle cx=%22110%22 cy=%226%22 r=%22.9%22/%3E%3Ccircle cx=%2258%22 cy=%2214%22 r=%22.6%22/%3E%3Ccircle cx=%22114%22 cy=%2219%22 r=%22.5%22/%3E%3C/g%3E%3C/svg%3E");border-color:#3b4a7a}
+.pl-noche.mpn:before{background:radial-gradient(circle,#fff 0 .035em,transparent calc(.035em + .025em)) 0 0/1.6em 1.1em;animation:plTwk 2.8s ease-in-out infinite}
+.pl-plata:is(.mpn,.plh,.pbn){--b0:#1a1f29;--bg:linear-gradient(180deg,#2b3240,#141821);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cdefs%3E%3ClinearGradient id=%22m%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8fafc%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%2394a3b8%22/%3E%3Cstop offset=%221%22 stop-color=%22%23334155%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill=%22url(%23m)%22 opacity=%22.9%22%3E%3Cpath d=%22M60 40 L80 0 L88 0 L68 40Z%22/%3E%3Cpath d=%22M76 40 L96 0 L108 0 L88 40Z%22/%3E%3Cpath d=%22M96 40 L116 0 L120 0 L120 6 L103 40Z%22/%3E%3C/g%3E%3Cg fill=%22%23fff%22 opacity=%22.7%22%3E%3Cpath d=%22M81 0 L83 0 L63 40 L61 40Z%22/%3E%3C/g%3E%3C/svg%3E");border-color:#94a3b8}
+.pl-selva:is(.mpn,.plh,.pbn){--b0:#04170c;--bg:linear-gradient(90deg,#04170c,#0f3d22);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg%3E%3Cpath d=%22M70 40 C80 26 96 16 120 10%22 stroke=%22%233f2a14%22 stroke-width=%222%22 fill=%22none%22/%3E%3Cellipse cx=%2286%22 cy=%2222%22 rx=%229%22 ry=%223.2%22 transform=%22rotate(-35 86 22)%22 fill=%22%2322c55e%22/%3E%3Cellipse cx=%2298%22 cy=%2214%22 rx=%2210%22 ry=%223.5%22 transform=%22rotate(-20 98 14)%22 fill=%22%2316a34a%22/%3E%3Cellipse cx=%2278%22 cy=%2231%22 rx=%228%22 ry=%223%22 transform=%22rotate(-50 78 31)%22 fill=%22%234ade80%22/%3E%3Cellipse cx=%22110%22 cy=%2222%22 rx=%229%22 ry=%223.2%22 transform=%22rotate(25 110 22)%22 fill=%22%2315803d%22/%3E%3Cellipse cx=%2294%22 cy=%2230%22 rx=%228%22 ry=%223%22 transform=%22rotate(20 94 30)%22 fill=%22%2322c55e%22/%3E%3Cellipse cx=%22112%22 cy=%228%22 rx=%227%22 ry=%222.6%22 transform=%22rotate(-10 112 8)%22 fill=%22%2386efac%22/%3E%3C/g%3E%3C/svg%3E");border-color:#166534}
+.pl-selva.mpn:before{background:radial-gradient(circle,#86efac 0 .04em,transparent calc(.04em + .025em)) 0 0/1.4em 1em;animation:plFall 6s linear infinite}
+/* rara */
+.pl-magna:is(.mpn,.plh,.pbn){--b0:#12062a;--bg:linear-gradient(90deg,#12062a,#3b0764);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg%3E%3Cpath d=%22M58 40 L74 0 L82 0 L66 40Z%22 fill=%22%237c3aed%22/%3E%3Cpath d=%22M72 40 L88 0 L100 0 L84 40Z%22 fill=%22%23a855f7%22/%3E%3Cpath d=%22M90 40 L106 0 L120 0 L120 4 L106 40Z%22 fill=%22%23ff5a36%22/%3E%3Cpath d=%22M108 40 L120 10 L120 40Z%22 fill=%22%23ff8a3d%22/%3E%3C/g%3E%3C/svg%3E");border-color:#7c3aed}
+/* épicas */
+.pl-fuego:is(.mpn,.plh,.pbn){--b0:#170603;--bg:radial-gradient(ellipse at 90% 120%,#7c2d12,transparent 70%),#170603;--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%221%22 x2=%220%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%23ff2d00%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23ff7a18%22/%3E%3Cstop offset=%221%22 stop-color=%22%23ffd23f%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill=%22url(%23f)%22%3E%3Cpath d=%22M78 40 C70 30 80 24 76 12 C86 20 90 28 86 40Z%22/%3E%3Cpath d=%22M92 40 C84 26 96 18 94 2 C106 14 110 28 104 40Z%22/%3E%3Cpath d=%22M106 40 C102 30 110 26 108 16 C118 24 120 32 116 40Z%22/%3E%3C/g%3E%3Cg fill=%22%23fff3b0%22 opacity=%22.85%22%3E%3Cpath d=%22M95 40 C92 32 98 28 97 20 C102 28 104 34 101 40Z%22/%3E%3C/g%3E%3C/svg%3E");border-color:#c2410c}
+.pl-fuego.mpn:before{background:radial-gradient(circle,#ffd23f 0 .04em,transparent calc(.04em + .025em)) 0 0/.9em .7em;animation:plRise 2.2s linear infinite}
+.pl-neon:is(.mpn,.plh,.pbn){--b0:#05060f;--bg:#05060f;--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg fill=%22none%22 stroke-width=%221.4%22%3E%3Cpath d=%22M60 40 V24 H70 V40 M72 40 V14 H82 V40 M84 40 V20 H92 V40 M94 40 V8 H104 V40 M106 40 V18 H116 V40%22 stroke=%22%2322d3ee%22/%3E%3Cpath d=%22M75 18 h4 M75 24 h4 M97 12 h4 M97 18 h4 M97 24 h4 M109 22 h4%22 stroke=%22%23ff2bd6%22/%3E%3C/g%3E%3Cpath d=%22M56 39 H120%22 stroke=%22%23ff2bd6%22 stroke-width=%221%22/%3E%3C/svg%3E");border-color:#22d3ee;animation:plNeon 2.6s ease-in-out infinite}
+@keyframes plNeon{0%,100%{box-shadow:0 0 .3em rgba(34,211,238,.6),0 .15em .45em rgba(0,0,0,.5)}50%{box-shadow:0 0 .55em rgba(255,43,214,.7),0 .15em .45em rgba(0,0,0,.5)}}
+.pl-neon.mpn:before{background:linear-gradient(90deg,rgba(34,211,238,.15),rgba(255,43,214,.15));animation:cosNeon 4s linear infinite}
+.pl-oro:is(.mpn,.plh,.pbn){--b0:#140d00;--bg:radial-gradient(ellipse at 85% 50%,#5c3d00,#140d00 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg fill=%22%23ffd23f%22 opacity=%22.35%22%3E%3Cpath d=%22M100 20 L60 0 L66 0Z%22/%3E%3Cpath d=%22M100 20 L76 0 L84 0Z%22/%3E%3Cpath d=%22M100 20 L96 0 L104 0Z%22/%3E%3Cpath d=%22M100 20 L116 0 L124 0Z%22/%3E%3Cpath d=%22M100 20 L60 40 L68 40Z%22/%3E%3Cpath d=%22M100 20 L84 40 L92 40Z%22/%3E%3Cpath d=%22M100 20 L108 40 L116 40Z%22/%3E%3C/g%3E%3Cg%3E%3Ccircle cx=%22100%22 cy=%2220%22 r=%229%22 fill=%22%23ffd23f%22 stroke=%22%237a5200%22 stroke-width=%221.2%22/%3E%3Ccircle cx=%22100%22 cy=%2220%22 r=%226%22 fill=%22none%22 stroke=%22%23fff3b0%22 stroke-width=%22.8%22/%3E%3Ccircle cx=%2284%22 cy=%2231%22 r=%225%22 fill=%22%23f5b800%22 stroke=%22%237a5200%22/%3E%3Ccircle cx=%22114%22 cy=%2231%22 r=%224.5%22 fill=%22%23f5b800%22 stroke=%22%237a5200%22/%3E%3C/g%3E%3C/svg%3E");border-color:#ffd23f;box-shadow:0 0 .5em rgba(255,196,0,.35),0 .15em .45em rgba(0,0,0,.5)}
+.pl-oro.mpn:before{background:radial-gradient(circle,#fff3b0 0 .035em,transparent calc(.035em + .025em)) 0 0/1.1em .8em;animation:plTwk 2s ease-in-out infinite}
+.pl-sakura:is(.mpn,.plh,.pbn){--b0:#12060a;--bg:radial-gradient(ellipse at 85% 30%,#4c0519,#12060a 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cpath d=%22M120 4 C104 8 96 16 86 18 C78 20 72 26 64 28 M96 16 C98 24 104 28 110 30 M86 18 C84 12 80 8 74 6%22 stroke=%22%237a3b2e%22 stroke-width=%222%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%22100.0%22 cy=%227.6%22 r=%222.0%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%22102.3%22 cy=%229.3%22 r=%222.0%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%22101.4%22 cy=%2211.9%22 r=%222.0%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2298.6%22 cy=%2211.9%22 r=%222.0%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2297.7%22 cy=%229.3%22 r=%222.0%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%22100%22 cy=%2210%22 r=%221.0%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%2290.0%22 cy=%2218.0%22 r=%221.7%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%2291.9%22 cy=%2219.4%22 r=%221.7%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%2291.2%22 cy=%2221.7%22 r=%221.7%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%2288.8%22 cy=%2221.7%22 r=%221.7%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%2288.1%22 cy=%2219.4%22 r=%221.7%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%2290%22 cy=%2220%22 r=%220.8%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%22110.0%22 cy=%2225.8%22 r=%221.8%22 fill=%22%23be123c%22/%3E%3Ccircle cx=%22112.1%22 cy=%2227.3%22 r=%221.8%22 fill=%22%23be123c%22/%3E%3Ccircle cx=%22111.3%22 cy=%2229.7%22 r=%221.8%22 fill=%22%23be123c%22/%3E%3Ccircle cx=%22108.7%22 cy=%2229.7%22 r=%221.8%22 fill=%22%23be123c%22/%3E%3Ccircle cx=%22107.9%22 cy=%2227.3%22 r=%221.8%22 fill=%22%23be123c%22/%3E%3Ccircle cx=%22110%22 cy=%2228%22 r=%220.9%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%2276.0%22 cy=%225.2%22 r=%221.5%22 fill=%22%23fb7185%22/%3E%3Ccircle cx=%2277.7%22 cy=%226.4%22 r=%221.5%22 fill=%22%23fb7185%22/%3E%3Ccircle cx=%2277.1%22 cy=%228.5%22 r=%221.5%22 fill=%22%23fb7185%22/%3E%3Ccircle cx=%2274.9%22 cy=%228.5%22 r=%221.5%22 fill=%22%23fb7185%22/%3E%3Ccircle cx=%2274.3%22 cy=%226.4%22 r=%221.5%22 fill=%22%23fb7185%22/%3E%3Ccircle cx=%2276%22 cy=%227%22 r=%220.8%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%2268.0%22 cy=%2225.2%22 r=%221.5%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2269.7%22 cy=%2226.4%22 r=%221.5%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2269.1%22 cy=%2228.5%22 r=%221.5%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2266.9%22 cy=%2228.5%22 r=%221.5%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2266.3%22 cy=%2226.4%22 r=%221.5%22 fill=%22%23e11d48%22/%3E%3Ccircle cx=%2268%22 cy=%2227%22 r=%220.8%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%22116.0%22 cy=%2212.3%22 r=%221.4%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%22117.6%22 cy=%2213.5%22 r=%221.4%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%22117.0%22 cy=%2215.4%22 r=%221.4%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%22115.0%22 cy=%2215.4%22 r=%221.4%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%22114.4%22 cy=%2213.5%22 r=%221.4%22 fill=%22%23f43f5e%22/%3E%3Ccircle cx=%22116%22 cy=%2214%22 r=%220.7%22 fill=%22%23fde68a%22/%3E%3Ccircle cx=%22104.0%22 cy=%2218.6%22 r=%221.2%22 fill=%22%23fda4af%22/%3E%3Ccircle cx=%22105.4%22 cy=%2219.6%22 r=%221.2%22 fill=%22%23fda4af%22/%3E%3Ccircle cx=%22104.8%22 cy=%2221.2%22 r=%221.2%22 fill=%22%23fda4af%22/%3E%3Ccircle cx=%22103.2%22 cy=%2221.2%22 r=%221.2%22 fill=%22%23fda4af%22/%3E%3Ccircle cx=%22102.6%22 cy=%2219.6%22 r=%221.2%22 fill=%22%23fda4af%22/%3E%3Ccircle cx=%22104%22 cy=%2220%22 r=%220.6%22 fill=%22%23fde68a%22/%3E%3C/svg%3E");border-color:#9f1239}
+.pl-sakura.mpn:before{background:radial-gradient(circle,#fb7185 0 .05em,transparent calc(.05em + .025em)) 0 0/1.5em 1.1em,radial-gradient(circle,#fda4af 0 .04em,transparent calc(.04em + .025em)) 0 0/2.1em 1.4em;animation:plFall 5s linear infinite}
+/* legendaria */
+.pl-galaxia:is(.mpn,.plh,.pbn){--b0:#090521;--bg:radial-gradient(ellipse at 80% 50%,#4c1d95,#090521 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg%3E%3Ccircle cx=%2298%22 cy=%2220%22 r=%2210%22 fill=%22%237c3aed%22/%3E%3Ccircle cx=%2295%22 cy=%2217%22 r=%224%22 fill=%22%23c4b5fd%22 opacity=%22.5%22/%3E%3Cellipse cx=%2298%22 cy=%2220%22 rx=%2217%22 ry=%224.5%22 fill=%22none%22 stroke=%22%23f0abfc%22 stroke-width=%221.4%22 transform=%22rotate(-18 98 20)%22/%3E%3Cg fill=%22%23fff%22%3E%3Ccircle cx=%2272%22 cy=%2210%22 r=%22.9%22/%3E%3Ccircle cx=%2280%22 cy=%2230%22 r=%22.7%22/%3E%3Ccircle cx=%22116%22 cy=%228%22 r=%22.8%22/%3E%3Ccircle cx=%2266%22 cy=%2224%22 r=%22.6%22/%3E%3Ccircle cx=%22112%22 cy=%2234%22 r=%22.9%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");border-color:#8b5cf6;box-shadow:0 0 .5em rgba(139,92,246,.45),0 .15em .45em rgba(0,0,0,.5)}
+.pl-galaxia.mpn:before{background:radial-gradient(circle,#fff 0 .035em,transparent calc(.035em + .025em)) 0 0/1em .75em;animation:plTwk 2.2s ease-in-out infinite}
+/* exclusivas */
+.pl-campeon:is(.mpn,.plh,.pbn){--b0:#1a0733;--bg:radial-gradient(ellipse at 85% 50%,#581c87,#1a0733 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg%3E%3Cpath d=%22M90 8 H110 V14 C110 22 104 26 100 26 C96 26 90 22 90 14Z%22 fill=%22%23ffd23f%22 stroke=%22%237a5200%22/%3E%3Cpath d=%22M90 11 C83 11 84 20 91 20 M110 11 C117 11 116 20 109 20%22 fill=%22none%22 stroke=%22%23ffd23f%22 stroke-width=%221.6%22/%3E%3Crect x=%2298%22 y=%2226%22 width=%224%22 height=%225%22 fill=%22%23d99a00%22/%3E%3Crect x=%2293%22 y=%2231%22 width=%2214%22 height=%224%22 rx=%221%22 fill=%22%237a5200%22/%3E%3C/g%3E%3Cg%3E%3Crect x=%2270%22 y=%228%22 width=%223%22 height=%221.6%22 fill=%22%2322d3ee%22 transform=%22rotate(30 71 9)%22/%3E%3Crect x=%2280%22 y=%2226%22 width=%223%22 height=%221.6%22 fill=%22%23ff5a36%22 transform=%22rotate(-20 81 27)%22/%3E%3Crect x=%22117%22 y=%2220%22 width=%223%22 height=%221.6%22 fill=%22%23a855f7%22/%3E%3Crect x=%2276%22 y=%2216%22 width=%222.4%22 height=%221.4%22 fill=%22%23ffd23f%22/%3E%3C/g%3E%3C/svg%3E");border-color:#ffd23f;box-shadow:0 0 .55em rgba(255,210,63,.4),0 .15em .45em rgba(0,0,0,.5)}
+.pl-campeon.mpn:before{background:radial-gradient(circle,#ffd23f 0 .04em,transparent calc(.04em + .025em)) 0 0/1.2em .9em;animation:plFall 4s linear infinite}
+.pl-dinastia:is(.mpn,.plh,.pbn){--b0:#0b0a07;--bg:radial-gradient(ellipse at 85% 50%,#5c3d00,#0b0a07 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg fill=%22%23ffd23f%22 opacity=%22.3%22%3E%3Cpath d=%22M100 22 L70 0 L78 0Z%22/%3E%3Cpath d=%22M100 22 L96 0 L104 0Z%22/%3E%3Cpath d=%22M100 22 L122 0 L120 8Z%22/%3E%3C/g%3E%3Cpath d=%22M86 30 L84 14 L93 21 L100 9 L107 21 L116 14 L114 30Z%22 fill=%22%23ffd23f%22 stroke=%22%237a5200%22 stroke-width=%221%22/%3E%3Crect x=%2285%22 y=%2230%22 width=%2230%22 height=%224%22 fill=%22%23d99a00%22/%3E%3Ccircle cx=%22100%22 cy=%2224%22 r=%222%22 fill=%22%23ef4444%22/%3E%3C/svg%3E");border-color:#fde68a;box-shadow:0 0 .6em rgba(253,230,138,.45),0 .15em .45em rgba(0,0,0,.5)}
+.pl-dinastia.mpn:before{background:radial-gradient(circle,#fff3b0 0 .035em,transparent calc(.035em + .025em)) 0 0/1.1em .8em;animation:plTwk 1.8s ease-in-out infinite}
+
+
+/* la placa también puede vestir una fila entera (palmarés, ranking, directorio): escena a la derecha que se funde hacia la izquierda */
+.plh[class*="pl-"]{position:relative;isolation:isolate;background:linear-gradient(90deg,var(--b0) 0 34%,color-mix(in srgb,var(--b0) 55%,transparent) 60%,transparent 90%),var(--art) right center/auto 100% no-repeat,var(--bg,var(--b0))!important}
+.plh[class*="pl-"]>*{position:relative;z-index:1}
+
+/* ---------- MARCOS DEL AVATAR: anillos de energía ----------
+   ::after = anillo principal; ::before = segunda capa (polvo, rayos) o el emblema.
+   El recorte del anillo y la deformación (plasma, llamas, partículas) los hacen filtros SVG que pone cos.js (#mgf-*). */
+:where([class*="fr-"]){position:relative}
+[class*="fr-"]{overflow:visible!important}
+[class*="fr-"]:after,[class*="fr-"]:before{content:"";position:absolute!important;inset:-16%!important;border-radius:50%!important;pointer-events:none;z-index:2!important;opacity:1!important;-webkit-mask:none!important;mask:none!important;will-change:transform}
+[class*="fr-"]:after{filter:url(#mgf-plasma);animation:frSpin 10s linear infinite!important}
+[class*="fr-"]:before{animation:frSpin 18s linear infinite reverse,frPulse 2.6s ease-in-out infinite!important}
+[class*="fr-"]:hover:after{animation-duration:2.4s!important}[class*="fr-"]:hover:before{animation-duration:5s!important}
+@keyframes frSpin{to{transform:rotate(360deg)}}
+@keyframes frGlow{0%,100%{box-shadow:0 0 .3em var(--fg)}50%{box-shadow:0 0 .75em var(--fg)}}
+@keyframes frPulse{0%,100%{opacity:.45}50%{opacity:.95}}
+
+/* — Raros — */
+.fr-oro{animation:frGlow 2.8s ease-in-out infinite!important;--fg:rgba(255,196,0,.55)}
+.fr-oro:after{background:conic-gradient(#8a6200,#ffd23f,#fffbe6 8%,#ffb300 16%,#8a6200 30%,#ffe27a 45%,#fff 50%,#ffc400 58%,#8a6200 75%,#ffd23f 90%,#8a6200)!important;filter:url(#mgf-plasma) drop-shadow(0 0 2px #ffc400)}
+.fr-oro:before{background:radial-gradient(circle,#fff6c2 0 .8px,transparent 1.3px) 0 0/7px 11px,radial-gradient(circle,#ffd23f 0 .7px,transparent 1.2px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust);opacity:.8!important}
+.fr-hielo{animation:frGlow 3s ease-in-out infinite!important;--fg:rgba(56,189,248,.55)}
+.fr-hielo:after{background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 0/4px 5px,radial-gradient(circle,#bae6fd 0 .8px,transparent 1.3px) 2px 3px/5px 4px,conic-gradient(from 10deg,transparent 0 4%,rgba(224,247,255,.7) 7%,rgba(56,189,248,.75) 12%,rgba(29,78,216,.6) 15%,transparent 18% 23%,rgba(255,255,255,.75) 27%,rgba(103,232,249,.7) 32%,transparent 37% 44%,rgba(224,247,255,.7) 48%,rgba(14,165,233,.7) 55%,transparent 60% 64%,rgba(255,255,255,.75) 68%,rgba(56,189,248,.7) 74%,rgba(30,64,175,.6) 78%,transparent 82% 86%,rgba(186,230,253,.7) 90%,rgba(14,165,233,.7) 96%,transparent)!important;filter:url(#mgf-wisp) drop-shadow(0 0 3px #38bdf8)}
+.fr-hielo:before{background:radial-gradient(circle,#ffffff 0 .8px,transparent 1.3px) 0 0/7px 11px,radial-gradient(circle,#7dd3fc 0 .7px,transparent 1.2px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-toxico{animation:frTox 2s ease-in-out infinite!important}
+@keyframes frTox{0%,100%{box-shadow:0 0 .3em rgba(163,255,18,.35)}50%{box-shadow:0 0 .7em rgba(163,255,18,.7)}}
+.fr-toxico:after{background:radial-gradient(circle,#ecfccb 0 .9px,transparent 1.4px) 0 0/4px 5px,radial-gradient(circle,#a3ff12 0 .8px,transparent 1.3px) 2px 3px/5px 4px,conic-gradient(transparent 0 5%,rgba(217,255,122,.7) 9%,rgba(163,255,18,.75) 15%,rgba(63,98,18,.6) 20%,transparent 24% 30%,rgba(236,252,203,.7) 35%,rgba(132,204,22,.7) 42%,transparent 48% 54%,rgba(163,255,18,.75) 60%,rgba(54,83,20,.6) 67%,transparent 72% 78%,rgba(217,255,122,.7) 84%,rgba(101,163,13,.7) 92%,transparent)!important;filter:url(#mgf-wisp) drop-shadow(0 0 3px #a3ff12)}
+.fr-toxico:before{background:radial-gradient(circle,#ecfccb 0 .8px,transparent 1.3px) 0 0/7px 11px,radial-gradient(circle,#a3ff12 0 .7px,transparent 1.2px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust);opacity:.9!important}
+
+/* — Épicos — */
+.fr-neon{animation:frGlow 2s ease-in-out infinite!important;--fg:rgba(255,43,214,.6)}
+.fr-neon:after{background:conic-gradient(#ff4fd8,#fff 4%,#ff2bd6 10%,#c026d3 28%,#ff7ae6 42%,#fff 48%,#ff2bd6 56%,#a21caf 78%,#ffd6f5 92%,#ff4fd8)!important;filter:url(#mgf-plasma) drop-shadow(0 0 3px #ff2bd6);animation-duration:6s!important}
+.fr-neon:before{background:radial-gradient(circle,#93c5fd 0 .8px,transparent 1.3px) 0 0/7px 11px,radial-gradient(circle,#c4b5fd 0 .7px,transparent 1.2px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-elite{animation:frGlow 2.6s ease-in-out infinite!important;--fg:rgba(139,92,246,.6)}
+.fr-elite:after{background:conic-gradient(#8b5cf6,#c4b5fd 10%,#6d28d9 25%,rgba(139,92,246,.15) 32% 40%,#a78bfa 50%,#fff 54%,#7c3aed 62%,rgba(139,92,246,.15) 70% 78%,#8b5cf6 90%)!important;filter:url(#mgf-plasma) drop-shadow(0 0 3px #8b5cf6)}
+.fr-elite:before{background:conic-gradient(transparent 0 15%,#ff5a36 22%,#ffd0c2 26%,#ff5a36 30%,transparent 38% 62%,#ff8a3d 70%,#fff 73%,#ff5a36 77%,transparent 85%)!important;filter:url(#mgf-plasma) drop-shadow(0 0 3px #ff5a36)}
+
+/* — Legendarios — */
+.fr-fuego{animation:frFire 1.6s ease-in-out infinite!important}
+@keyframes frFire{0%,100%{box-shadow:0 0 .4em rgba(255,45,0,.6)}50%{box-shadow:0 0 .8em rgba(255,122,24,.8)}}
+.fr-fuego:after{background:conic-gradient(#ff2d00,#ffb347 6%,#fff1c2 9%,#ff7a18 14%,#c2410c 24%,#ff5a00 34%,#ffd23f 40%,#fff 42%,#ff7a18 48%,#b91c1c 60%,#ff6a00 70%,#ffe08a 78%,#ff2d00 88%,#ff9a3c 95%,#ff2d00)!important;filter:url(#mgf-fire) drop-shadow(0 0 3px #ff7a18);animation-duration:5s!important}
+.fr-fuego:before{inset:-30%!important;-webkit-mask:radial-gradient(closest-side,transparent 58%,#000 64%,transparent 100%)!important;mask:radial-gradient(closest-side,transparent 58%,#000 64%,transparent 100%)!important;background:repeating-conic-gradient(rgba(255,220,160,.95) 0 1.1deg,transparent 1.1deg 17deg),repeating-conic-gradient(from 7deg,rgba(255,120,40,.75) 0 .7deg,transparent .7deg 23deg)!important;animation:frSpin 24s linear infinite reverse,frPulse 1.8s ease-in-out infinite!important}
+.fr-arcoiris{animation:frRbG 3s linear infinite!important}
+@keyframes frRbG{0%,100%{box-shadow:0 0 .55em rgba(255,61,210,.7)}33%{box-shadow:0 0 .55em rgba(61,207,255,.7)}66%{box-shadow:0 0 .55em rgba(255,242,61,.7)}}
+.fr-arcoiris:after{background:conic-gradient(#ff3d3d,#ffb23d,#fff23d,#3dff7a,#3dcfff,#9b3dff,#ff3dd2,#ff3d3d)!important;filter:url(#mgf-plasma) drop-shadow(0 0 3px rgba(255,255,255,.6));animation-duration:4s!important}
+.fr-arcoiris:before{background:radial-gradient(circle,#fff 0 .8px,transparent 1.3px) 0 0/7px 11px,radial-gradient(circle,#f0abfc 0 .7px,transparent 1.2px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-corona{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(255,196,0,.6)}
+.fr-corona:after{background:conic-gradient(#8a6200,#ffd23f,#fffbe6 8%,#ffb300 16%,#8a6200 30%,#ffe27a 45%,#fff 50%,#ffc400 58%,#8a6200 75%,#ffd23f 90%,#8a6200)!important;filter:url(#mgf-fire) drop-shadow(0 0 4px #ffc400);animation-duration:8s!important}
+
+/* — Exclusivos — */
+.fr-balon{animation:frBalon 2.2s ease-in-out infinite!important}
+@keyframes frBalon{0%,100%{box-shadow:0 0 .4em rgba(255,196,0,.5)}50%{box-shadow:0 0 .9em rgba(255,196,0,.85)}}
+.fr-balon:after{background:conic-gradient(#ffd23f,#7a5200 15%,#fff3b0 30%,#c08400 50%,#fffbe6 65%,#ffb300 80%,#ffd23f)!important;filter:url(#mgf-fire) drop-shadow(0 0 4px #ffd23f)}
+.fr-leyenda{animation:frGlow 2.6s ease-in-out infinite!important;--fg:rgba(14,165,233,.6)}
+.fr-leyenda:after{background:conic-gradient(rgba(14,165,233,.15) 0 4%,#e0f2fe 8%,#0ea5e9 14%,#ffd23f 22%,rgba(14,165,233,.12) 27% 33%,#fff 38%,#38bdf8 45%,#facc15 52%,rgba(14,165,233,.12) 58% 64%,#7dd3fc 70%,#0284c7 78%,#ffe27a 86%,rgba(14,165,233,.15) 92%)!important;filter:url(#mgf-wisp) drop-shadow(0 0 3px #0ea5e9)}
+.fr-fundador{animation:frGlow 2.6s ease-in-out infinite!important;--fg:rgba(255,90,54,.6)}
+.fr-fundador:after{background:conic-gradient(#ff5a36,#ffd0c2 8%,#5b21b6 22%,#a78bfa 35%,#ff5a36 50%,#fff 54%,#7c3aed 70%,#ff8a3d 85%,#ff5a36)!important;filter:url(#mgf-fire) drop-shadow(0 0 4px #ff5a36)}
+
+
+/* emblemas (usan ::before en lugar de la segunda capa) */
+.fr-corona:before,.fr-balon:before,.fr-leyenda:before,.fr-fundador:before,.fr-jackpot:before{z-index:4!important;inset:auto!important;border-radius:0!important;-webkit-mask:none!important;mask:none!important;background:none!important;will-change:auto;color:initial;-webkit-text-fill-color:initial;line-height:1}
+.fr-corona:before{top:-26%!important;left:50%!important;width:calc(var(--s,40px)*.52);height:calc(var(--s,40px)*.34);clip-path:polygon(0 100%,0 28%,18% 60%,33% 8%,50% 48%,67% 8%,82% 60%,100% 28%,100% 100%);background:radial-gradient(circle at 50% 76%,#ef4444 0 8%,#7f1d1d 9% 11%,transparent 12%),radial-gradient(circle at 24% 80%,#22d3ee 0 6%,transparent 7%),radial-gradient(circle at 76% 80%,#22c55e 0 6%,transparent 7%),linear-gradient(180deg,#fff8d6,#ffd23f 38%,#d99a00 70%,#8a6200)!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55)) drop-shadow(0 0 5px rgba(255,210,63,.8));animation:frCrown 2.4s ease-in-out infinite!important}
+@keyframes frCrown{0%,100%{transform:translateX(-50%) rotate(-8deg)}50%{transform:translateX(-50%) translateY(-8%) rotate(6deg)}}
+.fr-balon:before{top:50%!important;left:50%!important;width:28%;height:28%;margin:-14% 0 0 -14%;border-radius:50%!important;background:radial-gradient(circle at 32% 28%,#fff8d6,#ffd23f 30%,#c08400 75%)!important;box-shadow:0 0 0 2px #1a1200,0 0 10px #ffd23f;animation:frOrbit 3s linear infinite!important}
+@keyframes frOrbit{from{transform:rotate(0) translateX(calc(var(--s,40px)*.66)) rotate(0)}to{transform:rotate(360deg) translateX(calc(var(--s,40px)*.66)) rotate(-360deg)}}
+.fr-leyenda:before{top:50%!important;left:50%!important;width:calc(var(--s,40px)*.22);height:calc(var(--s,40px)*.22);margin:calc(var(--s,40px)*-.11) 0 0 calc(var(--s,40px)*-.11);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);background:radial-gradient(circle,#fff 0 25%,#ffd23f 50%,#f59e0b)!important;filter:drop-shadow(0 0 4px #0ea5e9);animation:frOrbit 2.4s linear infinite reverse!important}
+.fr-fundador:before{top:-22%!important;left:50%!important;width:calc(var(--s,40px)*.36);height:calc(var(--s,40px)*.36);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:linear-gradient(180deg,#fff3b0,#ffd23f 45%,#d97706)!important;filter:drop-shadow(0 0 4px #ff5a36) drop-shadow(0 2px 2px rgba(0,0,0,.5));transform:translateX(-50%);animation:frTwk 2.4s ease-in-out infinite!important}
+@keyframes frTwk{0%,100%{opacity:1;scale:1}50%{opacity:.6;scale:.8}}
+
+/* Jackpot Ludópata (exclusivo): marquesina de casino con bombillos que persiguen,
+   destellos de premio mayor y una mini tragamonedas que gira y cae en 7 */
+.fr-jackpot{animation:frJack 2.4s steps(1) infinite!important}
+@keyframes frJack{0%,100%{box-shadow:0 0 0 2px #ffd23f,0 0 .5em rgba(255,210,63,.6)}25%{box-shadow:0 0 0 2px #ff2d55,0 0 .6em rgba(255,45,85,.7)}50%{box-shadow:0 0 0 2px #ffd23f,0 0 .5em rgba(255,210,63,.6)}75%{box-shadow:0 0 0 2px #22c55e,0 0 .6em rgba(34,197,94,.65)}}
+.fr-jackpot:after{background:repeating-conic-gradient(#fffbe6 0 3.5deg,#ffd23f 3.5deg 6deg,#7f1d1d 6deg 10deg,#b91c1c 10deg 14deg,#7f1d1d 14deg 20deg),radial-gradient(closest-side,#ffd23f 75%,#b91c1c 82%,#ffd23f 90%)!important;filter:url(#mgf-clean) drop-shadow(0 0 2px #ffd23f) drop-shadow(0 0 4px rgba(255,45,85,.6));animation:frSpin 3.6s steps(36) infinite!important}
+.fr-jackpot:hover:after{animation-duration:1.2s!important}
+.fr-jackpot:before{right:-16%!important;bottom:-14%!important;width:calc(var(--s,40px)*.34);height:calc(var(--s,40px)*.48);border-radius:10%!important;background:url(img/carta-pica.svg) center/contain no-repeat!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6)) drop-shadow(0 0 5px rgba(255,210,63,.6));transform-origin:50% 60%;animation:frCard 4.2s cubic-bezier(.4,0,.2,1) infinite!important}
+@keyframes frCard{0%,100%{transform:rotate(12deg) translateY(0)}18%{transform:rotate(6deg) translateY(-10%)}36%{transform:rotate(12deg) translateY(0)}50%{transform:rotate(12deg) rotateY(90deg) scale(1.2)}60%{transform:rotate(-6deg) rotateY(180deg) scale(1.25);filter:drop-shadow(0 2px 3px rgba(0,0,0,.6)) drop-shadow(0 0 10px #ffd23f)}72%{transform:rotate(12deg) rotateY(360deg) scale(1)}}
+
+body:not(.adm-body) .tav[data-pid]{cursor:pointer}
+/* fuera de pantalla: animaciones en pausa (cos.js) */
+/* fuera de pantalla o fuera del presupuesto: sin animación (no solo en pausa), así el navegador suelta sus capas gráficas */
+.cos-off,.cos-off *,.cos-off:before,.cos-off:after,.cos-off *:before,.cos-off *:after{animation-name:none!important}
+@media(prefers-reduced-motion:reduce){.mpn-t,.mpn-n,.mpn[class*="pl-"],.mpn[class*="pl-"]:before,.mpn[class*="pl-"]:after,[class*="fr-"],[class*="fr-"]:before,[class*="fr-"]:after{animation:none!important}}
+
+/* ===================== MÍTICOS: lo más caro de la tienda ===================== */
+@keyframes myShine{0%,40%{background-position:150% 0,0 0}100%{background-position:-60% 0,0 0}}
+@keyframes myAur{to{background-position:0 100%}}
+@keyframes myLava{0%,100%{background-position:0 0,0 0}50%{background-position:.4em -.3em,0 100%}}
+@keyframes myHolo{to{background-position:300% 0}}
+.mpn-t.tr-mitica{position:relative;overflow:hidden;color:#160a2b;-webkit-text-fill-color:#160a2b;background:linear-gradient(110deg,#ffd6f6,#c9f2ff 20%,#fff7c2 35%,#d8c4ff 50%,#b8fff0 65%,#ffd6f6 80%,#c9f2ff);background-size:300% 100%;border:1px solid #fff;box-shadow:0 0 .5em rgba(255,255,255,.55),0 0 1.1em rgba(186,140,255,.55);animation:myHolo 5s linear infinite}
+.mpn-t.tr-mitica:before{width:.8em;height:.8em;background:#160a2b;clip-path:polygon(50% 0,100% 35%,82% 100%,18% 100%,0 35%)}
+.c-holo .mpn-n{background:linear-gradient(100deg,#ff9ff3,#a5f3fc 16%,#fef08a 32%,#c4b5fd 48%,#86efac 64%,#f9a8d4 80%,#a5f3fc);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 rgba(40,20,80,.85)) drop-shadow(0 0 .35em rgba(200,180,255,.8));animation:myHolo 4s linear infinite}
+.c-lava .mpn-n{background:radial-gradient(circle,#fff3b0 0 .05em,transparent .1em) 0 0/.9em .8em,linear-gradient(0deg,#c2410c 0%,#ff6a00 20%,#ffb020 40%,#fff1a8 52%,#ffb020 64%,#ff6a00 80%,#c2410c 100%);background-size:.9em .8em,100% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #2a0500) drop-shadow(0 0 .3em #ff4500) drop-shadow(0 0 .7em rgba(255,69,0,.55));animation:myLava 2.6s ease-in-out infinite}
+.c-aurora .mpn-n{background:linear-gradient(170deg,#34d399,#22d3ee 25%,#a78bfa 50%,#f472b6 70%,#34d399);background-size:100% 300%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .05em 0 #022c22) drop-shadow(0 0 .3em rgba(52,211,153,.8)) drop-shadow(0 0 .7em rgba(167,139,250,.55));animation:myAur 5s ease-in-out infinite alternate}
+.c-diamante .mpn-n{background:linear-gradient(100deg,transparent 40%,#fff 50%,transparent 60%) 150% 0/250% 100% no-repeat,repeating-linear-gradient(60deg,#e0f2fe 0 .18em,#7dd3fc .18em .3em,#fff .3em .42em,#bae6fd .42em .6em);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .06em 0 #0c4a6e) drop-shadow(0 0 .4em rgba(186,230,253,.9));animation:myShine 2.6s ease-in-out infinite}
+.c-oro24 .mpn-n{background:linear-gradient(100deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%) 150% 0/250% 100% no-repeat,linear-gradient(180deg,#fff7d1 0%,#ffd23f 30%,#b8860b 52%,#ffe27a 70%,#8a6200 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .07em 0 #3d2800) drop-shadow(0 0 .5em rgba(255,196,0,.7));animation:myShine 2.2s ease-in-out infinite}
+.c-vacio .mpn-n{color:#0a0014;-webkit-text-stroke:.035em #d8b4fe;filter:drop-shadow(0 0 .1em #c084fc) drop-shadow(0 0 .35em #7c3aed) drop-shadow(0 0 .9em rgba(124,58,237,.85))}
+.pl-holo:is(.mpn,.plh,.pbn){--b0:#140c26;--bg:linear-gradient(110deg,#2a1a4a,#173a5a 40%,#3a1a4a 70%,#16264a);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cdefs%3E%3ClinearGradient id=%22h%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23ff9ff3%22/%3E%3Cstop offset=%22.35%22 stop-color=%22%23a5f3fc%22/%3E%3Cstop offset=%22.65%22 stop-color=%22%23fef08a%22/%3E%3Cstop offset=%221%22 stop-color=%22%23c4b5fd%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill=%22url(%23h)%22 opacity=%22.85%22%3E%3Cpath d=%22M96 4 L108 20 L96 36 L84 20Z%22/%3E%3Cpath d=%22M76 10 L82 20 L76 30 L70 20Z%22 opacity=%22.6%22/%3E%3Cpath d=%22M114 12 L118 20 L114 28 L110 20Z%22 opacity=%22.5%22/%3E%3C/g%3E%3Cpath d=%22M96 4 L96 36 M84 20 H108%22 stroke=%22%23fff%22 stroke-width=%22.6%22 opacity=%22.7%22/%3E%3C/svg%3E")}
+.pl-diamante:is(.mpn,.plh,.pbn){--b0:#03121f;--bg:radial-gradient(ellipse at 85% 50%,#0c4a6e,#03121f 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg stroke=%22%23e0f2fe%22 stroke-width=%22.7%22 fill=%22%237dd3fc%22 fill-opacity=%22.35%22%3E%3Cpath d=%22M82 12 L90 4 H106 L114 12 L98 36Z%22/%3E%3Cpath d=%22M82 12 H114 M90 4 L94 12 L98 36 L102 12 L106 4%22 fill=%22none%22/%3E%3C/g%3E%3Ccircle cx=%22110%22 cy=%226%22 r=%221.4%22 fill=%22%23fff%22/%3E%3Ccircle cx=%2278%22 cy=%2230%22 r=%221%22 fill=%22%23fff%22/%3E%3C/svg%3E")}
+.pl-dragon:is(.mpn,.plh,.pbn){--b0:#120202;--bg:radial-gradient(ellipse at 85% 40%,#7f1d1d,#120202 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg fill=%22none%22 stroke=%22%237f1d1d%22 stroke-width=%221.2%22 opacity=%22.9%22%3E%3Cpath d=%22M64 40 Q70 32 76 40 Q82 32 88 40 Q94 32 100 40 Q106 32 112 40 Q118 32 124 40%22/%3E%3Cpath d=%22M70 32 Q76 24 82 32 Q88 24 94 32 Q100 24 106 32 Q112 24 118 32%22/%3E%3C/g%3E%3Cellipse cx=%2298%22 cy=%2214%22 rx=%2214%22 ry=%227%22 fill=%22%23fbbf24%22/%3E%3Cellipse cx=%2298%22 cy=%2214%22 rx=%222.2%22 ry=%226.4%22 fill=%22%231c0500%22/%3E%3Cellipse cx=%2294%22 cy=%2211%22 rx=%223%22 ry=%221.4%22 fill=%22%23fff%22 opacity=%22.7%22/%3E%3C/svg%3E")}
+.pl-aurora:is(.mpn,.plh,.pbn){--b0:#020617;--bg:linear-gradient(180deg,#020617,#0b1b3a);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cpath d=%22M50 26 C70 6 86 30 104 12 C112 4 118 8 124 4 V22 C112 26 106 30 96 26 C82 20 70 36 50 30Z%22 fill=%22%2334d399%22 opacity=%22.55%22/%3E%3Cpath d=%22M60 32 C78 18 92 36 110 22 C116 18 120 20 124 18 V30 C110 34 96 38 84 34 C74 30 66 38 60 36Z%22 fill=%22%23a78bfa%22 opacity=%22.5%22/%3E%3Cg fill=%22%23fff%22%3E%3Ccircle cx=%2280%22 cy=%226%22 r=%22.8%22/%3E%3Ccircle cx=%22112%22 cy=%2230%22 r=%22.7%22/%3E%3Ccircle cx=%2296%22 cy=%224%22 r=%22.6%22/%3E%3C/g%3E%3C/svg%3E")}
+.pl-trono:is(.mpn,.plh,.pbn){--b0:#14031f;--bg:radial-gradient(ellipse at 85% 50%,#581c87,#14031f 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Cg fill=%22%23ffd23f%22%3E%3Cpath d=%22M84 30 L84 14 L92 22 L100 8 L108 22 L116 14 L116 30Z%22/%3E%3Crect x=%2284%22 y=%2231%22 width=%2232%22 height=%224%22 rx=%221%22/%3E%3C/g%3E%3Cg fill=%22%23e11d48%22%3E%3Ccircle cx=%22100%22 cy=%2224%22 r=%222.2%22/%3E%3C/g%3E%3Cg fill=%22%2360a5fa%22%3E%3Ccircle cx=%2291%22 cy=%2227%22 r=%221.4%22/%3E%3Ccircle cx=%22109%22 cy=%2227%22 r=%221.4%22/%3E%3C/g%3E%3C/svg%3E")}
+.pl-cosmos:is(.mpn,.plh,.pbn){--b0:#030014;--bg:radial-gradient(ellipse at 85% 50%,#1e1b4b,#030014 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Ccircle cx=%22100%22 cy=%2220%22 r=%2210%22 fill=%22%23f97316%22/%3E%3Ccircle cx=%2296%22 cy=%2216%22 r=%224%22 fill=%22%23fdba74%22 opacity=%22.6%22/%3E%3Cellipse cx=%22100%22 cy=%2221%22 rx=%2220%22 ry=%224.5%22 fill=%22none%22 stroke=%22%23fde68a%22 stroke-width=%221.5%22 transform=%22rotate(-14 100 21)%22/%3E%3Cg fill=%22%23fff%22%3E%3Ccircle cx=%2276%22 cy=%228%22 r=%22.8%22/%3E%3Ccircle cx=%22118%22 cy=%2234%22 r=%22.8%22/%3E%3Ccircle cx=%2282%22 cy=%2232%22 r=%22.6%22/%3E%3C/g%3E%3C/svg%3E")}
+.pl-holo.mpn,.pl-diamante.mpn,.pl-dragon.mpn,.pl-aurora.mpn,.pl-trono.mpn,.pl-cosmos.mpn{border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 .7em rgba(200,160,255,.45),0 .15em .45em rgba(0,0,0,.5)}
+.pl-holo.mpn:after,.pl-diamante.mpn:after,.pl-dragon.mpn:after,.pl-aurora.mpn:after,.pl-trono.mpn:after,.pl-cosmos.mpn:after{background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.4) 50%,transparent 60%) 150% 0/250% 100% no-repeat,linear-gradient(180deg,rgba(255,255,255,.12),transparent 50%);animation:plShine 4s ease-in-out infinite}
+.pl-holo.mpn:before{background:linear-gradient(110deg,rgba(255,159,243,.4),rgba(165,243,252,.4),rgba(254,240,138,.4),rgba(196,181,253,.4),rgba(255,159,243,.4));background-size:300% 100%;animation:myHolo 5s linear infinite}
+.pl-diamante.mpn:before,.pl-cosmos.mpn:before,.pl-aurora.mpn:before{background:radial-gradient(circle,#fff 0 .035em,transparent .06em) 0 0/1em .75em;animation:plTwk 2.4s ease-in-out infinite}
+.pl-dragon.mpn:before{background:radial-gradient(circle,#ffb347 0 .04em,transparent .07em) 0 0/.9em 1.2em;animation:plRise 2.2s linear infinite}
+.pl-trono.mpn:before{background:radial-gradient(circle,#ffd23f 0 .035em,transparent .06em) 0 0/1.1em .8em;animation:plTwk 3s ease-in-out infinite}
+.fr-holo{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(216,180,254,.65)}
+.fr-holo:after{background:conic-gradient(#ff9ff3,#a5f3fc,#fef08a,#c4b5fd,#86efac,#f9a8d4,#a5f3fc,#ff9ff3)!important;filter:url(#mgf-plasma) drop-shadow(0 0 3px #fff);animation-duration:4s!important}
+.fr-holo:before{background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#f0abfc 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-diamante{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(186,230,253,.7)}
+.fr-diamante:after{background:conic-gradient(#fff,#bae6fd 6%,#0ea5e9 10%,#fff 12%,#e0f2fe 25%,#38bdf8 30%,#fff 33%,#bae6fd 50%,#0284c7 56%,#fff 60%,#e0f2fe 75%,#7dd3fc 82%,#fff 88%,#bae6fd)!important;filter:url(#mgf-clean) drop-shadow(0 0 4px #bae6fd);animation-duration:7s!important}
+.fr-diamante:before{background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#bae6fd 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-dragon{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(239,68,68,.7)}
+.fr-dragon:after{background:conic-gradient(#450a0a,#dc2626 8%,#fbbf24 12%,#7f1d1d 20%,#ef4444 32%,#fde047 36%,#991b1b 46%,#450a0a 58%,#f97316 68%,#fff7ed 71%,#b91c1c 80%,#450a0a)!important;filter:url(#mgf-fire) drop-shadow(0 0 4px #ef4444);animation-duration:3.5s!important}
+.fr-dragon:before{background:radial-gradient(circle,#fbbf24 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#ef4444 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-aurora{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(52,211,153,.65)}
+.fr-aurora:after{background:conic-gradient(#34d399,#22d3ee 15%,#a78bfa 35%,#f472b6 50%,#34d399 65%,#22d3ee 80%,#a78bfa 92%,#34d399)!important;filter:url(#mgf-wisp) drop-shadow(0 0 4px #34d399);animation-duration:6s!important}
+.fr-aurora:before{background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#a78bfa 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-vacio{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(168,85,247,.8)}
+.fr-vacio:after{background:conic-gradient(#000,#3b0764 10%,#a855f7 18%,#000 30%,#1e1b4b 45%,#c084fc 52%,#000 62%,#4c1d95 78%,#e879f9 84%,#000)!important;filter:url(#mgf-plasma) drop-shadow(0 0 5px #a855f7);animation-duration:5s!important}
+.fr-vacio:before{background:radial-gradient(circle,#e879f9 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#7c3aed 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+.fr-rayo{animation:frGlow 2.4s ease-in-out infinite!important;--fg:rgba(56,189,248,.8)}
+.fr-rayo:after{background:conic-gradient(#0c4a6e,#38bdf8 5%,#fff 7%,#0284c7 10%,#0c4a6e 22%,#7dd3fc 30%,#fff 31%,#0c4a6e 40%,#38bdf8 55%,#fff 57%,#0369a1 62%,#0c4a6e 75%,#bae6fd 85%,#fff 86%,#0c4a6e)!important;filter:url(#mgf-fire) drop-shadow(0 0 5px #38bdf8);animation-duration:2.2s!important}
+.fr-rayo:before{background:radial-gradient(circle,#fff 0 .9px,transparent 1.4px) 0 0/7px 11px,radial-gradient(circle,#38bdf8 0 .8px,transparent 1.3px) 3px 5px/11px 7px,radial-gradient(circle,#fff 0 .6px,transparent 1.1px) 5px 2px/13px 13px!important;filter:url(#mgf-dust)}
+@media(prefers-reduced-motion:reduce){.c-holo .mpn-n,.c-lava .mpn-n,.c-aurora .mpn-n,.c-diamante .mpn-n,.c-oro24 .mpn-n,.mpn-t.tr-mitica,.pl-holo.mpn:before{animation:none}}
+/* ===================== BANNER DE PLACA (portada del perfil / vitrina) ===================== */
+.pbn{position:relative;isolation:isolate;overflow:hidden;background:var(--bg,var(--b0,#0b0d16))!important}
+.pbx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.plh>.pbx{position:absolute!important;z-index:0!important}
+.pbx>i{position:absolute;display:block}
+.pba{inset:0;background:var(--art) right 3% center/auto 88% no-repeat}
+.pbx:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,color-mix(in srgb,var(--b0,#0b0d16) 85%,transparent) 0,color-mix(in srgb,var(--b0,#0b0d16) 35%,transparent) 40%,transparent 65%)}
+/* capas comunes de las míticas */
+.pbn-my{--fx1:rgba(200,160,255,.7);--fx2:#fff;--fx3:rgba(255,255,255,.45)}
+.pbn-my .pba{animation:pbFloat 6s ease-in-out infinite;transform-origin:85% 50%}
+.pbr{width:240%;aspect-ratio:1;left:80%;top:50%;translate:-50% -50%;background:repeating-conic-gradient(from 0deg,var(--fx3) 0 5deg,transparent 5deg 16deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 42%);mask:radial-gradient(circle,#000 0,transparent 42%);opacity:.55;mix-blend-mode:screen;animation:pbSpin 26s linear infinite}
+.pbg{width:70%;aspect-ratio:1;right:-12%;top:50%;translate:0 -50%;border-radius:50%;background:radial-gradient(circle,var(--fx1),transparent 65%);mix-blend-mode:screen;animation:pbPulse 2.8s ease-in-out infinite}
+.pbw{top:-10%;bottom:-10%;left:-40%;width:28%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);mix-blend-mode:overlay;animation:pbSweep 4.6s cubic-bezier(.6,0,.3,1) infinite}
+.pbp{left:var(--x);top:var(--y);width:calc(9px*var(--z));height:calc(9px*var(--z));background:var(--fx2);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 4px var(--fx2));animation:pbTwk var(--t) ease-in-out var(--d) infinite}
+.pbs{top:var(--y);left:105%;width:110px;height:2px;border-radius:2px;background:linear-gradient(90deg,#fff,transparent);filter:drop-shadow(0 0 4px #fff);opacity:0;animation:pbShoot 6.6s linear var(--d) infinite}
+@keyframes pbFloat{50%{transform:translateY(-3%) scale(1.04)}}
+@keyframes pbSpin{to{transform:rotate(360deg)}}
+@keyframes pbPulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes pbSweep{0%,55%{transform:translateX(0) skewX(-20deg)}100%{transform:translateX(620%) skewX(-20deg)}}
+@keyframes pbTwk{0%,100%{opacity:0;transform:scale(.2) rotate(0)}50%{opacity:1;transform:scale(1) rotate(90deg)}}
+@keyframes pbRise{0%{opacity:0;transform:translateY(40px) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-140px) translateX(14px) scale(1)}}
+@keyframes pbFall{0%{opacity:0;transform:translateY(-60px) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translateY(160px) rotate(540deg)}}
+@keyframes pbShoot{0%,62%{opacity:0;transform:translate(0,0) rotate(-18deg)}66%{opacity:1}100%{opacity:0;transform:translate(-900px,290px) rotate(-18deg)}}
+@keyframes pbFlick{0%,100%{opacity:.7;transform:scale(1)}30%{opacity:1;transform:scale(1.12)}55%{opacity:.6;transform:scale(.95)}75%{opacity:.95;transform:scale(1.06)}}
+@keyframes pbWave{0%{transform:translateX(-12%) skewY(-6deg)}100%{transform:translateX(12%) skewY(6deg)}}
+@keyframes pbHue{to{filter:hue-rotate(360deg)}}
+/* Holográfica: arcoíris que gira, prismas flotando */
+.pbn-my.pl-holo{--fx1:rgba(255,159,243,.65);--fx2:#fff;--fx3:rgba(165,243,252,.5)}
+.pl-holo .pbr{background:repeating-conic-gradient(from 0deg,rgba(255,159,243,.55) 0 6deg,transparent 6deg 12deg,rgba(165,243,252,.55) 12deg 18deg,transparent 18deg 24deg,rgba(254,240,138,.5) 24deg 30deg,transparent 30deg 36deg);opacity:.6;animation-duration:14s}
+.pl-holo .pbg{background:conic-gradient(from 0deg,rgba(255,159,243,.7),rgba(165,243,252,.7),rgba(254,240,138,.7),rgba(196,181,253,.7),rgba(255,159,243,.7));-webkit-mask:radial-gradient(circle,#000 0,transparent 65%);mask:radial-gradient(circle,#000 0,transparent 65%);animation:pbSpin 6s linear infinite}
+.pl-holo .pbp{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(135deg,#ff9ff3,#a5f3fc,#fef08a);width:calc(12px*var(--z));height:calc(16px*var(--z));animation-name:pbRise}
+.pl-holo .pbs{display:none}
+/* Diamante: destellos de estrella, rayos blancos, barrido fuerte */
+.pbn-my.pl-diamante{--fx1:rgba(125,211,252,.75);--fx2:#e0f2fe;--fx3:rgba(224,242,254,.6)}
+.pl-diamante .pbw{background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);mix-blend-mode:soft-light;width:20%}
+.pl-diamante .pbp{width:calc(14px*var(--z));height:calc(14px*var(--z));clip-path:polygon(50% 0,56% 44%,100% 50%,56% 56%,50% 100%,44% 56%,0 50%,44% 44%)}
+.pl-diamante .pbs{display:none}
+/* Dragón: ojo que arde, brasas que suben, sin rayos */
+.pbn-my.pl-dragon{--fx1:rgba(251,146,60,.85);--fx2:#ffb347}
+.pl-dragon .pbr{background:radial-gradient(ellipse at 50% 100%,rgba(239,68,68,.7),transparent 60%);-webkit-mask:none;mask:none;width:120%;aspect-ratio:auto;height:70%;left:50%;top:auto;bottom:-25%;translate:-50% 0;opacity:.9;animation:pbFlick 1.4s ease-in-out infinite;border-radius:50%}
+.pl-dragon .pbg{width:38%;right:4%;top:30%;background:radial-gradient(circle,rgba(253,224,71,.9),rgba(239,68,68,.5) 40%,transparent 70%);animation:pbFlick 2.2s ease-in-out infinite}
+.pl-dragon .pbp{top:auto;bottom:-6%;border-radius:50%;clip-path:none;width:calc(5px*var(--z));height:calc(5px*var(--z));background:radial-gradient(circle,#fff7ed,#fb923c 50%,#dc2626);animation-name:pbRise;animation-timing-function:ease-out}
+.pl-dragon .pbw{background:linear-gradient(90deg,transparent,rgba(255,120,40,.5),transparent);mix-blend-mode:screen}
+.pl-dragon .pbs{display:none}
+/* Aurora: cortinas de luz que ondulan, estrellas y fugaces */
+.pbn-my.pl-aurora{--fx1:rgba(52,211,153,.55);--fx2:#fff}
+.pl-aurora .pbr{width:140%;aspect-ratio:auto;height:120%;left:-20%;top:-30%;translate:none;-webkit-mask:linear-gradient(180deg,transparent,#000 30%,#000 55%,transparent);mask:linear-gradient(180deg,transparent,#000 30%,#000 55%,transparent);background:repeating-linear-gradient(100deg,rgba(52,211,153,.0) 0 4%,rgba(52,211,153,.55) 7%,rgba(34,211,238,.35) 10%,rgba(167,139,250,.5) 14%,rgba(244,114,182,.0) 18% 24%);filter:blur(6px);opacity:.85;animation:pbWave 5s ease-in-out infinite alternate}
+.pl-aurora .pbg{background:radial-gradient(circle,rgba(167,139,250,.6),transparent 65%)}
+.pl-aurora .pbp{width:calc(6px*var(--z));height:calc(6px*var(--z))}
+/* Trono: rayos dorados de rey, confeti de oro cayendo */
+.pbn-my.pl-trono{--fx1:rgba(255,210,63,.7);--fx2:#ffd23f;--fx3:rgba(255,226,122,.55)}
+.pl-trono .pbr{opacity:.75}
+.pl-trono .pbp{top:-8%;clip-path:none;border-radius:2px;width:calc(6px*var(--z));height:calc(10px*var(--z));background:linear-gradient(180deg,#fff7d1,#ffd23f 50%,#b8860b);filter:none;animation-name:pbFall;animation-timing-function:linear}
+.pl-trono .pbp:nth-child(3n){background:linear-gradient(180deg,#fda4af,#e11d48)}
+.pl-trono .pbp:nth-child(4n){background:linear-gradient(180deg,#bfdbfe,#3b82f6)}
+.pl-trono .pbs{display:none}
+.pl-trono .pbw{background:linear-gradient(90deg,transparent,rgba(255,236,150,.7),transparent)}
+/* Cosmos: nebulosa que gira, planeta que respira, lluvia de estrellas */
+.pbn-my.pl-cosmos{--fx1:rgba(249,115,22,.7);--fx2:#fff}
+.pl-cosmos .pbr{background:conic-gradient(from 0deg,rgba(168,85,247,.45),transparent 25%,rgba(236,72,153,.4) 45%,transparent 65%,rgba(59,130,246,.45) 85%,rgba(168,85,247,.45));-webkit-mask:radial-gradient(circle,#000 0,transparent 45%);mask:radial-gradient(circle,#000 0,transparent 45%);filter:blur(10px);animation-duration:18s}
+.pl-cosmos .pbp{width:calc(5px*var(--z));height:calc(5px*var(--z))}
+.pl-cosmos .pbs:nth-of-type(odd){animation-duration:4.8s}
+/* Fila anfitriona (lite): sin tanto peso */
+.pbn-lite .pbg{opacity:.6;width:40%}
+.pbn-lite .pbp{width:calc(6px*var(--z));height:calc(6px*var(--z))}
+.pbn-lite.pl-dragon .pbp{width:calc(4px*var(--z));height:calc(4px*var(--z))}
+@media(prefers-reduced-motion:reduce){.pbx *{animation:none!important}.pbp,.pbs,.pbw{display:none}}
+
+/* ===================== NAVIDAD (mítica) ===================== */
+.pl-navidad:is(.mpn,.plh,.pbn){--b0:#071630;--bg:radial-gradient(ellipse at 85% 60%,#173a6b,#071630 70%);--art:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 120 40%22 preserveAspectRatio=%22xMaxYMid slice%22%3E%3Ccircle cx=%2270%22 cy=%229%22 r=%225%22 fill=%22%23fef9c3%22/%3E%3Ccircle cx=%2272%22 cy=%228%22 r=%224.4%22 fill=%22%230b1e3f%22/%3E%3Cpath d=%22M40 40 C60 33 80 35 120 31 V40Z%22 fill=%22%23e0f2fe%22/%3E%3Cpath d=%22M58 40 C80 36 100 37 120 35 V40Z%22 fill=%22%23fff%22/%3E%3Cg%3E%3Crect x=%2297%22 y=%2233%22 width=%224%22 height=%225%22 fill=%22%237c2d12%22/%3E%3Cpath d=%22M99 5 L108 17 H104 L111 25 H106 L114 34 H84 L92 25 H87 L94 17 H90Z%22 fill=%22%2315803d%22/%3E%3Cpath d=%22M99 5 L104 12 L99 11 L94 12Z%22 fill=%22%2322c55e%22 opacity=%22.6%22/%3E%3Cpath d=%22M92 18 Q99 22 106 17 M88 26 Q99 30 110 25%22 stroke=%22%23facc15%22 stroke-width=%22.7%22 fill=%22none%22/%3E%3C/g%3E%3Cg%3E%3Ccircle cx=%2294%22 cy=%2219%22 r=%221.1%22 fill=%22%23ef4444%22/%3E%3Ccircle cx=%22103%22 cy=%2220%22 r=%221.1%22 fill=%22%233b82f6%22/%3E%3Ccircle cx=%2290%22 cy=%2227%22 r=%221.1%22 fill=%22%23facc15%22/%3E%3Ccircle cx=%2299%22 cy=%2228%22 r=%221.1%22 fill=%22%23ef4444%22/%3E%3Ccircle cx=%22108%22 cy=%2227%22 r=%221.1%22 fill=%22%23a855f7%22/%3E%3Ccircle cx=%2296%22 cy=%2214%22 r=%221%22 fill=%22%23facc15%22/%3E%3Ccircle cx=%22102%22 cy=%2213%22 r=%221%22 fill=%22%23ef4444%22/%3E%3C/g%3E%3Cpath d=%22M99 0 L100.3 3 L103.5 3.2 L101 5.2 L101.9 8.3 L99 6.5 L96.1 8.3 L97 5.2 L94.5 3.2 L97.7 3Z%22 fill=%22%23fde047%22/%3E%3Cg%3E%3Crect x=%2278%22 y=%2231%22 width=%228%22 height=%227%22 fill=%22%23dc2626%22/%3E%3Crect x=%2281.3%22 y=%2231%22 width=%221.4%22 height=%227%22 fill=%22%23fde047%22/%3E%3Crect x=%2278%22 y=%2233.8%22 width=%228%22 height=%221.4%22 fill=%22%23fde047%22/%3E%3Crect x=%22110%22 y=%2232%22 width=%227%22 height=%226%22 fill=%22%232563eb%22/%3E%3Crect x=%22112.8%22 y=%2232%22 width=%221.4%22 height=%226%22 fill=%22%23f8fafc%22/%3E%3Crect x=%2288%22 y=%2234%22 width=%226%22 height=%224.5%22 fill=%22%2316a34a%22/%3E%3Crect x=%2290.3%22 y=%2234%22 width=%221.2%22 height=%224.5%22 fill=%22%23fde047%22/%3E%3C/g%3E%3Cg fill=%22%23fff%22%3E%3Ccircle cx=%2262%22 cy=%2220%22 r=%22.8%22/%3E%3Ccircle cx=%2280%22 cy=%2214%22 r=%22.6%22/%3E%3Ccircle cx=%22116%22 cy=%2210%22 r=%22.8%22/%3E%3Ccircle cx=%2286%22 cy=%225%22 r=%22.6%22/%3E%3Ccircle cx=%22112%22 cy=%2220%22 r=%22.5%22/%3E%3C/g%3E%3C/svg%3E")}
+.pl-navidad.mpn{border:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 .7em rgba(239,68,68,.45),0 0 1.2em rgba(34,197,94,.3),0 .15em .45em rgba(0,0,0,.5)}
+.pl-navidad.mpn:before{background:radial-gradient(circle,#fff 0 .045em,transparent .07em) 0 0/1em .9em,radial-gradient(circle,#fff 0 .03em,transparent .05em) .5em .4em/.8em .7em;animation:plFall 5s linear infinite}
+.pl-navidad.mpn:after{background:linear-gradient(100deg,transparent 40%,rgba(255,255,255,.4) 50%,transparent 60%) 150% 0/250% 100% no-repeat,linear-gradient(180deg,rgba(255,255,255,.12),transparent 50%);animation:plShine 4s ease-in-out infinite}
+.pbn-my.pl-navidad{--fx1:rgba(250,204,21,.6);--fx2:#fff}
+.pl-navidad .pbr{width:100%;aspect-ratio:auto;height:20px;left:0;top:0;translate:none;-webkit-mask:none;mask:none;opacity:1;mix-blend-mode:normal;background:radial-gradient(ellipse 4px 5px at 50% 65%,#ef4444 0 100%,transparent 110%) 0 0/60px 20px,radial-gradient(ellipse 4px 5px at 50% 65%,#22c55e 0 100%,transparent 110%) 15px 0/60px 20px,radial-gradient(ellipse 4px 5px at 50% 65%,#facc15 0 100%,transparent 110%) 30px 0/60px 20px,radial-gradient(ellipse 4px 5px at 50% 65%,#3b82f6 0 100%,transparent 110%) 45px 0/60px 20px;filter:drop-shadow(0 0 4px #fde047);animation:pbBlink 1.2s steps(2) infinite}
+.pl-navidad .pbr:before{content:"";position:absolute;left:0;right:0;top:2px;height:8px;border-bottom:2px solid rgba(20,83,45,.9);border-radius:0 0 50% 50%/0 0 100% 100%}
+.pl-navidad .pbg{width:46%;right:-4%;background:radial-gradient(circle,rgba(253,224,71,.55),rgba(239,68,68,.25) 45%,transparent 70%)}
+.pl-navidad .pbp{top:-8%;clip-path:none;border-radius:50%;width:calc(6px*var(--z));height:calc(6px*var(--z));background:#fff;filter:drop-shadow(0 0 3px rgba(255,255,255,.9));animation-name:pbSnow;animation-timing-function:linear;animation-duration:calc(var(--t) * 1.8)}
+.pl-navidad .pbp:nth-child(3n){clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);border-radius:0;width:calc(11px*var(--z));height:calc(11px*var(--z))}
+.pl-navidad .pbs{width:150px;height:36px;border-radius:0;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 24%22%3E%3Cg fill=%22%23fde68a%22%3E%3Cpath d=%22M62 14 H86 Q92 14 92 8 H95 Q95 18 86 18 H64Z%22/%3E%3Crect x=%2266%22 y=%227%22 width=%2216%22 height=%227%22 rx=%222%22/%3E%3Ccircle cx=%2272%22 cy=%225%22 r=%223%22/%3E%3Cpath d=%22M60 19 H94%22 stroke=%22%23fde68a%22 stroke-width=%221.4%22/%3E%3Cpath d=%22M8 12 Q14 6 22 10 L26 6 L27 9 L24 12 L22 18 L20 18 L19 14 L12 14 L10 18 L8 18Z%22/%3E%3Cpath d=%22M32 12 Q38 6 46 10 L50 6 L51 9 L48 12 L46 18 L44 18 L43 14 L36 14 L34 18 L32 18Z%22/%3E%3Cpath d=%22M26 11 L32 12 M50 11 L64 12%22 stroke=%22%23fde68a%22 stroke-width=%22.8%22/%3E%3C/g%3E%3Ccircle cx=%2226%22 cy=%227%22 r=%221.2%22 fill=%22%23ef4444%22/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 8px rgba(253,224,71,.9));top:6%;animation:pbSleigh 11s linear var(--d) infinite}
+.pl-navidad .pbs+.pbs{display:none}
+.pbn-lite.pl-navidad .pbr{display:none}
+@keyframes pbSnow{0%{opacity:0;transform:translate(0,-20px)}10%{opacity:1}100%{opacity:.2;transform:translate(26px,320px)}}
+@keyframes pbBlink{50%{filter:drop-shadow(0 0 6px #fff) hue-rotate(160deg) brightness(1.3)}}
+@keyframes pbSleigh{0%,55%{opacity:0;transform:translate(0,0)}58%{opacity:1}100%{opacity:1;transform:translate(-1500px,40px)}}
+
+/* ===================== MARCOS MÍTICOS: Dragón eterno (persigue su cola) y Navidad ===================== */
+.fr-ouroboros{animation:frGlow 1.8s ease-in-out infinite!important;--fg:rgba(249,115,22,.85)}
+
+
+.fr-ouroboros:after{inset:-25%!important;background:url("fx/dragon-eterno.webp") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 5px rgba(255,100,20,.75))!important;animation:frSpin 14s linear infinite!important;z-index:3!important}
+.fr-ouroboros:before{inset:-25%!important;z-index:4!important;background:radial-gradient(circle at 65.5% 15.7%,rgba(255,240,160,.95) 0,rgba(255,110,30,.8) .9%,rgba(255,60,0,.35) 2.4%,transparent 4.2%);filter:none;animation:frSpin 14s linear infinite,fxEye 4s ease-in-out infinite!important}
+.fr-ouroboros:hover:after,.fr-ouroboros:hover:before{animation-duration:5s,4s!important}
+/* Dragón eterno · niveles: Nv.1 dormido (apagado y lento) · Nv.2 despierto · Nv.3 furia (más fuego, más rápido, aura roja) */
+.fr-ouroboros[data-lv="1"]:after{filter:saturate(.55) brightness(.78) drop-shadow(0 0 2px rgba(255,100,20,.35))!important;animation-duration:22s!important}
+.fr-ouroboros[data-lv="1"]:before{animation-duration:22s,4s!important;opacity:.55!important}
+.fr-ouroboros[data-lv="2"]:after{filter:drop-shadow(0 0 4px rgba(255,100,20,.7))!important}
+.fr-ouroboros[data-lv="1"]{animation:none!important;box-shadow:0 0 .25em rgba(249,115,22,.35)}
+.fr-ouroboros[data-lv="3"]:after{filter:saturate(1.45) brightness(1.2) contrast(1.05) drop-shadow(0 0 2px #fff1c2) drop-shadow(0 0 6px #ffb020) drop-shadow(0 0 14px rgba(255,50,0,.95))!important;animation-duration:9s!important}
+.fr-ouroboros[data-lv="3"]:before{animation-duration:9s,4s!important}
+.fr-ouroboros[data-lv="3"]{animation:none!important;box-shadow:0 0 .35em #ffb020,0 0 .9em rgba(255,80,0,.95),0 0 1.8em rgba(255,40,0,.6)!important}
+.fr-ouroboros[data-lv="3"]>.fxm .au{inset:2%;z-index:-1;opacity:1;background:url("fx/anillo-fuego.svg") center/100% 100% no-repeat,radial-gradient(closest-side,transparent 68%,rgba(255,120,20,.55) 78%,rgba(255,60,0,.3) 88%,transparent 100%);filter:drop-shadow(0 0 4px rgba(255,140,30,.95));animation:frSpin 12s linear infinite reverse}
+.fr-ouroboros>.fxm .o1,.fr-ouroboros>.fxm .o2,.fr-ouroboros>.fxm .o3{inset:2%}
+.fr-ouroboros:hover:after,.fr-ouroboros:hover:before{animation-duration:5s,4s!important}
+@keyframes fxEye{0%,100%{filter:brightness(.8);background-image:radial-gradient(circle at 65.5% 15.7%,rgba(255,240,160,.95) 0,rgba(255,110,30,.8) .9%,rgba(255,60,0,.35) 2.4%,transparent 4.2%)}40%{filter:brightness(1.4)}80%{filter:brightness(1);background-image:radial-gradient(circle at 65.5% 15.7%,rgba(255,240,160,.95) 0,rgba(255,110,30,.8) .9%,rgba(255,60,0,.35) 2.4%,transparent 4.2%)}83%,86%{background-image:radial-gradient(ellipse 2.2% 1.1% at 65.5% 15.7%,#24140f 0,#3a2219 60%,transparent 100%)}88%{background-image:radial-gradient(circle at 65.5% 15.7%,rgba(255,240,160,.95) 0,rgba(255,110,30,.8) .9%,rgba(255,60,0,.35) 2.4%,transparent 4.2%)}91%,93%{background-image:radial-gradient(ellipse 2.2% 1.1% at 65.5% 15.7%,#24140f 0,#3a2219 60%,transparent 100%)}95%{background-image:radial-gradient(circle at 65.5% 15.7%,rgba(255,240,160,.95) 0,rgba(255,110,30,.8) .9%,rgba(255,60,0,.35) 2.4%,transparent 4.2%)}}
+@keyframes fxFireP{0%,100%{opacity:.85}50%{opacity:1}}
+
+.fr-navidad{animation:frGlow 2.2s ease-in-out infinite!important;--fg:rgba(34,197,94,.6)}
+
+.fr-navidad:after{inset:-21.5%!important;background:url("fx/corona-navidad.svg") center/100% 100% no-repeat!important;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))!important;animation:frSway 4s ease-in-out infinite!important;z-index:3!important}
+.fr-navidad:before{inset:-21.5%!important;background:url("fx/luces-navidad.svg") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 3px rgba(255,220,120,.8));animation:frSpin 40s linear infinite!important;z-index:2!important}
+.fr-navidad:hover:after{animation-duration:1.4s!important}
+/* Navidad · niveles: Nv.1 Nevada (solo la corona) · Nv.2 Encendida (luces y copos en órbita) · Nv.3 Noche mágica (estrella, trineo volando y nevada) */
+.fr-navidad[data-lv="1"]:before{opacity:0!important}
+.fr-navidad[data-lv="1"]{animation:none!important;box-shadow:0 0 .3em rgba(255,255,255,.25)}
+.fr-navidad:not([data-lv="3"])>.fxm .gem{display:none}
+.fr-navidad[data-lv="3"]{animation:frGlow 2s ease-in-out infinite!important;--fg:rgba(255,210,63,.75)}
+.fr-navidad[data-lv="3"]>.fxm .gem{top:1%;z-index:5;bottom:auto;width:25%;height:25%;margin-left:-12.5%;filter:drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 8px rgba(255,210,63,.7))}
+.fr-navidad[data-lv="3"]>.fxm .o3{inset:-3%;animation-duration:8s}
+.fr-navidad>.fxm{z-index:4}
+.fr-navidad>.fxm .o3:before{width:58%;height:16%;margin-left:-29%;top:-9%;clip-path:none!important;border-radius:0;background:url("fx/trineo.svg") center/contain no-repeat!important;transform:scaleX(-1);filter:drop-shadow(0 0 3px rgba(255,224,138,.9))}
+.fr-navidad>.fxm .o3:after{display:none}
+.fr-navidad[data-lv="3"]>.fxm .au{inset:-2%;opacity:.95;background:radial-gradient(circle,#fff 0 1.1px,transparent 1.8px) 3px 2px/29px 23px,radial-gradient(circle,rgba(255,255,255,.85) 0 .8px,transparent 1.4px) 14px 9px/19px 31px,radial-gradient(circle,rgba(255,255,255,.7) 0 .6px,transparent 1.1px) 8px 17px/37px 17px;-webkit-mask:radial-gradient(closest-side,#000 0,#000 90%,transparent);mask:radial-gradient(closest-side,#000 0,#000 90%,transparent);animation:fxSnowF 3.5s linear infinite;z-index:6}
+.fr-navidad[data-lv="3"]>.fxm .au:after{content:"";position:absolute;inset:21%;border-radius:50%;opacity:.5;background:radial-gradient(circle,#fff 0 1px,transparent 1.6px) 5px 0/31px 29px,radial-gradient(circle,rgba(255,255,255,.8) 0 .7px,transparent 1.2px) 17px 13px/26px 37px;animation:fxSnowI 7s linear infinite}
+@keyframes fxSnowI{to{background-position:11px 58px,23px 74px}}
+@keyframes fxSnowF{to{background-position:9px 25px,10px 40px,14px 34px}}
+@keyframes frSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes frXmas{0%{opacity:1}50%{opacity:.55;filter:drop-shadow(0 0 5px #fff) hue-rotate(140deg) brightness(1.4)}}
+@media(prefers-reduced-motion:reduce){.fr-ouroboros:after,.fr-ouroboros:before,.fr-navidad:after,.fr-navidad:before{animation:none!important}}
+/* ===================== MARCOS MÍTICOS · MECÁNICAS =====================
+   .fxm = capa extra solo de los míticos: aura (Nv.3), satélites que orbitan (Nv.2: 2 · Nv.3: 3),
+   "momento mítico" cada 8 s (onda + chispas), ráfaga continua al pasar el dedo/mouse y gema que flota. */
+.frm>.fxm{position:absolute;inset:-36%;border-radius:50%;pointer-events:none;z-index:3;display:block;--m1:#e9d5ff;--m2:#a78bfa;--m3:#fff}
+.fxm>i{position:absolute;display:block;border-radius:50%}
+.fxm>.w1,.fxm>.w2,.fxm>.w3,.fxm>.w4,.fxm>.w5,.fxm>.w6{display:none}
+.fxm .o1,.fxm .o2,.fxm .o3{inset:13%;display:none;animation:frSpin 3.4s linear infinite}
+.fxm .o2{inset:9%;animation-duration:5.2s;animation-direction:reverse}
+.fxm .o3{inset:17%;animation-duration:2.3s}
+.fxm .o1:before,.fxm .o2:before,.fxm .o3:before{content:"";position:absolute;left:50%;top:-1%;width:13%;height:13%;margin-left:-6.5%;border-radius:50%;background:radial-gradient(circle,var(--m3) 0 25%,var(--m1) 45%,transparent 72%)}
+.fxm .o2:before{top:auto;bottom:-1%;width:11%;height:11%;margin-left:-5.5%;background:radial-gradient(circle,var(--m3) 0 25%,var(--m2) 45%,transparent 72%)}
+.fxm .o1:after,.fxm .o3:after{content:"";position:absolute;left:50%;top:0;width:26%;height:4%;margin-left:-26%;border-radius:999px;background:linear-gradient(90deg,transparent,var(--m1));opacity:.7}
+.frm[data-lv="2"] .fxm .o1,.frm[data-lv="2"] .fxm .o2,.frm[data-lv="3"] .fxm .o1,.frm[data-lv="3"] .fxm .o2,.frm[data-lv="3"] .fxm .o3{display:block}
+.fxm .bu{inset:20%;border:2px solid var(--m1);opacity:0;animation:fxWave 8s ease-out var(--dl,0s) infinite}
+.fxm .b2{inset:10%;opacity:0;background:repeating-conic-gradient(var(--m2) 0 3deg,transparent 3deg 22deg),repeating-conic-gradient(from 11deg,var(--m3) 0 1.5deg,transparent 1.5deg 22deg);-webkit-mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 86%,transparent 96%);mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 86%,transparent 96%);animation:fxSpark 8s ease-out var(--dl,0s) infinite}
+.frm:hover>.fxm .bu,.frm:active>.fxm .bu{animation-duration:1.1s;animation-delay:0s}
+.frm:hover>.fxm .b2,.frm:active>.fxm .b2{animation-duration:1.1s;animation-delay:.12s}
+.frm:hover>.fxm .o1,.frm:hover>.fxm .o2,.frm:hover>.fxm .o3{animation-duration:1s}
+.fxm .gem{left:50%;bottom:10%;width:15%;height:15%;margin-left:-7.5%;border-radius:0;clip-path:polygon(50% 0,100% 38%,50% 100%,0 38%);background:linear-gradient(135deg,var(--m3) 0,var(--m1) 35%,var(--m2) 70%,var(--m1));animation:fxGem 2.6s ease-in-out infinite;overflow:hidden}
+.fxm .gem:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%);transform:translateX(-120%);animation:fxGlint 2.6s ease-in-out infinite}
+.fxm .au{inset:12%;display:none;background:radial-gradient(closest-side,transparent 58%,var(--m1) 70%,var(--m2) 78%,transparent 90%);opacity:.6;animation:fxAura 2.4s ease-in-out infinite}
+.frm[data-lv="3"] .fxm .au{display:block}
+.frm[data-lv="3"]:not(.fr-ouroboros):not(.fr-navidad) .fxm .gem{background:linear-gradient(135deg,#fffbe6 0,#ffd23f 40%,#b8860b 75%,#ffe27a);width:18%;height:18%;margin-left:-9%}
+.frm[data-lv="3"] .fxm .bu{border-width:3px}
+@keyframes fxWave{0%{opacity:0;transform:scale(.85)}2%{opacity:1}13%{opacity:0;transform:scale(1.35)}100%{opacity:0;transform:scale(1.35)}}
+@keyframes fxSpark{0%{opacity:0;transform:scale(.8) rotate(0)}3%{opacity:1}15%{opacity:0;transform:scale(1.18) rotate(40deg)}100%{opacity:0;transform:scale(1.18) rotate(40deg)}}
+@keyframes fxGem{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12%) scale(1.12)}}
+@keyframes fxGlint{0%,55%{transform:translateX(-120%)}85%,100%{transform:translateX(120%)}}
+@keyframes fxAura{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+/* personalidad de cada marco */
+.fr-holo>.fxm{--m1:#f0abfc;--m2:#67e8f9;--m3:#fef9c3}
+.fr-holo>.fxm .b2{background:conic-gradient(#ff9ff3,#a5f3fc,#fef08a,#c4b5fd,#86efac,#ff9ff3)}
+.fr-holo>.fxm .gem{background:conic-gradient(from 45deg,#ff9ff3,#a5f3fc,#fef08a,#c4b5fd,#ff9ff3)}
+.fr-diamante>.fxm{--m1:#bae6fd;--m2:#e0f2fe;--m3:#fff}
+.fr-diamante>.fxm .b2{background:repeating-conic-gradient(#fff 0 1deg,transparent 1deg 15deg)}
+.fr-dragon>.fxm{--m1:#fb923c;--m2:#fde047;--m3:#fff7ed}
+.fr-dragon>.fxm .b2,.fr-ouroboros>.fxm .b2{background:repeating-conic-gradient(rgba(255,237,160,.95) 0 2deg,rgba(249,115,22,.85) 2deg 6deg,transparent 6deg 14deg)}
+.fr-aurora>.fxm{--m1:#34d399;--m2:#a78bfa;--m3:#ecfeff}
+.fr-aurora>.fxm .bu{border-color:transparent;background:radial-gradient(closest-side,transparent 80%,rgba(52,211,153,.8) 88%,rgba(167,139,250,.6) 94%,transparent)}
+.fr-vacio>.fxm{--m1:#c084fc;--m2:#1e0533;--m3:#f5d0fe}
+.fr-vacio>.fxm .bu{animation-name:fxImplode;border-color:#c084fc}
+.fr-vacio>.fxm .b2{animation-name:fxSuck;background:repeating-conic-gradient(rgba(192,132,252,.9) 0 2deg,transparent 2deg 18deg)}
+.fr-vacio>.fxm .gem{background:radial-gradient(circle at 40% 35%,#f5d0fe,#7e22ce 45%,#0b0014)}
+@keyframes fxImplode{0%{opacity:0;transform:scale(1.5)}3%{opacity:1}14%{opacity:0;transform:scale(.8)}100%{opacity:0;transform:scale(.8)}}
+@keyframes fxSuck{0%{opacity:0;transform:scale(1.3) rotate(0)}3%{opacity:1}15%{opacity:0;transform:scale(.85) rotate(-120deg)}100%{opacity:0;transform:scale(.85) rotate(-120deg)}}
+.fr-rayo>.fxm{--m1:#facc15;--m2:#60a5fa;--m3:#fff}
+.fr-rayo>.fxm .b2{background:repeating-conic-gradient(#fff 0 .8deg,#fde047 .8deg 2deg,transparent 2deg 45deg);animation-name:fxZap}
+@keyframes fxZap{0%{opacity:0}2%{opacity:1;transform:scale(1.05) rotate(0)}4%{opacity:.2}6%{opacity:1;transform:scale(1.12) rotate(8deg)}12%{opacity:0;transform:scale(1.2) rotate(8deg)}100%{opacity:0}}
+.fr-ouroboros>.fxm{--m1:#ef4444;--m2:#fbbf24;--m3:#fff7ed}
+.fr-ouroboros>.fxm .gem{background:radial-gradient(circle at 50% 50%,#fef08a 0 18%,#111 20% 30%,#f59e0b 32%,#b91c1c 80%);clip-path:ellipse(50% 32% at 50% 50%)}
+.fr-navidad>.fxm{--m1:#ef4444;--m2:#22c55e;--m3:#fff}
+.fr-navidad>.fxm .o1:before,.fr-navidad>.fxm .o2:before,.fr-navidad>.fxm .o3:before{background:#fff;clip-path:polygon(50% 0,58% 38%,95% 25%,64% 50%,95% 75%,58% 62%,50% 100%,42% 62%,5% 75%,36% 50%,5% 25%,42% 38%);width:13%;height:13%;margin-left:-6.5%}
+.fr-navidad>.fxm .b2{background:repeating-conic-gradient(#ef4444 0 3deg,transparent 3deg 15deg,#22c55e 15deg 18deg,transparent 18deg 30deg,#facc15 30deg 33deg,transparent 33deg 45deg)}
+.fr-navidad>.fxm .gem{background:linear-gradient(135deg,#fffbe6,#facc15 50%,#ca8a04);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.fxm .o1,.fxm .o2,.fxm .o3,.fxm .bu,.fxm .b2,.fxm .gem,.fxm .au{will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){.fxm *,.fxm *:before,.fxm *:after{animation:none!important}.fxm .bu,.fxm .b2{display:none}}
+.fr-ouroboros>.fxm .gem{display:none}
+
+/* ===================== MARCO MAGENTA (exclusivo del sorteo) — energía contenida que quiere liberarse =====================
+   Todo dentro de la caja del marco (1,4× el avatar). Una OLA de energía se persigue alrededor del aro y acelera mientras carga;
+   al llenarse ESTALLA (destello, onda y chispas contenidas) y vuelve a empezar. Las ondas invaden sutilmente el avatar.
+   Nv.1 Chispa: un remolino tenue y una ola lenta · Nv.2 Corriente: dos remolinos, dos olas que se persiguen, rayos, estalla cada 5 s
+   Nv.3 Singularidad: tres remolinos, tres olas, rayos constantes, estalla cada 3,2 s con máxima intensidad */
+.fr-magenta{animation:none!important;box-shadow:0 0 .25em rgba(255,60,220,.45)}
+.fr-magenta:after{inset:-20%!important;background:url("fx/magenta-1.webp") center/100% 100% no-repeat!important;filter:drop-shadow(0 0 3px rgba(255,60,220,.7))!important;animation:frSpin 16s linear infinite!important;z-index:3!important}
+.fr-magenta:before{inset:-20%!important;background:url("fx/magenta-2.webp") center/100% 100% no-repeat!important;filter:none;opacity:0!important;mix-blend-mode:screen;animation:frSpin 22s linear infinite reverse!important;z-index:2!important;-webkit-mask:none!important;mask:none!important}
+.fr-magenta>.fxm{inset:-20%!important;z-index:4!important;--m1:#ff4fd8;--m2:#b24bff;--m3:#fff}
+.fr-magenta>.fxm>i{display:none}
+/* ondas que invaden el avatar (la cara del centro queda despejada) */
+.fr-magenta>.fxm .o1{display:block!important;inset:0;border-radius:50%;background:url("fx/magenta-in.webp") center/100% 100% no-repeat;-webkit-mask:radial-gradient(closest-side,transparent 36%,#000 56%,#000 68%,transparent 73%);mask:radial-gradient(closest-side,transparent 36%,#000 56%,#000 68%,transparent 73%);mix-blend-mode:screen;opacity:.24;animation:frSpin 30s linear infinite reverse;z-index:0}
+.fr-magenta>.fxm .o1:before,.fr-magenta>.fxm .o1:after{display:none}
+/* la OLA que se persigue: cabeza blanca brillante y cola magenta, recorriendo el aro */
+.fr-magenta>.fxm .o3{display:block!important;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 62%,rgba(178,75,255,.25) 72%,rgba(255,79,216,.85) 92%,#fff 96.7%,rgba(255,214,247,.55) 97.7%,transparent 99.3%);-webkit-mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 88%,transparent 96%);mask:radial-gradient(closest-side,transparent 70%,#000 78%,#000 88%,transparent 96%);mix-blend-mode:screen;filter:blur(.6px) drop-shadow(0 0 4px #ff4fd8);animation:frSpin 3.6s linear infinite;z-index:5}
+.fr-magenta>.fxm .o3:before,.fr-magenta>.fxm .o3:after{display:none}
+.fr-magenta[data-lv="1"]>.fxm .o3{opacity:.55}
+.fr-magenta[data-lv="1"]:after{filter:saturate(.55) brightness(.72)!important;opacity:.85;animation-duration:28s!important}
+.fr-magenta[data-lv="1"]{box-shadow:0 0 .15em rgba(255,60,220,.3)}
+/* Nv.2 */
+.fr-magenta:not([data-lv="1"]):before{opacity:.9!important}
+.fr-magenta:not([data-lv="1"]):after{filter:brightness(1.12) drop-shadow(0 0 4px rgba(255,60,220,.85))!important;animation:frSpin 14s linear infinite,fxSurge 5s ease-in-out infinite!important}
+.fr-magenta:not([data-lv="1"]):before{animation:frSpin 20s linear infinite reverse,fxSurge 5s ease-in-out infinite!important}
+.fr-magenta:not([data-lv="1"]){animation:fxMgB 5s ease-in-out infinite!important}
+.fr-magenta:not([data-lv="1"])>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 12%,rgba(255,79,216,.85) 42%,#fff 46.7%,rgba(255,214,247,.55) 47.7%,transparent 49.3% 62%,rgba(255,79,216,.85) 92%,#fff 96.7%,rgba(255,214,247,.55) 97.7%,transparent 99.3%);animation:fxChase 5s cubic-bezier(.55,0,.25,1) infinite}
+.fr-magenta:not([data-lv="1"])>.fxm .o1{opacity:.34;animation:frSpin 26s linear infinite reverse,fxInv 5s ease-in-out infinite}
+.fr-magenta:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;animation:fxArc 5s steps(1) infinite;background:url("fx/magenta-chispas2.svg") center/100% 100% no-repeat,url("fx/magenta-rayos.svg") center/100% 100% no-repeat;filter:drop-shadow(0 0 2px #ff4fd8);z-index:6}
+.fr-magenta>.fxm .o2:before,.fr-magenta>.fxm .o2:after{display:none}
+.fr-magenta:not([data-lv="1"])>.fxm .b2{display:block;inset:13%;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px #ff4fd8,inset 0 0 10px #ff4fd8;background:none;-webkit-mask:none;mask:none;opacity:0;animation:fxShock 5s ease-out infinite;z-index:7}
+.fr-magenta:not([data-lv="1"])>.fxm .bu{display:block;inset:1%;border:0;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 7deg,#fff 0 1.4deg,transparent 1.4deg 12deg),repeating-conic-gradient(#ff4fd8 0 2.4deg,transparent 2.4deg 17deg);-webkit-mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);mask:radial-gradient(closest-side,transparent 74%,#000 80%,#000 90%,transparent 96%);animation:fxSpark 5s ease-out infinite;z-index:7}
+.fr-magenta:not([data-lv="1"])>.fxm .sx{display:block;inset:0;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.55) 0,rgba(255,214,247,.9) 70%,rgba(255,79,216,.8) 84%,transparent 100%);mix-blend-mode:screen;opacity:0;animation:fxFlash 5s ease-out infinite;z-index:8}
+/* Nv.3: tres olas, más rápido y más violento */
+.fr-magenta[data-lv="3"]:after{filter:brightness(1.35) saturate(1.2) drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(255,60,220,.95))!important;animation:frSpin 9s linear infinite,fxSurge3 3.2s ease-in-out infinite!important}
+.fr-magenta[data-lv="3"]:before{animation:frSpin 13s linear infinite reverse,fxSurge3 3.2s ease-in-out infinite!important}
+.fr-magenta[data-lv="3"]{animation:fxMgB3 3.2s ease-in-out infinite!important}
+.fr-magenta[data-lv="3"]>.fxm .o3{background:conic-gradient(from 0deg,transparent 0 8%,rgba(255,79,216,.9) 28%,#fff 31.5%,rgba(255,214,247,.55) 32.5%,transparent 34.1% 41%,rgba(255,79,216,.9) 61%,#fff 64.8%,rgba(255,214,247,.55) 65.8%,transparent 67.4% 74%,rgba(255,79,216,.9) 94%,#fff 98.0%,rgba(255,214,247,.55) 99.0%,transparent 100.6%);animation:fxChase3 3.2s cubic-bezier(.55,0,.25,1) infinite}
+.fr-magenta[data-lv="3"]>.fxm .o1{opacity:.44;animation:frSpin 18s linear infinite reverse,fxInv 3.2s ease-in-out infinite}
+.fr-magenta[data-lv="3"]>.fxm .o2{animation:frSpin 6s linear infinite;opacity:1;background-image:url("fx/magenta-chispas3.svg"),url("fx/magenta-rayos.svg");filter:drop-shadow(0 0 2px #ff4fd8) drop-shadow(0 0 1px #fff)}
+.fr-magenta[data-lv="3"]>.fxm .b2,.fr-magenta[data-lv="3"]>.fxm .bu,.fr-magenta[data-lv="3"]>.fxm .sx{animation-duration:3.2s}
+.fr-magenta[data-lv="3"]>.fxm .au{display:block;inset:0!important;opacity:.9;background:url("fx/magenta-3.webp") center/100% 100% no-repeat!important;mix-blend-mode:screen;animation:frSpin 7s linear infinite,fxMgH 3.2s ease-in-out infinite!important;z-index:1}
+/* la ola acelera mientras carga y da el último giro en el estallido */
+@keyframes fxChase{0%{transform:rotate(0)}50%{transform:rotate(380deg)}78%{transform:rotate(1150deg)}82%{transform:rotate(1310deg)}100%{transform:rotate(1440deg)}}
+@keyframes fxChase3{0%{transform:rotate(0)}40%{transform:rotate(340deg)}75%{transform:rotate(1240deg)}79%{transform:rotate(1400deg)}100%{transform:rotate(1800deg)}}
+/* impulso: se comprime, tiembla fuerte y revienta (sin salirse de la caja) */
+@keyframes fxSurge{0%,50%{scale:1;translate:0 0}60%{scale:.95}63%{translate:1.2% -1%}65%{translate:-1.3% .9%}67%{translate:1.1% 1.2%}69%{translate:-1.2% -1%}71%{translate:1.3% -.8%}73%{translate:-1% 1.2%}75%{translate:.9% -1.1%}77%{translate:0 0;scale:.9}80%{scale:1.06}86%{scale:.99}100%{scale:1;translate:0 0}}
+@keyframes fxSurge3{0%,40%{scale:1;translate:0 0}52%{scale:.94}56%{translate:1.6% -1.2%}58%{translate:-1.7% 1.3%}60%{translate:1.5% 1.6%}62%{translate:-1.6% -1.4%}64%{translate:1.7% -1.1%}66%{translate:-1.4% 1.6%}68%{translate:1.3% -1.5%}70%{translate:-1.5% 1%}73%{translate:0 0;scale:.88}77%{scale:1.08}84%{scale:.98}100%{scale:1;translate:0 0}}
+@keyframes fxShock{0%,77%{opacity:0;transform:scale(.9)}79%{opacity:1;transform:scale(.95)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes fxSpark{0%,77%{opacity:0;transform:scale(.88) rotate(0)}80%{opacity:1}100%{opacity:0;transform:scale(1.05) rotate(30deg)}}
+@keyframes fxFlash{0%,76%{opacity:0}79%{opacity:.95}84%{opacity:.25}88%{opacity:.6}96%,100%{opacity:0}}
+@keyframes fxInv{0%,50%{filter:none}75%{filter:brightness(2) saturate(1.4)}80%{filter:brightness(.6)}100%{filter:none}}
+@keyframes fxArc{0%,52%{opacity:.35}53%,79%{opacity:1}80%,100%{opacity:.35}}
+@keyframes fxMgB{0%,55%{box-shadow:0 0 .25em rgba(255,60,220,.5)}76%{box-shadow:0 0 .4em rgba(255,214,247,.9),0 0 .8em rgba(255,60,220,.9)}80%{box-shadow:0 0 .6em #fff,0 0 1.2em rgba(255,60,220,1)}100%{box-shadow:0 0 .25em rgba(255,60,220,.5)}}
+@keyframes fxMgB3{0%,45%{box-shadow:0 0 .3em rgba(255,255,255,.6),0 0 .7em rgba(255,60,220,.8)}72%{box-shadow:0 0 .5em #fff,0 0 1em rgba(255,60,220,1)}77%{box-shadow:0 0 .8em #fff,0 0 1.5em rgba(255,60,220,1),0 0 2em rgba(178,75,255,.7)}100%{box-shadow:0 0 .3em rgba(255,255,255,.6),0 0 .7em rgba(255,60,220,.8)}}
+@keyframes fxMgH{0%,100%{filter:hue-rotate(0)}50%{filter:hue-rotate(-45deg) brightness(1.2)}}
+.fr-magenta:not([data-lv="3"])>.fxm .gem{display:none!important}
+/* Nv.3 · HORIZONTE DE SUCESOS: la singularidad se traga el avatar (gira en espiral hacia el vacío) y renace en el estallido */
+.fr-magenta[data-lv="3"]>.fxm{background-image:inherit;background-size:0 0;background-repeat:no-repeat}
+.fr-magenta[data-lv="3"]>.fxm .w1{display:block!important;inset:14.3%;border-radius:50%;background:#0b0012;box-shadow:inset 0 0 10px rgba(255,79,216,.9),inset 0 0 22px rgba(11,0,18,.95);opacity:0;animation:fxSingBg 3.2s linear infinite;z-index:3}
+.fr-magenta[data-lv="3"]>.fxm .gem{display:block!important;inset:14.3%!important;width:auto!important;height:auto!important;margin:0!important;border-radius:50%!important;clip-path:none!important;filter:none;background-color:transparent!important;background-image:inherit!important;background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important;box-shadow:none;opacity:0;animation:fxSing2 3.2s cubic-bezier(.5,0,.3,1) infinite!important;z-index:4}
+.fr-magenta[data-lv="3"]>.fxm .gem:after{display:none!important}
+.fr-magenta[data-lv="3"]>.fxm .w2{display:block!important;inset:14.3%;border-radius:50%;background:radial-gradient(closest-side,#000 0 18%,rgba(255,79,216,.95) 24%,rgba(178,75,255,.5) 34%,transparent 48%);opacity:0;animation:fxHole 3.2s ease-in infinite;z-index:5}
+@keyframes fxSingBg{0%,46%{opacity:0}50%,86%{opacity:1}92%,100%{opacity:0}}
+@keyframes fxSing2{0%,46%{opacity:0;transform:rotate(0) scale(1)}50%{opacity:1;transform:rotate(0) scale(1)}73%{opacity:1;transform:rotate(600deg) scale(.1)}76%{opacity:1;transform:rotate(700deg) scale(0)}77%{opacity:1;transform:rotate(720deg) scale(1.15)}86%{opacity:1;transform:rotate(720deg) scale(1)}92%,100%{opacity:0;transform:rotate(720deg) scale(1)}}
+@keyframes fxSing{0%,46%{opacity:0;transform:rotate(0);background-size:100% 100%;filter:none}50%{opacity:1;transform:rotate(0);background-size:100% 100%}73%{opacity:1;transform:rotate(600deg);background-size:10% 10%;filter:blur(.6px) brightness(1.7) hue-rotate(-40deg)}76%{opacity:1;transform:rotate(700deg);background-size:0% 0%}77%{opacity:1;transform:rotate(720deg);background-size:135% 135%;filter:brightness(2.4)}86%{opacity:1;background-size:100% 100%;filter:none}92%,100%{opacity:0;transform:rotate(720deg);background-size:100% 100%}}
+@keyframes fxHole{0%,50%{opacity:0;transform:scale(.2)}74%{opacity:1;transform:scale(1)}76%{opacity:1;transform:scale(.3)}78%,100%{opacity:0;transform:scale(1.6)}}
+@media(prefers-reduced-motion:reduce){.fr-magenta,.fr-magenta:after,.fr-magenta:before,.fr-magenta>.fxm *{animation:none!important}.fr-magenta>.fxm .b2,.fr-magenta>.fxm .bu,.fr-magenta>.fxm .sx{display:none!important}}
+
+/* ===== Jackpot Ludópata · legendario exclusivo con 3 niveles =====
+   Nv.1 Ficha: la marquesina clásica · Nv.2 Racha: fichas y monedas en órbita, bombillos al doble
+   Nv.3 Premio mayor: una tragamonedas aparece sobre el avatar, los carretes giran (el tercero se hace esperar),
+   cae 7-7-7 y explota el JACKPOT con lluvia de monedas, destello y letrero */
+.fr-jackpot>.fxm{inset:-16%!important;z-index:3;--m1:#ffd23f;--m2:#ff2d55;--m3:#fff}
+.fr-jackpot>.fxm>i:before,.fr-jackpot>.fxm>i:after{display:none!important}
+.fr-jackpot>.fxm .au,.fr-jackpot>.fxm .gem{display:none!important}
+.fr-jackpot:after{filter:drop-shadow(0 0 2px #ffd23f) drop-shadow(0 0 4px rgba(255,45,85,.6))!important;-webkit-mask:radial-gradient(closest-side,transparent 75%,#000 76% 90%,transparent 91%)!important;mask:radial-gradient(closest-side,transparent 75%,#000 76% 90%,transparent 91%)!important}
+.fr-jackpot[data-lv="1"]:after{animation-duration:5.4s!important;filter:saturate(.8) drop-shadow(0 0 2px #ffd23f)!important}
+.fr-jackpot[data-lv="1"]>.fxm .bu,.fr-jackpot[data-lv="1"]>.fxm .b2{display:none}
+.fr-jackpot:not([data-lv="1"]):after{animation-duration:2.4s!important}
+.fr-jackpot:not([data-lv="1"])>.fxm .o1{display:block;inset:0;border-radius:0;background:url("fx/jackpot-fichas.svg") center/100% 100% no-repeat;animation:frSpin 9s linear infinite;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));z-index:1}
+.fr-jackpot:not([data-lv="1"])>.fxm .o2{display:block;inset:0;border-radius:0;background:url("fx/jackpot-monedas.svg") center/100% 100% no-repeat;animation:frSpin 14s linear infinite reverse,jkTw 1.6s ease-in-out infinite;z-index:1}
+.fr-jackpot>.fxm .bu{border-color:#ffd23f}
+@keyframes jkTw{50%{opacity:.5}}
+/* Nv.1 y Nv.2 · moneda al aire: sale de abajo, gira y vuelve a caer */
+.fr-jackpot:not([data-lv="3"])>.fxm .gem{display:block!important;left:43%;bottom:6%;top:auto;width:14%!important;height:14%!important;margin:0!important;border-radius:50%;clip-path:none;background:url("fx/jackpot-moneda.svg") center/contain no-repeat!important;filter:drop-shadow(0 2px 2px rgba(0,0,0,.6));opacity:0;animation:jkToss 5s cubic-bezier(.3,0,.4,1) var(--dl,0s) infinite!important;z-index:6}
+@keyframes jkToss{0%,62%{opacity:0;transform:translateY(0) rotateY(0) scale(.6)}65%{opacity:1;transform:translateY(0) rotateY(0) scale(1)}76%{transform:translateY(-260%) rotateY(900deg) scale(1.15);animation-timing-function:cubic-bezier(.5,0,.8,.6)}88%{opacity:1;transform:translateY(0) rotateY(1800deg) scale(1)}90%{transform:translateY(-25%) rotateY(1800deg) scale(1)}92%{opacity:1;transform:translateY(0) rotateY(1800deg)}97%,100%{opacity:0;transform:translateY(0) rotateY(1800deg) scale(.6)}}
+/* Nv.2 · ruleta: una bola blanca corre por la marquesina, frena y donde cae se enciende el premio; las fichas saltan */
+.fr-jackpot[data-lv="2"]>.fxm .o3{display:block;inset:0;border-radius:50%;background:none;animation:jkRoul 6s linear infinite;z-index:5}
+.fr-jackpot[data-lv="2"]>.fxm .o3:before{display:block!important;content:"";position:absolute;left:50%;top:5.6%;width:8%;height:8%;margin-left:-4%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#e5e7eb 45%,#6b7280);box-shadow:0 0 4px #fff,0 1px 2px rgba(0,0,0,.7)}
+.fr-jackpot[data-lv="2"]>.fxm .o3:after{display:block!important;content:"";position:absolute;left:50%;top:1%;width:18%;height:18%;margin-left:-9%;border-radius:50%;background:radial-gradient(closest-side,#fff 0 18%,#ffd23f 40%,rgba(255,45,85,.6) 65%,transparent);opacity:0;animation:jkHit 6s ease-out infinite}
+.fr-jackpot[data-lv="2"]>.fxm .o1{animation:frSpin 9s linear infinite,jkHop 6s ease-out infinite}
+@keyframes jkRoul{0%{transform:rotate(0);animation-timing-function:linear}45%{transform:rotate(1440deg);animation-timing-function:cubic-bezier(.15,.6,.3,1)}78%{transform:rotate(1785deg);animation-timing-function:ease-out}82%,100%{transform:rotate(1800deg)}}
+@keyframes jkHit{0%,80%{opacity:0;transform:scale(.4)}83%{opacity:1;transform:scale(1.15)}95%,100%{opacity:0;transform:scale(1.5)}}
+@keyframes jkHop{0%,81%{scale:1}85%{scale:1.14}89%{scale:.97}93%,100%{scale:1}}
+/* Nv.3 · Premio mayor: dos tiradas. La primera queda en 7-7 y el tercer 7 se pasa por un pelo (¡CASI!);
+   la segunda, con el tercer carrete haciéndose esperar, cae 7-7-7 y explota el JACKPOT */
+.fr-jackpot[data-lv="3"]{animation:frJack 1.2s steps(1) infinite!important}
+.fr-jackpot[data-lv="3"]:after{animation-duration:1.2s!important}
+.fr-jackpot[data-lv="3"]:before{animation:jkCard 16s ease-in-out infinite!important}
+.fr-jackpot[data-lv="3"]>.fxm .o1{animation-duration:6s}
+.fr-jackpot[data-lv="3"]>.fxm .o2{animation:frSpin 8s linear infinite reverse,jkTw .8s ease-in-out infinite}
+.fr-jackpot[data-lv="3"]>.fxm .o3{display:block;inset:12.1%;overflow:hidden;isolation:isolate;border-radius:50%;background:linear-gradient(90deg,transparent 32.6%,#ffd23f 32.6% 34%,transparent 34% 66%,#ffd23f 66% 67.4%,transparent 67.4%),linear-gradient(rgba(0,0,0,.55),transparent 28% 72%,rgba(0,0,0,.55)),radial-gradient(closest-side,#3a0610,#12000a);box-shadow:inset 0 0 0 2px #ffd23f,0 0 6px rgba(255,210,63,.7);opacity:0;animation:jkWin 16s ease-in-out infinite;z-index:2}
+.fr-jackpot[data-lv="3"]>.fxm .o3:before,.fr-jackpot[data-lv="3"]>.fxm .o3:after{display:block!important;content:"";position:absolute;top:0;left:0;width:66.67%;height:720%;margin:0;border-radius:0;opacity:1;background:url("fx/jackpot-carretes.svg") 0 0/150% 100% no-repeat;transform:translateY(2.78%);animation:jkReel 16s linear infinite;z-index:-1}
+.fr-jackpot[data-lv="3"]>.fxm .o3:after{left:66.67%;width:33.33%;background-position:100% 0;background-size:300% 100%;animation-name:jkReel2}
+.fr-jackpot[data-lv="3"]>.fxm .au{display:block!important;inset:auto;right:-1%;top:20%;width:9%;height:24%;border-radius:0;opacity:1;background:url("fx/jackpot-palanca.svg") center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7));transform-origin:50% 92%;animation:jkLever 16s ease-in-out infinite;z-index:6}
+.fr-jackpot[data-lv="3"]>.fxm:before{content:"";position:absolute;left:22%;right:22%;top:17%;height:18%;background:url("fx/jackpot-casi.svg") center/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7));opacity:0;animation:jkCasi 16s cubic-bezier(.3,1.6,.5,1) infinite;z-index:7}
+.fr-jackpot[data-lv="3"]>.fxm .sx{display:block;inset:6%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,251,230,.95),rgba(255,210,63,.7) 55%,rgba(255,45,85,.35) 72%,transparent 80%);opacity:0;animation:jkFl 16s ease-out infinite;z-index:3}
+.fr-jackpot[data-lv="3"]>.fxm .b2{display:block;inset:0;border-radius:0;-webkit-mask:none;mask:none;background:url("fx/jackpot-lluvia.svg") center/100% 100% no-repeat;opacity:0;animation:jkBoom 16s cubic-bezier(.15,.7,.3,1) infinite;z-index:4}
+.fr-jackpot[data-lv="3"]>.fxm .bu{inset:14%;border:3px solid #ffd23f;box-shadow:0 0 8px #ffd23f;opacity:0;animation:jkRing 16s ease-out infinite;z-index:4}
+.fr-jackpot[data-lv="3"]>.fxm .gem{display:block!important;left:14%;right:14%;top:auto;bottom:-3%;width:auto!important;height:24%!important;margin:0!important;border-radius:0;clip-path:none;background:url("fx/jackpot-letrero.svg") center/contain no-repeat!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));opacity:0;animation:jkSign 16s cubic-bezier(.3,1.6,.5,1) infinite!important;z-index:6}
+@keyframes jkWin{0%,13%{opacity:0;transform:scale(.8);translate:0 0}17%{opacity:1;transform:scale(1)}36%{translate:0 0}37%{translate:-4% 0}38%{translate:4% 0}39%{translate:-3% 0}40%{translate:2% 0}41%{translate:0 0}43%{opacity:1;transform:scale(1)}46%,53%{opacity:0;transform:scale(.8)}57%{opacity:1;transform:scale(1)}92%{opacity:1;transform:scale(1)}96%,100%{opacity:0;transform:scale(1.06)}}
+@keyframes jkReel{0%,18%{transform:translateY(2.78%)}19%{transform:translateY(-3%);animation-timing-function:linear}27%{transform:translateY(-72%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}30%{transform:translateY(-89.6%)}31%,49%{transform:translateY(-88.89%)}50%,58%{transform:translateY(2.78%)}59%{transform:translateY(-3%);animation-timing-function:linear}67%{transform:translateY(-72%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}70%{transform:translateY(-89.6%)}71%,100%{transform:translateY(-88.89%)}}
+@keyframes jkReel2{0%,18%{transform:translateY(2.78%)}19%{transform:translateY(-3%);animation-timing-function:linear}31%{transform:translateY(-70%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}35%{transform:translateY(-85.4%)}36%,49%{transform:translateY(-84.72%)}50%,58%{transform:translateY(2.78%)}59%{transform:translateY(-3%);animation-timing-function:linear}73%{transform:translateY(-70%);animation-timing-function:cubic-bezier(.2,.6,.35,1)}79%{transform:translateY(-89.8%)}80%,100%{transform:translateY(-88.89%)}}
+@keyframes jkLever{0%,13%{transform:scaleY(1)}15%{transform:scaleY(-.7)}18%{transform:scaleY(1)}53%{transform:scaleY(1)}55%{transform:scaleY(-.7)}58%,100%{transform:scaleY(1)}}
+@keyframes jkCasi{0%,35%{opacity:0;transform:scale(.3) rotate(6deg)}38%{opacity:1;transform:scale(1.12) rotate(4deg)}40%{opacity:1;transform:scale(1) rotate(4deg)}43%{opacity:1;transform:scale(1) rotate(4deg) translateY(10%)}46%,100%{opacity:0;transform:scale(.9) rotate(4deg) translateY(30%)}}
+@keyframes jkFl{0%,79%{opacity:0}81%{opacity:.95}84%{opacity:.15}86%{opacity:.6}93%,100%{opacity:0}}
+@keyframes jkBoom{0%,80%{opacity:0;transform:scale(.3) rotate(0)}82%{opacity:1}92%{opacity:1;transform:scale(1) rotate(28deg)}97%,100%{opacity:0;transform:scale(1.03) rotate(32deg)}}
+@keyframes jkRing{0%,80%{opacity:0;transform:scale(.9)}82%{opacity:1;transform:scale(.95)}93%,100%{opacity:0;transform:scale(1.3)}}
+@keyframes jkSign{0%,80%{opacity:0;transform:scale(.3) rotate(-10deg)}84%{opacity:1;transform:scale(1.12) rotate(-4deg)}87%{transform:scale(1) rotate(-4deg)}94%{opacity:1;transform:scale(1) rotate(-4deg)}98%,100%{opacity:0;transform:scale(.9) rotate(-4deg)}}
+@keyframes jkCard{0%,77%{opacity:1;transform:rotate(12deg)}80%{opacity:1;transform:rotate(12deg) rotateY(90deg) scale(1.2)}82%,95%{opacity:0;transform:rotate(12deg) scale(.4)}99%,100%{opacity:1;transform:rotate(12deg)}}
+@media(prefers-reduced-motion:reduce){.fr-jackpot>.fxm *,.fr-jackpot>.fxm:before{animation:none!important}.fr-jackpot>.fxm .o3,.fr-jackpot>.fxm .gem,.fr-jackpot>.fxm .b2,.fr-jackpot>.fxm .bu,.fr-jackpot>.fxm .sx,.fr-jackpot>.fxm .gem{display:none!important}}
+
+/* marcos legendarios/míticos en avatares chiquitos (menos de 50 px): versión liviana */
+.frm.fxs>.fxm{display:block!important;inset:0!important;z-index:5!important;animation:none!important;background:none!important}
+.frm.fxs[class][data-lv]>.fxm>i[class]{display:none!important}
+.frm.fxs[class][data-lv]>.fxm:before{display:none!important}
+.frm.fxs[class][data-lv]>.fxm:after{display:none!important;content:""}
+/* en avatares chiquitos el nivel se ve con una insignia (2 plateada, 3 dorada) */
+.frm.fxs[class][data-lv="2"]>.fxm:after,.frm.fxs[class][data-lv="3"]>.fxm:after{display:grid!important;place-items:center;position:absolute;left:auto;top:auto;right:-14%;bottom:-14%;width:46%;height:46%;min-width:13px;min-height:13px;border-radius:50%;border:1.5px solid #0d0d10;font:900 calc(var(--s,40px)*.26)/1 Archivo,sans-serif;color:#0d0d10;box-shadow:0 1px 3px rgba(0,0,0,.6);transform:none;opacity:1;animation:none;mask:none;-webkit-mask:none;filter:none}
+.frm.fxs[class][data-lv="2"]>.fxm:after{content:"2";background:linear-gradient(135deg,#ffffff,#cbd5e1 55%,#94a3b8)}
+.frm.fxs[class][data-lv="3"]>.fxm:after{content:"3";background:linear-gradient(135deg,#fffbe6,#ffd23f 50%,#c08400)}
+.frm.fxs{animation:none!important}
+.fr-ouroboros.fxs:before,.fr-magenta.fxs:before{display:none!important}
+.fr-ouroboros.fxs:after,.fr-navidad.fxs:after,.fr-navidad.fxs:before,.fr-magenta.fxs:after,.fr-jackpot.fxs:after,.fr-jackpot.fxs:before{filter:none!important}
+.fr-ouroboros.fxs[data-lv="1"]:after{filter:saturate(.55) brightness(.78)!important}
+.fr-magenta.fxs:after{animation:frSpin 14s linear infinite!important}
+.fr-jackpot.fxs:before{animation:frCard 4.2s cubic-bezier(.4,0,.2,1) infinite!important}
+
+
+
+/* ===== Black Matter · legendario de la tienda con 3 niveles (tinta viva con glitch de color) =====
+   Nv.1 Tinta: anillo de tinta que hierve (3 cuadros que se alternan) con bordes de color cian, magenta y amarillo
+   Nv.2 Derrame: gotas de tinta que chorrean sobre el avatar, salpicaduras que saltan y cortes de glitch
+   Nv.3 Materia oscura: la tinta sale del centro y se traga el avatar, abre los OJOS, mira a todos lados, parpadea…
+        y EXPLOTA en salpicaduras; el avatar reaparece partido en colores (glitch) */
+.fr-blackmatter{animation:none!important;box-shadow:0 0 .3em rgba(0,0,0,.6)}
+.fr-blackmatter:after,.fr-blackmatter:before{inset:-16%!important;-webkit-mask:none!important;mask:none!important;filter:drop-shadow(0 0 1px rgba(255,255,255,.25))!important;opacity:1!important;z-index:3!important}
+.fr-blackmatter:after{background:url("fx/bm-anillo1.svg") center/100% 100% no-repeat!important;animation:frSpin 20s linear infinite,bmB1 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite!important}
+.fr-blackmatter:before{background:url("fx/bm-anillo2.svg") center/100% 100% no-repeat!important;animation:frSpin 20s linear infinite,bmB2 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite!important}
+@keyframes bmBeat{0%{scale:1.035}35%{scale:.995}100%{scale:1}}
+@keyframes bmB1{0%{opacity:1}33.3%,100%{opacity:0}}
+@keyframes bmB2{0%{opacity:0}33.3%{opacity:1}66.6%,100%{opacity:0}}
+@keyframes bmB3{0%,66.6%{opacity:0}66.7%,100%{opacity:1}}
+.fr-blackmatter>.fxm{inset:-16%!important;z-index:4}
+.fr-blackmatter>.fxm>i:before,.fr-blackmatter>.fxm>i:after{display:none!important}
+.fr-blackmatter>.fxm .o1,.fr-blackmatter>.fxm .o2,.fr-blackmatter>.fxm .o3,.fr-blackmatter>.fxm .gem,.fr-blackmatter>.fxm .bu,.fr-blackmatter>.fxm .b2,.fr-blackmatter>.fxm .sx{display:none!important}
+.fr-blackmatter>.fxm .au{display:block!important;inset:0;border-radius:0;background:url("fx/bm-anillo3.svg") center/100% 100% no-repeat;opacity:0;animation:frSpin 20s linear infinite,bmB3 .42s steps(1) infinite,bmJit 4s steps(1) infinite;z-index:1}
+@keyframes bmJit{0%,84%{translate:0 0}85%{translate:-2% 1%}87%{translate:2.5% -1%}89%{translate:-1% -2%}91%{translate:1.5% 1.5%}93%,100%{translate:0 0}}
+/* Nv.2 y Nv.3: goteo, salpicaduras y glitch */
+.fr-blackmatter:not([data-lv="1"])>.fxm .o1{display:block!important;inset:0;border-radius:0;background:url("fx/bm-goteo.svg") center/100% 100% no-repeat;animation:none;z-index:2}
+.fr-blackmatter:not([data-lv="1"])>.fxm .o2{display:block!important;inset:0;border-radius:0;background:url("fx/bm-salpicadura.svg") center/100% 100% no-repeat;opacity:0;animation:bmSplat 3s cubic-bezier(.2,1.4,.5,1) infinite;z-index:3}
+@keyframes bmSplat{0%,62%{opacity:0;transform:scale(.86) rotate(0)}66%{opacity:1;transform:scale(1.02) rotate(8deg)}82%{opacity:1;transform:scale(1) rotate(8deg)}92%,100%{opacity:0;transform:scale(1.04) rotate(8deg)}}
+.fr-blackmatter:not([data-lv="1"])>.fxm .sx{display:block!important;inset:10%;border-radius:50%;overflow:hidden;background:url("fx/bm-glitch.svg") center/100% 100% no-repeat;opacity:0;animation:bmGl 5s steps(1) infinite;z-index:6}
+@keyframes bmGl{0%,80%{opacity:0;transform:translateX(0) scaleY(1)}81%{opacity:1;transform:translateX(-6%) scaleY(1)}83%{opacity:.8;transform:translateX(5%) scaleY(-1)}85%{opacity:1;transform:translateX(-3%) scaleY(1)}87%,100%{opacity:0}}
+.fr-blackmatter:not([data-lv="1"])>.fxm .au{animation:frSpin 20s linear infinite,bmB3 .42s steps(1) infinite,bmJit 2.6s steps(1) infinite}
+/* Nv.3 · la materia oscura se traga el avatar (ciclo de 10 s) */
+.fr-blackmatter[data-lv="3"]>.fxm{background-image:inherit;background-size:0 0;background-repeat:no-repeat}
+.fr-blackmatter[data-lv="3"]>.fxm .gem{display:block!important;left:9%;top:9%;width:82%!important;height:82%!important;margin:0!important;border-radius:50%;clip-path:none;background:url("fx/bm-gota.svg") center/100% 100% no-repeat!important;opacity:0;transform:scale(0) rotate(0);animation:bmBlob 14s cubic-bezier(.3,1.3,.5,1) infinite!important;z-index:4}
+@keyframes bmBlob{0%,17%{opacity:0;transform:scale(.6) rotate(0)}20%{opacity:1;transform:scale(1.04) rotate(-6deg)}26%{transform:scale(.98) rotate(3deg)}33%{transform:scale(1.01) rotate(-2deg)}39%{opacity:1;transform:scale(.9) rotate(0)}41%{opacity:1;transform:scale(1.18) rotate(0)}43%,100%{opacity:0;transform:scale(1.3) rotate(0)}}
+.fr-blackmatter[data-lv="3"]>.fxm .o3{display:block!important;inset:31% 15% auto 15%;height:34%;border-radius:0;background:url("fx/bm-ojos.svg") center/contain no-repeat;filter:drop-shadow(0 0 6px rgba(255,30,30,.75));opacity:0;animation:bmEyes 14s ease-out infinite;z-index:5}
+@keyframes bmEyes{0%,21%{opacity:0;transform:scale(.9,.02)}24%{opacity:1;transform:scale(1.08,1.1)}26%{transform:scale(1)}37%{opacity:1;transform:scale(1)}38.5%{opacity:1;transform:scale(1.25,.15)}40%,100%{opacity:0;transform:scale(1.2,.05)}}
+.fr-blackmatter[data-lv="3"]>.fxm .b2{display:block!important;inset:-2%;border-radius:0;-webkit-mask:none;mask:none;background:url("fx/bm-explosion.svg") center/100% 100% no-repeat;opacity:0;animation:bmBoom 14s cubic-bezier(.15,.8,.3,1) infinite;z-index:6}
+@keyframes bmBoom{0%,40%{opacity:0;transform:scale(.5) rotate(0)}42%{opacity:1;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1) rotate(12deg)}58%,100%{opacity:0;transform:scale(1.03) rotate(14deg)}}
+.fr-blackmatter[data-lv="3"]>.fxm .bu{display:block!important;inset:12.1%;border:0;border-radius:50%;background-image:inherit;background-size:cover;background-position:center;background-color:#ff1fd1;background-blend-mode:multiply;mix-blend-mode:screen;opacity:0;animation:bmGhost 14s steps(1) infinite;z-index:3}
+@keyframes bmGhost{0%,41%{opacity:0;translate:0 0}42%{opacity:.85;translate:-6% 0}44%{translate:5% 2%}46%{translate:-4% -2%}48%{opacity:.6;translate:3% 0}50%{translate:-2% 1%}52%{opacity:.4;translate:1% 0}54%,100%{opacity:0;translate:0 0}}
+.fr-blackmatter[data-lv="3"]>.fxm .sx{animation:bmGl3 14s steps(1) infinite}
+@keyframes bmGl3{0%,7%{opacity:0}8%{opacity:1;transform:translateX(-6%)}9%{opacity:.8;transform:translateX(5%) scaleY(-1)}10%{opacity:0}40%{opacity:0}41%{opacity:1;transform:translateX(-5%)}43%{opacity:.9;transform:translateX(6%) scaleY(-1)}45%{opacity:1;transform:translateX(-2%)}47%{opacity:.7;transform:translateX(4%) scaleY(-1)}49%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.fr-blackmatter:after,.fr-blackmatter:before,.fr-blackmatter>.fxm *{animation:none!important}.fr-blackmatter:before,.fr-blackmatter>.fxm .au,.fr-blackmatter>.fxm .o2,.fr-blackmatter>.fxm .sx,.fr-blackmatter>.fxm .gem,.fr-blackmatter>.fxm .o3,.fr-blackmatter>.fxm .b2,.fr-blackmatter>.fxm .bu{display:none!important}}
+
+/* Black Matter · llama azul y ondas de sonido */
+.fr-blackmatter>.fxm .w1,.fr-blackmatter>.fxm .w2{display:block!important;inset:4%;border-radius:0;background:url("fx/bm-flama1.svg") center/100% 100% no-repeat;transform-origin:50% 50%;filter:drop-shadow(0 0 3px rgba(34,211,238,.6));z-index:0;animation:frSpin 14s linear infinite,bmFl1 .36s steps(1) infinite,bmFlS 1.6s ease-in-out infinite}
+.fr-blackmatter>.fxm .w2{background-image:url("fx/bm-flama2.svg");animation:frSpin 14s linear infinite,bmFl2 .36s steps(1) infinite,bmFlS 1.6s ease-in-out infinite}
+@keyframes bmFl1{0%{opacity:.6}50%,100%{opacity:0}}
+@keyframes bmFl2{0%{opacity:0}50%,100%{opacity:.6}}
+@keyframes bmFlS{0%,100%{scale:.94}50%{scale:1}}
+.fr-blackmatter[data-lv="1"]>.fxm .w1,.fr-blackmatter[data-lv="1"]>.fxm .w2{scale:.93;animation:frSpin 14s linear infinite,bmFl1 .5s steps(1) infinite}
+.fr-blackmatter[data-lv="1"]>.fxm .w2{animation:frSpin 14s linear infinite,bmFl2 .5s steps(1) infinite}
+/* ondas que salen con cada golpe (todos los niveles) */
+.fr-blackmatter>.fxm .o1{display:block!important;inset:0;border-radius:0;background:none;animation:none;z-index:2}
+.fr-blackmatter:not([data-lv="1"])>.fxm .o1{background:url("fx/bm-goteo.svg") center/100% 100% no-repeat}
+.fr-blackmatter>.fxm .o1:before,.fr-blackmatter>.fxm .o1:after{display:block!important;content:"";position:absolute;inset:11%;margin:0;width:auto;height:auto;top:11%;left:11%;background:none;border-radius:50%;border:1px solid #00e5ff;box-shadow:0 0 4px #00e5ff;opacity:0;animation:bmWave 1s cubic-bezier(.1,.7,.3,1) infinite}
+.fr-blackmatter>.fxm .o1:after{border-color:#ff1f8f;box-shadow:0 0 4px #ff1f8f;animation-delay:.5s}
+@keyframes bmWave{0%{opacity:.55;transform:scale(1)}100%{opacity:0;transform:scale(1.26)}}
+/* Nv.2 y Nv.3: ecualizador que baila por dentro del borde */
+.fr-blackmatter:not([data-lv="1"])>.fxm .w3{display:block!important;inset:0;border-radius:0;background:url("fx/bm-eq1.svg") center/100% 100% no-repeat;opacity:.55;animation:frSpin 30s linear infinite reverse;z-index:3}
+.fr-blackmatter:not([data-lv="1"])>.fxm .w3:before,.fr-blackmatter:not([data-lv="1"])>.fxm .w3:after{display:block!important;content:"";position:absolute;inset:0;background:url("fx/bm-eq2.svg") center/100% 100% no-repeat;opacity:0;animation:bmEq1 .5s steps(1) infinite}
+.fr-blackmatter:not([data-lv="1"])>.fxm .w3:after{background-image:url("fx/bm-eq3.svg");animation:bmEq2 1s steps(1) infinite}
+@keyframes bmEq1{0%{opacity:1}25%{opacity:0}50%{opacity:1}62%,100%{opacity:0}}
+@keyframes bmEq2{0%{opacity:1}12%{opacity:0}50%{opacity:1}56%{opacity:0}75%{opacity:1}80%,100%{opacity:0}}
+/* Nv.3: más fuego, el ecualizador se vuelve loco y la llama estalla con la explosión */
+.fr-blackmatter[data-lv="3"]>.fxm .w1,.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl1 .24s steps(1) infinite,bmFl3 14s ease-out infinite}
+.fr-blackmatter[data-lv="3"]>.fxm .w2{animation:frSpin 9s linear infinite,bmFl2 .24s steps(1) infinite,bmFl3 14s ease-out infinite}
+@keyframes bmFl3{0%,8%{scale:1}18%{scale:.9}39%{scale:.92}41%{scale:1.14}50%{scale:1.04}60%,100%{scale:1}}
+.fr-blackmatter[data-lv="3"]>.fxm .w3:before{animation-duration:.3s}.fr-blackmatter[data-lv="3"]>.fxm .w3:after{animation-duration:.6s}
+.fr-blackmatter[data-lv="3"]>.fxm .o1:before,.fr-blackmatter[data-lv="3"]>.fxm .o1:after{border-width:1.5px}
+@media(prefers-reduced-motion:reduce){.fr-blackmatter>.fxm .w1,.fr-blackmatter>.fxm .w2,.fr-blackmatter>.fxm .w3,.fr-blackmatter>.fxm .w3:before,.fr-blackmatter>.fxm .w3:after{animation:none!important}.fr-blackmatter>.fxm .w2,.fr-blackmatter>.fxm .o1:before,.fr-blackmatter>.fxm .o1:after{display:none!important}}
+
+/* Black Matter · la tinta se derrite */
+.fr-blackmatter>.fxm .w4{display:block!important;inset:0;border-radius:0;background:url("fx/bm-derrite.svg") center/100% 100% no-repeat;z-index:3}
+.fr-blackmatter[data-lv="1"]>.fxm .w4{-webkit-mask:linear-gradient(transparent 55%,#000 70%);mask:linear-gradient(transparent 55%,#000 70%)}
+.fr-blackmatter:not([data-lv="1"])>.fxm .w5{display:block!important;inset:0;border-radius:0;background:url("fx/bm-charco.svg") center/100% 100% no-repeat;z-index:3}
+.fr-blackmatter[data-lv="3"]>.fxm .w6{display:block!important;inset:12.1%;border-radius:50%;overflow:hidden;background:url("fx/bm-cortina.svg") center top/100% 100% no-repeat;transform-origin:50% 0;opacity:0;animation:bmMelt 14s cubic-bezier(.5,0,.6,1) infinite;z-index:4}
+@keyframes bmMelt{0%,8%{opacity:1;transform:scaleY(0)}18%{opacity:1;transform:scaleY(1.05)}21%,100%{opacity:0;transform:scaleY(1.05)}}
+
+/* Black Matter · versión fiel a la idea: lo protagonista es la tinta que hierve con su borde de colores */
+.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w1,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w2,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w3,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w5,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w6,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .sx,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .o1:before,.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .o1:after{display:none!important}
+.fr-blackmatter.frm:not(.zz)[data-lv]>.fxm .w4{display:none!important}
+.fr-blackmatter[data-lv="1"]:after,.fr-blackmatter[data-lv="1"]:before{animation-duration:26s,.5s,.5s!important}
+
+/* Black Matter · cada nivel se nota: más ráfagas de color, más glitch y más velocidad */
+.fr-blackmatter.frm[data-lv="1"]:after{background-image:url("fx/bm-l1-1.svg")!important;filter:drop-shadow(0 0 1px rgba(255,255,255,.2))!important;animation:frSpin 32s linear infinite,bmB1 .7s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="1"]:before{background-image:url("fx/bm-l1-2.svg")!important;filter:drop-shadow(0 0 1px rgba(255,255,255,.2))!important;animation:frSpin 32s linear infinite,bmB2 .7s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="1"]>.fxm .au{background-image:url("fx/bm-l1-3.svg");animation:frSpin 32s linear infinite,bmB3 .7s steps(1) infinite}
+.fr-blackmatter.frm[data-lv="2"]:after{background-image:url("fx/bm-l2-1.svg")!important;filter:drop-shadow(2px 0 0 rgba(0,229,255,.75)) drop-shadow(-2px 0 0 rgba(255,31,143,.75))!important;animation:frSpin 20s linear infinite,bmB1 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite,bmJit2 2.2s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="2"]:before{background-image:url("fx/bm-l2-2.svg")!important;filter:drop-shadow(2px 0 0 rgba(0,229,255,.75)) drop-shadow(-2px 0 0 rgba(255,31,143,.75))!important;animation:frSpin 20s linear infinite,bmB2 .42s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite,bmJit2 2.2s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="2"]>.fxm .au{background-image:url("fx/bm-l2-3.svg");filter:drop-shadow(2px 0 0 rgba(0,229,255,.75)) drop-shadow(-2px 0 0 rgba(255,31,143,.75));animation:frSpin 20s linear infinite,bmB3 .42s steps(1) infinite,bmJit2 2.2s steps(1) infinite}
+.fr-blackmatter.frm[data-lv="3"]:after{background-image:url("fx/bm-l3-1.svg")!important;filter:drop-shadow(3px 0 0 rgba(0,229,255,.85)) drop-shadow(-3px 0 0 rgba(255,31,143,.85)) drop-shadow(0 0 7px rgba(255,30,30,.6))!important;animation:frSpin 12s linear infinite,bmB1 .3s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite,bmJit3 1.1s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="3"]:before{background-image:url("fx/bm-l3-2.svg")!important;filter:drop-shadow(3px 0 0 rgba(0,229,255,.85)) drop-shadow(-3px 0 0 rgba(255,31,143,.85)) drop-shadow(0 0 7px rgba(255,30,30,.6))!important;animation:frSpin 12s linear infinite,bmB2 .3s steps(1) infinite,bmBeat .5s cubic-bezier(.2,.8,.3,1) infinite,bmJit3 1.1s steps(1) infinite!important}
+.fr-blackmatter.frm[data-lv="3"]>.fxm .au{background-image:url("fx/bm-l3-3.svg");filter:drop-shadow(3px 0 0 rgba(0,229,255,.85)) drop-shadow(-3px 0 0 rgba(255,31,143,.85)) drop-shadow(0 0 7px rgba(255,30,30,.6));animation:frSpin 12s linear infinite,bmB3 .3s steps(1) infinite,bmJit3 1.1s steps(1) infinite}
+@keyframes bmJit2{0%,84%{translate:0 0}87%{translate:-1.5% .8%}90%{translate:1.5% -.8%}93%,100%{translate:0 0}}
+@keyframes bmJit3{0%,66%{translate:0 0}70%{translate:-2.5% 1%}74%{translate:2% -1.5%}78%{translate:-1% -2%}82%{translate:2.5% 1%}86%,100%{translate:0 0}}
+.fr-blackmatter.frm[data-lv="3"]{box-shadow:0 0 .5em rgba(255,30,30,.45)}
+.fr-blackmatter.fxs:before{display:none!important}.fr-blackmatter.fxs:after{animation:frSpin 20s linear infinite!important}
+/* pausa fuera de pantalla: gana sobre reglas de marcos con !important */
+.cos-off:not(#zq),.cos-off:not(#zq):before,.cos-off:not(#zq):after,.cos-off:not(#zq) *,.cos-off:not(#zq) *:before,.cos-off:not(#zq) *:after{animation-name:none!important}
+/* ===================== GARRA SANGRIENTA (3 niveles) =====================
+   La mano está DETRÁS del avatar (el avatar descansa en la palma): asoman los dedos, el pulgar y la muñeca.
+   Los dedos se doblan solos (animación dentro del SVG). */
+.fr-garra,.fr-mira{animation:none!important;box-shadow:none}
+.fr-garra.frm:after,.fr-garra.frm:before,.fr-mira.frm:after,.fr-mira.frm:before{border-radius:0!important;filter:none!important;background-position:center!important;background-size:100% 100%!important;background-repeat:no-repeat!important;z-index:3!important}
+.fr-garra.frm:after,.fr-garra.frm:before{inset:-60.7%!important}
+.fr-mira.frm:after,.fr-mira.frm:before{inset:-30%!important}
+.fr-garra>.fxm{inset:-40%!important;border-radius:0;z-index:4}
+.fr-mira>.fxm{inset:-30%!important;border-radius:0;z-index:4}
+.fr-garra>.fxm>i,.fr-mira>.fxm>i{display:none!important;inset:auto;border-radius:0;animation:none;will-change:auto;background-color:transparent;background-position:center;background-size:100% 100%;background-repeat:no-repeat;clip-path:none;margin:0;-webkit-mask:none;mask:none;border:0;filter:none}
+.fr-garra>.fxm>i:before,.fr-garra>.fxm>i:after,.fr-mira>.fxm>i:before,.fr-mira>.fxm>i:after{display:none!important}
+.fr-garra.frm:after{inset:-40%!important;background-image:url("fx/garra-anillo1.svg")!important;transform-origin:50% 50%;animation:gaGrip 4s ease-in-out infinite!important}
+.fr-garra.frm[data-lv="2"]:after{background-image:url("fx/garra-anillo2.svg")!important;animation-duration:2.6s!important}
+.fr-garra.frm[data-lv="3"]:after{background-image:url("fx/garra-anillo3.svg")!important}
+@keyframes gaGrip{0%,100%{scale:1}45%{scale:.975}}
+/* Nv2+: gotas que caen, charco y gota grande flotando */
+.fr-garra.frm:not([data-lv="1"])>.fxm>.o1,.fr-garra.frm:not([data-lv="1"])>.fxm>.o2,.fr-garra.frm:not([data-lv="1"])>.fxm>.o3{display:block!important;width:4.4%;height:6.6%;background-image:url("fx/garra-gotita.svg");z-index:5;opacity:0;animation:gaDrop 2.4s cubic-bezier(.55,0,1,.45) infinite!important}
+.fr-garra>.fxm>.o1{left:46%;top:86%}
+.fr-garra>.fxm>.o2{left:58%;top:85%;animation-delay:.9s!important}
+.fr-garra>.fxm>.o3{left:35%;top:83%;animation-delay:1.7s!important}
+@keyframes gaDrop{0%{opacity:0;translate:0 0;scale:.2}12%{opacity:1;translate:0 0;scale:1}30%{translate:0 10%;scale:.9 1.15}75%{opacity:1;translate:0 230%;scale:.85 1.25}76%,100%{opacity:0;translate:0 230%}}
+.fr-garra.frm:not([data-lv="1"])>.fxm>.gem{display:block!important;left:40%;top:-4%;width:20%;height:22%;background:url("fx/garra-gota.svg") center/100% 100% no-repeat!important;clip-path:none!important;margin:0!important;bottom:auto!important;z-index:6;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,20,20,.6));animation:gaBob 1.8s ease-in-out infinite!important}
+@keyframes gaBob{0%,100%{translate:0 0;scale:1}50%{translate:0 -8%;scale:1.08 .94}}
+.fr-garra.frm:not([data-lv="1"])>.fxm>.bu{display:block!important;inset:20%;border-radius:50%;background:radial-gradient(closest-side,transparent 84%,rgba(225,18,27,.55) 93%,transparent 100%);z-index:0}
+/* Nv3: PACTO DE SANGRE — la gota cae sobre el avatar, la mano aprieta y estalla */
+.fr-garra.frm[data-lv="3"]:after{animation:gaSq 8s cubic-bezier(.3,.7,.3,1) infinite!important}
+@keyframes gaSq{0%,40%,62%,100%{scale:1;rotate:0deg}46%{scale:.9;rotate:-2deg}50%{scale:1.06;rotate:1.5deg}55%{scale:.97;rotate:0deg}}
+.fr-garra.frm[data-lv="3"]>.fxm>.gem{animation:gaFall 8s cubic-bezier(.5,0,.9,.5) infinite!important}
+@keyframes gaFall{0%{opacity:0;translate:0 -30%;scale:.3}10%{opacity:1;translate:0 0;scale:.7}34%{translate:0 0;scale:1.15 1}40%{translate:0 0;scale:.95 1.12}46%{opacity:1;translate:0 190%;scale:.8 1.3}47%,100%{opacity:0;translate:0 190%;scale:.8 1.3}}
+.fr-garra.frm[data-lv="3"]>.fxm>.sx{display:block!important;inset:22.2%;border-radius:50%;overflow:hidden;background-image:url("fx/garra-mancha.svg");background-size:160% 160%;background-position:50% 30%;z-index:3;opacity:0;transform-origin:50% 30%;animation:gaSplat 8s ease-out infinite!important}
+@keyframes gaSplat{0%,45%{opacity:0;scale:.3}48%{opacity:.95;scale:1.08}54%{opacity:.9;scale:1}80%{opacity:.75;scale:1;translate:0 4%}92%,100%{opacity:0;scale:1;translate:0 10%}}
+.fr-garra.frm[data-lv="3"]>.fxm>.b2{display:block!important;inset:0;background-image:url("fx/garra-estallido.svg");z-index:6;opacity:0;animation:gaBurst 8s cubic-bezier(.15,.8,.3,1) infinite!important}
+@keyframes gaBurst{0%,46%{opacity:0;scale:.55;rotate:0deg}50%{opacity:1;scale:1.05;rotate:8deg}64%{opacity:.85;scale:1.12;rotate:10deg}74%,100%{opacity:0;scale:1.16;rotate:12deg}}
+.fr-garra.frm[data-lv="3"]>.fxm>.bu{background:radial-gradient(closest-side,transparent 78%,rgba(255,20,30,.85) 90%,rgba(120,0,8,.4) 96%,transparent 100%);animation:gaBeat 1.1s ease-out infinite!important}
+@keyframes gaBeat{0%,100%{opacity:.35;scale:1}12%{opacity:1;scale:1.1}24%{opacity:.5;scale:1.02}36%{opacity:.95;scale:1.08}}
+.fr-garra.frm[data-lv="3"]>.fxm>.w1{display:block!important;left:20%;top:-26%;width:60%;height:18%;z-index:5;background:url("fx/garra-gotita.svg") 0 0/9% 44% no-repeat,url("fx/garra-gotita.svg") 50% 40%/7% 34% no-repeat,url("fx/garra-gotita.svg") 100% 10%/8% 40% no-repeat;opacity:0;animation:gaRain 1.3s linear infinite!important}
+@keyframes gaRain{0%{opacity:0;translate:0 0}15%{opacity:1}80%{opacity:1;translate:0 120%}100%{opacity:0;translate:0 150%}}
+.fr-garra.frm[data-lv="3"]>.fxm>.o1,.fr-garra.frm[data-lv="3"]>.fxm>.o2,.fr-garra.frm[data-lv="3"]>.fxm>.o3{animation-duration:1.6s!important}
+.fr-garra.fxs:after,.fr-mira.fxs:after{animation:none!important}.fr-mira.fxs:before{display:none!important}
+
+/* --- Garra: esencia y mecánicas por nivel --- */
+@property --ga{syntax:"<angle>";inherits:false;initial-value:0deg}
+/* Nv1 · Agarre: tic nervioso de la mano, una sola gota cae del dedo y sombra roja tenue */
+.fr-garra.frm[data-lv="1"]:after{animation:gaTwitch 4.2s ease-out infinite!important}
+@keyframes gaTwitch{0%,78%,100%{scale:1;rotate:0deg;translate:0 0}80%{scale:.95;rotate:-2deg;translate:0 1%}83%{scale:1.02;rotate:1deg;translate:0 0}86%{scale:.99;rotate:-.5deg}90%{scale:1;rotate:0deg}}
+.fr-garra.frm[data-lv="1"]>.fxm>.o1{display:block!important;left:22%;top:78%;width:4.4%;height:6.6%;background-image:url("fx/garra-gotita.svg");z-index:5;opacity:0;animation:gaDrop 4.2s cubic-bezier(.55,0,1,.45) 3.36s infinite!important}
+.fr-garra.frm[data-lv="1"]>.fxm>.bu{display:block!important;inset:12%;border-radius:50%;background:radial-gradient(closest-side,transparent 62%,rgba(150,0,12,.5) 78%,transparent 100%);z-index:0;animation:gaShade 4.2s ease-in-out infinite!important}
+@keyframes gaShade{0%,70%,100%{opacity:.45}82%{opacity:1}}
+/* Nv2 · Herida: zarpazo de 3 garras que raja el avatar y sangra */
+.fr-garra.frm[data-lv="2"]:after{animation:gaHit2 6s ease-out infinite!important}
+@keyframes gaHit2{0%,7%,30%,100%{scale:1;rotate:0deg}9%{scale:.94;rotate:-3deg}12%{scale:1.03;rotate:1.5deg}16%{scale:1;rotate:0deg}}
+.fr-garra.frm:not([data-lv="1"])>.fxm>.w4{display:block!important;inset:22.2%;border-radius:50%;overflow:hidden;background-image:url("fx/garra-zarpazo.svg");z-index:5;clip-path:inset(0 0 0 100%);animation:gaClaw 6s ease-out infinite!important}
+@keyframes gaClaw{0%,8%{clip-path:inset(0 0 0 100%);opacity:1;translate:0 0}11%{clip-path:inset(0 0 0 0);opacity:1}38%{opacity:1;translate:0 0}52%,100%{clip-path:inset(0 0 0 0);opacity:0;translate:0 6%}}
+.fr-garra.frm:not([data-lv="1"])>.fxm>.w3{display:block!important;inset:22.2%;border-radius:50%;background:rgba(210,0,18,.6);mix-blend-mode:multiply;z-index:4;opacity:0;animation:gaTint2 6s ease-out infinite!important}
+@keyframes gaTint2{0%,8%{opacity:0}10%{opacity:.85}20%,100%{opacity:0}}
+/* Nv3 · Pacto de sangre (ciclo de 10 s): sello de runas que se dibuja + latido que se acelera → la gota cae →
+   la mano aprieta, estalla y te tiñe de rojo → zarpazo → todo se escurre */
+.fr-garra.frm[data-lv="3"]:after{animation:gaSq3 10s cubic-bezier(.3,.7,.3,1) infinite!important}
+@keyframes gaSq3{0%,43%,58%,100%{scale:1;rotate:0deg}46%{scale:.88;rotate:-2.5deg}50%{scale:1.07;rotate:1.5deg}54%{scale:.97;rotate:0deg}60%{scale:.95;rotate:-2deg}63%{scale:1.02;rotate:1deg}66%{scale:1;rotate:0deg}}
+.fr-garra.frm[data-lv="3"]>.fxm>.w5{display:block!important;inset:0;background-image:url("fx/garra-sello.svg");z-index:2;-webkit-mask:conic-gradient(#000 var(--ga),transparent 0);mask:conic-gradient(#000 var(--ga),transparent 0);filter:drop-shadow(0 0 4px rgba(255,20,30,.7));animation:gaSeal 10s linear infinite!important}
+@keyframes gaSeal{0%{--ga:0deg;opacity:1;rotate:0deg;scale:1;translate:0 0}30%{--ga:360deg}44%{scale:1;rotate:0deg}47%{--ga:360deg;scale:1.08}52%{scale:1}88%{--ga:360deg;opacity:1;rotate:28deg;translate:0 0}96%,100%{--ga:360deg;opacity:0;rotate:30deg;translate:0 5%}}
+.fr-garra.frm[data-lv="3"]>.fxm>.bu{animation:gaBeat3 10s ease-out infinite!important}
+@keyframes gaBeat3{0%{opacity:.3;scale:1}1.5%{opacity:.9;scale:1.08}4%{opacity:.3;scale:1}14%{opacity:.3;scale:1}15.5%{opacity:.95;scale:1.09}18%{opacity:.35;scale:1}26%{opacity:.35;scale:1}27.3%{opacity:1;scale:1.1}29.5%{opacity:.4;scale:1}35%{opacity:.4;scale:1}36.2%{opacity:1;scale:1.11}38%{opacity:.45;scale:1}41%{opacity:.45;scale:1}42%{opacity:1;scale:1.12}43.6%{opacity:.5;scale:1}45%{opacity:.5;scale:1}46.5%{opacity:1;scale:1.22}52%{opacity:.6;scale:1.04}62%{opacity:.4;scale:1}63.5%{opacity:.9;scale:1.08}66%{opacity:.4;scale:1}78%{opacity:.35;scale:1}79.5%{opacity:.85;scale:1.07}82%,100%{opacity:.3;scale:1}}
+.fr-garra.frm[data-lv="3"]>.fxm>.gem{animation:gaFall3 10s cubic-bezier(.5,0,.9,.5) infinite!important}
+@keyframes gaFall3{0%,4%{opacity:0;translate:0 -30%;scale:.2}10%{opacity:1;translate:0 0;scale:.55}36%{translate:0 0;scale:1.15 1}40%{translate:0 0;scale:.95 1.12}46%{opacity:1;translate:0 190%;scale:.8 1.3}47%,100%{opacity:0;translate:0 190%;scale:.8 1.3}}
+.fr-garra.frm[data-lv="3"]>.fxm>.sx{animation:gaSplat3 10s ease-out infinite!important}
+@keyframes gaSplat3{0%,45.5%{opacity:0;scale:.3;translate:0 0}48%{opacity:.9;scale:1.08}53%{opacity:.8;scale:1}62%{opacity:.55;scale:1;translate:0 6%}72%,100%{opacity:0;scale:1;translate:0 14%}}
+.fr-garra.frm[data-lv="3"]>.fxm>.b2{animation:gaBurst3 10s cubic-bezier(.15,.8,.3,1) infinite!important}
+@keyframes gaBurst3{0%,45.5%{opacity:0;scale:.55;rotate:0deg}49%{opacity:1;scale:1.05;rotate:8deg}62%{opacity:.85;scale:1.12;rotate:10deg}72%,100%{opacity:0;scale:1.16;rotate:12deg}}
+.fr-garra.frm[data-lv="3"]>.fxm>.w3{animation:gaTint3 10s ease-out infinite!important}
+@keyframes gaTint3{0%,45.5%{opacity:0}47%{opacity:.9}54%{opacity:.3}60%{opacity:.6}66%,100%{opacity:0}}
+.fr-garra.frm[data-lv="3"]>.fxm>.w4{animation:gaClaw3 10s ease-out infinite!important}
+@keyframes gaClaw3{0%,59%{clip-path:inset(0 0 0 100%);opacity:1;translate:0 0}61%{clip-path:inset(0 0 0 0);opacity:1}76%{opacity:1;translate:0 0}86%,100%{clip-path:inset(0 0 0 0);opacity:0;translate:0 8%}}
+@media(prefers-reduced-motion:reduce){.fr-garra>.fxm>.w5{-webkit-mask:none;mask:none}}
+
+/* Garra: neblina roja que gira detrás de la mano (más densa en cada nivel) */
+.fr-garra.frm[data-lv]:before{display:block!important;content:""!important;border-radius:50%!important;background:radial-gradient(closest-side,transparent 43%,rgba(150,0,14,.55) 52%,rgba(90,0,8,.32) 70%,transparent 96%),conic-gradient(from 20deg,transparent,rgba(255,30,40,.3) 12%,transparent 26%,rgba(255,30,40,.22) 44%,transparent 58%,rgba(255,30,40,.3) 76%,transparent 90%)!important;-webkit-mask:radial-gradient(closest-side,transparent 43%,#000 49%,#000 58%,transparent 78%)!important;mask:radial-gradient(closest-side,transparent 43%,#000 49%,#000 58%,transparent 78%)!important;opacity:.35!important;animation:frSpin 22s linear infinite!important}
+.fr-garra.frm[data-lv="2"]:before{opacity:.6!important;animation-duration:14s!important}
+.fr-garra.frm[data-lv="3"]:before{opacity:.85!important;animation-duration:9s!important}
+.fr-garra.fxs:before{display:none!important}
+/* Garra sin mano: anillo de sangre que late + rasguños (Nv1) + reflejo de sangre que corre por el anillo (Nv2+) */
+@keyframes gaVein{0%,100%{scale:1}8%{scale:1.035}16%{scale:.995}24%{scale:1.02}34%{scale:1}}
+.fr-garra.frm[data-lv="1"]:after{animation:gaTwitch 4.2s ease-out infinite,gaVein 1.4s ease-in-out infinite!important}
+.fr-garra.frm[data-lv="1"]>.fxm>.w6{display:block!important;left:58%;top:14%;width:28%;height:28%;background-image:url("fx/garra-rasguno.svg");rotate:-8deg;z-index:6;clip-path:inset(0 0 100% 0);animation:gaScr 4.2s ease-out infinite!important}
+@keyframes gaScr{0%,79%{clip-path:inset(0 0 100% 0);opacity:1}82%{clip-path:inset(0 0 0 0);opacity:1}94%{opacity:1}100%{clip-path:inset(0 0 0 0);opacity:0}}
+.fr-garra.frm:not([data-lv="1"])>.fxm>.au{display:block!important;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 290deg,rgba(255,190,180,.15) 310deg,rgba(255,220,210,.85) 350deg,transparent 360deg);-webkit-mask:radial-gradient(closest-side,transparent 54%,#000 56%,#000 61%,transparent 63%);mask:radial-gradient(closest-side,transparent 54%,#000 56%,#000 61%,transparent 63%);z-index:5;animation:frSpin 3.2s linear infinite!important}
+.fr-garra.frm[data-lv="3"]>.fxm>.au{animation-duration:1.9s!important}
+/* ===================== FRANCOTIRADOR (3 niveles) ===================== */
+/* Nv1 · Mira: la mira respira y se mece (pulso del tirador) y el láser tiembla sobre el avatar */
+.fr-mira.frm:after{background-image:url("fx/mira-anillo1.svg")!important;animation:miSway 3.2s ease-in-out infinite!important}
+@keyframes miSway{0%,100%{translate:0 0;rotate:0deg}25%{translate:1.2% -1%;rotate:.6deg}50%{translate:-.8% 1.2%;rotate:-.4deg}75%{translate:-1.2% -.6%;rotate:.3deg}}
+.fr-mira.frm:before{display:none!important}
+.fr-mira.frm[data-lv]>.fxm>.au{display:block!important;left:46%;top:46%;width:8%;height:8%;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#ff1a1a 30%,rgba(255,26,26,.5) 55%,transparent 72%);z-index:6;animation:miDot 3.2s ease-in-out infinite!important}
+@keyframes miDot{0%,100%{translate:0 0;opacity:.95}20%{translate:-90% 60%}40%{translate:70% -50%;opacity:.6}60%{translate:40% 80%}80%{translate:-60% -40%;opacity:1}}
+/* Nv2 · En la mira: radar, distancia que baja, mira que busca y LOCK */
+.fr-mira.frm[data-lv="2"]:after{background-image:url("fx/mira-anillo2.svg")!important;animation:miSway 3.2s ease-in-out infinite!important}
+.fr-mira.frm[data-lv="3"]:after{background-image:url("fx/mira-anillo3.svg")!important}
+.fr-mira.frm:not([data-lv="1"]):before{display:block!important;background-image:url("fx/mira-escala.svg")!important;opacity:.85!important;animation:frSpin 24s linear infinite!important}
+.fr-mira.frm:not([data-lv="1"])>.fxm>.au{left:4%;top:4%;width:92%;height:92%;background:radial-gradient(closest-side,transparent 80%,rgba(255,26,26,.45) 90%,transparent 100%);z-index:0;animation:miGlow 6s ease-in-out infinite!important}
+@keyframes miGlow{0%,50%,100%{opacity:.25}60%,88%{opacity:1}}
+.fr-mira.frm:not([data-lv="1"])>.fxm>.w2{display:block!important;inset:5%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 290deg,rgba(255,26,26,.08) 300deg,rgba(255,60,60,.55) 358deg,#ff8080 360deg);-webkit-mask:radial-gradient(closest-side,transparent 69%,#000 71%,#000 99%,transparent 100%);mask:radial-gradient(closest-side,transparent 69%,#000 71%,#000 99%,transparent 100%);z-index:1;animation:frSpin 2.2s linear infinite!important}
+.fr-mira.frm:not([data-lv="1"])>.fxm>.o1{display:block!important;left:35%;top:35%;width:30%;height:30%;background-image:url("fx/mira-mini.svg");z-index:7;animation:miHunt 6s cubic-bezier(.45,0,.25,1) infinite!important}
+@keyframes miHunt{0%{opacity:0;translate:-60% -55%;scale:1}6%{opacity:1}18%{translate:55% -40%}30%{translate:-35% 45%}42%{translate:50% 35%}55%{translate:0 0;scale:1}60%{translate:0 0;scale:.75}88%{opacity:1;translate:0 0;scale:.75}96%,100%{opacity:0;translate:0 0;scale:.6}}
+.fr-mira.frm:not([data-lv="1"])>.fxm>.bu{display:block!important;inset:0;background-image:url("fx/mira-lock.svg");z-index:8;opacity:0;animation:miLock 6s ease-out infinite!important}
+@keyframes miLock{0%,56%{opacity:0;scale:1.35}60%{opacity:1;scale:1}66%{opacity:.3}70%{opacity:1}76%{opacity:.3}80%,88%{opacity:1;scale:1}94%,100%{opacity:0;scale:1.05}}
+.fr-mira.frm:not([data-lv="1"])>.fxm>.w3{display:block!important;left:66%;top:91%;width:34%;height:6.8%;background-image:url("fx/mira-dist.svg");background-size:100% 600%;background-position:0 0;z-index:8;animation:miDist 6s steps(1) infinite!important}
+@keyframes miDist{0%{background-position:0 0}10%{background-position:0 20%}20%{background-position:0 40%}32%{background-position:0 60%}44%{background-position:0 80%}56%,100%{background-position:0 100%}}
+/* Nv3 · Headshot: 3 disparos — el 1º falla, el 2º pega (+50) y el 3º es HEADSHOT; luego recarga */
+.fr-mira.frm[data-lv="3"]:after{animation:miKick3 12s cubic-bezier(.3,.7,.3,1) infinite!important}
+@keyframes miKick3{0%,22%,46%,70%{scale:1;rotate:0deg;translate:0 0}24%{scale:1.06;rotate:3deg;translate:2% -2%}27%{scale:1;rotate:0deg;translate:0 0}48%{scale:1.06;rotate:-3deg;translate:-2% -2%}51%{scale:.94;rotate:0deg;translate:0 0}56%,71%{scale:.88}72%{scale:1.1;rotate:5deg;translate:3% -3%}73.5%{translate:-3% 2%;rotate:-4deg}75%{translate:2% 1%;rotate:2deg}78%,100%{scale:1;rotate:0deg;translate:0 0}}
+.fr-mira.frm[data-lv="3"]>.fxm>.au{animation:miGlow3 12s ease-in-out infinite!important}
+@keyframes miGlow3{0%,100%{opacity:.25}24%,48%{opacity:.9}30%,52%{opacity:.35}58%,71%{opacity:1}72%{opacity:1;scale:1.15}84%{opacity:.3;scale:1}}
+.fr-mira.frm[data-lv="3"]>.fxm>.o1{animation:miHunt3 12s cubic-bezier(.45,0,.25,1) infinite!important}
+@keyframes miHunt3{0%{opacity:0;translate:-60% -55%;scale:1}4%{opacity:1}10%{translate:55% -40%}16%{translate:-30% 35%}20%,23.5%{translate:-75% -50%;scale:.85}24%{translate:-90% -70%;scale:1.1}30%{translate:30% 30%;scale:1}38%{translate:-15% 20%}44%,47.5%{translate:12% 22%;scale:.8}48%{translate:5% 35%;scale:1}54%{translate:0 0;scale:.9}58%,71%{opacity:1;translate:0 0;scale:.7}72%,100%{opacity:0;translate:0 0;scale:.5}}
+.fr-mira.frm[data-lv="3"]>.fxm>.bu{animation:miLock3 12s ease-out infinite!important}
+@keyframes miLock3{0%,17%{opacity:0;scale:1.35}19%,23%{opacity:.8;scale:1.08}24%,57%{opacity:0;scale:1.3}60%{opacity:1;scale:1}63%{opacity:.3}66%{opacity:1}68%{opacity:.3}70%,71.5%{opacity:1;scale:.92}74%,100%{opacity:0;scale:1.2}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w3{animation:miDist3 12s steps(1) infinite!important}
+@keyframes miDist3{0%{background-position:0 0}4%{background-position:0 20%}8%{background-position:0 40%}12%{background-position:0 60%}16%{background-position:0 80%}20%,100%{background-position:0 100%}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w4{display:block!important;left:0;top:91%;width:34%;height:8.16%;background-image:url("fx/mira-balas.svg");background-size:100% 500%;background-position:0 0;z-index:8;animation:miAmmo 12s steps(1) infinite!important}
+@keyframes miAmmo{0%{background-position:0 0}24%{background-position:0 25%}48%{background-position:0 50%}72%{background-position:0 75%}84%,99%{background-position:0 100%}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w1{display:block!important;left:2%;top:14%;width:15%;height:15%;background-image:url("fx/mira-agujero.svg");z-index:7;opacity:0;animation:miHole1 12s steps(1) infinite!important}
+@keyframes miHole1{0%,23.9%{opacity:0}24%,97%{opacity:1}98%,100%{opacity:0}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w5{display:block!important;left:-6%;top:2%;width:36%;height:12%;background-image:url("fx/mira-fallo.svg");z-index:9;opacity:0;animation:miPopA 12s cubic-bezier(.2,1.6,.4,1) infinite!important}
+@keyframes miPopA{0%,24%{opacity:0;scale:0;rotate:-12deg}27%{opacity:1;scale:1.15;rotate:-8deg}30%,38%{opacity:1;scale:1;rotate:-8deg}42%,100%{opacity:0;scale:1;translate:0 -20%;rotate:-8deg}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w6{display:block!important;left:66%;top:28%;width:26%;height:13%;background-image:url("fx/mira-mas50.svg");z-index:9;opacity:0;animation:miPopB 12s ease-out infinite!important}
+@keyframes miPopB{0%,48%{opacity:0;scale:.3;translate:0 0}50%{opacity:1;scale:1.2;translate:0 0}53%{scale:1}62%{opacity:1;translate:0 -60%}66%,100%{opacity:0;translate:0 -80%}}
+.fr-mira.frm[data-lv="3"]>.fxm>.sx{display:block!important;inset:18.75%;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,rgba(255,240,200,.9) 30%,rgba(255,40,40,.55) 60%,transparent 75%);z-index:5;opacity:0;animation:miFlash3 12s linear infinite!important}
+@keyframes miFlash3{0%,47.9%{opacity:0}48%{opacity:.45}50%,71.9%{opacity:0}72%{opacity:1}75%{opacity:.6}80%,100%{opacity:0}}
+.fr-mira.frm[data-lv="3"]>.fxm>.b2{display:block!important;inset:0;background-image:url("fx/mira-hit.svg");z-index:8;opacity:0;animation:miHit3 12s cubic-bezier(.2,1.6,.4,1) infinite!important}
+@keyframes miHit3{0%,47.9%{opacity:0;scale:1.2}49%{opacity:1;scale:.6}54%{opacity:1;scale:.6}57%,71.9%{opacity:0;scale:1.6}74%{opacity:1;scale:1}86%{opacity:1;scale:1}90%,100%{opacity:0;scale:.8}}
+.fr-mira.frm[data-lv="3"]>.fxm>.gem{display:block!important;left:0!important;top:52%!important;width:100%!important;height:36%!important;background:url("fx/mira-headshot.svg") center/100% 100% no-repeat!important;clip-path:none!important;margin:0!important;bottom:auto!important;z-index:10;opacity:0;filter:drop-shadow(0 3px 0 #000);animation:miBan 12s cubic-bezier(.2,1.6,.4,1) infinite!important}
+@keyframes miBan{0%,72%{opacity:0;scale:0;rotate:-14deg}75%{opacity:1;scale:1.12;rotate:-5deg}78%{scale:1;rotate:-5deg}92%{opacity:1;scale:1;rotate:-5deg}96%,100%{opacity:0;scale:1.1;rotate:-5deg}}
+.fr-mira.frm[data-lv="3"]>.fxm>.w1:before{display:block!important;content:"";position:absolute;left:470%;top:120%;width:100%;height:100%;background:url("fx/mira-agujero.svg") center/100% 100% no-repeat;opacity:0;animation:miHole2 12s steps(1) infinite}
+@keyframes miHole2{0%,71.9%{opacity:0}72%,97%{opacity:1}98%,100%{opacity:0}}
+.fr-mira.frm[data-lv="3"]>.fxm>.o2,.fr-mira.frm[data-lv="3"]>.fxm>.o3{display:block!important;left:74%;top:48%;width:4.5%;height:9.5%;background-image:url("fx/mira-casquillo.svg");z-index:8;opacity:0;animation:miShellA 12s linear infinite!important}
+.fr-mira.frm[data-lv="3"]>.fxm>.o3{animation-name:miShellB!important}
+@keyframes miShellA{0%,23.9%{opacity:0;translate:0 0;rotate:0deg}24%{opacity:1;translate:0 0}29%{translate:180% -260%;rotate:300deg}36%{opacity:1;translate:330% 120%;rotate:620deg}37%,71.9%{opacity:0;translate:0 0;rotate:0deg}72%{opacity:1;translate:0 0}77%{translate:120% -300%;rotate:-320deg}85%{opacity:1;translate:260% 140%;rotate:-640deg}86%,100%{opacity:0}}
+@keyframes miShellB{0%,47.9%{opacity:0;translate:0 0;rotate:0deg}48%{opacity:1;translate:0 0}53%{translate:220% -200%;rotate:280deg}60%{opacity:1;translate:300% 150%;rotate:560deg}61%,100%{opacity:0}}
+/* Nv3 · Headshot: cada disparo empuja el avatar hacia atrás; la mira y los efectos se quedan quietos (compensan el movimiento) */
+.fr-mira.frm[data-lv="3"]{animation:miKnock 12s linear infinite!important}
+.fr-mira.frm[data-lv="3"]>.fxm{animation:miInv 12s linear infinite!important}
+.fr-mira.frm[data-lv="3"]:after{animation:miKick3 12s cubic-bezier(.3,.7,.3,1) infinite,miInv 12s linear infinite!important}
+.fr-mira.frm[data-lv="3"]:before{animation:miSpinR 24s linear infinite,miInv 12s linear infinite!important}
+@keyframes miSpinR{to{rotate:360deg}}
+@keyframes miKnock{0%{scale:1 1;rotate:0deg}23.9%{scale:1 1;rotate:0deg}24.5%{scale:0.94 0.92;rotate:-3deg}26%{scale:1.01 1.01;rotate:0.5deg}27.5%{scale:1 1;rotate:0deg}47.9%{scale:1 1;rotate:0deg}48.6%{scale:0.84 0.78;rotate:-8deg}50%{scale:0.87 0.83;rotate:-6deg}52%{scale:0.96 0.95;rotate:-1.5deg}54%{scale:1 1;rotate:0deg}71.9%{scale:1 1;rotate:0deg}72.5%{scale:0.66 0.58;rotate:14deg}74%{scale:0.69 0.61;rotate:18deg}76%{scale:0.71 0.63;rotate:15deg}80%{scale:0.73 0.66;rotate:12deg}86%{scale:0.73 0.66;rotate:12deg}90%{scale:0.9 0.87;rotate:4deg}94%{scale:1.02 1.02;rotate:-1deg}96%{scale:1 1;rotate:0deg}100%{scale:1 1;rotate:0deg}}
+@keyframes miInv{0%{transform:scale(1.0000,1.0000) rotate(0deg)}23.9%{transform:scale(1.0000,1.0000) rotate(0deg)}24.5%{transform:scale(1.0638,1.0870) rotate(3deg)}26%{transform:scale(0.9901,0.9901) rotate(-0.5deg)}27.5%{transform:scale(1.0000,1.0000) rotate(0deg)}47.9%{transform:scale(1.0000,1.0000) rotate(0deg)}48.6%{transform:scale(1.1905,1.2821) rotate(8deg)}50%{transform:scale(1.1494,1.2048) rotate(6deg)}52%{transform:scale(1.0417,1.0526) rotate(1.5deg)}54%{transform:scale(1.0000,1.0000) rotate(0deg)}71.9%{transform:scale(1.0000,1.0000) rotate(0deg)}72.5%{transform:scale(1.5152,1.7241) rotate(-14deg)}74%{transform:scale(1.4493,1.6393) rotate(-18deg)}76%{transform:scale(1.4085,1.5873) rotate(-15deg)}80%{transform:scale(1.3699,1.5152) rotate(-12deg)}86%{transform:scale(1.3699,1.5152) rotate(-12deg)}90%{transform:scale(1.1111,1.1494) rotate(-4deg)}94%{transform:scale(0.9804,0.9804) rotate(1deg)}96%{transform:scale(1.0000,1.0000) rotate(0deg)}100%{transform:scale(1.0000,1.0000) rotate(0deg)}}
+@media(prefers-reduced-motion:reduce){.fr-mira.frm,.fr-mira>.fxm,.fr-garra:before,.fr-garra:after,.fr-mira:before,.fr-mira:after,.fr-garra>.fxm>i,.fr-mira>.fxm>i,.fr-mira>.fxm>i:before{animation:none!important}}
+.fr-mira.fxs,.fr-mira.fxs>.fxm,.fr-garra.fxs>.fxm{animation:none!important}
+
+/* ===================== PLACA COMO FONDO DE MINIATURA (data-plc) ===================== */
+.plc{position:relative;isolation:isolate;overflow:hidden;color:#fff}
+.plc>*:not(.pbx){position:relative;z-index:1}
+.plc>.pbx{position:absolute!important;inset:0;z-index:0!important;border-radius:inherit}
+.plc .pba{background-position:right 4% center;background-size:auto 92%}
+.plc>.pbx:after{background:linear-gradient(90deg,color-mix(in srgb,var(--b0,#0b0d16) 82%,transparent) 0,color-mix(in srgb,var(--b0,#0b0d16) 45%,transparent) 45%,transparent 75%)}
+.cos-prev.cp-pl{display:flex;align-items:center;gap:10px;width:100%;min-height:74px;padding:10px 14px;border-radius:12px;text-align:left;box-sizing:border-box}
+.cp-pl .tav{flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+.cp-pl .cp-tx{display:grid;gap:2px;min-width:0}
+.cp-pl .cp-tx b{font:900 15px/1.1 Archivo,system-ui,sans-serif;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-pl .cp-tx small{font:600 11px/1.2 Archivo,system-ui,sans-serif;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.8)}
+/* ===================== MÍTICAS PREMIUM: ilustración animada propia + borde de luz ===================== */
+.pbn-my.pl-dragon{--art:url("fx/placa-dragon.svg")}
+.pbn-my.pl-holo{--art:url("fx/placa-holo.svg")}
+.pbn-my.pl-diamante{--art:url("fx/placa-diamante.svg")}
+.pbn-my.pl-aurora{--art:url("fx/placa-aurora.svg")}
+.pbn-my.pl-trono{--art:url("fx/placa-trono.svg")}
+.pbn-my.pl-cosmos{--art:url("fx/placa-cosmos.svg")}
+.pbn-my.pl-navidad{--art:url("fx/placa-navidad.svg")}
+.pbn-my .pba{background-size:auto 100%;background-position:right 2% center}
+.pbn-my.pl-aurora .pba{background-size:cover;background-position:center}
+.pbe{inset:0;border-radius:inherit;padding:2px;box-sizing:border-box;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);z-index:3}
+.pbe:before{content:"";position:absolute;left:50%;top:50%;width:max(300%,600px);aspect-ratio:1;translate:-50% -50%;background:conic-gradient(from 0deg,transparent 0 62%,color-mix(in srgb,var(--fx2) 60%,transparent) 76%,#fff 82%,var(--fx2) 86%,transparent 96%);animation:pbSpin 4.2s linear infinite}
+.pbe:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fx2) 45%,transparent)}
+.pbn-my{box-shadow:0 0 18px -4px var(--fx1)}
+@media(prefers-reduced-motion:reduce){.pbe:before{animation:none}}
+/* ===================== PLACA DRAGÓN ETERNO (legendaria, 3 niveles · colección del marco) ===================== */
+.pl-dragoneterno:is(.mpn,.plh,.pbn){--b0:#0e0604;--bg:linear-gradient(90deg,rgba(8,3,2,.55),rgba(8,3,2,0) 55%),url("fx/placa-ouro-escamas.webp") center/cover,#0b0606;--art:none}
+.pl-dragoneterno.mpn{border:1px solid rgba(255,140,60,.55);box-shadow:inset 0 1px 0 rgba(255,200,150,.2),0 0 .6em rgba(255,106,0,.35),0 .15em .45em rgba(0,0,0,.5)}
+.pbn-my.pl-dragoneterno{--fx1:rgba(255,106,0,.55);--fx2:#ffb347;--fx3:rgba(255,140,40,.35);--art:none}
+.pbn-my.pl-dragoneterno[data-plv="3"]{--fx1:rgba(255,40,0,.7);--fx2:#ff6a1a}
+.pl-dragoneterno .pba{background:var(--art) left bottom/160px 42% repeat-x!important;animation:none!important;opacity:.95}
+.pf-bn.pl-dragoneterno .pba{background-size:220px 30%!important;background-position:left bottom!important}
+/* capas: pbr = lava entre escamas · pbw = brillo que recorre las escamas · pbg = resplandor del ojo · pbp = brasas */
+.pl-dragoneterno .pbr{mix-blend-mode:normal;inset:0;width:100%;height:100%;left:0;top:0;translate:none;aspect-ratio:auto;border-radius:0;background:url("fx/placa-ouro-lava.webp") center/cover;-webkit-mask:linear-gradient(90deg,transparent 0,#000 30%,transparent 55%,#000 80%,transparent 100%) 0 0/250% 100%;mask:linear-gradient(90deg,transparent 0,#000 30%,transparent 55%,#000 80%,transparent 100%) 0 0/250% 100%;opacity:.28;animation:deFlow 9s linear infinite,deLava1 5s ease-in-out infinite!important}
+@keyframes deFlow{to{-webkit-mask-position:-150% 0;mask-position:-150% 0}}
+@keyframes deLava1{0%,100%{opacity:.18}50%{opacity:.38}}
+.pl-dragoneterno[data-plv="2"] .pbr{-webkit-mask:linear-gradient(90deg,#000 0,rgba(0,0,0,.35) 35%,#000 65%,rgba(0,0,0,.35) 100%) 0 0/200% 100%;mask:linear-gradient(90deg,#000 0,rgba(0,0,0,.35) 35%,#000 65%,rgba(0,0,0,.35) 100%) 0 0/200% 100%;animation:deFlow2 5s linear infinite,deLava 2.6s ease-in-out infinite!important}
+@keyframes deFlow2{to{-webkit-mask-position:-200% 0;mask-position:-200% 0}}
+.pl-dragoneterno[data-plv="3"] .pbr{opacity:1;filter:brightness(1.35) saturate(1.2);-webkit-mask:linear-gradient(90deg,transparent 0,#000 20%,transparent 40%,#000 60%,transparent 80%,#000 100%) 0 0/200% 100%;mask:linear-gradient(90deg,transparent 0,#000 20%,transparent 40%,#000 60%,transparent 80%,#000 100%) 0 0/200% 100%;animation:deWave 2.2s linear infinite,deFlick .18s steps(2) infinite!important}
+@keyframes deFlick{50%{opacity:.82}}
+@keyframes deLava{0%,100%{opacity:.6}50%{opacity:.95}}
+@keyframes deWave{to{-webkit-mask-position:-100% 0;mask-position:-100% 0}}
+.pl-dragoneterno .pbw{width:22%;background:linear-gradient(90deg,transparent,rgba(255,220,180,.55),transparent);mix-blend-mode:overlay;animation:pbSweep 7s cubic-bezier(.6,0,.3,1) infinite}
+.pl-dragoneterno[data-plv="2"] .pbw{animation-duration:4.6s;background:linear-gradient(90deg,transparent,rgba(255,180,90,.6),transparent);mix-blend-mode:screen}
+.pl-dragoneterno[data-plv="3"] .pbw{animation-duration:2.8s;background:linear-gradient(90deg,transparent,rgba(255,120,40,.75),transparent);mix-blend-mode:screen}
+.pl-dragoneterno .pbg{width:60%;right:-10%;background:radial-gradient(circle,rgba(255,140,40,.55),transparent 65%);opacity:.35}
+.pl-dragoneterno[data-plv="2"] .pbg{opacity:.8}
+.pl-dragoneterno[data-plv="3"] .pbg{opacity:1;background:radial-gradient(circle,rgba(255,60,0,.8),rgba(255,0,0,.3) 45%,transparent 70%)}
+.pl-dragoneterno .pbp{display:none}
+.pl-dragoneterno:is([data-plv="2"],[data-plv="3"]) .pbp{display:block;top:auto;bottom:-6%;border-radius:50%;clip-path:none;width:calc(4px*var(--z));height:calc(4px*var(--z));background:radial-gradient(circle,#fff7ed,#fb923c 50%,#dc2626);filter:drop-shadow(0 0 3px #ff6a00);animation-name:pbRise}
+.pl-dragoneterno[data-plv="3"] .pbp{width:calc(6px*var(--z));height:calc(6px*var(--z))}
+.pl-dragoneterno .pbs{display:none}
+.pl-dragoneterno:not([data-plv="3"]) .pbe{display:none}
+.pl-dragoneterno[data-plv="3"] .pbe:before{background:conic-gradient(from 0deg,transparent 0 55%,#ff3b00 70%,#ffd36b 80%,#ff6a00 88%,transparent 98%);animation-duration:2.6s}
+.pf-bn.pbn-my .pba{background-size:auto 46%!important;background-position:right 5% 42%!important}
+.pf-bn.pbn-my.pl-aurora .pba{background-size:cover!important;background-position:center!important}
+/* Dragón eterno · niveles bien distintos: Nv1 frío y apagado → Nv2 lava viva y llamas bajas → Nv3 incendio */
+.pl-dragoneterno .pba{background:none!important;animation:none!important}
+.pl-dragoneterno[data-plv="2"] .pba{background:url("fx/placa-ouro-llamas.webp") left bottom/auto 40% repeat-x!important;opacity:.75}
+.pl-dragoneterno[data-plv="3"] .pba{background:url("fx/placa-ouro-llamas.webp") left bottom/auto 92% repeat-x!important;opacity:1}
+.pf-bn.pl-dragoneterno[data-plv="2"] .pba{background-size:auto 28%!important}
+.pf-bn.pl-dragoneterno[data-plv="3"] .pba{background-size:auto 70%!important}
+/* Nv1: velo frío, casi sin lava, sin brasas */
+.pl-dragoneterno[data-plv="1"] .pbg{inset:0!important;width:auto!important;height:auto!important;right:auto;top:0;translate:none!important;border-radius:0;aspect-ratio:auto;background:linear-gradient(180deg,rgba(14,16,24,.35),rgba(6,6,10,.55))!important;mix-blend-mode:normal!important;opacity:1!important;animation:none!important}
+.pl-dragoneterno[data-plv="1"] .pbr{animation:deFlow 12s linear infinite,deEmber 6s ease-in-out infinite!important}
+@keyframes deEmber{0%,100%{opacity:.04}50%{opacity:.16}}
+.pl-dragoneterno[data-plv="1"] .pbw{animation-duration:9s;background:linear-gradient(90deg,transparent,rgba(200,210,230,.28),transparent);mix-blend-mode:overlay}
+/* Nv2: resplandor cálido desde abajo */
+.pl-dragoneterno[data-plv="2"] .pbg{inset:0!important;width:auto!important;height:auto!important;right:auto;top:0;translate:none!important;border-radius:0;aspect-ratio:auto;background:radial-gradient(ellipse at 50% 130%,rgba(255,110,0,.55),transparent 62%)!important;mix-blend-mode:screen!important;opacity:1!important;animation:dePulse 2.6s ease-in-out infinite!important}
+@keyframes dePulse{0%,100%{opacity:.7}50%{opacity:1}}
+/* Nv3: todo al rojo, resplandor que titila */
+.pl-dragoneterno[data-plv="3"] .pbg{inset:0!important;width:auto!important;height:auto!important;right:auto;top:0;translate:none!important;border-radius:0;aspect-ratio:auto;background:radial-gradient(ellipse at 50% 120%,rgba(255,60,0,.85),rgba(255,0,0,.25) 55%,transparent 80%),linear-gradient(0deg,rgba(255,40,0,.25),transparent 60%)!important;mix-blend-mode:screen!important;opacity:1!important;animation:deHeat .9s ease-in-out infinite!important}
+@keyframes deHeat{0%,100%{opacity:.85}30%{opacity:1}60%{opacity:.75}}
+.pl-dragoneterno[data-plv="3"] .pbp{width:calc(7px*var(--z));height:calc(7px*var(--z))}
+/* Dragón eterno · lava sin redibujar: dos capas con máscaras fijas que se alternan (solo opacidad, va por GPU) */
+.pl-dragoneterno .pbr{-webkit-mask:linear-gradient(90deg,#000 0,transparent 25%,#000 50%,transparent 75%,#000 100%)!important;mask:linear-gradient(90deg,#000 0,transparent 25%,#000 50%,transparent 75%,#000 100%)!important;filter:none!important}
+.pl-dragoneterno[data-plv="1"] .pbr{-webkit-mask:none!important;mask:none!important;animation:deEmber 6s ease-in-out infinite!important}
+.pl-dragoneterno[data-plv="2"] .pbr{animation:deA 3.2s ease-in-out infinite!important}
+.pl-dragoneterno[data-plv="3"] .pbr{animation:deA 1.6s ease-in-out infinite!important}
+.pl-dragoneterno:is([data-plv="2"],[data-plv="3"]) .pbs{display:block!important;inset:0;left:0;top:0;width:100%;height:100%;border-radius:0;filter:none;translate:none;background:url("fx/placa-ouro-lava.webp") center/cover;-webkit-mask:linear-gradient(90deg,transparent 0,#000 25%,transparent 50%,#000 75%,transparent 100%);mask:linear-gradient(90deg,transparent 0,#000 25%,transparent 50%,#000 75%,transparent 100%);opacity:0}
+.pl-dragoneterno[data-plv="2"] .pbs{animation:deB 3.2s ease-in-out infinite!important}
+.pl-dragoneterno[data-plv="3"] .pbs{animation:deB 1.6s ease-in-out infinite!important}
+@keyframes deA{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes deB{0%,100%{opacity:.35}50%{opacity:1}}
+/* ===== Marco legendario Sierra Infernal · 3 niveles =====
+   Nv1 Forjada: la sierra avanza a golpes (trinquete), fuego tenue que respira.
+   Nv2 Encendida: gira sin parar, el fuego arde y titila, halo naranja y brasas que suben.
+   Nv3 Desatada: acelera y frena como un motor, estela de giro, segundo fuego en contra, chispas, destello y temblor. */
+.fr-sierra{animation:none!important;box-shadow:none}
+.fr-sierra.frm:after,.fr-sierra.frm:before{border-radius:0!important;filter:none!important;background-position:center!important;background-size:100% 100%!important;background-repeat:no-repeat!important;inset:-42%!important}
+.fr-sierra.frm:after{background-image:url("fx/sierra-metal.webp")!important;z-index:3!important;animation:siTick 24s steps(12,end) infinite!important}
+.fr-sierra.frm:before{display:block!important;content:""!important;background:radial-gradient(closest-side,transparent 50%,rgba(255,110,10,.6) 64%,rgba(255,60,0,.18) 80%,transparent 96%)!important;z-index:0!important;opacity:.25;animation:siGlow 3.4s ease-in-out infinite!important}
+.fr-sierra>.fxm{inset:-42%!important;border-radius:0;z-index:4}
+.fr-sierra>.fxm>i{display:none!important;inset:auto;border-radius:0;animation:none;will-change:auto;background-color:transparent;background-position:center;background-size:100% 100%;background-repeat:no-repeat;clip-path:none;margin:0;-webkit-mask:none;mask:none;border:0;filter:none;box-shadow:none}
+.fr-sierra>.fxm>i:before,.fr-sierra>.fxm>i:after{display:none!important}
+.fr-sierra.frm>.fxm>.au{display:block!important;inset:0;background-image:url("fx/sierra-fuego.webp");z-index:1;opacity:.45;animation:siTick 24s steps(12,end) infinite,siBreath 3.4s ease-in-out infinite!important}
+@keyframes siTick{to{transform:rotate(360deg)}}
+@keyframes siSpin{to{transform:rotate(360deg)}}
+@keyframes siSpinR{to{transform:rotate(-360deg)}}
+@keyframes siBreath{0%,100%{opacity:.25}50%{opacity:.6}}
+@keyframes siGlow{0%,100%{opacity:.08}50%{opacity:.26}}
+/* Nv2 */
+.fr-sierra.frm[data-lv="2"]:after,.fr-sierra.frm[data-lv="2"]>.fxm>.au{animation:siSpin 9s linear infinite!important}
+.fr-sierra.frm[data-lv="2"]>.fxm>.au{opacity:1}
+.fr-sierra.frm[data-lv="2"]>.fxm>.w2{display:block!important;inset:0;background-image:url("fx/sierra-fuego.webp");z-index:2;opacity:0;animation:siSpin 9s linear infinite,siFlick 1.3s steps(1) infinite!important}
+.fr-sierra.frm[data-lv="2"]:before{opacity:.55;animation:siGlow2 2s ease-in-out infinite!important}
+@keyframes siGlow2{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:.85;transform:scale(1.03)}}
+@keyframes siFlick{0%{opacity:0}12%{opacity:.55}20%{opacity:.15}38%{opacity:.7}50%{opacity:.25}63%{opacity:.6}80%{opacity:.1}90%{opacity:.45}}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o1,.fr-sierra.frm:not([data-lv="1"])>.fxm>.o2,.fr-sierra.frm:not([data-lv="1"])>.fxm>.o3{display:block!important;width:4%;height:4%;border-radius:50%;background:radial-gradient(circle,#fff6c8 0 25%,#ffa526 45%,rgba(255,90,0,.5) 65%,transparent 72%);z-index:5;opacity:0;animation:siEmber 2.4s ease-out infinite!important}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o1{left:26%;top:30%}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o2{left:70%;top:26%;animation-delay:.8s!important}
+.fr-sierra.frm:not([data-lv="1"])>.fxm>.o3{left:48%;top:20%;animation-delay:1.6s!important}
+@keyframes siEmber{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(30%,-260%) scale(1.2)}}
+/* Nv3 */
+.fr-sierra.frm[data-lv="3"]{animation:siShake 3s linear infinite!important}
+.fr-sierra.frm[data-lv="3"]:after,.fr-sierra.frm[data-lv="3"]>.fxm>.au{animation:siRev 3s cubic-bezier(.65,0,.35,1) infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.au{opacity:1}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w1{display:block!important;inset:0;background-image:url("fx/sierra-metal.webp");z-index:0;opacity:.32;animation:siRev 3s cubic-bezier(.65,0,.35,1) -.07s infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w2{display:block!important;inset:-3%;background-image:url("fx/sierra-fuego.webp");z-index:2;opacity:.7;animation:siSpinR 2.2s linear infinite,siFlick 1s steps(1) infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w3{display:block!important;inset:4%;background-image:url("fx/sierra-chispas.svg");z-index:6;animation:siSpin .9s linear infinite,siSpark 3s linear infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.w4{display:block!important;inset:-2%;background-image:url("fx/sierra-chispas2.svg");z-index:6;transform:rotate(17deg);animation:siSpin 1.3s linear infinite,siSpark 3s linear -1.5s infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.sx{display:block!important;inset:12%;border-radius:50%;background:radial-gradient(closest-side,transparent 55%,rgba(255,240,190,.95) 68%,rgba(255,120,20,.6) 80%,transparent 100%);z-index:5;opacity:0;animation:siFlash 3s ease-out infinite!important}
+.fr-sierra.frm[data-lv="3"]:before{opacity:.9;background:radial-gradient(closest-side,transparent 46%,rgba(255,150,30,.75) 60%,rgba(255,50,0,.35) 78%,transparent 98%)!important;animation:siGlow3 3s ease-in-out infinite!important}
+.fr-sierra.frm[data-lv="3"]>.fxm>.o1,.fr-sierra.frm[data-lv="3"]>.fxm>.o2,.fr-sierra.frm[data-lv="3"]>.fxm>.o3{animation-duration:1.5s!important;width:5%;height:5%}
+@keyframes siRev{0%{transform:rotate(0)}100%{transform:rotate(1440deg)}}
+@keyframes siSpark{0%,30%{opacity:0}40%,62%{opacity:1}72%,100%{opacity:0}}
+@keyframes siFlash{0%,40%{opacity:0;transform:scale(.92)}50%{opacity:1;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.12)}}
+@keyframes siGlow3{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes siShake{0%,42%,58%,100%{translate:0 0}45%{translate:1.5% -1%}48%{translate:-1.5% 1%}51%{translate:1% 1.5%}54%{translate:-1% -1%}}
+/* marcos pequeños: solo sierra y fuego */
+.fr-sierra.fxs>.fxm>i:not(.au){display:none!important}
+.fr-sierra.fxs{animation:none!important}
+@media(prefers-reduced-motion:reduce){.fr-sierra.frm,.fr-sierra:before,.fr-sierra:after,.fr-sierra>.fxm>i{animation:none!important}}
+/* Nv1: ceniza sobre el anillo de fuego, brasa que respira */
+.fr-sierra.frm[data-lv="1"]>.fxm>.w1{display:block!important;inset:0;border-radius:50%;background:radial-gradient(closest-side,transparent 50.5%,rgba(22,12,8,.82) 52.5%,rgba(30,16,10,.74) 58%,rgba(22,12,8,.82) 63%,transparent 65%);z-index:0;animation:siTick 24s steps(12,end) infinite,siAsh 3.4s ease-in-out infinite!important}
+@keyframes siAsh{0%,100%{opacity:1}50%{opacity:.55}}
+.fr-sierra.frm[data-lv="1"]>.fxm>.au{z-index:1}
+/* ===== Color legendario «Punk»: cambia la tipografía a letra gastada de fotocopia (Rubik Dirt, licencia libre OFL) =====
+   Letras blancas con contorno de tinta y doble impresión roja/cian; cada 3 s la copia "falla": tiembla, se desfasan
+   los colores y pasa la luz del escáner. Se lee en fondo claro y oscuro. La fuente se carga sola (cos.js). */
+.c-punk .mpn-n{font-family:"Rubik Dirt","Arial Black",Impact,sans-serif;font-weight:400;font-style:normal;letter-spacing:.02em;padding:0 .12em;color:#fbf8f0;-webkit-text-stroke:.03em #0d0d10;paint-order:stroke fill;text-shadow:.06em .04em 0 rgba(255,42,85,.85),-.05em -.02em 0 rgba(34,224,255,.8);animation:pkGlitch 3s steps(1) infinite}
+.mpn.c-punk:not([class*="pl-"]){position:relative;overflow:hidden}
+.mpn.c-punk:not([class*="pl-"]):after{content:"";position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none;background:linear-gradient(90deg,transparent 0 45%,rgba(198,255,26,.55) 48%,rgba(255,255,255,.75) 50%,rgba(198,255,26,.55) 52%,transparent 55% 100%);opacity:0;transform:translateX(-55%);animation:pkScan 3s linear infinite}
+@keyframes pkScan{0%,60%{transform:translateX(-55%);opacity:0}62%,88%{opacity:1}90%,100%{transform:translateX(55%);opacity:0}}
+@keyframes pkGlitch{0%,62%,100%{transform:none;text-shadow:.06em .04em 0 rgba(255,42,85,.85),-.05em -.02em 0 rgba(34,224,255,.8)}
+  64%{transform:translateX(.04em) skewX(-6deg);text-shadow:.16em .02em 0 rgba(255,42,85,.9),-.14em -.03em 0 rgba(34,224,255,.85)}
+  67%{transform:translateX(-.05em);text-shadow:-.12em .05em 0 rgba(255,42,85,.9),.12em -.04em 0 rgba(34,224,255,.85)}
+  70%{transform:translateY(-.03em) skewX(4deg);text-shadow:.09em -.05em 0 rgba(255,42,85,.9),-.1em .05em 0 rgba(34,224,255,.85)}
+  73%{transform:none;text-shadow:.2em 0 0 rgba(255,42,85,.6),-.2em 0 0 rgba(34,224,255,.6)}}
+@media(prefers-reduced-motion:reduce){.c-punk .mpn-n,.mpn.c-punk:after{animation:none;opacity:0}}
+/* ===== Color legendario «Dragón eterno» (colección con el marco y la placa) =====
+   Letra épica (Cinzel Decorative, licencia libre OFL) rellena con las escamas de la placa, lava que fluye por las grietas,
+   tinte de oro fundido y filo dorado; cada 4 s un destello de oro recorre el nombre. Si el nombre no lleva placa,
+   le suben brasas por encima. La fuente se carga sola (cos.js). */
+.c-dragoneterno .mpn-n{font-family:"Cinzel Decorative","Cinzel",Georgia,serif;font-weight:900;font-style:normal;font-size:.85em;line-height:1.25;letter-spacing:0;padding:0 .06em;color:transparent;background:linear-gradient(100deg,transparent 0 42%,rgba(255,250,220,.95) 48%,#fff 50%,rgba(255,250,220,.95) 52%,transparent 58% 100%) 130% 0/300% 100% no-repeat,url("fx/placa-ouro-lava.webp") 0 0/2.6em 2.6em repeat,linear-gradient(180deg,rgba(255,214,90,.62) 15%,rgba(255,120,30,.45) 55%,rgba(150,30,0,.25) 85%),url("fx/placa-ouro-escamas.webp") center/2.2em 2.2em repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:.025em #ffd25a;paint-order:stroke fill;filter:drop-shadow(0 0 .1em rgba(255,120,20,.85)) drop-shadow(0 .06em 0 #2a0800);animation:deName 4s linear infinite}
+@keyframes deName{0%,55%{background-position:130% 0,0 0,0 0,center}80%,100%{background-position:-30% 0,0 0,0 0,center}}
+.mpn.c-dragoneterno:not([class*="pl-"]){position:relative;isolation:isolate}
+.mpn.c-dragoneterno:not([class*="pl-"]):after{content:"";position:absolute;left:0;right:0;bottom:50%;height:1.1em;pointer-events:none;background:radial-gradient(circle,#fff3c4 0 .03em,#ff8a1f .06em,transparent .09em) .2em 100%/1.5em 1.1em repeat-x,radial-gradient(circle,#ffd25a 0 .025em,#ff4d00 .05em,transparent .08em) .9em 100%/2.1em 1.1em repeat-x;opacity:0;animation:mtEmber 2.6s linear infinite}
+@keyframes mtEmber{0%{opacity:0;transform:translateY(.5em)}20%{opacity:1}100%{opacity:0;transform:translateY(-.4em)}}
+/* letra por letra (cos.js parte el nombre): cada letra lleva su relleno; el destello y una ola de fuego la recorren:
+   la letra salta, crece y su filo pasa de dorado a blanco caliente, una tras otra */
+.c-dragoneterno .mpn-n[data-sp]{background:none;animation:none}
+.c-dragoneterno .mpn-n>i{font-style:normal;display:inline-block;white-space:pre;color:transparent;background:linear-gradient(100deg,transparent 0 42%,rgba(255,250,220,.95) 48%,#fff 50%,rgba(255,250,220,.95) 52%,transparent 58% 100%) 130% 0/300% 100% no-repeat,url("fx/placa-ouro-lava.webp") 0 0/2.6em 2.6em repeat,linear-gradient(180deg,rgba(255,214,90,.62) 15%,rgba(255,120,30,.45) 55%,rgba(150,30,0,.25) 85%),url("fx/placa-ouro-escamas.webp") center/2.2em 2.2em repeat;-webkit-background-clip:text;background-clip:text;transform-origin:50% 80%;animation:deName 4s linear infinite,deWave 4s ease-in-out infinite;animation-delay:calc(var(--i,0) * .07s)}
+@keyframes deWave{0%,58%,76%,100%{transform:none;-webkit-text-stroke-color:#ffd25a}66%{transform:translateY(-.14em) scale(1.16) rotate(-4deg);-webkit-text-stroke-color:#fff6d8}71%{transform:translateY(.02em) scale(.97);-webkit-text-stroke-color:#ffb020}}
+@media(prefers-reduced-motion:reduce){.c-dragoneterno .mpn-n,.c-dragoneterno .mpn-n>i,.mpn.c-dragoneterno:after{animation:none}}
+
+/* placas en tarjetas y listas: menos partículas y sin sombra por partícula (cada una era una capa gráfica) */
+.pbn-lite .pbp{filter:none!important}
