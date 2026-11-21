@@ -725,3 +725,24 @@ html body.es .banner .bt b.x.es-2l{line-height:1.02;max-height:none}
   html body.es .banner[data-st="up"] .bn-grid>.bt:first-child{padding:60px 70px 34px 24px!important}
   html body.es .banner[data-st="up"] .bn-grid>.bt:last-child{padding:60px 24px 34px 100px!important}
 }
+/* ===== computador: la portada usa casi todo el ancho y el marcador escala con la pantalla ===== */
+@media (min-width:900px){
+  html body.es main#partidos.wrap{max-width:min(1560px,100%)!important;padding-left:max(24px,2.2vw)!important;padding-right:max(24px,2.2vw)!important}
+  html body.es .banner .bt{min-height:clamp(340px,27vw,460px)!important}
+  html body.es .banner .bt .dc{width:clamp(140px,11.5vw,200px)!important;height:clamp(140px,11.5vw,200px)!important}
+  html body.es .banner .bt b.x{font-size:clamp(36px,3.2vw,56px)!important}
+  html body.es .banner .bt .form>*{width:clamp(22px,1.7vw,30px)!important;height:clamp(22px,1.7vw,30px)!important}
+  html body.es .banner .bt .form:before{font-size:clamp(12px,.9vw,15px)!important}
+  html body.es .banner .sc span{font-size:clamp(230px,19vw,330px)!important}
+  html body.es .banner .es-min{width:clamp(86px,6.6vw,112px)!important;height:clamp(86px,6.6vw,112px)!important;font-size:clamp(26px,2vw,34px)!important}
+  html body.es .banner .bn-top>#bLg{font-size:clamp(15px,1.1vw,18px)!important}
+  html body.es .banner .bn-top .bn-time .ch{font-size:clamp(16px,1.2vw,20px)!important}
+  html body.es .banner .es-ic .bn-pos{font-size:clamp(17px,1.3vw,22px)!important}
+  html body.es .banner .es-tx{font-size:clamp(18px,1.4vw,24px)}
+}
+@media (min-width:900px){
+  html body.es .banner .bn-in{max-width:none!important;width:100%}
+  html body.es .banner{background:transparent!important;border:0!important}
+  html body.es .banner .mv-dots{margin-top:14px}
+  html body.es .banner .es-fan{padding-left:0;padding-right:0;background:transparent}
+}
