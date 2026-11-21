@@ -37,7 +37,7 @@
       function (d) { inn.style.transition = 'none'; inn.style.transform = 'translateX(' + d * .5 + 'px) rotate(' + d * .012 + 'deg)'; });
     $$('.others .mc').forEach(function (c) { c.addEventListener('click', function () { setTimeout(mark, 30); }); });
     mark();
-    var hint = h('div', 'mv-hint'); hint.innerHTML = '<span>👆</span> Desliza o usa las flechas para ver otros partidos'; dots.appendChild(hint);
+    var hint = h('div', 'mv-hint'); hint.innerHTML = '<span>👆</span> Desliza para ver más partidos'; dots.appendChild(hint);
   }
   // ---------- 2. alineaciones: deslizar entre pestañas ----------
   function lineups() {

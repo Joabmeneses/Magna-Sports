@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
 <title>Magna Arena · Inicio</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Archivo+Black&family=JetBrains+Mono:wght@500;700&family=Space+Mono:wght@400;700&display=swap">
 <style>
 :root{--bg:#0a0d18;--fg:#f1f3fb;--muted:#9aa0b8;--line:#1b2030;--blue:#3b4bff;--orange:#ff5a36;--purple:#8b5cf6;--yellow:#ffd23f;--btn-line:#f1f3fb;--card:#0f1326;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
@@ -318,9 +318,9 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 .im.vd{background-image:url(img/4421c40bd1.webp)}
 .desk{display:none!important}
 </style>
-<style>.hero.mob{display:none!important}.vacio .hero,.vacio .banner,.vacio .others,.vacio .note{display:none}.mbtn,.mp{display:none!important}.vac{display:none;text-align:center;padding:90px 0}.vacio .vac{display:block}.vac h1{font-size:clamp(34px,8vw,72px);margin:0 0 14px}.vac p{color:var(--muted);max-width:52ch;margin:0 auto 24px}nav a.on{color:var(--orange)}nav{gap:16px}@media(min-width:900px){nav{gap:18px}.logo{font-size:22px}}</style><link rel="stylesheet" href="cos.css"><link rel="stylesheet" href="calle.css">
+<style>.hero.mob{display:none!important}.vacio .hero,.vacio .banner,.vacio .others,.vacio .note{display:none}.mbtn,.mp{display:none!important}.vac{display:none;text-align:center;padding:90px 0}.vacio .vac{display:block}.vac h1{font-size:clamp(34px,8vw,72px);margin:0 0 14px}.vac p{color:var(--muted);max-width:52ch;margin:0 auto 24px}nav a.on{color:var(--orange)}nav{gap:16px}@media(min-width:900px){nav{gap:18px}.logo{font-size:22px}}</style><link rel="stylesheet" href="cos.css"><link rel="stylesheet" href="calle.css"><link rel="stylesheet" href="esports.css">
 </head>
-<body class="ac">
+<body class="ac es">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="stk" viewBox="0 0 100 100"><path d="M50 10c-18 0-30 14-30 34v8h60v-8C80 24 68 10 50 10z" fill="#141a3d"/><ellipse cx="50" cy="52" rx="22" ry="17" fill="#ffb36b"/><path d="M36 46h28" stroke="#141a3d" stroke-width="4" stroke-linecap="round"/><path d="M50 92C30 78 26 66 36 62c6-2 12 2 14 6 2-4 8-8 14-6 10 4 6 16-14 30z" fill="currentColor"/><path d="M38 14l6 8 6-10 6 10 6-8-2 12H40z" fill="currentColor"/></symbol>
 <symbol id="smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M8 14.5c1 1.6 2.4 2.3 4 2.3s3-.7 4-2.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
@@ -333,7 +333,7 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <div class="act"><a class="pill o mono enter" href="admin.html">Administración</a>
 </div>
 </div>
-</header><script src="nav.js"></script>
+</header><script src="nav.js"></script><script src="esports.js" defer></script>
 
 <main class="wrap" id="partidos"><div class="vac"><h1 class="x">Aún no hay partidos</h1><p>Cuando el administrador programe partidos en el panel, aparecerán aquí con marcador, reacciones y animaciones de gol.</p><a class="btn" href="admin.html">Ir al panel</a></div>
 
@@ -376,9 +376,9 @@ body,.card,.mc,header{transition:background-color .4s,color .4s,border-color .4s
 <div class="bn-top"><span class="live mono" id="bLive"><i></i><span id="bLiveT">En vivo</span></span><span class="ch" id="bLg"></span></div>
 <div class="bn-row"><span class="ch bn-view" id="bView"></span><button class="bell" id="bell" aria-pressed="false" aria-label="Activar notificaciones"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><i class="bd"></i></button></div>
 <div class="bn-grid">
-<div class="bt"><div class="dc"><span class="im r"></span></div><b class="x" id="bN1"></b><span class="bn-pos mono" id="bP1"></span><div class="form" id="bF1"></div><button class="rx"><span class="av"><span class="stk"></span><em>+</em></span><span>Reaccionar</span></button></div>
+<div class="bt"><div class="dc"><span class="im r"></span></div><b class="x" id="bN1"></b><span class="bn-pos mono" id="bP1"></span><div class="form" id="bF1"></div><button class="rx"><span class="av"><span class="stk"></span><em>+</em></span><span class="rx-l">Apoyar</span></button></div>
 <div class="sc x"><span data-g="h"></span><i></i><span data-g="a"></span></div>
-<div class="bt"><div class="dc"><span class="im v"></span></div><b class="x" id="bN2"></b><span class="bn-pos mono" id="bP2"></span><div class="form" id="bF2"></div><button class="rx"><span class="av"><span class="stk"></span><em>+</em></span><span>Reaccionar</span></button></div>
+<div class="bt"><div class="dc"><span class="im v"></span></div><b class="x" id="bN2"></b><span class="bn-pos mono" id="bP2"></span><div class="form" id="bF2"></div><button class="rx"><span class="av"><span class="stk"></span><em>+</em></span><span class="rx-l">Apoyar</span></button></div>
 </div>
 <div class="bn-time"><span class="ch" id="clk"></span></div>
 
@@ -449,7 +449,7 @@ function view(i,anim){var w=$('#mwin'),md=MODES[i],olds=$$('.mstrip',w);
   if(anim&&!RM){n.animate([{transform:'translateX(45%) scale(1.1)',opacity:0},{transform:'none',opacity:1}],{duration:600,easing:'cubic-bezier(.2,1.2,.4,1)'});shine()}}
  shown=i;chips();if(mapOpen)showMap(i,true)}
 function prog(){var m=M[cur];$('#mbar').style.width=m.live?(ROUND-m.left)/ROUND*100+'%':'0%';T('#mnx',m.live?'Siguiente: '+MODES[(m.mode+1)%5].n+' · 0:'+pad(m.left):'Empieza pronto')}
-function rxl(){$$('.rx').forEach(function(b,i){var n=M[cur].n[i?'a':'h'];b.lastElementChild.textContent='Reaccionar'+(n?' · '+n:'')})}
+function rxl(){$$('.rx').forEach(function(b,i){var k=b.dataset.side||(i?'a':'h'),n=M[cur].n[k],l=b.querySelector('.rx-l')||b.lastElementChild;l.textContent=n?'Apoyos '+n:'Apoyar'})}
 function fill(anim){var m=M[cur],lab=[m.lg,m.jn].filter(Boolean).join(' · ');
  T('#bLiveT',m.fin?'Finalizado':m.live?'En vivo':'Próximo');$('#bLive').classList.toggle('up',!m.live||!!m.fin);T('#bLg',lab);var v=$('#bView');v.hidden=!m.v;v.textContent=m.v;
  T('#bN1',m.h);T('#bN2',m.a);var pp=m.pos||['[#]','[#]'],ff=m.form||['',''];T('#bP1','Posición '+pp[0]);T('#bP2','Posición '+pp[1]);$$('.dpos').forEach(function(e,i){e.textContent='Posición '+pp[i]});formB($('#bF1'),ff[0]);formB($('#bF2'),ff[1]);formB($('#dF1'),ff[0]);formB($('#dF2'),ff[1]);
@@ -474,9 +474,9 @@ function intro(){var m=M[cur];flash('<div class="oi"><span class="oc im '+(m.hi|
  $('#ov b').animate([{transform:'scale(0)'},{transform:'scale(1.6)',offset:.6},{transform:'scale(1)'}],{duration:800,delay:450,fill:'backwards'});
  burst(innerWidth/2,innerHeight/2,[COL.h,COL.a,'#ffd23f'],26,'conf')}
 function react(k,el){M[cur].n[k]++;var r=el.getBoundingClientRect();floatStk(r.left+r.width/2,r.top+r.height/3,STK[k][SEL[k]]);pop(el);rxl();if(navigator.vibrate)navigator.vibrate(8)}
-function bind(el,k){function go(){react(k,el)}if(el.tagName==='BUTTON')el.addEventListener('click',function(){openPick(k,el)});
- el.addEventListener('pointerdown',function(e){if(e.button>0)return;if(el.tagName==='BUTTON')return;go();clearInterval(hold);hold=setInterval(go,160)});
- el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){if(el.tagName==='BUTTON')return;e.preventDefault();go()}})}
+function bind(el,k){function go(){react(k,el.tagName==='BUTTON'?($('.stk',el)||el):el)}
+ el.addEventListener('pointerdown',function(e){if(e.button>0)return;go();clearInterval(hold);hold=setInterval(go,160)});
+ el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})}
 ['pointerup','pointercancel','blur'].forEach(function(v){addEventListener(v,function(){clearInterval(hold)})});
 [['.d1','h'],['.d2','a'],['.team.h .crest','h'],['.team.a .crest','a'],['.bn-grid .bt:first-child .dc','h'],['.bn-grid .bt:last-child .dc','a'],['.bn-grid .bt:first-child .rx','h'],['.bn-grid .bt:last-child .rx','a'],['.react.l','h'],['.react.r','a']].forEach(function(p){
  var e=$(p[0]);e.dataset.side=p[1];if(e.tagName!=='BUTTON'){e.tabIndex=0;e.setAttribute('role','button');e.setAttribute('aria-label','Animar al equipo')}bind(e,p[1])});
@@ -561,18 +561,21 @@ function goalFx(k,gi){var m=M[cur],name=k==='h'?m.h:m.a,cr=(k==='h'?m.hi:m.ai)||
  setTimeout(function(){$$('[data-g="'+k+'"]').forEach(function(e){if(!RM)e.animate([{transform:'scale(1)'},{transform:'scale(1.6)',color:'#ffd23f',offset:.35},{transform:'scale(1)'}],{duration:700,easing:'ease-out'})})},2850)}
 function cards(){var o=$('#otros');
  if(!o.children.length)M.forEach(function(m,i){var c=document.createElement('div');c.className='mc';c.tabIndex=0;c.setAttribute('role','button');
-  c.innerHTML='<div class="mc-cat mono"><i class="dot"></i><span></span><em class="mc-st mono"></em></div><b class="mc-t"></b><div class="mc-row"><span class="mc-c"><span class="im"></span></span><div class="mc-s"></div><span class="mc-c"><span class="im"></span></span></div>';
+  c.innerHTML='<div class="mc-top"><em class="mc-st mono"></em><div class="mc-cat mono"><i class="dot"></i><span></span></div></div><b class="mc-t"></b><div class="mc-row"><div class="mc-p"><span class="mc-c"><span class="im"></span></span><b class="mc-n"></b></div><div class="mc-s"></div><div class="mc-p"><b class="mc-n"></b><span class="mc-c"><span class="im"></span></span></div></div>';
   c.addEventListener('click',function(){select(i,true)});c.addEventListener('keydown',function(e){if(e.key==='Enter')select(i,true)});o.appendChild(c)});
  $$('.mc',o).forEach(function(c,i){var m=M[i],st=m.live?(m.fin?'Finalizado':'En vivo'):'Próximo',sc=$('.mc-s',c);
   $('.dot',c).style.background=m.cc;$('.mc-cat span',c).textContent=m.lg;$('.mc-t',c).textContent=m.h+' vs. '+m.a;$('.mc-st',c).textContent=st;c.classList.toggle('lv',st==='En vivo');
   sc.textContent=m.live?m.s[0]+' - '+m.s[1]:m.when;sc.classList.toggle('up',!m.live);
+  var ps=$$('.mc-p',c),ns=$$('.mc-n',c),sh=m.live?[m.s[0],m.s[1]]:[m.h,m.a];c.classList.toggle('up',!m.live);
+  ns.forEach(function(e,j){e.textContent=sh[j]});ps.forEach(function(e,j){var w=m.live&&(+m.s[j])>(+m.s[1-j]);e.classList.toggle('w',w);e.setAttribute('data-tab',w?(m.fin?'GANADOR':'ADELANTE'):'')});
+  $('.mc-st',c).textContent=m.fin?'Resultado del partido':m.live?'● En vivo':'Próximo · '+m.when;
   $$('.mc-c .im',c).forEach(function(e,j){cls(e,j?m.ai:m.hi)})})}
 avatars();
 function formB(el,t){el.innerHTML='';var w=(t.match(/V/g)||[]).length,l=(t.match(/D/g)||[]).length;
  for(var i=0;i<4;i++){var c=t[i],b=document.createElement('i');b.className=c==='V'?'w':c==='D'?'l':'e';b.title=c==='V'?'Victoria':c==='D'?'Derrota':'Sin datos';b.style.animationDelay=i*70+'ms';el.appendChild(b)}
  el.setAttribute('role','img');el.setAttribute('aria-label',t?'Últimos 4 partidos: '+w+' victorias y '+l+' derrota':'Sin historial')}
 cards();select(0,false);
-window.MAGNA_BN={M:M,cur:function(){return cur},render:render,goalFx:goalFx};
+window.MAGNA_BN={M:M,cur:function(){return cur},render:render,goalFx:goalFx,pick:function(k){openPick(k,$('.rx[data-side="'+k+'"]'))}};
 if(!RM&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;t.classList.add('in');io.unobserve(t);setTimeout(function(){t.classList.remove('rv','in');t.style.transitionDelay=''},1300)}})},{threshold:.12});
  $$('.hero .meta,.hero h1,.hero p,.hero .cta,.hero .vs,.banner,.desk .card,.mc,.note').forEach(function(e,i){if(e.offsetParent===null)return;e.classList.add('rv');e.style.transitionDelay=(i%5)*70+'ms';io.observe(e)})}
 })();

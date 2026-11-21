@@ -77,6 +77,10 @@
       hero.appendChild(kp); root.appendChild(hero); setTimeout(function () { cnt.forEach(function (c) { countUp(c[0], c[1]); }); }, 150);
     }
 
+    // Con partido destacado, la portada termina en el marcador y las alineaciones:
+    // accesos rápidos, noticias y equipos se quitaron a pedido (siguen en la portada vacía).
+    if (!empty) return;
+
     // 2) accesos rápidos
     var mk = MAGNA.marketState ? MAGNA.marketState() : { open: false };
     var go = sec(root, empty ? 'Explora' : 'Accesos rápidos', null, null, '#ff5a36'), gg = h('div', 'hh-go');

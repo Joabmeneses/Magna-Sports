@@ -290,13 +290,23 @@
     return nt;
   }
   function keys(m, D) { if (m.status === 'scheduled') return null; var w = h('div', 'al-keys'), all = D.h.played.concat(D.a.played), k = 0;
-    function add(ic, html) { var c = h('div', 'al-key'); c.style.setProperty('--r', ((k % 2 ? 1 : -1) * (1 + k % 3 * .5)) + 'deg'); c.style.animationDelay = k * 80 + 'ms'; k++; c.appendChild(h('i', null, ic)); var s2 = h('span'); s2.innerHTML = html; c.appendChild(s2); w.appendChild(c); }
-    function nm(id) { var p = by(S().players, id); return p ? p.name.replace(/[<>&]/g, '') : '?'; }
-    if (D.mvp) add('⭐', 'MVP: <b>' + nm(D.mvp) + '</b>');
-    var gs = all.filter(function (id) { return D.goals[id]; }).sort(function (a, b) { return D.goals[b] - D.goals[a]; }); if (gs.length) add('⚽', 'Goleador: <b>' + nm(gs[0]) + '</b> (' + D.goals[gs[0]] + ')');
-    var rs = all.filter(function (id) { return D.R[id] != null; }).sort(function (a, b) { return D.R[b] - D.R[a]; }); if (rs.length) add('📈', 'Mejor nota: <b>' + nm(rs[0]) + '</b> ' + rt(D.R[rs[0]]));
-    var ah = teamAvg(D.h, D), aa = teamAvg(D.a, D); if (ah != null && aa != null && ah !== aa) add('🛡️', 'Mejor promedio: <b>' + MAGNA.teamName(ah > aa ? D.h.tid : D.a.tid).replace(/[<>&]/g, '') + '</b> ' + rt(Math.max(ah, aa)));
-    var tg = teamGoals(D.h, D) + teamGoals(D.a, D); if (tg) add('🔥', '<b>' + tg + '</b> ' + (tg === 1 ? 'gol' : 'goles') + ' en total');
+    function esc(x) { return String(x).replace(/[<>&]/g, ''); }
+    function sd(id) { return D.h.played.indexOf(id) >= 0 ? 'h' : D.a.played.indexOf(id) >= 0 ? 'a' : ''; }
+    // tarjeta de dato: icono, etiqueta, valor grande y detalle; el borde toma el color del equipo
+    function add(ic, lab, val, sub, side) { var c = h('div', 'al-key' + (side ? ' s-' + side : '')); c.style.animationDelay = k * 90 + 'ms'; k++;
+      c.appendChild(h('i', null, ic)); c.appendChild(h('small', null, lab)); c.appendChild(h('b', null, val)); if (sub) c.appendChild(h('em', null, sub)); w.appendChild(c); }
+    function nm(id) { var p = by(S().players, id); return p ? esc(p.name) : '?'; }
+    if (D.mvp) add('⭐', 'MVP', nm(D.mvp), 'Jugador del partido', sd(D.mvp));
+    var gs = all.filter(function (id) { return D.goals[id]; }).sort(function (a, b) { return D.goals[b] - D.goals[a]; }); if (gs.length) add('⚽', 'Goleador', nm(gs[0]), D.goals[gs[0]] + (D.goals[gs[0]] === 1 ? ' gol' : ' goles'), sd(gs[0]));
+    var rs = all.filter(function (id) { return D.R[id] != null; }).sort(function (a, b) { return D.R[b] - D.R[a]; }); if (rs.length) add('📈', 'Mejor nota', nm(rs[0]), 'Nota ' + rt(D.R[rs[0]]), sd(rs[0]));
+    var tg = teamGoals(D.h, D) + teamGoals(D.a, D); if (tg) add('🔥', 'Goles', String(tg), 'en total', '');
+    var ah = teamAvg(D.h, D), aa = teamAvg(D.a, D);
+    if (ah != null && aa != null) { var cm = h('div', 'es-cmp'), tot = ah + aa || 1, ph = Math.round(ah / tot * 100);
+      cm.style.setProperty('--ph', ph + '%');
+      cm.innerHTML = '<small>Nota promedio del equipo</small><div class="es-cr"><b class="h"></b><div class="es-cb"><i class="h"></i><i class="a"></i></div><b class="a"></b></div><div class="es-cn"><span class="h"></span><span class="a"></span></div>';
+      cm.querySelector('b.h').textContent = rt(ah); cm.querySelector('b.a').textContent = rt(aa);
+      cm.querySelector('span.h').textContent = MAGNA.teamName(D.h.tid); cm.querySelector('span.a').textContent = MAGNA.teamName(D.a.tid);
+      w.appendChild(cm); }
     return w.children.length ? w : null; }
   function lineups(m, D) {
     var box = document.getElementById('alineaciones'); if (!box) { box = h('section', 'al'); box.id = 'alineaciones'; var bn = document.getElementById('marcador'); if (!bn) return; bn.parentNode.insertBefore(box, bn.nextSibling); }
@@ -307,6 +317,16 @@
       var d = h('div'); d.appendChild(h('b', null, MAGNA.teamName(X.tid))); var av = teamAvg(X, D); d.appendChild(h('small', null, (av != null ? 'Nota ' + rt(av) + ' · ' : '') + X.field.length + ' en cancha' + (X.dt ? ' · DT ' + X.dt.name : ''))); a.appendChild(d); tm.appendChild(a);
       if (!j) { var sc = h('div', 'al-sc'); sc.appendChild(h('b', null, m.status === 'scheduled' ? 'VS' : (m.hs || 0) + '-' + (m.as || 0))); sc.appendChild(h('small', null, m.status === 'live' ? 'EN VIVO' : m.status === 'finished' ? 'FINAL' : (m.round || 'PRONTO').toUpperCase().slice(0, 14))); tm.appendChild(sc); } });
     box.appendChild(tm);
+    // datos para la imagen descargable de la alineación (match-poster.js)
+    box._pd = function () { var cp = MAGNA.compOf ? MAGNA.compOf(m) : null;
+      function team(sd) { var X = D[sd], n = X.field.length;
+        return { tid: X.tid, name: MAGNA.teamName(X.tid), color: col(X.tid), crest: MAGNA.crestUrl(X.tid), dt: X.dt ? X.dt.name : '', avg: teamAvg(X, D),
+          players: X.field.map(function (pid, i) { var p = by(S().players, pid) || { name: '?' }, ps = (POS2[n] || POS2[3])[i] || [25, 50], id = PAV[pid];
+            return { name: p.name, ini: ini(p.name), av: id && /^a\d\d$/.test(id) ? 'avatars/' + id + '.webp' : null, r: D.R[pid], g: D.goals[pid] || 0, mvp: D.mvp === pid, sub: !!D.subIn[pid], x: ps[0], y: ps[1] }; }),
+          bench: X.bench.map(function (pid) { var p = by(S().players, pid); return p ? p.name : ''; }).filter(Boolean) }; }
+      var ks = []; [].forEach.call(box.querySelectorAll('.al-keys .al-key'), function (k) { var q = function (t) { var e = k.querySelector(t); return e ? e.textContent : ''; }; ks.push({ ic: q('i'), lab: q('small'), val: q('b'), sub: q('em'), side: k.classList.contains('s-h') ? 'h' : k.classList.contains('s-a') ? 'a' : '' }); });
+      return { status: m.status, hs: m.hs || 0, as: m.as || 0, round: m.round || '', comp: cp ? cp.name : '', at: m.at || '', h: team('h'), a: team('a'), keys: ks }; };
+    var dl = h('button', 'al-dl', '📸 Descargar imagen'); dl.type = 'button'; dl.onclick = function () { if (window.MagnaShot) MagnaShot.lineup(box, dl); }; tl.appendChild(dl);
     box.appendChild(VIEW === 'duelo' ? duelView(m, D) : VIEW === 'notas' ? notesView(m, D) : arenaView(m, D));
     var ky = keys(m, D); if (ky) box.appendChild(ky);
     var bn2 = h('div', 'al-bn'), PS = MAGNA.playerStats ? MAGNA.playerStats() : {};
