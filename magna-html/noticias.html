@@ -243,6 +243,50 @@ html body.nwp .sec-t h2,html body.nwp .side h3{color:#f2f2ee!important;text-shad
 html body.nwp .nc .im .bg,html body.nwp .fc .bg,html body.nwp .cov .bg{background:var(--agbg,none) center/cover,linear-gradient(135deg,var(--ac,#8b5cf6),#170d2c)!important}
 html body.nwp .nc .im .bg span,html body.nwp .fc .bg span,html body.nwp .cov .bg span{color:rgba(255,255,255,.14)!important;-webkit-text-stroke:2px rgba(255,255,255,.25);font-family:"Archivo Black",Archivo,sans-serif!important}
 @media(max-width:600px){html body.nwp .nh-m{height:110px;opacity:.9;position:absolute;right:-6px;top:8px;margin:0}html body.nwp .nh h1{position:relative;z-index:1}}
+
+/* ================= modo post ================= */
+html body.nwp #featWrap{display:none!important}
+html body.nwp .nlay{grid-template-columns:minmax(0,640px) minmax(0,320px)!important;justify-content:center;gap:28px!important;align-items:start}
+html body.nwp .ng{display:grid!important;grid-template-columns:1fr!important;gap:22px!important}
+html body.nwp .side-w{position:sticky;top:84px;display:grid;gap:22px}
+@media(max-width:900px){html body.nwp .nlay{grid-template-columns:1fr!important}html body.nwp .side-w{position:static;order:-1}html body.nwp #topN{display:none!important}}
+html body.nwp .pst{position:relative;background:#f2f2ee;color:#0c0716;border:4px solid #0c0716;box-shadow:7px 7px 0 var(--ac,#8b5cf6);animation:pstIn .5s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes pstIn{from{opacity:0;transform:translateY(18px)}}
+html body.nwp .pst-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 16px 6px}
+html body.nwp .pst-h .who{margin:0;cursor:pointer}html body.nwp .pst-h .who:hover b{text-decoration:underline}
+html body.nwp .pst-tg{display:flex;flex-direction:column;align-items:flex-end;gap:4px}html body.nwp .pin{font:700 11px "Space Mono",monospace;color:#0c0716;background:#c6ff1a;padding:2px 7px;transform:rotate(2deg)}
+html body.nwp .pst-tx{padding:4px 16px 12px}
+html body.nwp .pst-tx h3{margin:4px 0 6px;font-size:clamp(19px,2.6vw,23px);line-height:1.12;text-transform:none}
+html body.nwp .pst-tx h3 button{all:unset;cursor:pointer;color:#0c0716}html body.nwp .pst-tx h3 button:hover{text-decoration:underline}
+html body.nwp .pst-sum{margin:0 0 8px;font:700 15px/1.45 Archivo,sans-serif;color:#3a3350}
+html body.nwp .pst-more,html body.nwp .pst-more p{color:#241c38;font:15.5px/1.6 Archivo,sans-serif;margin:0 0 8px}
+html body.nwp .pst-more strong{background:linear-gradient(transparent 60%,rgba(198,255,26,.7) 60%)}
+html body.nwp .pst-vm{border:0;background:none;padding:0;color:#5b21b6;font:700 14px "Space Mono",monospace;cursor:pointer}html body.nwp .pst-vm:hover{text-decoration:underline}
+html body.nwp .pst-im{display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;border-top:4px solid #0c0716;border-bottom:4px solid #0c0716;overflow:hidden;cursor:pointer;position:relative;background:#170d2c}
+html body.nwp .pst-im img,html body.nwp .pst-im .bg{width:100%;height:100%;object-fit:cover;transition:transform .5s}html body.nwp .pst-im:hover img,html body.nwp .pst-im:hover .bg{transform:scale(1.04)}
+html body.nwp .pst-st{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:2px dashed rgba(12,7,22,.18);font:700 13px "Space Mono",monospace}
+html body.nwp .pst-st .rsum,html body.nwp .pst-st .rsum *{color:#0c0716!important}
+html body.nwp .pst-cn{border:0;background:none;padding:0;color:#5a5270;font:700 13px "Space Mono",monospace;cursor:pointer}html body.nwp .pst-cn:hover{color:#0c0716;text-decoration:underline}
+html body.nwp .pst-a{padding:8px 12px 12px}
+html body.nwp .pst-rx{background:none!important;padding:0!important;margin:0 0 8px!important}html body.nwp .pst-rx h4{display:none}
+html body.nwp .pst-rx .rxs{display:flex!important;flex-wrap:wrap;gap:6px!important}
+html body.nwp .pst-rx .rx{flex:1 1 0;min-width:46px;padding:6px 4px!important;border:2px solid #0c0716!important;background:#fff!important;color:#0c0716!important;display:flex;align-items:center;justify-content:center;gap:4px;transition:transform .15s}
+html body.nwp .pst-rx .rx:hover{transform:translateY(-2px)}html body.nwp .pst-rx .rx.on{background:#c6ff1a!important;border-color:#0c0716!important}
+html body.nwp .pst-rx .rx .n{font:700 12px "Space Mono",monospace}
+html body.nwp .pst-bt{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+html body.nwp .pst-c{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 6px;border:0;background:#0c0716;color:#f2f2ee;font:700 13px "Space Mono",monospace;cursor:pointer;transition:background .15s,color .15s}
+html body.nwp .pst-c svg{width:16px;height:16px}html body.nwp .pst-c:hover,html body.nwp .pst-c.on{background:var(--ac,#8b5cf6);color:#0c0716}
+html body.nwp .pst-cm .cms{margin:0;border-top:4px solid #0c0716}
+html body.nwp .agb{padding:16px;border:4px solid #0c0716;background:#0c0716;box-shadow:7px 7px 0 var(--ac)}html body.nwp .agb .who.big{margin-bottom:8px}html body.nwp .agb p{margin:0 0 10px;color:#b9aee0;font:700 13px "Space Mono",monospace}
+html body.nwp .ag-box h3{margin:0 0 10px;color:#f2f2ee}
+html body.nwp #agL{display:grid;gap:8px}
+html body.nwp .agi{display:block;width:100%;text-align:left;padding:8px 10px;border:0;border-left:5px solid var(--ac);background:#170d2c;cursor:pointer;transition:transform .15s,background .15s}
+html body.nwp .agi:hover{transform:translateX(3px);background:#221440}html body.nwp .agi.on{background:#f2f2ee}
+html body.nwp .agi .who{margin:0}html body.nwp .agi .who-t b{color:#f2f2ee}html body.nwp .agi.on .who-t b{color:#0c0716}html body.nwp .agi .who-av{width:36px;height:36px;font-size:15px}
+@media(max-width:600px){html body.nwp #agL{display:flex;overflow-x:auto;gap:8px;padding-bottom:4px}html body.nwp .agi{flex:none;width:auto}html body.nwp .pst-c{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html body.nwp .pst{animation:none}}
+html body.nwp .nlay>*,html body.nwp .side-w,html body.nwp .side,html body.nwp .ng,html body.nwp .pst{min-width:0;max-width:100%}html body.nwp #agL{max-width:100%}
+@media(max-width:600px){html body.nwp .nlay{display:grid!important;grid-template-columns:minmax(0,1fr)!important}html body.nwp .pst-bt{gap:4px}html body.nwp .pst-rx .rx{min-width:0}}
 </style></head>
 <body class="nwp ac ck"><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap">
@@ -255,12 +299,12 @@ html body.nwp .nc .im .bg span,html body.nwp .fc .bg span,html body.nwp .cov .bg
   </section>
   <div class="tk" id="tk" hidden><div class="tk-l"><i></i>Última hora</div><div class="tk-v"><div class="tk-t" id="tkT"></div></div></div>
   <section id="featWrap" hidden><div class="sec-t"><h2 class="x" id="featT">Destacadas</h2></div><div class="feat" id="feat" tabindex="0" aria-roledescription="carrusel"></div></section>
-  <div class="sec-t"><h2 class="x">Últimas noticias</h2><span class="cnt" id="cnt"></span></div>
+  <div class="sec-t"><h2 class="x">Publicaciones</h2><span class="cnt" id="cnt"></span></div>
   <div class="nbar"><div class="ftr" id="ftr" role="tablist" aria-label="Categorías"></div><div class="srch"><input class="search" id="q" type="search" placeholder="Buscar noticia…" aria-label="Buscar noticia"></div></div>
   <div class="nlay">
     <div><div class="ng" id="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
       <div class="more"><button class="rd" id="more" hidden>Ver más noticias</button></div></div>
-    <aside class="side" id="topN" hidden><h3 id="topT">Lo más reaccionado</h3><div id="topL"></div></aside>
+    <aside class="side-w"><div class="side ag-box"><h3>Cuentas oficiales</h3><div id="agL"></div></div><div class="side" id="topN" hidden><h3 id="topT">Lo más reaccionado</h3><div id="topL"></div></div></aside>
   </div>
   <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
 </main>
