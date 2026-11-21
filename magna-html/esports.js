@@ -68,7 +68,7 @@
   }
 
   function deco() {
-    var lg = $('#bLg'), mc = cur(), tx = (lg ? lg.textContent : '') + ' ' + (mc && mc.lg || ''), kd = /champions/i.test(tx) ? 'champions' : /star\s*nova/i.test(tx) ? 'starnova' : /omega/i.test(tx) ? 'omega' : /amistos/i.test(tx) ? 'amistoso' : ''; if ((B.getAttribute('data-comp') || '') !== kd) { if (kd) B.setAttribute('data-comp', kd); else B.removeAttribute('data-comp'); }
+    var lg = $('#bLg'), mc = cur(), tx = (lg ? lg.textContent : '') + ' ' + (mc && mc.lg || ''), kd = /champions/i.test(tx) ? 'champions' : /(star|super)\s*nova/i.test(tx) ? 'starnova' : /omega/i.test(tx) ? 'omega' : /amistos/i.test(tx) ? 'amistoso' : ''; if ((B.getAttribute('data-comp') || '') !== kd) { if (kd) B.setAttribute('data-comp', kd); else B.removeAttribute('data-comp'); }
     var T = B.querySelectorAll('.bn-grid>.bt'), n = [$('#bN1'), $('#bN2')], m = cur(), md = $('.es-min', B), c = $('#clk');
     [].forEach.call(T, function (t, i) { var w = $('.es-wm', t), v = n[i] ? n[i].textContent : ''; if (w && w.textContent !== v) { w.textContent = v; t.classList.remove('es-in'); void t.offsetWidth; t.classList.add('es-in'); } });
     if (md) { var mm = /(\d+):/.exec(c ? c.textContent : ''); st(md, m && m.fin ? 'FINAL' : m && m.live ? (mm ? (+mm[1] + 1 > 90 ? '90+' : (+mm[1] + 1)) + '\u2019' : 'VIVO') : 'VS'); }
@@ -111,7 +111,7 @@
   }); }
   // miniaturas de partidos: torneo (para su fondo), número de tarjeta e inclinación alterna
   function cards() { var o = document.getElementById('otros'); if (!o) return; [].forEach.call(o.querySelectorAll('.mc'), function (c, i) {
-    var t = (c.querySelector('.mc-cat span') || {}).textContent || '', k = /champions/i.test(t) ? 'champions' : /star\s*nova/i.test(t) ? 'starnova' : /omega/i.test(t) ? 'omega' : /amistos/i.test(t) ? 'amistoso' : '';
+    var t = (c.querySelector('.mc-cat span') || {}).textContent || '', k = /champions/i.test(t) ? 'champions' : /(star|super)\s*nova/i.test(t) ? 'starnova' : /omega/i.test(t) ? 'omega' : /amistos/i.test(t) ? 'amistoso' : '';
     if ((c.getAttribute('data-comp') || '') !== k) { if (k) c.setAttribute('data-comp', k); else c.removeAttribute('data-comp'); }
     if (!c.style.getPropertyValue('--i')) { c.style.setProperty('--i', i); c.style.setProperty('--tilt', (i % 2 ? 1.2 : -1.2) + 'deg'); } }); }
   function all() { lead(); clock(); fanBar(); deco(); names(); cards(); }

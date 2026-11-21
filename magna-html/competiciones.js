@@ -97,7 +97,7 @@
       if (it.has_logo) { var im = document.createElement('img'); im.alt = ''; im.src = '/api/public/' + kind + '/' + it.id + '/logo'; cr.appendChild(im); } else cr.textContent = it.name.slice(0, 2).toUpperCase(); c.appendChild(cr);
       if (!it.has_logo && MAGNA.trophyArt(it.name, 'torneo') && kind === 'tournaments') { cr.textContent = ''; cr.style.background = 'none'; cr.style.border = '0'; cr.appendChild(M.trophyImg(it.name, 'torneo', 88)); }
       c.appendChild(h('h3', 'x', it.name)); var rk = h('div', 'ranks'); [[it.teams.length, 'Equipos'], [it.config.format === 'knockout' && it.config.legs === 2 ? 'Ida y vuelta' : FM[it.config.format], 'Formato']].forEach(function (x) { var d = h('div', 'rk'); d.appendChild(h('b', null, x[0])); d.appendChild(h('span', 'mono', x[1])); rk.appendChild(d); }); c.appendChild(rk);
-      c.onclick = function () { detail(kind, it); }; g.appendChild(c);
+      c.onclick = function () { if (kind === 'tournaments' && it.config.format === 'knockout') { if (/super\s*nova|star\s*nova/i.test(it.name)) { location.href = 'supernova.html?t=' + it.id; return; } if (it.config.legs === 2 || /omega/i.test(it.name)) { location.href = 'copa.html?t=' + it.id; return; } } detail(kind, it); }; g.appendChild(c);
     });
   }
   var tabs = document.getElementById('tabs');

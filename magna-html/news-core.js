@@ -97,7 +97,7 @@ window.NEWS = (function () {
     ['magna', 'Magna Sports', 'magnasports', '#c6ff1a', '#0c0716', 'M', null, 'Cuenta oficial de la comunidad'],
     ['champions', 'Champions Magna', 'championsmagna', '#3b5bff', '#ffffff', '★', 'img/bn-champions-sm.webp', 'Cuenta oficial de la Champions'],
     ['omega', 'OmegaCup Oficial', 'omegacup', '#ff6a1a', '#1a0600', 'Ω', 'img/bn-omega-sm.webp', 'Cuenta oficial de la OmegaCup'],
-    ['starnova', 'Starnova Oficial', 'starnova', '#8b5cf6', '#ffffff', '✦', 'img/bn-starnova-sm.webp', 'Cuenta oficial de Starnova'],
+    ['starnova', 'Supernova Oficial', 'supernova', '#8b5cf6', '#ffffff', '✦', 'img/bn-starnova-sm.webp', 'Cuenta oficial de la Supernova'],
     ['mundial', 'Mundial Magna', 'mundialmagna', '#2ee59d', '#04140d', 'W', null, 'Cuenta oficial del Mundial'],
     ['ligas', 'Ligas Magna', 'ligasmagna', '#ffd23f', '#1a1400', 'L', null, 'Cuenta oficial de las ligas'],
     ['mercado', 'Mercado Magna', 'mercadomagna', '#ff4fa3', '#ffffff', '⇄', null, 'Fichajes y mercado'],
@@ -117,7 +117,7 @@ window.NEWS = (function () {
   function agent0(id) { for (var i = 0; i < AGENTS.length; i++) if (AGENTS[i][0] === id) { var x = AGENTS[i]; return { id: x[0], name: x[1], handle: '@' + x[2], color: x[3], ink: x[4], mark: x[5], bg: x[6], bio: x[7], ai: !!x[8], crest: x[9] || null }; } return null; }
   // cuenta que publica: la elegida en el panel o, si no hay, la que corresponde por el tema
   function agentOf(a) { var g = a && a.agent && agent(a.agent); if (g) return g; var t = ((a && a.title) || '') + ' ' + ((a && a.summary) || '');
-    return agent(/champions/i.test(t) ? 'champions' : /omega/i.test(t) ? 'omega' : /star\s*nova/i.test(t) ? 'starnova' : /mundial/i.test(t) ? 'mundial' : a && a.category === 'fichajes' ? 'mercado' : /amistos/i.test(t) ? 'amistosos' : a && /^(primera|segunda|tercera)$/.test(a.category) ? 'ligas' : 'magna'); }
+    return agent(/champions/i.test(t) ? 'champions' : /omega/i.test(t) ? 'omega' : /(star|super)\s*nova/i.test(t) ? 'starnova' : /mundial/i.test(t) ? 'mundial' : a && a.category === 'fichajes' ? 'mercado' : /amistos/i.test(t) ? 'amistosos' : a && /^(primera|segunda|tercera)$/.test(a.category) ? 'ligas' : 'magna'); }
   // ---------- comentarios ----------
   function myTeam() { return sb().then(function (c) { return c.rpc('team_post_me').then(function (r) { return r.error ? null : r.data; }); }).catch(function () { return null; }); }
   function teamPost(t, su, b) { return sb().then(function (c) { return c.rpc('team_post', { p_title: t, p_summary: su, p_body: b }).then(chk); }); }
