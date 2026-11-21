@@ -34,7 +34,12 @@
   // ---------- piezas de las tarjetas ----------
   function pv(title, right) { var w = el('div', 'pv'), h = el('div', 'pv-h'); h.appendChild(el('span', null, title)); if (right) h.appendChild(el('span', null, right)); w.appendChild(h); return w; }
   function prow(n, team, val, sub) { var r = el('div', 'pr'); r.appendChild(el('span', 'n', String(n))); r.appendChild(crest(team)); var t = el('span'); t.textContent = MAGNA.teamName(team); if (sub) { var w = el('span'); w.appendChild(t); w.appendChild(el('small', null, sub)); r.appendChild(w); } else r.appendChild(t); r.appendChild(el('em', null, val)); return r; }
-  function tableOf(c) { if (c.format === 'champions' && c.groups && c.groups[0] && MAGNA.groupTable) return MAGNA.groupTable(c, c.groups[0]); return null; }
+  // tabla general de la Champions: todos los equipos de todos los grupos juntos (igual que champions.html): victoria 3, derrota 1
+  function tableOf(c) { if (c.format !== 'champions') return null; var ids = c.groups && c.groups.length ? c.groups.reduce(function (a, g) { return a.concat(g.teamIds || []); }, []) : (c.teamIds || []), r = {};
+    ids.forEach(function (t) { r[t] = { team_id: t, team: MAGNA.teamName(t), pj: 0, g: 0, p: 0, gf: 0, gc: 0, pts: 0 }; });
+    (S().matches || []).forEach(function (m) { if (m.type !== 'tournament' || m.cid !== c.id || !m.group || m.status !== 'finished') return; var a = r[m.home], b = r[m.away]; if (!a || !b) return;
+      var hs = Number(m.hs) || 0, as = Number(m.as) || 0; a.pj++; b.pj++; a.gf += hs; a.gc += as; b.gf += as; b.gc += hs; var w = hs > as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3; w[1].pts += 1; });
+    return Object.keys(r).map(function (k) { var x = r[k]; x.dg = x.gf - x.gc; return x; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.team.localeCompare(y.team, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; }); }
   function tiesNow(c) { // ronda actual de una copa: [{a,b,m,win,live,ga,gb}]
     if (c.format === 'knockout' && c.legs === 2 && MAGNA.koTies) { var R = MAGNA.koTies(c) || [], cur = R.filter(function (r) { return r.ties.some(function (t) { return t.win == null && (t.a != null || t.b != null); }); })[0] || R[R.length - 1]; return cur ? { round: cur.round, ties: cur.ties } : null; }
     var st = c.state || {}, rn = st.round, ms = tms(c).filter(function (m) { return !rn || m.round === rn; }); if (!ms.length) return null;

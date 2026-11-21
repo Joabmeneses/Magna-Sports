@@ -206,6 +206,46 @@ html body.evh .cc .ftr .go{justify-content:center;align-self:stretch;white-space
 @media(max-width:700px){html body.evh .cc,html body.evh .cc.big{grid-template-columns:1fr}html body.evh .cc .bg{width:100%;height:150px}html body.evh .cc:before{background:linear-gradient(180deg,rgba(12,7,22,.45) 0,var(--ink) 150px),var(--grain)}
   html body.evh .cc .c1 .tr{height:72px}html body.evh .cc .c2{border-left:0;padding-top:0}html body.evh .pv-cols,html body.evh .pv-g{grid-template-columns:1fr}html body.evh .pv-g>:nth-child(2n),html body.evh .pv-cols>:nth-child(2n){border-left:0}html body.evh .pv-g>:nth-child(n+2),html body.evh .pv-cols>:nth-child(n+2){border-top:1px solid rgba(255,255,255,.06)}
   html body.evh .cc .ftr .cd{text-align:left}}
+
+/* ===== v4: esquinas redondeadas ===== */
+html body.evh .eh{border-radius:28px;border-top:0;box-shadow:0 0 0 3px var(--lime),8px 8px 0 3px var(--ink)}
+html body.evh .tag{border-radius:999px;padding:7px 12px}
+html body.evh .ey .lvp{border-radius:999px;padding:7px 12px}
+html body.evh .ks{border-radius:18px;overflow:hidden}
+html body.evh .k:first-child{border-top-left-radius:16px}
+html body.evh .sp{border-radius:22px;overflow:hidden;border-top-width:2px;box-shadow:0 0 0 3px var(--sc,var(--lime)),6px 6px 0 3px var(--ink)}
+html body.evh .sp-dots button{border-radius:999px}
+html body.evh .sl2 .k1 span{border-radius:999px;padding:6px 10px}
+html body.evh .vs2 .sc.v{border-radius:12px}
+html body.evh .sl2 .ft em{border-radius:999px;padding:7px 12px}
+html body.evh .tk{border-radius:999px;box-shadow:0 4px 0 var(--con)}
+html body.evh .tk-l{transform:none;margin-left:0;padding:0 18px;border-radius:999px 0 0 999px}
+html body.evh .tk-t a i{border-radius:999px;padding:3px 8px}html body.evh .tk-t a em{border-radius:8px}
+html body.evh .sec{border-bottom:0;padding-bottom:0}
+html body.evh .sec h2{position:relative;padding-bottom:10px}
+html body.evh .sec h2:after{content:"";position:absolute;left:0;bottom:0;width:70px;height:6px;border-radius:999px;background:var(--lime)}
+html body.evh .flt button{border-radius:999px;padding:9px 14px;box-shadow:0 3px 0 var(--ink)}
+html body.evh .flt button b{border-radius:999px;padding:1px 7px}
+html body.evh .cc,html body.evh .cc.big{border-radius:24px;border:0;border-top:0;box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 70%,transparent),0 8px 0 0 var(--ink);overflow:hidden}
+html body.evh .cc:hover{box-shadow:0 0 0 3px var(--c),0 12px 0 0 var(--ink);transform:translateY(-4px)}
+html body.evh .cc .bg{border-radius:24px 0 0 24px}
+html body.evh .cc .st,html body.evh .cc .ph{border-radius:999px;padding:6px 11px}
+html body.evh .cc .bar{border-radius:999px;overflow:hidden;border:0}html body.evh .cc .bar i{border-radius:999px}
+html body.evh .pv{border-radius:16px;overflow:hidden;border:1px solid var(--line);border-left:4px solid var(--c)}
+html body.evh .pr .n{border-radius:8px}
+html body.evh .kr .m{border-radius:8px}
+html body.evh .cc .ftr{background:transparent;border-left:2px dashed rgba(255,255,255,.08)}
+html body.evh .cc .go{border-radius:999px;padding:11px 16px;box-shadow:0 4px 0 var(--ink)}
+html body.evh .cc:hover .go{box-shadow:0 4px 0 var(--paper)}
+html body.evh .cc .c1 .tr{filter:drop-shadow(0 0 16px color-mix(in srgb,var(--c) 65%,transparent))}
+@media(max-width:1100px){html body.evh .cc .ftr{border-left:0;border-top:2px dashed rgba(255,255,255,.08)}}
+@media(max-width:700px){html body.evh .cc .bg{border-radius:24px 24px 0 0}html body.evh .ks{border-radius:16px}}
+
+html body.evh .pv-cols{grid-template-rows:repeat(3,auto);grid-auto-flow:column}
+html body.evh .pv-cols>.pr{border-top:1px solid rgba(255,255,255,.06)!important;border-left:0!important}
+html body.evh .pv-cols>.pr:nth-child(3n+1){border-top:0!important}
+html body.evh .pv-cols>.pr:nth-child(n+4){border-left:1px solid rgba(255,255,255,.06)!important}
+@media(max-width:700px){html body.evh .pv-cols{grid-template-rows:none;grid-auto-flow:row}html body.evh .pv-cols>.pr{border-left:0!important}html body.evh .pv-cols>.pr:nth-child(3n+1){border-top:1px solid rgba(255,255,255,.06)!important}html body.evh .pv-cols>.pr:first-child{border-top:0!important}}
 </style></head>
 <body class="evh ac"><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap">
