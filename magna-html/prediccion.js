@@ -76,7 +76,7 @@ window.PRED = (function () {
     .sort(function (a, b) { return b.pts - a.pts || b.hits - a.hits || a.n.localeCompare(b.n); }); }
   function rankOf() { var R = ranked(), i = -1; R.forEach(function (x, k) { if (x.me && i < 0) i = k; }); return i >= 0 ? i + 1 : null; }
 
-  function champion() { var c = cur, open = P.champOpen(c), pick = mine[key('champion')], s = h('section', 'pd-s'), t = h('h2', 'x', '🏆 Tu campeón');
+  function champion() { var c = cur, open = P.champOpen(c), pick = mine[key('champion')], s = h('section', 'pd-s pd-paper'), t = h('h2', 'x', '🏆 Tu campeón');
     t.appendChild(h('span', 'pd-tag' + (open ? '' : ' cl'), open ? 'Abierta' : 'Cerrada')); s.appendChild(t);
     var done = c.state && c.state.phase === 'done';
     s.appendChild(h('p', null, open ? 'Vale ' + P.CHAMP + ' puntos. Puedes cambiarlo hasta que empiece la eliminatoria.' : done ? 'Campeón: ' + MAGNA.teamName(c.state.champion) + (pick != null ? (pick === c.state.champion ? ' · ¡Acertaste! +' + P.CHAMP : ' · Esta vez no') : '') : 'La eliminatoria ya empezó. ' + (pick != null ? 'Tu elección: ' + MAGNA.teamName(pick) + '.' : 'No elegiste campeón.')));
@@ -85,7 +85,7 @@ window.PRED = (function () {
       if (open && me) b.onclick = function () { if (mine[key('champion')] !== tid) save('champion', 0, tid, MAGNA.teamName(tid)); }; if (!open && !on) b.style.display = pick != null ? 'none' : ''; g.appendChild(b); });
     s.appendChild(g); root.appendChild(s); }
 
-  function zones() { var c = cur, open = P.zoneOpen(c), done = P.zoneDone(c), L = P.zLim(c), T = P.leagueTable(c), ZF = done ? P.zoneOf(c) : null, s = h('section', 'pd-s pd-z');
+  function zones() { var c = cur, open = P.zoneOpen(c), done = P.zoneDone(c), L = P.zLim(c), T = P.leagueTable(c), ZF = done ? P.zoneOf(c) : null, s = h('section', 'pd-s pd-z pd-paper');
     var t = h('h2', 'x', '📋 Fase de liga: ¿quién clasifica?'); t.appendChild(h('span', 'pd-tag' + (open ? '' : ' cl'), open ? 'Abierta' : 'Cerrada')); s.appendChild(t);
     var cnt = { 1: 0, 2: 0 }; c.teamIds.forEach(function (tid) { var v = mine[key('zone', tid)]; if (v) cnt[v]++; });
     s.appendChild(h('p', null, open ? 'Marca a los ' + L.d + ' que crees que pasan directo (+' + P.ZP[1] + ' c/u) y a los ' + L.p + ' que van al play-off (+' + P.ZP[2] + ' c/u). Los que no marques son tus eliminados. Puedes cambiarlo hasta que la administración cierre la predicción o termine la fase de liga.'
@@ -93,34 +93,59 @@ window.PRED = (function () {
     var bar = h('div', 'pd-zb'); [[1, 'Directo', L.d], [2, 'Play-off', L.p]].forEach(function (x) { var b = h('div', 'pd-zc z' + x[0] + (cnt[x[0]] >= x[2] ? ' full' : '')); b.appendChild(h('b', null, cnt[x[0]] + '/' + x[2])); b.appendChild(h('small', null, x[1])); var pr = h('i'); pr.style.width = (x[2] ? Math.min(100, cnt[x[0]] / x[2] * 100) : 0) + '%'; b.appendChild(pr); bar.appendChild(b); });
     if (open && me) { var cp = h('button', 'pd-cp', '🪄 Copiar la tabla actual'); cp.type = 'button'; cp.title = 'Marca a los equipos según cómo van ahora en la tabla'; cp.onclick = function () { copyTable(T, L); }; bar.appendChild(cp); }
     s.appendChild(bar);
-    var list = h('div', 'pd-zl'); T.forEach(function (x) { var tid = x.id, v = mine[key('zone', tid)] || 0, r = h('div', 'pd-zr' + (v ? ' z' + v : '')), real = ZF && ZF[tid];
-      var pz = x.pos <= L.d ? 'd' : x.pos <= L.d + L.p ? 'p' : 'e'; r.appendChild(h('span', 'pd-zp ' + pz, String(x.pos))); r.appendChild(M.crest(tid, x.n, 28)); var nm = h('div', 'pd-zn'); nm.appendChild(h('b', null, x.n)); nm.appendChild(h('small', null, x.pts + ' pts · ' + x.pj + ' PJ')); r.appendChild(nm);
-      var sg = h('div', 'pd-zs'); [[1, 'Directo'], [2, 'Play-off']].forEach(function (o) { var on = v === o[0], b = h('button', on ? 'on' : null, o[1]); b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false');
-        var full = !on && cnt[o[0]] >= (o[0] === 1 ? L.d : L.p); b.disabled = !open || !me || full; if (full && open) b.title = 'Ya llenaste estos cupos: quita a otro equipo primero';
-        if (open && me) b.onclick = function () { save('zone', tid, on ? 0 : o[0], on ? x.n + ': eliminado en tu predicción' : '✔ ' + x.n + ' → ' + o[1]); }; sg.appendChild(b); }); r.appendChild(sg);
-      if (real) { var mp = v || 3, ok = mp === real; r.appendChild(h('em', 'pd-zres ' + (ok ? 'ok' : 'ko'), ok ? (v ? '✔ +' + P.ZP[v] : '✔ Fuera') : '✘ ' + ['', 'Directo', 'Play-off', 'Fuera'][real])); }
-      list.appendChild(r); }); s.appendChild(list);
+    // tabla de cada grupo de la fase, para decidir con datos
+    var G = (c.groups && c.groups.length ? c.groups : [{ name: '', teamIds: c.teamIds }]);
+    function gtab(g) { var r = {}; g.teamIds.forEach(function (t) { r[t] = { id: t, n: MAGNA.teamName(t), pj: 0, g: 0, p: 0, gf: 0, gc: 0, pts: 0, f: [] }; });
+      MAGNA.S.matches.filter(function (m) { return m.type === 'tournament' && m.cid === c.id && m.group != null && (!g.name || String(m.group) === String(g.name)) && m.status === 'finished'; })
+        .sort(function (x, y) { return String(x.at || '').localeCompare(String(y.at || '')); }).forEach(function (m) { var A = r[m.home], B = r[m.away]; if (!A || !B) return;
+          A.pj++; B.pj++; A.gf += m.hs; A.gc += m.as; B.gf += m.as; B.gc += m.hs; var hw = m.hs > m.as; (hw ? A : B).g++; (hw ? B : A).p++; (hw ? A : B).pts += 3; if (c.format === 'champions') (hw ? B : A).pts += 1; A.f.push(hw ? 'V' : 'D'); B.f.push(hw ? 'D' : 'V'); });
+      return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.n.localeCompare(y.n, 'es'); }); }
+    var gw = h('div', 'pd-gw');
+    G.forEach(function (g) { var box = h('div', 'pd-gb'); box.appendChild(h('div', 'pd-gh', g.name ? 'GRUPO ' + String(g.name).toUpperCase() : 'FASE DE LIGA'));
+      var hdr = h('div', 'pd-gr pd-gcol'); ['#', 'Equipo', 'PJ', 'G', 'P', 'DG', 'PTS', 'Racha', 'Tu predicción'].forEach(function (t) { hdr.appendChild(h('span', null, t)); }); box.appendChild(hdr);
+      gtab(g).forEach(function (x, i) { var tid = x.id, v = mine[key('zone', tid)] || 0, real = ZF && ZF[tid], r = h('div', 'pd-gr' + (v ? ' z' + v : ''));
+        r.appendChild(h('span', 'pd-gp', String(i + 1))); var tm = h('span', 'pd-gt'); tm.appendChild(M.crest(tid, x.n, 26)); tm.appendChild(h('b', null, x.n)); r.appendChild(tm);
+        [x.pj, x.g, x.p, (x.dg > 0 ? '+' : '') + x.dg].forEach(function (val) { r.appendChild(h('span', 'pd-gn', String(val))); }); r.appendChild(h('span', 'pd-gn pts', String(x.pts)));
+        var fm = h('span', 'pd-gf'); x.f.slice(-4).forEach(function (q) { fm.appendChild(h('i', q === 'V' ? 'w' : 'l', q)); }); if (!x.f.length) fm.appendChild(h('small', null, '—')); r.appendChild(fm);
+        var sg = h('div', 'pd-zs'); [[1, 'Directo'], [2, 'Play-off']].forEach(function (o) { var on = v === o[0], b = h('button', on ? 'on' : null, o[1]); b.type = 'button'; b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          var full = !on && cnt[o[0]] >= (o[0] === 1 ? L.d : L.p); b.disabled = !open || !me || full; if (full && open) b.title = 'Ya llenaste estos cupos: quita a otro equipo primero';
+          if (open && me) b.onclick = function () { save('zone', tid, on ? 0 : o[0], on ? x.n + ': eliminado en tu predicción' : '✔ ' + x.n + ' → ' + o[1]); }; sg.appendChild(b); });
+        if (real) { var mp = v || 3, ok = mp === real; sg.appendChild(h('em', 'pd-zres ' + (ok ? 'ok' : 'ko'), ok ? (v ? '✔ +' + P.ZP[v] : '✔ Fuera') : '✘ ' + ['', 'Directo', 'Play-off', 'Fuera'][real])); }
+        r.appendChild(sg); box.appendChild(r); });
+      gw.appendChild(box); });
+    s.appendChild(gw);
     root.appendChild(s); }
   function copyTable(T, L) { var steps = [], fill = [];
     T.forEach(function (x) { var w = x.pos <= L.d ? 1 : x.pos <= L.d + L.p ? 2 : 0, cu = mine[key('zone', x.id)] || 0; if (cu === w) return; if (cu) steps.push([x.id, 0]); if (w) fill.push([x.id, w]); });
     steps = steps.concat(fill); if (!steps.length) return toast('Tu predicción ya es igual a la tabla actual');
     toast('Copiando la tabla…'); sb().then(function (c) { return steps.reduce(function (pr, st) { return pr.then(function () { return c.rpc('pred_save', { p_tour: cur.id, p_kind: 'zone', p_ref: st[0], p_pick: st[1] }).then(function (r) { if (r && r.error) throw r.error; if (st[1]) mine[key('zone', st[0])] = st[1]; else delete mine[key('zone', st[0])]; }); }); }, Promise.resolve()); })
       .then(function () { render(); toast('🪄 Listo: tu predicción copia la tabla actual. Ajusta lo que quieras.'); }, function (e) { load(); toast((e && e.message) || 'No se pudo copiar', true); }); }
-  function rounds() { var s = h('section', 'pd-s'); s.appendChild(h('h2', 'x', '⚔️ Cruces')); var K = P.koMatches(cur);
+  function rounds() { var s = h('section', 'pd-s pd-paper'); s.appendChild(h('h2', 'x', '⚔️ Cruces')); var K = P.koMatches(cur);
     if (!K.length) { s.appendChild(h('p', null, 'Elige el ganador de cada cruce antes de que empiece.')); s.appendChild(h('div', 'pd-emp', 'La eliminatoria todavía no está armada. Cuando se definan los cruces aparecerán aquí para que elijas. Mientras tanto, ¡elige a tu campeón!')); root.appendChild(s); return; }
-    s.appendChild(h('p', null, 'Toca el equipo que crees que gana. Cada cruce se cierra cuando empieza el partido.'));
+    s.appendChild(h('p', null, 'Toca el equipo que crees que gana: queda marcado como tu ELECCIÓN. Cada cruce se cierra cuando empieza el partido.'));
     var by = {}; K.forEach(function (m) { var r = m.round || 'Eliminatoria'; (by[r] = by[r] || []).push(m); });
-    Object.keys(by).forEach(function (r) { var rd = h('div', 'pd-rd'), hh = h('h3', null, r); hh.appendChild(h('small', null, '+' + P.roundPts(r) + ' por acierto')); rd.appendChild(hh); var xs = h('div', 'pd-xs');
-      by[r].forEach(function (m) { var lk = P.locked(m), w = P.winner(m), pick = mine[key('match', m.id)], x = h('div', 'pd-x'), wh = h('div', 'when');
-        wh.appendChild(h('span', null, m.status === 'finished' ? 'Final · ' + m.hs + '-' + m.as : m.status === 'live' ? '● En juego' : m.at ? M.fdt(m.at) : 'Sin fecha')); wh.appendChild(h('b', null, lk ? '🔒 Cerrado' : '✏️ Abierto')); x.appendChild(wh);
-        var two = h('div', 'two'); [m.home, m.away].forEach(function (tid, i) { var on = pick === tid, cls = on ? 'on' : ''; if (w && on) cls += w === tid ? ' ok' : ' ko'; var b = tmBtn(tid, cls); b.disabled = lk || !me; b.setAttribute('aria-pressed', on ? 'true' : 'false');
-          if (!lk && me) b.onclick = function () { if (mine[key('match', m.id)] !== tid) save('match', m.id, tid, MAGNA.teamName(tid)); }; two.appendChild(b); if (!i) two.appendChild(h('span', 'vs', 'VS')); }); x.appendChild(two);
-        if (w && pick != null) x.appendChild(h('div', 'res ' + (w === pick ? 'ok' : 'ko'), w === pick ? '✔ Acertaste · +' + P.roundPts(m.round) : '✘ Ganó ' + MAGNA.teamName(w)));
-        else if (lk && pick == null && me) x.appendChild(h('div', 'res', 'No elegiste en este cruce'));
-        xs.appendChild(x); }); rd.appendChild(xs); s.appendChild(rd); });
+    function short(n) { n = String(n || ''); var w = n.trim().split(/\s+/); return w.length > 1 ? w.map(function (x) { return x[0]; }).join('').slice(0, 4).toUpperCase() : n.slice(0, 5).toUpperCase(); }
+    Object.keys(by).forEach(function (r) { var rd = h('div', 'pd-rd'), hh = h('h3', 'pd-rt', r.toUpperCase()); hh.appendChild(h('small', null, '+' + P.roundPts(r) + ' pts por acierto')); rd.appendChild(hh); var xs = h('div', 'pd-xs');
+      by[r].forEach(function (m, mi) { var lk = P.locked(m), w = P.winner(m), pick = mine[key('match', m.id)], x = h('div', 'pd-x2' + (lk ? ' lk' : '') + (pick != null ? ' has' : ''));
+        x.style.setProperty('--i', mi);
+        var hd = h('div', 'pd-xh'); hd.appendChild(h('b', null, r)); x.appendChild(hd);
+        var two = h('div', 'pd-two');
+        [m.home, m.away].forEach(function (tid, i) { var on = pick === tid, nm = MAGNA.teamName(tid), b = h('button', 'pd-sd ' + (i ? 'a' : 'h') + (on ? ' on' : '') + (pick != null && !on ? ' off' : '') + (w && on ? (w === tid ? ' ok' : ' ko') : '') + (w === tid ? ' win' : ''));
+          b.type = 'button'; b.disabled = lk || !me; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', 'Elegir a ' + nm);
+          var cw = h('span', 'pd-cw'); cw.appendChild(M.crest(tid, nm, 96)); b.appendChild(cw);
+          b.appendChild(h('span', 'pd-nm', nm.length > 9 ? short(nm) : nm.toUpperCase())); b.title = nm;
+          b.appendChild(h('span', 'pd-el', w && on ? (w === tid ? '✔ ACIERTO' : '✘ FALLASTE') : 'ELECCIÓN'));
+          if (!lk && me) b.onclick = function () { if (mine[key('match', m.id)] !== tid) save('match', m.id, tid, nm); };
+          two.appendChild(b); });
+        x.appendChild(two);
+        if (w && pick != null) x.appendChild(h('div', 'pd-res ' + (w === pick ? 'ok' : 'ko'), w === pick ? '✔ Acertaste · +' + P.roundPts(m.round) + ' pts' : '✘ Ganó ' + MAGNA.teamName(w)));
+        else if (lk && pick == null && me) x.appendChild(h('div', 'pd-res', 'No elegiste en este cruce'));
+        else if (!lk && pick == null) x.appendChild(h('div', 'pd-res hint', me ? '👆 Toca un equipo para elegir' : '🔒 Entra para elegir'));
+        var wr = h('div', 'pd-xwr'); wr.appendChild(x); wr.appendChild(h('div', 'pd-inf', (m.status === 'finished' ? 'Final · ' + m.hs + '-' + m.as : m.status === 'live' ? '● En juego' : m.at ? M.fdt(m.at) : 'Sin fecha') + ' · ' + (lk ? '🔒 Cerrado' : '✏️ Abierto')));
+        xs.appendChild(wr); }); rd.appendChild(xs); s.appendChild(rd); });
     root.appendChild(s); }
 
-  function table() { var s = h('section', 'pd-s'); s.appendChild(h('h2', 'x', '📊 Tabla de predicciones'));
+  function table() { var s = h('section', 'pd-s pd-paper'); s.appendChild(h('h2', 'x', '📊 Tabla de predicciones'));
     if (board == null) { s.appendChild(M.skel(3)); root.appendChild(s); return; }
     var R = ranked(); s.appendChild(h('p', null, R.length ? R.length + (R.length === 1 ? ' persona juega' : ' personas juegan') + '. Las elecciones de los demás se ven cuando cada cruce se cierra.' : 'Nadie ha jugado todavía. ¡Sé el primero!'));
     if (R.length) { var bd = h('div', 'pd-bd'); R.slice(0, 50).forEach(function (x, i) { var r = h('div', 'pd-row' + (x.me ? ' me' : '')); r.appendChild(h('span', 'ps', String(i + 1))); var nm = h('div', 'nm'); if (x.pid) nm.appendChild(M.pn(x.n, x.pid)); else nm.appendChild(document.createTextNode(x.n)); nm.appendChild(h('small', null, x.hits + (x.hits === 1 ? ' acierto' : ' aciertos') + (x.me ? ' · Tú' : ''))); r.appendChild(nm); r.appendChild(h('span', 'pt', String(x.pts))); bd.appendChild(r); }); s.appendChild(bd); }
