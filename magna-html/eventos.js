@@ -26,7 +26,7 @@
 
   // ---------- render ----------
   function render() { clearInterval(tick); root.innerHTML = ''; var now = Date.now(), A = all(), up = A.filter(function (e) { return endOf(e) >= now; }), past = A.filter(function (e) { return endOf(e) < now && !e.auto; }).reverse();
-    var hd = h('section', 'ev-h'), tx = h('div'); tx.appendChild(h('div', 'ey', 'Comunidad · Magna Sports')); tx.appendChild(h('h1', null, 'Eventos')); tx.appendChild(h('p', null, 'Torneos, finales, premiaciones y planes de la comunidad. Apúntate, pon la alarma y que no se te pase ninguno.')); hd.appendChild(tx); hd.appendChild(h('div', 'ev-ic', '🎪')); root.appendChild(hd);
+    var hd = h('section', 'ev-h'), tx = h('div'); tx.appendChild(h('div', 'ey', 'Comunidad · Magna Sports')); tx.appendChild(h('h1', null, 'Planes')); tx.appendChild(h('p', null, 'Finales, premiaciones, torneos relámpago y planes de la comunidad. Apúntate, pon la alarma y que no se te pase ninguno.')); hd.appendChild(tx); hd.appendChild(h('div', 'ev-ic', '🎪')); root.appendChild(hd);
     var tk = [], nx = up.filter(function (e) { return !isLive(e, now); })[0], lv = up.filter(function (e) { return isLive(e, now); });
     if (lv.length) tk.push(['En vivo', lv.map(function (e) { return e.title; }).join(' · ')]); if (nx) tk.push(['Próximo', nx.title + ' · ' + rel(tms(nx.at) - now)]);
     var V = S().ballonVote, BL = MAGNA.ballonList(); if (V && V.id && V.open) tk.push(['Balón de Oro', 'Votación abierta · Edición ' + V.ed]); else if (BL[0]) tk.push(['Último Balón de Oro', (MAGNA.ballonWho(BL[0], 'winner') || '—') + ' · ' + BL[0].ed]);

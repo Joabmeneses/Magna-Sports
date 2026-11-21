@@ -1,71 +1,89 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
-<title>Magna Arena · Eventos</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&display=swap"><link rel="stylesheet" href="site.css">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0d0a1f"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Magna Arena · Eventos</title>
+<meta name="description" content="Todas las competiciones de Magna Sports en un solo lugar: Champions, OmegaCup, Supernova, Mundial, ligas y torneos.">
+<meta property="og:title" content="Eventos · Magna Arena"><meta property="og:description" content="Champions, OmegaCup, Supernova, Mundial, ligas y torneos."><meta property="og:image" content="img/bn-champions.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="calle.css">
 <style>
-body.evp{background:#0c0a26;--ac:#ff5a36}
-body.evp:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(45% 35% at 0 0,rgba(255,90,54,.3),transparent 70%),radial-gradient(40% 35% at 100% 10%,rgba(255,196,0,.2),transparent 70%),radial-gradient(60% 40% at 50% 100%,rgba(139,92,246,.2),transparent 70%)}
-body.evp:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(-62deg,rgba(255,255,255,.022) 0 2px,transparent 2px 120px)}
-.ev-h{position:relative;margin-top:24px;border-radius:32px;overflow:hidden;padding:clamp(22px,4.5vw,42px);border:2px solid rgba(255,255,255,.16);border-bottom-width:6px;background:linear-gradient(125deg,#5a1a12,#1c1545 58%,#14113a);isolation:isolate;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;box-shadow:0 30px 60px -30px rgba(255,90,54,.7)}
-.ev-h:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 2px,transparent 2px 26px)}
-.ev-h:after{content:"";position:absolute;z-index:-1;top:-20%;bottom:-20%;right:14%;width:30%;transform:skewX(-18deg);background:linear-gradient(180deg,rgba(255,196,0,.32),transparent);box-shadow:70px 0 0 -12px rgba(255,255,255,.05)}
-.ev-h .ey{font:700 12px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#ffb89f}
-.ev-h h1{margin:6px 0 8px;font:900 clamp(48px,9vw,104px)/1 Archivo,sans-serif;font-stretch:125%;letter-spacing:-.03em;text-transform:uppercase;padding-top:.04em;background:linear-gradient(90deg,#fff,#ffd23f);-webkit-background-clip:text;background-clip:text;color:transparent}
-.ev-h p{margin:0;color:#ecdcd6;max-width:56ch}
-.ev-ic{font-size:clamp(70px,11vw,130px);line-height:1;filter:none;animation:evBob 3.2s ease-in-out infinite;user-select:none}
-@keyframes evBob{50%{transform:translateY(-10px) rotate(6deg)}}
-.ev-sec{margin-top:36px}.ev-sec>h2{margin:0 0 4px;font-size:clamp(22px,3.4vw,32px)}.ev-sec>p{margin:0 0 14px;color:#a9a7c4}
-/* próximo evento */
-.ev-next{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:center;padding:clamp(18px,3vw,28px);border-radius:28px;border:2px solid var(--ec,#ff5a36);border-bottom-width:7px;background:radial-gradient(70% 100% at 0 0,color-mix(in srgb,var(--ec,#ff5a36) 35%,transparent),transparent 70%),linear-gradient(120deg,rgba(20,17,58,.92),rgba(12,10,38,.92));box-shadow:0 30px 60px -28px var(--ec,#ff5a36)}
-.ev-next .k{display:inline-flex;gap:8px;align-items:center;font:800 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ec)}
-.ev-next h3{margin:8px 0 6px;font:900 clamp(26px,4vw,44px)/1.02 Archivo,sans-serif;font-stretch:118%;text-transform:uppercase}
-.ev-next .ds{color:#d6d3ee;margin:0 0 12px;white-space:pre-line}.ev-next .wh{color:#cfcde6;font-size:14px;margin-bottom:14px}
-.ev-cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.ev-cd div{text-align:center;padding:14px 6px;border-radius:18px;background:#07061a;border:2px solid rgba(255,255,255,.1);border-bottom-width:5px;box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--ec) 60%,transparent)}
-.ev-cd b{display:block;font:900 clamp(30px,5vw,52px)/1 Archivo,sans-serif;font-stretch:120%;font-variant-numeric:tabular-nums}.ev-cd small{font:700 10px "JetBrains Mono",monospace;letter-spacing:.12em;color:#a9a7c4;text-transform:uppercase}
-.ev-live{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#ff2d55;color:#fff;font:900 14px Archivo,sans-serif;letter-spacing:.06em}.ev-live:before{content:"";width:9px;height:9px;border-radius:50%;background:#fff;animation:evBl 1s infinite}@keyframes evBl{50%{opacity:.2}}
-/* botones */
-.ev-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.ev-b{display:inline-flex;align-items:center;gap:8px;border:2px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 16px;font:800 14px Archivo,sans-serif;text-decoration:none;cursor:pointer;background:rgba(255,255,255,.06);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.45);transition:transform .12s,box-shadow .12s}
-.ev-b:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.45)}.ev-b.go{background:var(--ec,#ff5a36);border-color:var(--ec,#ff5a36);color:#0b0a1f;box-shadow:0 4px 0 color-mix(in srgb,var(--ec,#ff5a36) 45%,#000)}
-.ev-b.on{background:#2ee59d;border-color:#2ee59d;color:#0a0d18;box-shadow:0 4px 0 #128a5c}.ev-b:disabled{opacity:.5;cursor:not-allowed}
-.ev-b .n{font:800 11px "JetBrains Mono",monospace;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.25)}
-/* balón de oro */
-.ev-bo{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:22px;align-items:center;padding:clamp(18px,3vw,28px);border-radius:28px;border:2px solid #ffd23f;border-bottom-width:7px;overflow:hidden;isolation:isolate;background:radial-gradient(60% 120% at 0 50%,rgba(255,196,0,.4),transparent 65%),linear-gradient(120deg,#3a2a00,#1d1550 60%,#140f3a);box-shadow:0 30px 60px -28px rgba(255,196,0,.7)}
-.ev-bo:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,rgba(255,255,255,.04) 0 2px,transparent 2px 22px)}
-.ev-ball{width:clamp(90px,12vw,140px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff8d6,#ffd23f 22%,#e0a200 55%,#7a4f00 100%);box-shadow:0 0 50px rgba(255,196,0,.6),inset -10px -14px 24px rgba(0,0,0,.35);animation:evSpin 12s linear infinite;position:relative}
-.ev-ball:after{content:"";position:absolute;left:18%;top:12%;width:30%;height:22%;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(5px)}
-@keyframes evSpin{to{transform:rotate(1turn)}}.ev-tro{height:clamp(110px,14vw,170px)!important;filter:drop-shadow(0 0 26px rgba(255,196,0,.55)) drop-shadow(0 12px 20px rgba(0,0,0,.5))!important}@media(max-width:760px){.ev-tro{height:100px!important}}
-.ev-bo .k{font:800 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#ffe08a}
-.ev-bo h3{margin:6px 0;font:900 clamp(26px,4vw,44px)/1 Archivo,sans-serif;font-stretch:118%;text-transform:uppercase;background:linear-gradient(180deg,#fff6cf,#ffc400 70%,#b37b00);-webkit-background-clip:text;background-clip:text;color:transparent;padding-top:.06em}
-.ev-bo p{margin:0;color:#e9e2c4}.ev-bo .ev-b.go{--ec:#ffc400}
-.ev-noms{display:flex;margin-top:12px}.ev-noms .tav{--s:42px;margin-right:-10px;box-shadow:0 0 0 3px #1d1550}
-.ev-bo .cdm{font:800 13px "JetBrains Mono",monospace;color:#fff;margin-top:10px}.ev-bo .cdm b{color:#ffd23f}
-.ev-bo .win{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}.ev-bo .win .tav{--s:84px;box-shadow:0 0 0 4px #ffd23f}.ev-bo .win>div{display:flex;flex-direction:column;gap:2px}.ev-bo .win b{font:900 17px Archivo,sans-serif;text-transform:uppercase}.ev-bo .win small{color:#e9e2c4;font-size:12px}
-/* agenda */
-.ev-f{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
-.ev-f button{transform:skewX(-10deg);border-radius:12px;border:2px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#e7e6f7;padding:9px 16px;font:800 14px Archivo,sans-serif;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.5)}
-.ev-f button>span{display:inline-block;transform:skewX(10deg)}.ev-f button.on{background:#ff5a36;border-color:#ff5a36;color:#0b0a1f;box-shadow:0 4px 0 #8a2a12}
-.ev-g{margin:22px 0 10px;display:flex;align-items:center;gap:10px;font:800 12px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:#cfcde6}.ev-g:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent)}
-.ev-list{display:grid;gap:10px}
-.ev-c{--ec:#8b5cf6;display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 16px 12px 12px;border-radius:22px;border:2px solid rgba(255,255,255,.1);border-bottom-width:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--ec) 14%,transparent),rgba(255,255,255,.03) 55%);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:evIn .45s both;transition:transform .15s,border-color .2s}
-.ev-c:hover{transform:translateX(4px);border-color:color-mix(in srgb,var(--ec) 60%,transparent)}
-@keyframes evIn{from{opacity:0;transform:translateY(10px)}}
-.ev-dt{align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:16px;background:var(--ec);color:#0b0a1f;box-shadow:inset 0 -5px 0 rgba(0,0,0,.2);padding:8px 4px}
-.ev-dt small{font:800 10px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase}.ev-dt b{font:900 34px/1 Archivo,sans-serif;font-stretch:120%}.ev-dt i{font-style:normal;font:700 11px "JetBrains Mono",monospace}
-.ev-c .t{min-width:0}.ev-c .t .tg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
-.ev-chip{font:800 10px "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--ec) 25%,transparent);color:color-mix(in srgb,var(--ec) 60%,#fff)}
-.ev-c h4{margin:0;font:900 19px/1.15 Archivo,sans-serif}.ev-c .t p{margin:4px 0 0;color:#bdbbd6;font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.ev-c .t .wh{color:#a9a7c4;font-size:12px;margin-top:4px}
-.ev-c .r{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.ev-c .cd2{font:800 13px "JetBrains Mono",monospace;color:#fff;white-space:nowrap}.ev-c .ev-b{padding:8px 12px;font-size:13px;border-radius:12px}
-.ev-c.past{opacity:.6}.ev-c.past:hover{opacity:.9}
-.ev-teams{display:flex;align-items:center;gap:8px;margin-top:6px;font:800 14px Archivo,sans-serif}.ev-teams .cr{width:26px;height:26px;border-radius:7px;font-size:10px}
-.ev-emp{padding:26px;border-radius:22px;border:2px dashed rgba(255,255,255,.2);text-align:center;color:#a9a7c4}
-@media(max-width:760px){.ev-h{grid-template-columns:1fr}.ev-ic{display:none}.ev-next{grid-template-columns:1fr}.ev-bo{grid-template-columns:1fr;text-align:left}.ev-ball{width:80px}.ev-bo .win{flex-direction:row;text-align:left}.ev-bo .win .tav{--s:56px!important}
-  .ev-c{grid-template-columns:64px minmax(0,1fr);gap:12px}.ev-c .r{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap}.ev-dt b{font-size:26px}.ev-cd{gap:6px}.ev-cd div{padding:10px 4px}}
-@media(prefers-reduced-motion:reduce){.ev-ic,.ev-ball,.ev-c,.ev-live:before{animation:none}}
-</style><link rel="stylesheet" href="arena.css">
-<link rel="stylesheet" href="calle.css"></head>
-<body class="evp ac ck"><header class="top" id="top"></header><script src="nav.js"></script>
-<main class="wrap" id="ev"></main>
-<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="accounts.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="arena.js"></script><script src="eventos.js" defer></script><script src="mov.js" defer></script>
+html body.evh{font-family:Archivo,system-ui,sans-serif;--lime:#c6ff1a;--vio:#8b5cf6;--mut:#b9b0d6;--card:#16122e;--line:rgba(255,255,255,.12);background:#0d0a1f!important;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1.3px)!important;background-size:9px 9px!important;color:#f4f1ff}
+html body.evh:before,html body.evh:after{background:radial-gradient(45% 35% at 0 0,rgba(139,92,246,.26),transparent 70%),radial-gradient(40% 35% at 100% 10%,rgba(198,255,26,.12),transparent 70%)!important}
+html body.evh .wrap{max-width:1320px}
+html body.evh .mono{font:700 11px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+/* portada */
+html body.evh .eh{position:relative;margin-top:22px;padding:clamp(22px,4.4vw,46px);border-radius:30px;overflow:hidden;isolation:isolate;border:2px solid rgba(198,255,26,.35);background:linear-gradient(120deg,#1d1450 0,#120e2c 55%,#0f2a1d 120%);box-shadow:0 0 0 4px #0d0a1f,0 0 0 6px rgba(139,92,246,.4)}
+html body.evh .eh:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 26px)}
+html body.evh .eh-tr{position:absolute;right:clamp(-30px,2vw,30px);bottom:-20px;display:flex;align-items:flex-end;gap:0;z-index:-1;pointer-events:none}
+html body.evh .eh-tr img{height:clamp(110px,15vw,190px);width:auto;margin-left:-28px;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);animation:ehF 5s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(255,210,63,.35))}
+html body.evh .eh-tr img:nth-child(2){height:clamp(140px,19vw,240px);animation-delay:-1.6s;z-index:1}html body.evh .eh-tr img:nth-child(3){animation-delay:-3.2s}
+@keyframes ehF{50%{transform:translateY(-10px)}}
+html body.evh .ey{display:inline-flex;align-items:center;gap:8px;color:var(--lime)}html body.evh .ey i{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);animation:ehP 1.4s infinite}
+@keyframes ehP{50%{opacity:.25}}
+html body.evh .eh h1{margin:10px 0 8px;font:900 clamp(56px,11vw,132px)/.9 Archivo,sans-serif;font-stretch:125%;letter-spacing:-.035em;text-transform:uppercase;background:linear-gradient(180deg,#fff 0,#e3dcff 45%,#c6ff1a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45))}
+html body.evh .eh p{margin:0;color:#dcd5f5;max-width:52ch}
+html body.evh .ks{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+html body.evh .k{min-width:104px;padding:10px 14px;border-radius:16px;background:rgba(13,10,31,.6);border:1px solid color-mix(in srgb,var(--c) 50%,transparent);border-bottom:3px solid var(--c);animation:ehIn .5s both}
+html body.evh .k b{display:block;font:900 24px/1 Archivo,sans-serif;font-stretch:115%;color:var(--c)}html body.evh .k span{display:block;margin-top:5px;font:700 10px "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#d9d2f2}
+@keyframes ehIn{from{opacity:0;transform:translateY(12px)}}
+/* en vivo */
+html body.evh .lv{margin-top:16px;display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+html body.evh .lv[hidden]{display:none}
+html body.evh .lvc{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:var(--card);border:1px solid #ff2d55;text-decoration:none;color:inherit;box-shadow:0 0 24px -10px #ff2d55}
+html body.evh .lvc .t{font:700 10px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#ff5c7a}html body.evh .lvc .t:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff2d55;margin-right:6px;animation:ehP 1.2s infinite}
+html body.evh .lvc b{font:800 14px Archivo,sans-serif;white-space:nowrap}html body.evh .lvc em{font:900 16px Archivo,sans-serif;font-style:normal;padding:4px 8px;border-radius:8px;background:#ff2d55;color:#fff}
+/* tarjetas de competición */
+html body.evh .sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:28px 0 12px}
+html body.evh .sec h2{margin:0;font:900 clamp(24px,3.4vw,34px)/1 Archivo,sans-serif;font-stretch:120%;text-transform:uppercase}
+html body.evh .sec small{color:var(--mut)}
+html body.evh .cg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+html body.evh .cc{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;padding:20px;border-radius:26px;overflow:hidden;isolation:isolate;text-decoration:none;color:#fff;border:2px solid color-mix(in srgb,var(--c) 55%,transparent);box-shadow:0 18px 40px -24px var(--c);transition:transform .2s,box-shadow .2s,border-color .2s;animation:ehIn .5s both}
+html body.evh .cc:hover{transform:translateY(-5px) rotate(-.3deg);border-color:var(--c);box-shadow:0 26px 50px -22px var(--c)}
+html body.evh .cc .bg{position:absolute;inset:0;z-index:-2;background:var(--bg) center/cover;transition:transform .6s}
+html body.evh .cc:hover .bg{transform:scale(1.07)}
+html body.evh .cc:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(10,8,24,.96) 0,rgba(10,8,24,.75) 45%,rgba(10,8,24,.15) 100%)}
+html body.evh .cc .tr{position:absolute;right:8px;top:8px;height:130px;width:auto;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);z-index:-1;transition:transform .4s;filter:drop-shadow(0 0 18px var(--c))}
+html body.evh .cc:hover .tr{transform:translateY(-6px) rotate(4deg) scale(1.05)}
+html body.evh .cc .st{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;font:700 10px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.12);backdrop-filter:blur(6px)}
+html body.evh .cc .st.on{background:var(--c);color:#0d0a1f}html body.evh .cc .st.live{background:#ff2d55;color:#fff}html body.evh .cc .st.live:before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:ehP 1.2s infinite}
+html body.evh .cc h3{margin:10px 0 2px;font:900 clamp(28px,3vw,38px)/.95 Archivo,sans-serif;font-stretch:122%;text-transform:uppercase;letter-spacing:-.02em;text-shadow:0 3px 0 rgba(0,0,0,.4)}
+html body.evh .cc .ed{font:800 14px Archivo,sans-serif;color:var(--c)}
+html body.evh .cc .inf{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font:700 11px "Space Mono",monospace;color:#d9d2f2}
+html body.evh .cc .inf span{display:inline-flex;align-items:center;gap:5px}
+html body.evh .cc .ch{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:12px;background:rgba(255,210,63,.14);border:1px solid rgba(255,210,63,.45);font:800 13px Archivo,sans-serif;color:#ffd23f}
+html body.evh .cc .bar{height:5px;margin-top:12px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}html body.evh .cc .bar i{display:block;height:100%;width:var(--p,0%);background:var(--c);border-radius:9px;transition:width .8s}
+html body.evh .cc .go{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font:900 13px Archivo,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--c)}
+html body.evh .cc .go:after{content:"→";transition:transform .2s}html body.evh .cc:hover .go:after{transform:translateX(5px)}
+html body.evh .cc .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}html body.evh .cc .chips span{padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.1);font:700 11px Archivo,sans-serif}
+html body.evh .cc.big{grid-column:span 2;min-height:340px}
+/* próximos partidos */
+html body.evh .ml{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:10px}
+html body.evh .mc{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);text-decoration:none;color:inherit;transition:transform .15s}
+html body.evh .mc:hover{transform:translateY(-2px)}
+html body.evh .mc .t{display:flex;align-items:center;gap:8px;min-width:0;font:800 13px Archivo,sans-serif;text-transform:uppercase}html body.evh .mc .t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html body.evh .mc .t.r{flex-direction:row-reverse;text-align:right}
+html body.evh .mc .m{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}html body.evh .mc .m b{font:900 15px Archivo,sans-serif}html body.evh .mc .m small{font:700 9px "Space Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);white-space:nowrap}html body.evh .mc .m small.c{color:var(--c)}
+html body.evh .cr{width:28px;height:28px;flex:none;border-radius:50%;background:#2a2450;border:2px solid var(--tc,#5a5080);display:grid;place-items:center;font:900 10px Archivo,sans-serif;color:#fff;overflow:hidden}html body.evh .cr img{width:100%;height:100%;object-fit:cover}
+html body.evh .empty{padding:26px;border-radius:20px;border:2px dashed var(--line);color:var(--mut);text-align:center}
+html body.evh .foot{margin:40px 0 30px;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:980px){html body.evh .cg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){html body.evh .cg{grid-template-columns:1fr}html body.evh .cc.big{grid-column:auto}html body.evh .cc{min-height:250px}html body.evh .eh-tr{opacity:.35;right:-30px}html body.evh .cc .tr{height:100px}}
+@media(prefers-reduced-motion:reduce){html body.evh *{animation:none!important}}
+</style></head>
+<body class="evh ac"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap">
+  <section class="eh">
+    <div class="ey mono"><i></i><span>Competiciones · Magna Sports</span></div>
+    <h1>Eventos</h1>
+    <p>Champions, OmegaCup, Supernova, Mundial, ligas y torneos: todo lo que se juega en Magna, en un solo lugar.</p>
+    <div class="ks" id="ks"></div>
+    <div class="eh-tr" aria-hidden="true"><img src="trofeos/omegacup.webp" alt=""><img src="trofeos/champions.webp" alt=""><img src="trofeos/supernova.webp" alt=""></div>
+  </section>
+  <div class="lv" id="lv" hidden></div>
+  <div class="sec"><h2>Competiciones</h2><small class="mono" id="cnt"></small></div>
+  <div class="cg" id="cg"></div>
+  <div class="sec"><h2>Próximos partidos</h2><small class="mono">De todas las competiciones</small></div>
+  <div class="ml" id="nx"></div>
+  <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+</main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="eventos-hub.js"></script>
+<script src="mov.js" defer></script>
 </body></html>
