@@ -3,7 +3,7 @@
 // tarjetas tipo revista, lo más reaccionado y lector con barra de progreso. Los datos vienen de news-core.js (Supabase).
 (function () {
   var N = window.NEWS, $ = function (s, r) { return (r || document).querySelector(s); };
-  var ALL = [], TOT = {}, MINE = {}, CC = {}, ME = null, cat = 'all', q = '', AG = null, MYTEAM = null, shown = 13, openId = null, busy = {};
+  var ALL = [], TOT = {}, MINE = {}, CC = {}, ME = null, cat = 'all', q = '', AG = null, MYTEAM = null, MYJUDGE = null, AS = null, FOL = {}, shown = 13, openId = null, busy = {};
   var RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var ICON = { share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
     link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>',
@@ -27,10 +27,10 @@
   function who(a, big) { var g = N.agentOf(a), w = el('div', 'who k-' + g.kind + (big ? ' big' : '')); w.style.setProperty('--ac', g.color); w.style.setProperty('--ai', g.ink);
     var av = el('span', 'who-av'); if (g.crest) { var im = el('img'); im.src = g.crest; im.alt = ''; im.loading = 'lazy'; im.onerror = function () { im.remove(); av.textContent = g.mark; }; av.appendChild(im); } else av.textContent = g.mark;
     if (g.bg) av.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),url("' + g.bg + '")'; w.appendChild(av);
-    var t = el('div', 'who-t'), n = el('b', null, g.name), bd = g.kind === 'ai' ? el('i', 'vf ai', 'IA') : el('i', 'vf' + (g.kind === 'pres' ? ' gold' : g.kind === 'team' ? ' team' : ''), '✔');
-    bd.title = g.kind === 'ai' ? 'Periodista simulado con inteligencia artificial' : g.kind === 'team' ? 'Equipo verificado' : g.kind === 'pres' ? 'Presidente verificado' : 'Cuenta oficial'; n.appendChild(bd); t.appendChild(n);
+    var t = el('div', 'who-t'), n = el('b', null, g.name), bd = g.kind === 'ai' ? el('i', 'vf ai', 'IA') : el('i', 'vf' + (g.kind === 'pres' ? ' gold' : g.kind === 'team' ? ' team' : g.kind === 'judge' ? ' judge' : ''), '✔');
+    bd.title = g.kind === 'ai' ? 'Periodista simulado con inteligencia artificial' : g.kind === 'team' ? 'Equipo verificado' : g.kind === 'judge' ? 'Juez verificado' : g.kind === 'pres' ? 'Presidente verificado' : 'Cuenta oficial'; n.appendChild(bd); t.appendChild(n);
     t.appendChild(el('small', null, g.handle + ' · ' + ago(a))); w.appendChild(t);
-    if (big) w.appendChild(el('span', 'who-tag', g.kind === 'ai' ? 'PERIODISTA IA' : g.kind === 'team' ? 'EQUIPO' : g.kind === 'pres' ? 'PRESIDENTE' : 'OFICIAL')); return w; }
+    if (big) w.appendChild(el('span', 'who-tag', g.kind === 'ai' ? 'PERIODISTA IA' : g.kind === 'team' ? 'EQUIPO' : g.kind === 'judge' ? 'JUEZ' : g.kind === 'pres' ? 'PRESIDENTE' : 'OFICIAL')); return w; }
   function ccount(a) { var n = CC[a.id] || 0, s = el('span', 'ccn'); s.appendChild(el('em', null, '💬')); s.appendChild(el('b', null, String(n))); s.title = n + (n === 1 ? ' comentario' : ' comentarios'); return s; }
   function link(a) { return location.origin + location.pathname + '#n-' + a.id; }
   function share(a) { var url = link(a), data = { title: a.title, text: a.summary || a.title, url: url };
@@ -118,10 +118,22 @@
     var l = el('span', 'pst-rs'); l.appendChild(summary(a.id)); w.appendChild(l);
     var r = el('button', 'pst-cn', c ? c + (c === 1 ? ' comentario' : ' comentarios') : 'Sé el primero en comentar'); r.type = 'button'; r.onclick = function () { var p = w.closest('.pst'); if (p && p._cm) p._cm(true); }; w.appendChild(r); return w; }
   function firstPara(b) { var t = String(b || '').split(/\n\s*\n/)[0] || ''; return t; }
+  // ---------- seguir cuentas ----------
+  function fpaint(b) { var f = FOL[b.dataset.ag] || { n: 0, mine: false }; b.classList.toggle('on', f.mine); b.firstChild.textContent = f.mine ? '✓ Siguiendo' : '+ Seguir';
+    if (b.lastChild !== b.firstChild) b.lastChild.textContent = f.n ? String(f.n) : ''; b.setAttribute('aria-pressed', f.mine ? 'true' : 'false'); }
+  function fsync(ag) { document.querySelectorAll('.flw').forEach(function (b) { if (b.dataset.ag === ag) fpaint(b); }); var c = $('.agb-n'); if (c && c.dataset.ag === ag) c.textContent = fcount(ag); }
+  function fcount(ag) { var n = (FOL[ag] || {}).n || 0; return n === 1 ? '1 seguidor' : n + ' seguidores'; }
+  function followBtn(ag, cnt) { var b = el('button', 'flw'); b.type = 'button'; b.dataset.ag = ag; b.appendChild(el('span')); if (cnt) b.appendChild(el('em')); fpaint(b);
+    b.title = 'Recibe un aviso cada vez que ' + N.agent(ag).name + ' publique';
+    b.onclick = function (e) { e.stopPropagation(); if (!ME) { toast('Inicia sesión para seguir cuentas y recibir avisos'); return; } if (b.disabled) return;
+      var f = FOL[ag] || (FOL[ag] = { n: 0, mine: false }), on = !f.mine; f.mine = on; f.n = Math.max(0, f.n + (on ? 1 : -1)); fsync(ag); b.disabled = true;
+      if (on) { b.classList.add('pop'); setTimeout(function () { b.classList.remove('pop'); }, 500); toast('🔔 Te avisaremos cuando ' + N.agent(ag).name + ' publique'); }
+      N.follow(ag, on).then(function (n) { if (typeof n === 'number') f.n = n; fsync(ag); }, function (er) { f.mine = !on; f.n = Math.max(0, f.n + (on ? -1 : 1)); fsync(ag); toast((er && er.message) || 'No se pudo actualizar'); }).then(function () { b.disabled = false; }); };
+    return b; }
   function post(a, i) {
     var p = el('article', 'pst'); p.dataset.id = a.id; p.style.animationDelay = Math.min(i, 8) * 60 + 'ms'; agentVars(a, p);
-    var hd = el('div', 'pst-h'); var w = who(a); w.onclick = function () { AG = N.agentOf(a).id; shown = 13; drawFilters(); drawGrid(); drawTop(); scrollTo({ top: $('#grid').getBoundingClientRect().top + scrollY - 90, behavior: RM ? 'auto' : 'smooth' }); }; w.title = 'Ver solo las publicaciones de ' + N.agentOf(a).name; hd.appendChild(w);
-    var g0 = N.agentOf(a); if (g0.kind === 'team' && (MYTEAM === g0.team || (ME && ME.role === 'admin'))) { var dl = el('button', 'pst-del', 'Borrar post'); dl.type = 'button'; dl.onclick = function () { if (dl.dataset.k !== '1') { dl.dataset.k = '1'; dl.textContent = '¿Seguro?'; setTimeout(function () { dl.dataset.k = ''; dl.textContent = 'Borrar post'; }, 3000); return; } N.teamPostDel(a.id).then(function () { ALL = ALL.filter(function (x) { return x.id !== a.id; }); drawAll(); toast('Post borrado'); }, function (e) { toast((e && e.message) || 'No se pudo borrar'); }); }; hd.appendChild(dl); }
+    var hd = el('div', 'pst-h'); var w = who(a); w.onclick = function () { AG = N.agentOf(a).id; shown = 13; drawFilters(); drawGrid(); drawTop(); scrollTo({ top: $('#grid').getBoundingClientRect().top + scrollY - 90, behavior: RM ? 'auto' : 'smooth' }); }; w.title = 'Ver solo las publicaciones de ' + N.agentOf(a).name; hd.appendChild(w); hd.appendChild(followBtn(N.agentOf(a).id));
+    var g0 = N.agentOf(a); if ((g0.kind === 'team' && MYTEAM === g0.team) || (g0.kind === 'judge' && MYJUDGE === g0.judge) || ((g0.kind === 'team' || g0.kind === 'judge') && ME && ME.role === 'admin')) { var dl = el('button', 'pst-del', 'Borrar post'); dl.type = 'button'; dl.onclick = function () { if (dl.dataset.k !== '1') { dl.dataset.k = '1'; dl.textContent = '¿Seguro?'; setTimeout(function () { dl.dataset.k = ''; dl.textContent = 'Borrar post'; }, 3000); return; } N.teamPostDel(a.id).then(function () { ALL = ALL.filter(function (x) { return x.id !== a.id; }); drawAll(); toast('Post borrado'); }, function (e) { toast((e && e.message) || 'No se pudo borrar'); }); }; hd.appendChild(dl); }
     var tg = el('div', 'pst-tg'); if (a.featured) tg.appendChild(el('span', 'pin', '📌 Fijada')); tg.appendChild(chip(a)); hd.appendChild(tg); p.appendChild(hd);
     var tx = el('div', 'pst-tx'), tt = el('h3'), tb = el('button', null, a.title); tb.type = 'button'; tb.onclick = function () { open(a.id); }; tt.appendChild(tb); tx.appendChild(tt);
     if (a.summary) tx.appendChild(el('p', 'pst-sum', a.summary));
@@ -138,24 +150,26 @@
     p._cm = function (force) { var op = force || cw.hidden; cw.hidden = !op; cb.classList.toggle('on', op); if (op && !cw.firstChild) cw.appendChild(commentsBox(a, function () { var o = p.querySelector('.pst-st'); if (o) o.replaceWith(stats(a)); })); if (op) setTimeout(function () { var t = cw.querySelector('textarea'); if (t) t.focus({ preventScroll: true }); cw.scrollIntoView({ block: 'nearest', behavior: RM ? 'auto' : 'smooth' }); }, 60); };
     cb.onclick = function () { p._cm(); };
     return p; }
-  function composer() { var g = N.agent('team:' + MYTEAM); if (!g) return null; var w = el('div', 'cmp'); agentVars({ agent: g.id }, w); w.style.setProperty('--ac', g.color);
-    var hd = who({ agent: g.id, publish_at: new Date().toISOString() }); hd.querySelector('.who-t small').textContent = g.handle + ' · Publicar como tu equipo'; w.appendChild(hd);
+  function composer() { var ids = []; if (MYTEAM) ids.push('team:' + MYTEAM); if (MYJUDGE) ids.push('juez:' + MYJUDGE); if (!ids.length) return null; if (ids.indexOf(AS) < 0) AS = ids[0];
+    var g = N.agent(AS); if (!g) return null; var isJ = g.kind === 'judge', w = el('div', 'cmp'); agentVars({ agent: g.id }, w); w.style.setProperty('--ac', g.color);
+    var hd = who({ agent: g.id, publish_at: new Date().toISOString() }); hd.querySelector('.who-t small').textContent = g.handle + (isJ ? ' · Publicar como juez' : ' · Publicar como tu equipo'); w.appendChild(hd);
+    if (ids.length > 1) { var sw = el('div', 'cmp-as'); ids.forEach(function (id) { var x = N.agent(id), b = el('button', id === AS ? 'on' : '', x.kind === 'judge' ? '⚖️ Como juez' : '🛡️ Como ' + x.name); b.type = 'button'; b.onclick = function () { if (AS === id) return; AS = id; var nw = composer(); if (nw) w.replaceWith(nw); }; sw.appendChild(b); }); w.appendChild(sw); }
     var ti = el('input', 'cmp-ti'); ti.maxLength = 120; ti.placeholder = 'Título del comunicado'; var su = el('input', 'cmp-su'); su.maxLength = 300; su.placeholder = 'Entradilla (opcional)';
-    var bo = el('textarea', 'cmp-bo'); bo.maxLength = 3000; bo.rows = 3; bo.placeholder = '¿Qué quiere contar ' + g.name + '? Fichajes, convocatorias, mensajes a la afición…';
+    var bo = el('textarea', 'cmp-bo'); bo.maxLength = 3000; bo.rows = 3; bo.placeholder = isJ ? 'Decisiones arbitrales, aclaraciones de reglas, notas de los partidos…' : '¿Qué quiere contar ' + g.name + '? Fichajes, convocatorias, mensajes a la afición…';
     var row = el('div', 'cmp-r'), cn = el('small', null, '0/3000'), go = el('button', 'cm-go', 'Publicar'); go.type = 'button'; go.disabled = true;
     function chk() { cn.textContent = bo.value.length + '/3000'; go.disabled = ti.value.trim().length < 3 || !bo.value.trim(); }
     ti.oninput = su.oninput = chk; bo.oninput = function () { chk(); bo.style.height = 'auto'; bo.style.height = Math.min(320, bo.scrollHeight) + 'px'; };
-    go.onclick = function () { go.disabled = true; go.textContent = 'Publicando…'; N.teamPost(ti.value.trim(), su.value.trim(), bo.value.trim()).then(function () { toast('📣 Publicado como ' + g.name); ti.value = su.value = bo.value = ''; chk(); return load(); }, function (e) { toast((e && e.message) || 'No se pudo publicar'); }).then(function () { go.textContent = 'Publicar'; chk(); }); };
+    go.onclick = function () { go.disabled = true; go.textContent = 'Publicando…'; (isJ ? N.judgePost : N.teamPost)(ti.value.trim(), su.value.trim(), bo.value.trim()).then(function () { toast('📣 Publicado como ' + g.name); ti.value = su.value = bo.value = ''; chk(); return load(); }, function (e) { toast((e && e.message) || 'No se pudo publicar'); }).then(function () { go.textContent = 'Publicar'; chk(); }); };
     w.appendChild(ti); w.appendChild(su); w.appendChild(bo); row.appendChild(el('span', 'cmp-n', 'Se publica al instante en el feed · Máx. 1 post cada 2 horas')); row.appendChild(cn); row.appendChild(go); w.appendChild(row); return w; }
   function drawGrid() { var g = $('#grid'); g.innerHTML = ''; var l = visible(); $('#cnt').textContent = l.length ? l.length + (l.length === 1 ? ' noticia' : ' noticias') : '';
     if (!l.length) { if (ALL.length) { var e = empty(g, 'No hay noticias con ese filtro', 'Prueba otra categoría o búsqueda.', 'pensando'), b = el('button', 'rd', 'Ver todas'); b.type = 'button'; b.onclick = function () { cat = 'all'; q = ''; AG = null; $('#q').value = ''; drawFilters(); drawGrid(); }; e.lastChild.appendChild(b); } else empty(g, 'Todavía no hay noticias', 'Muy pronto publicaremos las primeras novedades de la comunidad.', 'silencio'); $('#more').hidden = true; return; }
-    if (MYTEAM && !AG && !q) { var cp = composer(); if (cp) g.appendChild(cp); }
-    if (AG) { var ag = N.agent(AG), bn = el('div', 'agb'); agentVars({ agent: AG }, bn); bn.appendChild(who({ agent: AG, publish_at: (l[0] || {}).publish_at || new Date().toISOString() }, true)); bn.appendChild(el('p', null, ag.bio + ' · ' + l.length + (l.length === 1 ? ' publicación' : ' publicaciones'))); var xb = el('button', 'rd', '← Ver todas las cuentas'); xb.type = 'button'; xb.onclick = function () { AG = null; drawFilters(); drawGrid(); drawTop(); }; bn.appendChild(xb); g.appendChild(bn); }
+    if ((MYTEAM || MYJUDGE) && !AG && !q) { var cp = composer(); if (cp) g.appendChild(cp); }
+    if (AG) { var ag = N.agent(AG), bn = el('div', 'agb'); agentVars({ agent: AG }, bn); bn.appendChild(who({ agent: AG, publish_at: (l[0] || {}).publish_at || new Date().toISOString() }, true)); bn.appendChild(el('p', null, ag.bio + ' · ' + l.length + (l.length === 1 ? ' publicación' : ' publicaciones'))); var fr = el('div', 'agb-f'), fc = el('b', 'agb-n', fcount(AG)); fc.dataset.ag = AG; fr.appendChild(followBtn(AG)); fr.appendChild(fc); bn.appendChild(fr); var xb = el('button', 'rd', '← Ver todas las cuentas'); xb.type = 'button'; xb.onclick = function () { AG = null; drawFilters(); drawGrid(); drawTop(); }; bn.appendChild(xb); g.appendChild(bn); }
     l.slice().sort(function (x, y) { return (y.featured ? 1 : 0) - (x.featured ? 1 : 0); }).slice(0, shown).forEach(function (a, i) { g.appendChild(post(a, i)); }); $('#more').hidden = l.length <= shown; }
   // ---------- lo más reaccionado ----------
   function drawAgents() { var w = $('#agL'); if (!w) return; w.innerHTML = ''; var cnt = {}, ord = [];
     ALL.forEach(function (a) { var id = N.agentOf(a).id; if (!cnt[id]) { cnt[id] = 0; ord.push(id); } cnt[id]++; });
-    var rank = function (id) { var g = N.agent(id); return g.kind === 'org' ? 0 : g.kind === 'pres' ? 1 : g.kind === 'team' ? 2 : 3; };
+    var rank = function (id) { var g = N.agent(id); return g.kind === 'org' ? 0 : g.kind === 'pres' ? 1 : g.kind === 'team' ? 2 : g.kind === 'judge' ? 3 : 4; };
     ord.sort(function (x, y) { return rank(x) - rank(y) || cnt[y] - cnt[x]; });
     ord.forEach(function (id) { var g = N.agent(id), n = cnt[id]; var b = el('button', 'agi' + (AG === id ? ' on' : '')); b.type = 'button'; agentVars({ agent: id }, b); b.appendChild(who({ agent: id, publish_at: new Date().toISOString() })); b.querySelector('.who-t small').textContent = g.handle + ' · ' + n + (n === 1 ? ' post' : ' posts');
       b.onclick = function () { AG = AG === id ? null : id; shown = 13; drawFilters(); drawGrid(); drawTop(); }; w.appendChild(b); }); }
@@ -210,7 +224,7 @@
     openId = id; if (location.hash !== '#n-' + id) history.replaceState(null, '', '#n-' + id);
     var ov = el('div', 'rov'), ar = el('article', 'art'), pg = el('div', 'rpg'), pgi = el('i'); pg.appendChild(pgi); ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', a.title); ov.appendChild(pg); ov.appendChild(ar); ar.style.setProperty('--c', N.cat(a.category).color);
     var cv = el('div', 'cov'); cover(a, cv); var x = el('button', 'x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Cerrar'); x.onclick = close; ar.appendChild(x); ar.appendChild(cv);
-    var ab = el('div', 'ab'); ab.appendChild(who(a, true)); var mt = el('div', 'meta'); mt.appendChild(chip(a)); mt.appendChild(el('span', null, N.fdate(a.publish_at, true))); mt.appendChild(rt(a)); if (a.featured) mt.appendChild(el('span', 'ft-s', '★ Destacada')); ab.appendChild(mt);
+    var ab = el('div', 'ab'); var wb = who(a, true); wb.appendChild(followBtn(N.agentOf(a).id)); ab.appendChild(wb); var mt = el('div', 'meta'); mt.appendChild(chip(a)); mt.appendChild(el('span', null, N.fdate(a.publish_at, true))); mt.appendChild(rt(a)); if (a.featured) mt.appendChild(el('span', 'ft-s', '★ Destacada')); ab.appendChild(mt);
     ab.appendChild(el('h1', null, a.title)); if (a.summary) ab.appendChild(el('p', 'lead', a.summary));
     var body = el('div', 'body'); body.innerHTML = N.render(a.body); ab.appendChild(body);
     curBar = reactBar(a); ab.appendChild(curBar); ab.appendChild(el('p', 'rx-note', 'Una reacción por persona. Puedes cambiarla o quitarla cuando quieras.'));
@@ -233,7 +247,10 @@
   function loadTotals() { return N.totals(ALL.map(function (a) { return a.id; })).then(function (r) { TOT = {}; (r.data || []).forEach(function (x) { (TOT[x.article_id] = TOT[x.article_id] || {})[x.emoji] = x.total; }); }); }
   function loadCC() { return N.commentCounts(ALL.map(function (a) { return a.id; })).then(function (r) { CC = {}; (r.data || []).forEach(function (x) { CC[x.article_id] = x.total; }); }, function () {}); }
   N.myTeam().then(function (t) { if (t) { MYTEAM = t; if (ALL.length) drawGrid(); } });
-  if (window.ACCOUNTS && ACCOUNTS.me) ACCOUNTS.me().then(function (a) { ME = a || null; var b = $('.cms'); if (b && b.redraw) b.redraw(); }, function () {});
+  if (N.follows) N.follows().then(function (o) { FOL = o || {}; document.querySelectorAll('.flw').forEach(fpaint); var c = $('.agb-n'); if (c) c.textContent = fcount(c.dataset.ag); });
+  if (N.notifyDue) N.notifyDue();
+  if (N.myJudge) N.myJudge().then(function (j) { if (j) { MYJUDGE = j; if (ALL.length) drawGrid(); } });
+  if (window.ACCOUNTS && ACCOUNTS.me) ACCOUNTS.me().then(function (a) { ME = a || null; document.querySelectorAll('.flw').forEach(fpaint); var b = $('.cms'); if (b && b.redraw) b.redraw(); }, function () {});
   function load() {
     return N.listPublic().then(function (r) { if (r.error) throw r.error; ALL = r.data || []; return Promise.all([loadTotals(), loadCC(), N.mine().then(function (m) { MINE = m; }, function () {})]); })
       .then(function () { drawAll(); var m = /^#n-(\d+)$/.exec(location.hash); if (m) { if (ALL.some(function (a) { return a.id === Number(m[1]); })) open(Number(m[1])); else toast('Esa noticia ya no está disponible.'); } });

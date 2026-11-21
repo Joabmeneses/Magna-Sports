@@ -407,6 +407,7 @@
     if (/^💰 (Fondos|Ingresos)/.test(t)) return { k: 'team', ic: '🏦', go: 'mi-equipo.html', tab: 'team', lbl: 'Ver mi equipo' };
     if (/^⏰/.test(t)) return { k: 'match', ic: '⏰', go: 'mi-equipo.html', tab: 'team', lbl: 'Ver mi equipo' };
     if (/^🗺/.test(t)) return { k: 'info', ic: '🗺️', go: 'index.html#mpanel', tab: 'info', lbl: 'Ver los mapas' };
+    if (/^📰/.test(t)) return { k: 'info', ic: '📰', go: 'noticias.html', tab: 'info', lbl: 'Ver el post' };
     if (/^⚖️/.test(t)) return { k: 'judge', ic: '⚖️', go: 'juez.html', tab: 'info', lbl: 'Ir a calificar' };
     return { k: 'info', ic: '🔔', go: '', tab: 'info', lbl: '' }; }
   function clean(t) { return String(t || '').replace(/^(\p{Extended_Pictographic}|\uFE0F|\u200D|\s)+/u, ''); }
