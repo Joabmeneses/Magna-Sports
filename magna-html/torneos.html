@@ -177,6 +177,35 @@ html body.evh .gr i{position:absolute;left:0;bottom:0;height:3px;width:var(--p);
 html body.evh .gr:first-child:after{content:"👑";position:absolute;right:62px;top:6px;font-size:16px;transform:rotate(14deg)}
 @media(max-width:980px){html body.evh .two{grid-template-columns:1fr}html body.evh .eh-in{grid-template-columns:1fr}html body.evh .sp{min-height:270px}}
 @media(max-width:640px){html body.evh .cc.big .pv-cols{grid-template-columns:1fr}html body.evh .cc.big .pv-cols .pr:nth-child(2n){border-left:0}html body.evh .sec{flex-direction:column;align-items:flex-start}}
+
+/* ===== v3: banners horizontales ===== */
+html body.evh .cg{grid-template-columns:1fr;gap:14px}
+html body.evh .cc,html body.evh .cc.big{display:grid;grid-template-columns:minmax(260px,330px) minmax(0,1fr) 220px;align-items:stretch;gap:0;min-height:0;padding:0;grid-column:auto}
+html body.evh .cc:hover{transform:translate(-3px,-3px)}
+html body.evh .cc:before{background:linear-gradient(90deg,rgba(12,7,22,.55) 0,rgba(12,7,22,.78) 26%,var(--ink) 40%),var(--grain)}
+html body.evh .cc:after{display:none}
+html body.evh .cc .bg{right:auto;width:42%;background-position:center}
+html body.evh .cc .c1{position:relative;display:flex;align-items:center;gap:12px;padding:16px 16px 16px 14px;min-width:0}
+html body.evh .cc .c1 .tr{position:static;flex:none;height:92px;width:auto;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--c) 60%,transparent))}
+html body.evh .cc:hover .c1 .tr{transform:translateY(-4px) rotate(4deg)}
+html body.evh .cc .tx{min-width:0;flex:1}
+html body.evh .cc .top{min-height:0;gap:5px}
+html body.evh .cc h3,html body.evh .cc.big h3{margin:8px 0 2px;font-size:clamp(26px,2.6vw,34px);overflow-wrap:anywhere}
+html body.evh .cc .bar{margin-top:10px;height:6px}
+html body.evh .cc .c2{display:flex;align-items:center;padding:12px 14px;min-width:0;border-left:2px dashed rgba(255,255,255,.08)}
+html body.evh .cc .pv{margin:0;width:100%}
+html body.evh .pv-cols,html body.evh .pv-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+html body.evh .pv-g>.pr:nth-child(n+3),html body.evh .pv-g>.kr:nth-child(n+3),html body.evh .pv-cols>.pr:nth-child(n+3){border-top:1px solid rgba(255,255,255,.06)}
+html body.evh .pv-g>:nth-child(2n),html body.evh .pv-cols>:nth-child(2n){border-left:1px solid rgba(255,255,255,.06)}
+html body.evh .pv-g>.pr+.pr,html body.evh .pv-g>.kr+.kr{border-top:0}
+html body.evh .pv-g>:nth-child(n+3){border-top:1px solid rgba(255,255,255,.06)!important}
+html body.evh .cc .ftr{flex-direction:column;align-items:stretch;justify-content:center;gap:10px;margin:0;padding:14px;border-left:2px solid rgba(255,255,255,.06);background:rgba(12,7,22,.5)}
+html body.evh .cc .ftr .cd{text-align:center;line-height:1.5}
+html body.evh .cc .ftr .go{justify-content:center;align-self:stretch;white-space:nowrap;letter-spacing:.08em}
+@media(max-width:1100px){html body.evh .cc,html body.evh .cc.big{grid-template-columns:minmax(230px,280px) minmax(0,1fr)}html body.evh .cc .ftr{grid-column:1/-1;flex-direction:row;justify-content:space-between;border-left:0;border-top:2px solid rgba(255,255,255,.06)}html body.evh .cc .ftr .go{align-self:auto}}
+@media(max-width:700px){html body.evh .cc,html body.evh .cc.big{grid-template-columns:1fr}html body.evh .cc .bg{width:100%;height:150px}html body.evh .cc:before{background:linear-gradient(180deg,rgba(12,7,22,.45) 0,var(--ink) 150px),var(--grain)}
+  html body.evh .cc .c1 .tr{height:72px}html body.evh .cc .c2{border-left:0;padding-top:0}html body.evh .pv-cols,html body.evh .pv-g{grid-template-columns:1fr}html body.evh .pv-g>:nth-child(2n),html body.evh .pv-cols>:nth-child(2n){border-left:0}html body.evh .pv-g>:nth-child(n+2),html body.evh .pv-cols>:nth-child(n+2){border-top:1px solid rgba(255,255,255,.06)}
+  html body.evh .cc .ftr .cd{text-align:left}}
 </style></head>
 <body class="evh ac"><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap">
@@ -190,10 +219,6 @@ html body.evh .gr:first-child:after{content:"👑";position:absolute;right:62px;
   <div class="tk" id="tk" hidden><span class="tk-l">Resultados</span><div class="tk-v"><div class="tk-t" id="tkT"></div></div></div>
   <div class="sec"><h2>Competiciones</h2><div class="flt" id="flt" role="tablist" aria-label="Filtrar competiciones"></div></div>
   <div class="cg" id="cg"></div>
-  <div class="two">
-    <section><div class="sec"><h2>Próximos partidos</h2><small class="mono">Cuenta regresiva</small></div><div id="nx"></div></section>
-    <section><div class="sec"><h2>La están rompiendo</h2><small class="mono">Goleadores</small></div><div class="gs" id="gs"></div></section>
-  </div>
   <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
 </main>
 <script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="torneos-hub.js"></script>

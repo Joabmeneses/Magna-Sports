@@ -48,12 +48,16 @@
     else if (nx) { cd = el('span', 'cd'); cd.appendChild(document.createTextNode('⏱ Próximo ')); var b = el('b'); b.dataset.at = nx.at; b.textContent = left(nx.at); cd.appendChild(b); }
     else cd = el('span', 'cd', o.done ? '🏁 Edición terminada' : '📅 Sin partidos programados');
     f.appendChild(cd); f.appendChild(el('span', 'go', o.cta)); return f; }
+  // banner horizontal: [trofeo + nombre + estado] [contenido] [cuenta regresiva + botón]
   function card(o) {
-    var a = el('a', 'cc' + (o.big ? ' big' : '')); a.href = o.href; a.style.setProperty('--c', o.color); a.style.animationDelay = o.i * 70 + 'ms'; a.setAttribute('data-n', String(o.i + 1).padStart(2, '0')); a.dataset.f = o.f || '';
-    var bg = el('div', 'bg'); bg.style.setProperty('--bg', o.bg); a.appendChild(bg); if (o.tro) { var t = el('img', 'tr'); t.src = o.tro; t.alt = ''; t.loading = 'lazy'; a.appendChild(t); }
-    var top = el('div', 'top'); top.appendChild(el('span', 'st' + (o.live ? ' live' : o.on ? ' on' : ''), o.live ? 'En vivo' : o.status)); if (o.ph) top.appendChild(el('span', 'ph', o.ph)); a.appendChild(top);
-    a.appendChild(el('h3', null, o.title)); if (o.ed) a.appendChild(el('div', 'ed', o.ed));
-    if (o.body) a.appendChild(o.body); if (o.p != null) { var bar = el('div', 'bar'), i = el('i'); i.style.setProperty('--p', o.p + '%'); bar.appendChild(i); a.appendChild(bar); }
+    var a = el('a', 'cc'); a.href = o.href; a.style.setProperty('--c', o.color); a.style.animationDelay = o.i * 60 + 'ms'; a.dataset.f = o.f || '';
+    var bg = el('div', 'bg'); bg.style.setProperty('--bg', o.bg); a.appendChild(bg);
+    var c1 = el('div', 'c1'); if (o.tro) { var t = el('img', 'tr'); t.src = o.tro; t.alt = ''; t.loading = 'lazy'; c1.appendChild(t); }
+    var tx = el('div', 'tx'), top = el('div', 'top'); top.appendChild(el('span', 'st' + (o.live ? ' live' : o.on ? ' on' : ''), o.live ? 'En vivo' : o.status)); if (o.ph) top.appendChild(el('span', 'ph', o.ph)); tx.appendChild(top);
+    tx.appendChild(el('h3', null, o.title)); if (o.ed) tx.appendChild(el('div', 'ed', o.ed));
+    if (o.p != null) { var bar = el('div', 'bar'), i = el('i'); i.style.setProperty('--p', o.p + '%'); bar.appendChild(i); bar.title = o.p + '% de los partidos jugados'; tx.appendChild(bar); }
+    c1.appendChild(tx); a.appendChild(c1);
+    var c2 = el('div', 'c2'); if (o.body) { var rows = [].slice.call(o.body.children).filter(function (x) { return x.classList.contains('pr') || x.classList.contains('kr'); }); if (rows.length > 1) { var gd = el('div', 'pv-g'); rows.forEach(function (x) { gd.appendChild(x); }); o.body.appendChild(gd); } c2.appendChild(o.body); } a.appendChild(c2);
     a.appendChild(footer(o, o.ms || [])); return a; }
   // copa o torneo con edición
   function cupCard(o, c) {
@@ -64,7 +68,7 @@
     o.f = o.live ? 'live on' : ch != null ? 'done' : c.status === 'active' ? 'on' : 'soon';
     if (ch != null) { o.body = pv('🏆 Campeón', c.teamIds.length + ' equipos'); o.body.appendChild(prow(1, ch, 'Campeón')); }
     else if (k === 'champions' || k === 'mundial') { var T = k === 'champions' ? tableOf(c) : null;
-      if (T && T.length) { o.body = pv('Tabla · top ' + Math.min(o.big ? 6 : 3, T.length), 'Pts'); var cols = el('div', 'pv-cols'); T.slice(0, o.big ? 6 : 3).forEach(function (r) { cols.appendChild(prow(r.pos, r.team_id, String(r.pts), r.pj + ' PJ · ' + (r.dg > 0 ? '+' : '') + r.dg + ' DG')); }); o.body.appendChild(cols); }
+      if (T && T.length) { o.body = pv('Tabla · top ' + Math.min(6, T.length), 'Pts'); var cols = el('div', 'pv-cols'); T.slice(0, 6).forEach(function (r) { cols.appendChild(prow(r.pos, r.team_id, String(r.pts), r.pj + ' PJ · ' + (r.dg > 0 ? '+' : '') + r.dg + ' DG')); }); o.body.appendChild(cols); }
       else if (k === 'mundial' && c.groups && c.groups.length && MAGNA.groupTable && (c.state || {}).phase === 'groups') { o.body = pv('Líderes de grupo', 'Pts'); c.groups.slice(0, 4).forEach(function (g) { var t = MAGNA.groupTable(c, g)[0]; if (t) o.body.appendChild(prow(g.name, t.team_id, String(t.pts))); }); }
       else { var tn = tiesNow(c); if (tn) { o.body = pv(tn.round || 'Cruces', tn.ties.length + ' cruces'); tn.ties.slice(0, 4).forEach(function (t) { o.body.appendChild(kRow(t)); }); } } }
     else { var tn2 = tiesNow(c); if (tn2) { o.body = pv(tn2.round || 'Cruces', (c.legs === 2 ? 'Global' : 'Partido único')); tn2.ties.slice(0, 4).forEach(function (t) { o.body.appendChild(kRow(t)); }); } }
@@ -101,21 +105,6 @@
     tk.hidden = !M0.length; if (!M0.length) return; t.innerHTML = '';
     var add = function () { M0.forEach(function (m) { var cp = compOf(m) || { name: '' }, a = el('a'); a.href = 'partido.html?id=' + m.id; a.appendChild(el('i', null, cp.name)); a.appendChild(document.createTextNode(MAGNA.teamName(m.home))); a.appendChild(el('em', null, m.hs + '-' + m.as)); a.appendChild(document.createTextNode(MAGNA.teamName(m.away))); t.appendChild(a); }); };
     add(); add(); t.style.setProperty('--d', Math.max(24, M0.length * 6) + 's'); }
-  // ---------- goleadores ----------
-  function scorers() { var G = {}, g = $('#gs'); g.innerHTML = '';
-    (S().matches || []).forEach(function (m) { if ((m.type !== 'tournament' && m.type !== 'league') || !m.live || !m.live.ev) return; m.live.ev.forEach(function (e) { if (e.k === 'goal' && e.player != null) G[e.player] = (G[e.player] || 0) + 1; }); });
-    var L = Object.keys(G).map(function (k) { return { id: Number(k), n: G[k] }; }).sort(function (a, b) { return b.n - a.n || String(MAGNA.playerName(a.id)).localeCompare(String(MAGNA.playerName(b.id)), 'es'); }).slice(0, 6);
-    if (!L.length) { g.appendChild(el('div', 'empty', 'Todavía no hay goles registrados en las competiciones.')); return; }
-    var mx = L[0].n; L.forEach(function (x, i) { var p = MAGNA.by(S().players || [], x.id) || {}, a = el('a', 'gr'); a.href = 'jugador.html?id=' + x.id; a.style.setProperty('--c', i === 0 ? '#c6ff1a' : i < 3 ? '#b18cff' : '#5a4a8a'); a.style.setProperty('--p', Math.round(x.n / mx * 100) + '%'); a.style.animationDelay = i * 60 + 'ms';
-      a.appendChild(el('span', 'n', String(i + 1))); a.appendChild(crest(p.teamId)); var t = el('div'); t.appendChild(el('b', null, MAGNA.playerName(x.id) || 'Jugador')); t.appendChild(el('small', null, p.teamId != null ? MAGNA.teamName(p.teamId) : 'Sin equipo')); a.appendChild(t);
-      var gl = el('span', 'g', String(x.n)); gl.appendChild(el('small', null, x.n === 1 ? 'gol' : 'goles')); a.appendChild(gl); a.appendChild(el('i')); g.appendChild(a); }); }
-  // ---------- próximos ----------
-  function upcoming() { var nx = $('#nx'); nx.innerHTML = ''; var up = (S().matches || []).filter(function (m) { return m.status === 'scheduled' && m.at && (m.type === 'tournament' || m.type === 'league'); }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); }).slice(0, 6);
-    if (!up.length) { nx.appendChild(el('div', 'empty', 'No hay partidos programados por ahora.')); return; }
-    var cur = null, box = null; up.forEach(function (m) { var dl = dayLabel(m.at); if (dl !== cur) { cur = dl; nx.appendChild(el('div', 'dy', dl)); box = el('div', 'ml'); nx.appendChild(box); }
-      var cp = compOf(m) || { name: 'Partido', color: '#8b5cf6' }, a = el('a', 'mc'); a.href = 'partido.html?id=' + m.id; a.style.setProperty('--c', cp.color);
-      var h = el('div', 't'); h.appendChild(crest(m.home)); h.appendChild(el('span', null, MAGNA.teamName(m.home))); var mid = el('div', 'm'); mid.appendChild(el('small', 'c', cp.name)); mid.appendChild(el('b', null, 'VS')); var cd = el('em'); cd.dataset.at = m.at; cd.textContent = left(m.at); mid.appendChild(cd);
-      var aw = el('div', 't r'); aw.appendChild(crest(m.away)); aw.appendChild(el('span', null, MAGNA.teamName(m.away))); a.appendChild(h); a.appendChild(mid); a.appendChild(aw); a.title = fdt(m.at); box.appendChild(a); }); }
   // ---------- filtros ----------
   function filters(counts) { var w = $('#flt'); w.innerHTML = ''; [['all', 'Todos'], ['on', 'En juego'], ['live', 'En vivo'], ['done', 'Terminados']].forEach(function (x) { var b = el('button', flt === x[0] ? 'on' : ''); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', flt === x[0]);
       b.appendChild(document.createTextNode(x[1])); b.appendChild(el('b', null, String(counts[x[0]] || 0))); b.onclick = function () { flt = x[0]; filters(counts); applyF(); }; w.appendChild(b); }); }
@@ -154,7 +143,7 @@
     if (!H.length) hb.appendChild(el('div', 'pv-e', 'El palmarés se llena con cada final'));
     g.appendChild(card({ i: i++, title: 'Historial', color: COL.hist, bg: 'radial-gradient(circle at 70% 20%,#7a1f55,#2a0c1f 60%,#14060f)', tro: 'trofeos/copa-del-rey.webp', cta: 'Ver el palmarés', href: 'competiciones.html#historial', status: 'Palmarés', f: 'done', done: true, body: hb }));
     var counts = { all: 0, on: 0, live: 0, done: 0 }; document.querySelectorAll('#cg .cc').forEach(function (c) { counts.all++; c.dataset.f.split(' ').forEach(function (f) { if (counts[f] != null) counts[f]++; }); });
-    filters(counts); applyF(); upcoming(); scorers(); first = false; }
+    filters(counts); applyF(); first = false; }
   render(); window.addEventListener('magna:update', function () { render(); });
   setInterval(tickClocks, 30000);
 })();
