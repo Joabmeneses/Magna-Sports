@@ -4,7 +4,7 @@
   var H = HUB, el = H.el, S = H.S, NEWS_L = null;
   var COL = { news: '#22b8ff', bet: '#ff5a36', shop: '#ff4fa3', rank: '#ffd23f', team: '#2ee59d' };
   var ICO = { color: '🎨', plate: '🏷️', frame: '🖼️', title: '🔤' }, RAR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legendaria: 'Legendaria', mitica: 'Mítica' }, RO = { comun: 0, rara: 1, epica: 2, legendaria: 3, mitica: 4 };
-  function bg(c) { return 'radial-gradient(circle at 20% 30%,' + c + '55,transparent 60%),linear-gradient(120deg,#1d1450,#0c0716)'; }
+  function bg(c) { return 'radial-gradient(circle at 25% 40%,' + c + '88,transparent 65%),radial-gradient(circle at 80% 10%,' + c + '44,transparent 60%)'; }
   function ranking() { var P = MAGNA.teamPoints ? MAGNA.teamPoints() : {}; return (S().teams || []).map(function (t) { return { id: t.id, pts: (P[t.id] || {}).pts || 0 }; }).sort(function (a, b) { return b.pts - a.pts || String(MAGNA.teamName(a.id)).localeCompare(String(MAGNA.teamName(b.id)), 'es'); }); }
   function shopNow() { var now = Date.now(); return (S().shop || []).filter(function (x) { return x.active !== false && !x.tempOff && !x.packOnly && !x.raffle && !x.award && !x.upg && x.price; })
     .map(function (x) { x._sale = x.saleUntil && H.when(x.saleUntil) > now; return x; }).sort(function (a, b) { return (b._sale ? 1 : 0) - (a._sale ? 1 : 0) || (RO[b.rarity] || 0) - (RO[a.rarity] || 0) || b.price - a.price; }); }

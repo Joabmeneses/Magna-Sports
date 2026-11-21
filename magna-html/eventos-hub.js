@@ -3,7 +3,7 @@
 (function () {
   var H = HUB, el = H.el, S = H.S, RAF = null;
   var COL = { bal: '#ffc400', pred: '#c6ff1a', raf: '#ff4fa3', plan: '#ffb400', mkt: '#8b5cf6' };
-  function bg(c) { return 'radial-gradient(circle at 20% 30%,' + c + '55,transparent 60%),linear-gradient(120deg,#1d1450,#0c0716)'; }
+  function bg(c) { return 'radial-gradient(circle at 25% 40%,' + c + '88,transparent 65%),radial-gradient(circle at 80% 10%,' + c + '44,transparent 60%)'; }
   function now() { return Date.now(); }
   function plans() { return (S().events || []).filter(function (e) { return e && e.title && e.at && (H.when(e.end || e.at) + 2 * 36e5) > now(); }).sort(function (a, b) { return H.when(a.at) - H.when(b.at); }); }
   function moves() { return (S().news || []).filter(function (n) { return n.kind === 'transfer' || n.kind === 'market'; }).sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); }); }
