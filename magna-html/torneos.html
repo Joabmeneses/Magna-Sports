@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0d0a1f"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Magna Arena · Torneos</title>
+<meta name="description" content="Todas las competiciones de Magna Sports en un solo lugar: Champions, OmegaCup, Supernova, Mundial, ligas y torneos.">
+<meta property="og:title" content="Torneos · Magna Arena"><meta property="og:description" content="Champions, OmegaCup, Supernova, Mundial, ligas y torneos."><meta property="og:image" content="img/bn-champions.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&family=Space+Mono:wght@400;700&family=Archivo+Black&display=swap">
+<link rel="stylesheet" href="calle.css">
+<style>
+html body.evh{--ink:#0c0716;--coal:#170d2c;--ash:#2b1852;--line:#3b2568;--con:#8b5cf6;--paper:#f2f2ee;--mut:#b9aee0;--lime:#c6ff1a;--red:#ff3b30;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  font-family:Archivo,system-ui,sans-serif;background:var(--coal)!important;background-image:var(--grain)!important;color:var(--paper)}
+html body.evh:before,html body.evh:after{display:none!important}
+html body.evh .wrap{max-width:1320px}
+html body.evh .mono{font:700 11px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+html body.evh .tag{display:inline-block;padding:6px 10px;background:var(--ink);color:var(--paper);font:700 11px/1 "Space Mono",monospace;letter-spacing:.16em;text-transform:uppercase}
+/* portada */
+html body.evh .eh{position:relative;margin-top:22px;overflow:hidden;isolation:isolate;background:var(--ash) var(--grain);border-top:6px solid var(--lime);box-shadow:8px 8px 0 var(--ink)}
+html body.evh .eh-in{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:16px;padding:clamp(22px,4vw,42px)}
+html body.evh .eh:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(-62deg,rgba(255,255,255,.035) 0 2px,transparent 2px 22px)}
+html body.evh .eh:after{content:"TORNEOS";position:absolute;right:-2%;bottom:-6%;z-index:-1;font:400 clamp(90px,18vw,240px)/1 "Archivo Black",Archivo,sans-serif;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.06);white-space:nowrap}
+html body.evh .ey{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+html body.evh .ey .lvp{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:var(--red);color:#fff;font:700 11px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase}html body.evh .ey .lvp:before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:ehP 1.2s infinite}
+html body.evh .ey .lvp[hidden]{display:none}
+@keyframes ehP{50%{opacity:.25}}
+html body.evh .eh h1{margin:14px 0 10px;font:400 clamp(60px,11.5vw,140px)/.86 "Archivo Black",Archivo,sans-serif;letter-spacing:-.01em;text-transform:uppercase;color:var(--paper);text-shadow:6px 6px 0 var(--con),12px 12px 0 var(--ink)}
+html body.evh .eh h1 span{color:var(--lime)}
+html body.evh .eh p{margin:0;color:var(--mut);max-width:52ch;font:400 15px/1.5 Archivo,sans-serif}
+html body.evh .ks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:22px;max-width:640px;border:2px solid var(--ink);background:var(--ink)}
+html body.evh .k{padding:12px 14px;background:var(--coal) var(--grain);border-top:4px solid var(--c);animation:ehIn .45s both}
+html body.evh .k+.k{border-left:2px solid var(--ink)}
+html body.evh .k b{display:block;font:400 30px/1 "Archivo Black",Archivo,sans-serif;color:var(--c)}html body.evh .k span{display:block;margin-top:6px;font:700 10px "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+@keyframes ehIn{from{opacity:0;transform:translateY(10px)}}
+html body.evh .eh-tr{display:flex;align-items:flex-end;pointer-events:none}
+html body.evh .eh-tr img{height:clamp(110px,14vw,180px);width:auto;margin-left:-26px;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);animation:ehF 5s ease-in-out infinite}
+html body.evh .eh-tr img:nth-child(2){height:clamp(140px,18vw,230px);animation-delay:-1.6s;z-index:1}html body.evh .eh-tr img:nth-child(3){animation-delay:-3.2s}
+@keyframes ehF{50%{transform:translateY(-8px)}}
+/* en vivo */
+html body.evh .lv{margin-top:18px;display:flex;gap:10px;overflow-x:auto;padding:0 8px 8px 0}
+html body.evh .lv[hidden]{display:none}
+html body.evh .lvc{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink);border:2px solid var(--ink);border-top:4px solid var(--red);text-decoration:none;color:var(--paper);box-shadow:4px 4px 0 var(--red);transition:transform .15s,box-shadow .15s}
+html body.evh .lvc:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--red)}
+html body.evh .lvc .t{font:700 10px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#ff7468}html body.evh .lvc .t:before{content:"●";margin-right:6px;animation:ehP 1.2s infinite}
+html body.evh .lvc b{font:800 14px Archivo,sans-serif;text-transform:uppercase;white-space:nowrap}html body.evh .lvc em{font:400 16px "Archivo Black",sans-serif;font-style:normal;padding:4px 8px;background:var(--lime);color:var(--ink)}
+/* títulos de sección */
+html body.evh .sec{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:36px 0 14px;padding-bottom:10px;border-bottom:4px solid var(--con)}
+html body.evh .sec h2{margin:0;font:400 clamp(26px,3.6vw,40px)/1 "Archivo Black",Archivo,sans-serif;text-transform:uppercase;color:var(--paper);text-shadow:3px 3px 0 var(--con)}
+html body.evh .sec small{color:var(--lime)}
+/* tarjetas */
+html body.evh .cg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+html body.evh .cc{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;padding:18px;overflow:hidden;isolation:isolate;text-decoration:none;color:var(--paper);background:var(--ink);border:2px solid var(--ink);border-top:6px solid var(--c);box-shadow:6px 6px 0 var(--ink);transition:transform .15s,box-shadow .15s;animation:ehIn .45s both}
+html body.evh .cc:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--c)}
+html body.evh .cc .bg{position:absolute;inset:0;z-index:-2;background:var(--bg) center/cover;transition:transform .6s;filter:saturate(.9)}
+html body.evh .cc:hover .bg{transform:scale(1.06)}
+html body.evh .cc:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,var(--ink) 0,rgba(12,7,22,.82) 42%,rgba(12,7,22,.2) 100%),var(--grain)}
+html body.evh .cc:after{content:attr(data-n);position:absolute;right:14px;bottom:52px;z-index:-1;font:400 64px/1 "Archivo Black",sans-serif;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.14)}
+html body.evh .cc .tr{position:absolute;right:6px;top:6px;height:130px;width:auto;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 60%,transparent 100%);z-index:-1;transition:transform .3s}
+html body.evh .cc:hover .tr{transform:translateY(-6px) rotate(4deg)}
+html body.evh .cc .st{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:5px 9px;font:700 10px/1 "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;background:var(--paper);color:var(--ink)}
+html body.evh .cc .st.on{background:var(--c);color:var(--ink)}html body.evh .cc .st.live{background:var(--red);color:#fff}html body.evh .cc .st.live:before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:ehP 1.2s infinite}
+html body.evh .cc h3{margin:10px 0 2px;font:400 clamp(30px,3.2vw,42px)/.92 "Archivo Black",Archivo,sans-serif;text-transform:uppercase;text-shadow:3px 3px 0 var(--ink)}
+html body.evh .cc .ed{font:700 12px "Space Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+html body.evh .cc .inf{display:flex;flex-wrap:wrap;gap:0;margin-top:10px;border:1px solid var(--line);align-self:flex-start}
+html body.evh .cc .inf span{padding:5px 9px;font:700 11px "Space Mono",monospace;color:var(--paper);background:rgba(12,7,22,.7)}html body.evh .cc .inf span+span{border-left:1px solid var(--line)}
+html body.evh .cc .ch{display:flex;align-items:center;gap:8px;margin-top:10px;padding:7px 10px;background:var(--lime);color:var(--ink);font:800 13px Archivo,sans-serif;text-transform:uppercase;align-self:flex-start;box-shadow:3px 3px 0 var(--ink)}
+html body.evh .cc .bar{height:8px;margin-top:12px;background:rgba(255,255,255,.1);border:1px solid var(--line)}html body.evh .cc .bar i{display:block;height:100%;width:var(--p,0%);background:repeating-linear-gradient(-45deg,var(--c) 0 6px,color-mix(in srgb,var(--c) 70%,#000) 6px 12px);transition:width .8s}
+html body.evh .cc .go{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:9px 14px;background:var(--c);color:var(--ink);font:700 12px/1 "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;box-shadow:3px 3px 0 var(--paper);transition:transform .15s}
+html body.evh .cc .go:after{content:"→";transition:transform .2s}html body.evh .cc:hover .go:after{transform:translateX(4px)}
+html body.evh .cc .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}html body.evh .cc .chips span{padding:4px 8px;background:var(--ash);border:1px solid var(--line);font:700 11px Archivo,sans-serif;text-transform:uppercase}
+html body.evh .cc.big{grid-column:span 2;min-height:340px}
+html body.evh .cc.big h3{font-size:clamp(40px,4.6vw,64px)}
+/* próximos partidos */
+html body.evh .ml{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:12px}
+html body.evh .mc{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;padding:12px 14px;background:var(--ink);border:2px solid var(--ink);border-top:4px solid var(--c);box-shadow:4px 4px 0 var(--ash);text-decoration:none;color:var(--paper);transition:transform .15s,box-shadow .15s}
+html body.evh .mc:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--c)}
+html body.evh .mc .t{display:flex;align-items:center;gap:8px;min-width:0;font:800 14px Archivo,sans-serif;text-transform:uppercase}html body.evh .mc .t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html body.evh .mc .t.r{flex-direction:row-reverse;text-align:right}
+html body.evh .mc .m{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}html body.evh .mc .m b{font:400 16px "Archivo Black",sans-serif;padding:2px 8px;background:var(--lime);color:var(--ink)}html body.evh .mc .m small{font:700 9px "Space Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);white-space:nowrap}html body.evh .mc .m small.c{color:var(--c)}
+html body.evh .cr{width:30px;height:30px;flex:none;border-radius:50%;background:var(--ash);border:2px solid var(--tc,#5a5080);display:grid;place-items:center;font:900 10px Archivo,sans-serif;color:#fff;overflow:hidden}html body.evh .cr img{width:100%;height:100%;object-fit:cover}
+html body.evh .empty{padding:26px;border:2px dashed var(--line);color:var(--mut);text-align:center;font:700 12px "Space Mono",monospace}
+html body.evh .foot{margin:40px 0 30px;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:980px){html body.evh .cg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){html body.evh .eh-in{grid-template-columns:1fr}html body.evh .eh-tr{position:absolute;right:-20px;top:10px;opacity:.3;z-index:-1}html body.evh .ks{grid-template-columns:repeat(2,minmax(0,1fr))}html body.evh .k:nth-child(3){border-left:0}html body.evh .k:nth-child(n+3){border-top-width:4px;border-top-style:solid}
+  html body.evh .cg{grid-template-columns:1fr}html body.evh .cc.big{grid-column:auto}html body.evh .cc{min-height:260px}html body.evh .cc .tr{height:100px}}
+@media(prefers-reduced-motion:reduce){html body.evh *{animation:none!important}}
+
+/* ===== v2: más vida ===== */
+html body.evh .eh-in{grid-template-columns:minmax(0,1fr) minmax(300px,420px);align-items:stretch}
+html body.evh .eh-l{display:flex;flex-direction:column;justify-content:flex-end}
+/* foco "ahora mismo" */
+html body.evh .sp{position:relative;display:flex;flex-direction:column;background:var(--ink);border:2px solid var(--ink);border-top:5px solid var(--sc,var(--lime));box-shadow:6px 6px 0 var(--sc,var(--lime));min-height:300px;transition:box-shadow .4s,border-color .4s}
+html body.evh .sp-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--ash) var(--grain)}
+html body.evh .sp-h b{font:700 11px "Space Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}
+html body.evh .sp-dots{display:flex;gap:5px}html body.evh .sp-dots button{width:18px;height:6px;border:0;padding:0;background:rgba(255,255,255,.2);cursor:pointer}html body.evh .sp-dots button.on{background:var(--sc,var(--lime));width:28px}
+html body.evh .sp-b{flex:1;position:relative;overflow:hidden}
+html body.evh .sl2{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:14px;text-decoration:none;color:var(--paper);opacity:0;transform:translateX(30px);transition:opacity .45s,transform .45s;pointer-events:none}
+html body.evh .sl2.on{opacity:1;transform:none;pointer-events:auto}
+html body.evh .sl2 .bgi{position:absolute;inset:0;z-index:-1;background:var(--bg) center/cover;opacity:.32;filter:saturate(1.1)}
+html body.evh .sl2 .bgi:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--ink) 10%,transparent 90%)}
+html body.evh .sl2 .k1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html body.evh .sl2 .k1 span{padding:5px 8px;font:700 10px/1 "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;background:var(--sc);color:var(--ink)}
+html body.evh .sl2 .k1 span.r{background:var(--red);color:#fff}html body.evh .sl2 .k1 span.w{background:var(--paper)}
+html body.evh .vs2{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+html body.evh .vs2 .tm{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+html body.evh .vs2 .tm b{font:400 15px/1.05 "Archivo Black",Archivo,sans-serif;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.evh .vs2 .cr{width:58px;height:58px;font-size:16px;border-width:3px;box-shadow:3px 3px 0 var(--ink)}
+html body.evh .vs2 .sc{font:400 clamp(34px,4vw,48px)/1 "Archivo Black",sans-serif;text-shadow:3px 3px 0 var(--con)}
+html body.evh .vs2 .sc.v{font-size:22px;padding:6px 10px;background:var(--lime);color:var(--ink);text-shadow:none}
+html body.evh .sl2 .ft{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html body.evh .sl2 .ft small{font:700 11px "Space Mono",monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+html body.evh .sl2 .ft em{font:700 12px "Space Mono",monospace;font-style:normal;padding:6px 9px;background:var(--sc);color:var(--ink);white-space:nowrap}
+html body.evh .sl2 .chm{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+html body.evh .sl2 .chm .cr{width:74px;height:74px;font-size:20px;border-width:3px;box-shadow:0 0 0 4px var(--gold,#ffd23f),5px 5px 0 4px var(--ink)}
+html body.evh .sl2 .chm b{font:400 26px/1 "Archivo Black",sans-serif;text-transform:uppercase;color:#ffd23f;text-shadow:3px 3px 0 var(--ink)}
+html body.evh .sp-e{padding:30px 16px;text-align:center;color:var(--mut);font:700 12px "Space Mono",monospace}
+/* cinta de resultados */
+html body.evh .tk{display:flex;align-items:stretch;margin-top:18px;background:var(--lime);color:var(--ink);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--con);overflow:hidden}
+html body.evh .tk[hidden]{display:none}
+html body.evh .tk-l{flex:none;display:flex;align-items:center;padding:0 14px;background:var(--red);color:#fff;font:700 11px "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase;transform:skewX(-8deg);margin-left:-6px;padding-left:20px}
+html body.evh .tk-v{flex:1;overflow:hidden;mask:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+html body.evh .tk-t{display:inline-flex;gap:34px;padding:11px 0;white-space:nowrap;animation:tkM var(--d,40s) linear infinite}
+html body.evh .tk:hover .tk-t{animation-play-state:paused}
+html body.evh .tk-t a{display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none;font:800 14px Archivo,sans-serif;text-transform:uppercase}
+html body.evh .tk-t a i{font:700 10px "Space Mono",monospace;font-style:normal;letter-spacing:.1em;padding:3px 6px;background:var(--ink);color:var(--lime)}
+html body.evh .tk-t a em{font:400 15px "Archivo Black",sans-serif;font-style:normal;padding:1px 7px;background:var(--ink);color:#fff}
+@keyframes tkM{to{transform:translateX(-50%)}}
+/* filtros */
+html body.evh .sec .flt{display:flex;flex-wrap:wrap;gap:6px}
+html body.evh .flt button{padding:8px 12px;border:2px solid var(--ink);background:var(--coal);color:var(--paper);font:700 11px/1 "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .12s}
+html body.evh .flt button:hover{transform:translate(-1px,-1px)}html body.evh .flt button b{margin-left:6px;padding:1px 5px;background:var(--ash);font-weight:700}
+html body.evh .flt button.on{background:var(--lime);color:var(--ink)}html body.evh .flt button.on b{background:var(--ink);color:var(--lime)}
+html body.evh .cc.hide{display:none}
+/* contenido de cada tarjeta */
+html body.evh .cc{justify-content:flex-start;min-height:0}
+html body.evh .cc .top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:110px;align-content:flex-start}
+html body.evh .cc .ph{padding:5px 8px;font:700 10px/1 "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;background:rgba(12,7,22,.8);border:1px solid var(--line)}
+html body.evh .pv{margin-top:12px;background:rgba(12,7,22,.86);border:1px solid var(--line);border-left:4px solid var(--c)}
+html body.evh .pv-h{display:flex;justify-content:space-between;padding:7px 10px;font:700 10px "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--line)}
+html body.evh .pr{display:grid;grid-template-columns:26px 24px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 10px;font:800 13px Archivo,sans-serif;text-transform:uppercase}
+html body.evh .pr+.pr{border-top:1px solid rgba(255,255,255,.06)}
+html body.evh .pr .n{display:grid;place-items:center;width:24px;height:22px;font:400 12px "Archivo Black",sans-serif;background:var(--ash);color:var(--paper)}
+html body.evh .pr:first-of-type .n{background:var(--c);color:var(--ink)}
+html body.evh .pr .cr{width:24px;height:24px;font-size:9px}
+html body.evh .pr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.evh .pr em{font:700 12px "Space Mono",monospace;font-style:normal;color:var(--c)}
+html body.evh .pr small{display:block;font:700 9px "Space Mono",monospace;color:var(--mut);letter-spacing:.08em}
+html body.evh .kr{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;padding:6px 10px;font:800 12px Archivo,sans-serif;text-transform:uppercase}
+html body.evh .kr+.kr{border-top:1px solid rgba(255,255,255,.06)}
+html body.evh .kr .a,html body.evh .kr .b{display:flex;align-items:center;gap:6px;min-width:0}html body.evh .kr .b{flex-direction:row-reverse;text-align:right}
+html body.evh .kr .a span,html body.evh .kr .b span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.evh .kr .cr{width:22px;height:22px;font-size:8px}
+html body.evh .kr .m{font:400 13px "Archivo Black",sans-serif;padding:2px 7px;background:var(--ash);white-space:nowrap}
+html body.evh .kr.live .m{background:var(--red);color:#fff}html body.evh .kr .l{opacity:.4;text-decoration:line-through}html body.evh .kr .w{color:var(--c)}
+html body.evh .pv-e{padding:12px 10px;font:700 11px "Space Mono",monospace;color:var(--mut)}
+html body.evh .cc .ftr{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+html body.evh .cc .cd{font:700 11px "Space Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--paper)}html body.evh .cc .cd b{color:var(--c)}
+html body.evh .cc .cd.r{color:#ff7468}
+html body.evh .cc .go{margin-top:0}
+html body.evh .cc .bar{margin-top:10px}
+html body.evh .cc .tr{height:96px}
+html body.evh .cc.big .pv-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+html body.evh .cc.big .pv-cols .pr:nth-child(2n){border-left:1px solid rgba(255,255,255,.06)}
+/* próximos */
+html body.evh .two{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px}
+html body.evh .dy{margin:0 0 6px;font:700 11px "Space Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}
+html body.evh .dy+.ml{margin-bottom:16px}
+html body.evh #nx .ml{grid-template-columns:1fr}
+html body.evh .mc .m em{font:700 10px "Space Mono",monospace;font-style:normal;padding:3px 6px;background:var(--c);color:var(--ink);white-space:nowrap}
+/* goleadores */
+html body.evh .gs{display:flex;flex-direction:column;gap:8px}
+html body.evh .gr{position:relative;display:grid;grid-template-columns:44px 34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;background:var(--ink);border:2px solid var(--ink);border-left:5px solid var(--c);box-shadow:4px 4px 0 var(--ash);text-decoration:none;color:var(--paper);overflow:hidden;animation:ehIn .45s both;transition:transform .15s}
+html body.evh .gr:hover{transform:translate(-2px,-2px)}
+html body.evh .gr .n{font:400 28px/1 "Archivo Black",sans-serif;color:transparent;-webkit-text-stroke:1.5px var(--c)}
+html body.evh .gr:first-child .n{color:var(--c);-webkit-text-stroke:0}
+html body.evh .gr b{display:block;font:400 16px/1.1 "Archivo Black",sans-serif;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.evh .gr small{font:700 10px "Space Mono",monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+html body.evh .gr .g{display:flex;align-items:baseline;gap:4px;font:400 26px/1 "Archivo Black",sans-serif;color:var(--lime)}html body.evh .gr .g small{color:var(--mut)}
+html body.evh .gr i{position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--c)}
+html body.evh .gr:first-child:after{content:"👑";position:absolute;right:62px;top:6px;font-size:16px;transform:rotate(14deg)}
+@media(max-width:980px){html body.evh .two{grid-template-columns:1fr}html body.evh .eh-in{grid-template-columns:1fr}html body.evh .sp{min-height:270px}}
+@media(max-width:640px){html body.evh .cc.big .pv-cols{grid-template-columns:1fr}html body.evh .cc.big .pv-cols .pr:nth-child(2n){border-left:0}html body.evh .sec{flex-direction:column;align-items:flex-start}}
+</style></head>
+<body class="evh ac"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap">
+  <section class="eh"><div class="eh-in">
+    <div class="eh-l"><div class="ey"><span class="tag">Competiciones · Magna Sports</span><span class="lvp" id="lvp" hidden>En vivo</span></div>
+    <h1>Tor<span>neos</span></h1>
+    <p>Champions, OmegaCup, Supernova, Mundial y ligas: todo lo que se juega en Magna, en un solo lugar.</p>
+    <div class="ks" id="ks"></div></div>
+    <aside class="sp" id="sp" aria-label="Ahora mismo en Magna" aria-live="polite"></aside>
+  </div></section>
+  <div class="tk" id="tk" hidden><span class="tk-l">Resultados</span><div class="tk-v"><div class="tk-t" id="tkT"></div></div></div>
+  <div class="sec"><h2>Competiciones</h2><div class="flt" id="flt" role="tablist" aria-label="Filtrar competiciones"></div></div>
+  <div class="cg" id="cg"></div>
+  <div class="two">
+    <section><div class="sec"><h2>Próximos partidos</h2><small class="mono">Cuenta regresiva</small></div><div id="nx"></div></section>
+    <section><div class="sec"><h2>La están rompiendo</h2><small class="mono">Goleadores</small></div><div class="gs" id="gs"></div></section>
+  </div>
+  <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+</main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="torneos-hub.js"></script>
+<script src="mov.js" defer></script>
+</body></html>

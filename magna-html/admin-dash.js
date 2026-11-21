@@ -164,7 +164,7 @@ window.ADMIN_DASH = function (b, A) {
 
   // ---------- páginas del sitio ----------
   var pgw = card('dpg', 'Tu sitio'), pg = h('div', 'dpg-g');
-  [['index.html', 'Partidos', '#ef4444'], ['noticias.html', 'Noticias', '#a855f7'], ['ligas.html', 'Ligas', '#3b82f6'], ['champions.html', 'Champions', '#22d3ee'], ['mundial.html', 'Mundial', '#10b981'], ['ranking.html', 'Ranking', '#f59e0b'], ['equipos.html', 'Equipos', '#ec4899'], ['tienda.html', 'Tienda', '#eab308'], ['eventos.html', 'Eventos', '#8b5cf6'], ['prediccion.html', 'Predicción', '#06b6d4']].forEach(function (p) {
+  [['index.html', 'Partidos', '#ef4444'], ['noticias.html', 'Noticias', '#a855f7'], ['ligas.html', 'Ligas', '#3b82f6'], ['champions.html', 'Champions', '#22d3ee'], ['mundial.html', 'Mundial', '#10b981'], ['ranking.html', 'Ranking', '#f59e0b'], ['equipos.html', 'Equipos', '#ec4899'], ['tienda.html', 'Tienda', '#eab308'], ['torneos.html', 'Torneos', '#c6ff1a'], ['planes.html', 'Planes', '#8b5cf6'], ['prediccion.html', 'Predicción', '#06b6d4']].forEach(function (p) {
     var a = h('a', 'dp'); a.href = p[0]; a.target = '_blank'; a.rel = 'noopener'; a.style.setProperty('--c', p[2]); a.appendChild(h('span', null, p[1])); a.appendChild(h('em', null, '↗')); pg.appendChild(a); });
   pgw.appendChild(pg); b.appendChild(pgw);
 

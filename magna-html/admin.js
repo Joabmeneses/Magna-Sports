@@ -439,7 +439,7 @@
   var exT = null, exBusy = false;
   window.ADMIN_EXCL = function () { clearTimeout(exT); exT = setTimeout(function () { syncExcl(false); }, 2500); };
   setTimeout(function () { if (window.ADMIN_EXCL) ADMIN_EXCL(); }, 4000);
-  // ---------- Eventos (eventos.html) ----------
+  // ---------- Planes (planes.html) ----------
   var EVK = { torneo: '🏆 Torneo', amistoso: '🤝 Amistosos', especial: '🎉 Especial', stream: '📺 Transmisión', premio: '🥇 Premiación', comunidad: '🗣️ Comunidad' }, EVC = null;
   // ---------- predicción de la llave: tabla y premios en Bits ----------
   function evRpc(n, a) { return window.MAGNA_SB().then(function (c) { return c.rpc(n, a); }).then(function (r) { if (r && r.error) throw r.error; return r.data; }); }
@@ -710,7 +710,7 @@
     { id: 'equipos', g: 'Comunidad', l: 'Equipos', i: 'shield', c: '#b07cff', f: teamsV, d: 'Equipos, escudos, plantillas y trofeos.', p: 'equipos.html' },
     { id: 'jugadores', g: 'Comunidad', l: 'Jugadores y roles', i: 'user', c: '#4cc3ff', f: playersV, d: 'Personas de la comunidad y su rol: Jugador, Coach y jugador o Solo coach. Al registrar a alguien se crea su cuenta con un código fijo de 6 dígitos.', p: 'mercado.html' },
     { id: 'roles', g: 'Comunidad', l: 'Roles y accesos', i: 'key', c: '#ff5fa2', f: function (b) { dataV(b, 'roles'); }, d: 'Quién manda en el sitio: administradores con correo, administradores con código y jueces que califican partidos.' },
-    { id: 'eventos', g: 'Comunidad', l: 'Eventos', i: 'cal', c: '#32d583', f: eventsV, d: 'Agenda de la comunidad: torneos relámpago, amistosos, transmisiones y premiaciones. Los miembros se apuntan con «¡Voy!».', p: 'eventos.html' },
+    { id: 'eventos', g: 'Comunidad', l: 'Planes', i: 'cal', c: '#32d583', f: eventsV, d: 'Agenda de la comunidad: torneos relámpago, amistosos, transmisiones y premiaciones. Los miembros se apuntan con «¡Voy!».', p: 'eventos.html' },
     { id: 'economia', g: 'Bits y tienda', l: 'Economía y fichajes', i: 'coin', c: '#ffc53d', f: econV, d: 'Caja de Bits de cada equipo (sueldos), Bucks para fichajes, multiplicador por puntos y mercado de fichajes.', ct: function () { return MAGNA.marketState().open ? '●' : 0; }, p: 'mercado.html' },
     { id: 'tienda', g: 'Bits y tienda', l: 'Tienda', i: 'bag', c: '#ff5fa2', f: shopV, d: 'Cosméticos que los miembros compran con Bits o reciben de regalo: colores de nombre, placas, marcos y títulos.', p: 'tienda.html' },
     { id: 'regalos', g: 'Bits y tienda', l: 'Regalos', i: 'gift', c: '#ff7a2f', f: regalosV, d: 'Premia a la comunidad: regala Bits o cosméticos en segundos, con premios listos para el MVP, los goleadores o los campeones.' },
