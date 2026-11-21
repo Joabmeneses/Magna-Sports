@@ -109,7 +109,12 @@
       b.classList.add('es-2l'); px = px0; set(px); while (px > 12 && (b.scrollWidth > b.clientWidth + 1 || b.scrollHeight > px * 2.3)) set(--px); }
     else while (px > 11 && b.scrollWidth > b.clientWidth + 1) set(--px);
   }); }
-  function all() { lead(); clock(); fanBar(); deco(); names(); }
+  // miniaturas de partidos: torneo (para su fondo), número de tarjeta e inclinación alterna
+  function cards() { var o = document.getElementById('otros'); if (!o) return; [].forEach.call(o.querySelectorAll('.mc'), function (c, i) {
+    var t = (c.querySelector('.mc-cat span') || {}).textContent || '', k = /champions/i.test(t) ? 'champions' : /star\s*nova/i.test(t) ? 'starnova' : /omega/i.test(t) ? 'omega' : /amistos/i.test(t) ? 'amistoso' : '';
+    if ((c.getAttribute('data-comp') || '') !== k) { if (k) c.setAttribute('data-comp', k); else c.removeAttribute('data-comp'); }
+    if (!c.style.getPropertyValue('--i')) { c.style.setProperty('--i', i); c.style.setProperty('--tilt', (i % 2 ? 1.2 : -1.2) + 'deg'); } }); }
+  function all() { lead(); clock(); fanBar(); deco(); names(); cards(); }
 
   // imágenes para descargar/compartir (marcador y alineación); match-poster.js se carga al pedirlas
   var LP = null;
@@ -132,7 +137,7 @@
   function start() {
     B = document.getElementById('marcador'); if (!B) return; build(); all(); (function tryBtn(k) { if (!shotBtn() && k < 40) setTimeout(function () { tryBtn(k + 1); }, 250); })(0); (function tick() { var r = rotate(); setTimeout(tick, r === 'hold' ? 1000 : showAd ? 9000 : 5000); })();
     if (window.MutationObserver) var mo = new MutationObserver(all), o = { childList: true, characterData: true, subtree: true }; ['.bn-grid', '.es-info'].forEach(function (q) { var e = $(q, B); if (e) mo.observe(e, o); });
-    var c = $('#clk'); if (c && window.MutationObserver) new MutationObserver(function () { clock(); deco(); }).observe(c, { childList: true, characterData: true, subtree: true });
+    var ot = document.getElementById('otros'); if (ot && window.MutationObserver) new MutationObserver(cards).observe(ot, { childList: true, subtree: true, characterData: true }); var c = $('#clk'); if (c && window.MutationObserver) new MutationObserver(function () { clock(); deco(); }).observe(c, { childList: true, characterData: true, subtree: true });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
   window.addEventListener('resize', function () { if (B) names(); });

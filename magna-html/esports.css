@@ -746,3 +746,57 @@ html body.es .banner .bt b.x.es-2l{line-height:1.02;max-height:none}
   html body.es .banner .mv-dots{margin-top:14px}
   html body.es .banner .es-fan{padding-left:0;padding-right:0;background:transparent}
 }
+
+/* ================= MINIATURAS v2: más color, más juego ================= */
+html body.es .others{gap:22px!important;padding:18px 6px 26px!important}
+html body.es .others .mc{position:relative;overflow:visible!important;border:4px solid var(--es-ink)!important;transform:rotate(var(--tilt,0deg))!important;box-shadow:7px 7px 0 var(--sh,var(--es-con))!important;transition:transform .3s cubic-bezier(.3,1.6,.5,1),box-shadow .3s!important;animation:mcIn .55s calc(var(--i,0) * 90ms) cubic-bezier(.2,1.3,.4,1) both;--sh:var(--es-con)}
+html body.es .others .mc:nth-child(even){--sh:var(--es-lime)}
+@keyframes mcIn{from{opacity:0;transform:translateY(24px) rotate(0deg) scale(.9)}}
+html body.es .others .mc:hover,html body.es .others .mc:focus-visible{transform:rotate(0deg) translateY(-8px) scale(1.03)!important;box-shadow:11px 13px 0 var(--sh)!important;z-index:3;outline:none}
+html body.es .others .mc:active{transform:scale(.97)!important}
+/* franja superior con color por torneo */
+html body.es .others .mc-top{position:relative;overflow:hidden;padding:12px 12px 14px!important;background:linear-gradient(120deg,#5b21b6,#8b5cf6 45%,#ff4fa3)!important;border-bottom:4px solid var(--es-ink)}
+html body.es .others .mc-top:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-60deg,transparent 0 12px,rgba(255,255,255,.08) 12px 14px);pointer-events:none}
+html body.es .others .mc[data-comp] .mc-top{background-size:cover!important;background-position:center!important}
+html body.es .others .mc[data-comp="champions"] .mc-top{background:linear-gradient(rgba(20,10,70,.45),rgba(20,10,70,.65)),url("img/bn-champions-sm.webp") center/cover!important}
+html body.es .others .mc[data-comp="starnova"] .mc-top{background:linear-gradient(rgba(40,15,90,.4),rgba(40,15,90,.6)),url("img/bn-starnova-sm.webp") center/cover!important}
+html body.es .others .mc[data-comp="omega"] .mc-top{background:linear-gradient(rgba(70,10,0,.35),rgba(60,5,10,.6)),url("img/bn-omega-sm.webp") center/cover!important}
+html body.es .others .mc[data-comp="amistoso"] .mc-top{background:linear-gradient(rgba(10,40,90,.3),rgba(10,40,90,.55)),url("img/bn-amistoso-sm.webp") center/cover!important}
+html body.es .others .mc-top>*{position:relative;z-index:1}
+html body.es .others .mc-st{background:var(--es-lime)!important;color:var(--es-ink)!important;padding:4px 10px!important;transform:rotate(-2deg)!important;box-shadow:3px 3px 0 var(--es-ink);font-size:12px!important}
+html body.es .others .mc.lv .mc-st{background:var(--es-red)!important;color:#fff!important;animation:mcLive 1.2s ease-in-out infinite!important}
+@keyframes mcLive{50%{transform:rotate(-2deg) scale(1.08);box-shadow:3px 3px 0 var(--es-ink),0 0 18px rgba(255,59,48,.8)}}
+html body.es .others .mc-cat{color:#fff!important;text-shadow:2px 2px 0 rgba(12,7,22,.7);font-size:12px!important;margin-top:4px}
+html body.es .others .mc-cat .dot{box-shadow:0 0 0 2px #fff!important}
+/* panel de equipos: diagonal + VS en el centro */
+html body.es .others .mc-row{position:relative;gap:0!important}
+html body.es .others .mc-p{padding:20px 10px 16px!important;min-height:132px}
+html body.es .others .mc-p:first-child{clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%);margin-right:-10px;padding-right:20px!important}
+html body.es .others .mc-p:last-child{padding-left:20px!important}
+html body.es .others .mc-p{background-image:radial-gradient(rgba(12,7,22,.14) 1.5px,transparent 2px)!important;background-size:12px 12px!important}
+html body.es .others .mc-row:after{content:"VS";position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);z-index:2;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:var(--es-ink);color:var(--es-lime);border:3px solid #fff;font:900 14px "Archivo Black",Archivo,sans-serif;box-shadow:0 4px 0 rgba(12,7,22,.4);transition:transform .35s cubic-bezier(.3,1.7,.5,1)}
+html body.es .others .mc.lv .mc-row:after{content:"VIVO";font-size:9px;background:var(--es-red);color:#fff;animation:mcVs 1.2s ease-in-out infinite}
+html body.es .others .mc:not(.up):not(.lv) .mc-row:after{content:"FIN";font-size:11px;color:var(--es-paper)}
+@keyframes mcVs{50%{transform:translate(-50%,-50%) rotate(-8deg) scale(1.15)}}
+html body.es .others .mc:hover .mc-row:after{transform:translate(-50%,-50%) rotate(352deg) scale(1.15)}
+/* escudos grandes que rebotan */
+html body.es .others .mc-c{width:66px!important;height:66px!important;border:3px solid var(--es-ink)!important;box-shadow:0 0 0 3px #fff,4px 5px 0 3px rgba(12,7,22,.35)!important;transition:transform .35s cubic-bezier(.3,1.8,.5,1)!important}
+html body.es .others .mc:hover .mc-p:first-child .mc-c{transform:rotate(-12deg) scale(1.12) translateY(-4px)!important}
+html body.es .others .mc:hover .mc-p:last-child .mc-c{transform:rotate(12deg) scale(1.12) translateY(-4px)!important}
+html body.es .others .mc.up .mc-n{font:900 14px/1.1 "Archivo Black",Archivo,sans-serif!important;letter-spacing:.02em!important;white-space:normal!important;text-align:center;text-wrap:balance;overflow:visible!important}
+/* tarjeta que estás viendo */
+html body.es .others .mc.on{outline:none!important;--sh:var(--es-lime);box-shadow:7px 7px 0 var(--es-lime),0 0 0 4px var(--es-lime),0 0 30px rgba(198,255,26,.45)!important}
+html body.es .others .mc.on:after{content:"👀 VIENDO";position:absolute;top:-14px;right:12px;z-index:4;padding:4px 10px;background:var(--es-lime);color:var(--es-ink);border:3px solid var(--es-ink);font:900 11px "Archivo Black",Archivo,sans-serif;transform:rotate(4deg);animation:mcTag 1.6s ease-in-out infinite}
+@keyframes mcTag{50%{transform:rotate(-2deg) translateY(-3px)}}
+/* destello al pasar el mouse */
+html body.es .others .mc-row:before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;z-index:3;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-16deg);opacity:0}
+html body.es .others .mc:hover .mc-row:before{animation:mcShine .7s ease-out;opacity:1}
+@keyframes mcShine{from{left:-60%}to{left:130%}}
+@media (prefers-reduced-motion:reduce){html body.es .others .mc,html body.es .others .mc *,html body.es .others .mc:after{animation:none!important}}
+html body.es .others .mc:not(.up) .mc-row:after{display:none}
+html body.es .others .mc .mc-p.w:before{display:none}
+html body.es .others .mc:not(.up) .mc-c{width:52px!important;height:52px!important}
+html body.es .others .mc:not(.up) .mc-n{font-size:52px!important;text-shadow:3px 3px 0 #fff}
+html body.es .others .mc:not(.up) .mc-p.w .mc-n{animation:mcWin 1.4s ease-in-out infinite}
+@keyframes mcWin{50%{transform:scale(1.12) rotate(-4deg)}}
+html body.es .others{padding-left:14px!important}
