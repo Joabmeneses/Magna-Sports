@@ -101,16 +101,29 @@ window.NEWS = (function () {
     ['mundial', 'Mundial Magna', 'mundialmagna', '#2ee59d', '#04140d', 'W', null, 'Cuenta oficial del Mundial'],
     ['ligas', 'Ligas Magna', 'ligasmagna', '#ffd23f', '#1a1400', 'L', null, 'Cuenta oficial de las ligas'],
     ['mercado', 'Mercado Magna', 'mercadomagna', '#ff4fa3', '#ffffff', '⇄', null, 'Fichajes y mercado'],
-    ['amistosos', 'Amistosos Magna', 'amistososmagna', '#22d3ee', '#04141a', '🤝', 'img/bn-amistoso-sm.webp', 'Partidos amistosos']];
-  function agent(id) { for (var i = 0; i < AGENTS.length; i++) if (AGENTS[i][0] === id) { var x = AGENTS[i]; return { id: x[0], name: x[1], handle: '@' + x[2], color: x[3], ink: x[4], mark: x[5], bg: x[6], bio: x[7] }; } return null; }
+    ['amistosos', 'Amistosos Magna', 'amistososmagna', '#22d3ee', '#04141a', '🤝', 'img/bn-amistoso-sm.webp', 'Partidos amistosos'],
+    ['presidente', 'Presidente de Magna Sports', 'presidentemagna', '#ffd23f', '#1a1400', '♛', null, 'Mensajes del presidente de la comunidad'],
+    // periodistas con IA (personajes ficticios: escriben con datos reales de la página)
+    ['ia-pizarra', 'Valentina Pizarra', 'lapizarra', '#22d3ee', '#04141a', 'VP', null, 'Periodista IA · análisis táctico y tablas', 1],
+    ['ia-relato', 'Tomás Relato', 'elrelato', '#ff5a36', '#ffffff', 'TR', null, 'Periodista IA · crónicas de partido', 1],
+    ['ia-dato', 'Dato Duro', 'datoduro', '#2ee59d', '#04140d', 'DD', null, 'Periodista IA · estadísticas, ranking y apuestas', 1],
+    ['ia-mercado', 'Mercado Picante', 'mercadopicante', '#ff4fa3', '#ffffff', 'MP', null, 'Periodista IA · fichajes y mercado', 1]];
+  function slugT(n) { return String(n || 'equipo').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ''); }
+  function agent(id) { var m = /^team:(\d+)$/.exec(id || ''); if (m && window.MAGNA) { var tid = Number(m[1]), nm = MAGNA.teamName(tid), col = MAGNA.teamColor ? MAGNA.teamColor(tid) : '#8b5cf6';
+      return { id: id, team: tid, name: nm, handle: '@' + slugT(nm), color: col, ink: '#ffffff', mark: String(nm).slice(0, 2).toUpperCase(), crest: MAGNA.crestUrl ? MAGNA.crestUrl(tid) : null, bg: null, bio: 'Cuenta oficial del equipo ' + nm, kind: 'team' }; }
+    var g = agent0(id); if (g) g.kind = g.ai ? 'ai' : id === 'presidente' ? 'pres' : 'org'; return g; }
+  function agent0(id) { for (var i = 0; i < AGENTS.length; i++) if (AGENTS[i][0] === id) { var x = AGENTS[i]; return { id: x[0], name: x[1], handle: '@' + x[2], color: x[3], ink: x[4], mark: x[5], bg: x[6], bio: x[7], ai: !!x[8] }; } return null; }
   // cuenta que publica: la elegida en el panel o, si no hay, la que corresponde por el tema
   function agentOf(a) { var g = a && a.agent && agent(a.agent); if (g) return g; var t = ((a && a.title) || '') + ' ' + ((a && a.summary) || '');
     return agent(/champions/i.test(t) ? 'champions' : /omega/i.test(t) ? 'omega' : /star\s*nova/i.test(t) ? 'starnova' : /mundial/i.test(t) ? 'mundial' : a && a.category === 'fichajes' ? 'mercado' : /amistos/i.test(t) ? 'amistosos' : a && /^(primera|segunda|tercera)$/.test(a.category) ? 'ligas' : 'magna'); }
   // ---------- comentarios ----------
+  function myTeam() { return sb().then(function (c) { return c.rpc('team_post_me').then(function (r) { return r.error ? null : r.data; }); }).catch(function () { return null; }); }
+  function teamPost(t, su, b) { return sb().then(function (c) { return c.rpc('team_post', { p_title: t, p_summary: su, p_body: b }).then(chk); }); }
+  function teamPostDel(id) { return sb().then(function (c) { return c.rpc('team_post_del', { p_id: id }).then(chk); }); }
   function comments(id) { return sb().then(function (c) { return c.rpc('news_comments', { p_article: id }).then(chk); }); }
   function commentCounts(ids) { return sb().then(function (c) { return ids.length ? c.rpc('news_comment_counts', { p_ids: ids }).then(chk) : { data: [] }; }); }
   function comment(id, body) { return sb().then(function (c) { return c.rpc('news_comment_add', { p_article: id, p_body: body }).then(chk); }); }
   function uncomment(cid) { return sb().then(function (c) { return c.rpc('news_comment_del', { p_id: cid }).then(chk); }); }
-  return { AGENTS: AGENTS, agent: agent, agentOf: agentOf, comments: comments, commentCounts: commentCounts, comment: comment, uncomment: uncomment, CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
+  return { myTeam: myTeam, teamPost: teamPost, teamPostDel: teamPostDel, AGENTS: AGENTS, agent: agent, agentOf: agentOf, comments: comments, commentCounts: commentCounts, comment: comment, uncomment: uncomment, CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
     listPublic: listPublic, totals: totals, session: session, isAdmin: isAdmin, mine: mine, react: react, listAll: listAll, save: save, remove: remove, upload: upload, prepPhoto: prepPhoto, compose: compose, toBlob: toBlob };
 })();

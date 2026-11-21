@@ -287,6 +287,38 @@ html body.nwp .agi .who{margin:0}html body.nwp .agi .who-t b{color:#f2f2ee}html 
 @media(prefers-reduced-motion:reduce){html body.nwp .pst{animation:none}}
 html body.nwp .nlay>*,html body.nwp .side-w,html body.nwp .side,html body.nwp .ng,html body.nwp .pst{min-width:0;max-width:100%}html body.nwp #agL{max-width:100%}
 @media(max-width:600px){html body.nwp .nlay{display:grid!important;grid-template-columns:minmax(0,1fr)!important}html body.nwp .pst-bt{gap:4px}html body.nwp .pst-rx .rx{min-width:0}}
+
+/* ===== v2: botón de reaccionar, insignias, equipos, rendimiento ===== */
+html body.nwp .pst{content-visibility:auto;contain-intrinsic-size:auto 520px}
+html body.nwp .pst.noimg .pst-st{border-top:4px solid #0c0716}
+html body.nwp .pst-bt{grid-template-columns:repeat(3,1fr)!important;position:relative}
+html body.nwp .pst-c{position:relative;gap:8px!important;padding:12px 6px!important;font-size:14px!important;background:#0c0716;transition:background .15s,color .15s,transform .12s!important;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+html body.nwp .pst-c:active{transform:scale(.96)}
+html body.nwp .rb-e{font-size:19px;line-height:1;display:inline-block;transition:transform .25s cubic-bezier(.3,1.8,.5,1)}
+html body.nwp .pst-c:hover .rb-e{transform:scale(1.2) rotate(-8deg)}
+html body.nwp .rbtn.on{background:#c6ff1a!important;color:#0c0716!important}html body.nwp .rbtn.on .rb-e{animation:rbPop .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes rbPop{40%{transform:scale(1.5) rotate(-10deg)}}
+html body.nwp .rpick{position:fixed;z-index:20;display:flex;gap:2px;padding:6px 8px;background:#0c0716;border:3px solid #c6ff1a;box-shadow:5px 5px 0 #8b5cf6;animation:rpIn .2s cubic-bezier(.2,1.4,.4,1)}
+@keyframes rpIn{from{opacity:0;transform:translateY(8px) scale(.9)}}
+html body.nwp .rp-e{width:46px;height:46px;border:0;background:none;font-size:30px;line-height:1;cursor:pointer;transition:transform .15s;animation:rpE .3s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes rpE{from{opacity:0;transform:translateY(12px) scale(.5)}}
+html body.nwp .rp-e:hover{transform:translateY(-8px) scale(1.35)}html body.nwp .rp-e.on{background:rgba(198,255,26,.2)}
+html body.nwp .rfly{position:absolute;left:50%;top:0;font-size:20px;pointer-events:none;animation:rfly .85s ease-out both}
+@keyframes rfly{to{transform:translate(calc(-50% + var(--dx)),-60px) scale(1.3);opacity:0}}
+html body.nwp .pst-st .rsum em{width:26px;height:26px;display:inline-grid;place-items:center;margin-right:-6px;border-radius:50%;background:#fff;border:2px solid #0c0716;font-size:14px;font-style:normal}
+html body.nwp .pst-st .rsum b{margin-left:12px}
+html body.nwp .vf.gold{background:#ffb400}html body.nwp .vf.team{background:#2ee59d;color:#04140d}
+html body.nwp .vf.ai{width:auto;height:auto;border-radius:3px;padding:2px 5px;background:#8b5cf6;font:700 9px "Space Mono",monospace;letter-spacing:.06em}
+html body.nwp .who-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}html body.nwp .who.k-team .who-av:has(img){background:#fff}
+html body.nwp .who.k-ai .who-av{border-style:dashed}
+html body.nwp .pst-del{border:0;background:none;color:#d64552;font:700 11px "Space Mono",monospace;cursor:pointer;margin-left:auto;margin-right:8px}
+html body.nwp .cmp{display:grid;gap:8px;padding:14px;border:4px solid #0c0716;background:#0c0716;box-shadow:7px 7px 0 var(--ac,#c6ff1a)}
+html body.nwp .cmp .who-t b{color:#f2f2ee}html body.nwp .cmp .who-t small{color:#c6ff1a}
+html body.nwp .cmp input,html body.nwp .cmp textarea{width:100%;box-sizing:border-box;border:3px solid #3b2568;background:#170d2c;color:#f2f2ee;padding:10px 12px;font:15px/1.4 Archivo,sans-serif;outline:none;resize:none}
+html body.nwp .cmp .cmp-ti{font:900 17px "Archivo Black",Archivo,sans-serif}html body.nwp .cmp input:focus,html body.nwp .cmp textarea:focus{border-color:#c6ff1a}
+html body.nwp .cmp-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}html body.nwp .cmp-n{flex:1;color:#b9aee0;font:700 11px "Space Mono",monospace}html body.nwp .cmp-r small{color:#b9aee0;font:700 11px "Space Mono",monospace}
+@media(max-width:600px){html body.nwp .pst-c{font-size:12px!important;gap:5px!important}html body.nwp .rp-e{width:40px;height:40px;font-size:26px}}
+@media(prefers-reduced-motion:reduce){html body.nwp .rp-e,html body.nwp .rpick,html body.nwp .rbtn.on .rb-e{animation:none}}
 </style></head>
 <body class="nwp ac ck"><header class="top" id="top"></header><script src="nav.js"></script>
 <main class="wrap">
