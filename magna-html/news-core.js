@@ -29,7 +29,7 @@ window.NEWS = (function () {
   function ago(s) { var d = (Date.now() - new Date(s).getTime()) / 1000; if (d < 60) return 'hace un momento'; if (d < 3600) return 'hace ' + Math.floor(d / 60) + ' min'; if (d < 86400) return 'hace ' + Math.floor(d / 3600) + ' h'; if (d < 7 * 86400) return 'hace ' + Math.floor(d / 86400) + ' d'; return fdate(s); }
   function sb() { return window.MAGNA_SB(); }
   // ---------- lectura pública ----------
-  function listPublic() { return sb().then(function (c) { return c.from('articles').select('id,title,summary,body,category,cover_url,status,publish_at,featured,updated_at').in('status', ['published', 'scheduled']).lte('publish_at', new Date().toISOString()).order('publish_at', { ascending: false }).limit(200); }); }
+  function listPublic() { return sb().then(function (c) { return c.from('articles').select('id,title,summary,body,category,cover_url,status,publish_at,featured,updated_at,agent').in('status', ['published', 'scheduled']).lte('publish_at', new Date().toISOString()).order('publish_at', { ascending: false }).limit(200); }); }
   function totals(ids) { return sb().then(function (c) { return ids.length ? c.from('article_reaction_totals').select('article_id,emoji,total').in('article_id', ids) : { data: [] }; }); }
   function session() { return sb().then(function (c) { return c.auth.getSession().then(function (r) { return r.data && r.data.session; }); }); }
   function isAdmin() { return session().then(function (s) { if (!s || s.user.is_anonymous) return false; return sb().then(function (c) { return c.rpc('is_admin').then(function (r) { return r.data === true; }); }); }).catch(function () { return false; }); }
@@ -46,7 +46,7 @@ window.NEWS = (function () {
   function chk(r) { if (r && r.error) throw r.error; return r; }
   // ---------- administración ----------
   function listAll() { return sb().then(function (c) { return c.from('articles').select('*').order('publish_at', { ascending: false }).limit(500).then(chk); }); }
-  function save(a) { return sb().then(function (c) { var row = { title: a.title, summary: a.summary, body: a.body, category: a.category, cover_url: a.cover_url || null, status: a.status, publish_at: a.publish_at, featured: !!a.featured };
+  function save(a) { return sb().then(function (c) { var row = { title: a.title, summary: a.summary, body: a.body, category: a.category, cover_url: a.cover_url || null, status: a.status, publish_at: a.publish_at, featured: !!a.featured, agent: a.agent || null };
     if (a.id) return c.from('articles').update(row).eq('id', a.id).select().then(chk);
     row.author_email = a.author_email || null; return c.from('articles').insert(row).select().then(chk); }); }
   function remove(id) { return sb().then(function (c) { return c.from('articles').delete().eq('id', id).then(chk); }); }
@@ -91,6 +91,26 @@ window.NEWS = (function () {
       return toBlob(cv, .9).then(function (b) { return { blob: b, url: URL.createObjectURL(b) }; });
     });
   }
-  return { CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
+  // ---------- cuentas oficiales que publican (agentes) ----------
+  // id, nombre, @usuario, color, color del texto, sigla del avatar, fondo de portada
+  var AGENTS = [
+    ['magna', 'Magna Sports', 'magnasports', '#c6ff1a', '#0c0716', 'M', null, 'Cuenta oficial de la comunidad'],
+    ['champions', 'Champions Magna', 'championsmagna', '#3b5bff', '#ffffff', '★', 'img/bn-champions-sm.webp', 'Cuenta oficial de la Champions'],
+    ['omega', 'OmegaCup Oficial', 'omegacup', '#ff6a1a', '#1a0600', 'Ω', 'img/bn-omega-sm.webp', 'Cuenta oficial de la OmegaCup'],
+    ['starnova', 'Starnova Oficial', 'starnova', '#8b5cf6', '#ffffff', '✦', 'img/bn-starnova-sm.webp', 'Cuenta oficial de Starnova'],
+    ['mundial', 'Mundial Magna', 'mundialmagna', '#2ee59d', '#04140d', 'W', null, 'Cuenta oficial del Mundial'],
+    ['ligas', 'Ligas Magna', 'ligasmagna', '#ffd23f', '#1a1400', 'L', null, 'Cuenta oficial de las ligas'],
+    ['mercado', 'Mercado Magna', 'mercadomagna', '#ff4fa3', '#ffffff', '⇄', null, 'Fichajes y mercado'],
+    ['amistosos', 'Amistosos Magna', 'amistososmagna', '#22d3ee', '#04141a', '🤝', 'img/bn-amistoso-sm.webp', 'Partidos amistosos']];
+  function agent(id) { for (var i = 0; i < AGENTS.length; i++) if (AGENTS[i][0] === id) { var x = AGENTS[i]; return { id: x[0], name: x[1], handle: '@' + x[2], color: x[3], ink: x[4], mark: x[5], bg: x[6], bio: x[7] }; } return null; }
+  // cuenta que publica: la elegida en el panel o, si no hay, la que corresponde por el tema
+  function agentOf(a) { var g = a && a.agent && agent(a.agent); if (g) return g; var t = ((a && a.title) || '') + ' ' + ((a && a.summary) || '');
+    return agent(/champions/i.test(t) ? 'champions' : /omega/i.test(t) ? 'omega' : /star\s*nova/i.test(t) ? 'starnova' : /mundial/i.test(t) ? 'mundial' : a && a.category === 'fichajes' ? 'mercado' : /amistos/i.test(t) ? 'amistosos' : a && /^(primera|segunda|tercera)$/.test(a.category) ? 'ligas' : 'magna'); }
+  // ---------- comentarios ----------
+  function comments(id) { return sb().then(function (c) { return c.rpc('news_comments', { p_article: id }).then(chk); }); }
+  function commentCounts(ids) { return sb().then(function (c) { return ids.length ? c.rpc('news_comment_counts', { p_ids: ids }).then(chk) : { data: [] }; }); }
+  function comment(id, body) { return sb().then(function (c) { return c.rpc('news_comment_add', { p_article: id, p_body: body }).then(chk); }); }
+  function uncomment(cid) { return sb().then(function (c) { return c.rpc('news_comment_del', { p_id: cid }).then(chk); }); }
+  return { AGENTS: AGENTS, agent: agent, agentOf: agentOf, comments: comments, commentCounts: commentCounts, comment: comment, uncomment: uncomment, CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
     listPublic: listPublic, totals: totals, session: session, isAdmin: isAdmin, mine: mine, react: react, listAll: listAll, save: save, remove: remove, upload: upload, prepPhoto: prepPhoto, compose: compose, toBlob: toBlob };
 })();

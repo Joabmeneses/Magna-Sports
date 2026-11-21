@@ -76,6 +76,8 @@ window.ADMIN_NEWS = function (b, U) {
       var bo = h('textarea', 'in'); bo.rows = 12; bo.maxLength = 40000; bo.value = a.body; bo.placeholder = 'Escribe la noticia completa…'; var hp = h('p', 'nw-help'); hp.innerHTML = 'Formato: deja una línea en blanco entre párrafos · <code>## Subtítulo</code> · <code>**negrita**</code> · <code>*cursiva*</code> · <code>- lista</code> · <code>&gt; cita</code>'; fld('Contenido completo', bo, hp);
       var two = h('div', 'nw-two'), cs = h('select', 'in'); N.CATS.forEach(function (c) { var o = h('option', null, c[1]); o.value = c[0]; if (c[0] === a.category) o.selected = true; cs.appendChild(o); });
       var l1 = h('label', 'f', 'Categoría'); l1.appendChild(cs); two.appendChild(l1);
+      var ag = h('select', 'in'), oa = h('option', null, 'Automática (según el tema)'); oa.value = ''; ag.appendChild(oa); N.AGENTS.forEach(function (x) { var o = h('option', null, x[1] + ' · @' + x[2]); o.value = x[0]; if (x[0] === a.agent) o.selected = true; ag.appendChild(o); });
+      var la = h('label', 'f', 'Publica la cuenta oficial'); la.appendChild(ag); two.appendChild(la);
       var l2 = h('div', 'f', 'Importancia'), fe = h('label'); fe.style.cssText = 'display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-top:6px;color:var(--fg);cursor:pointer'; var fc = h('input'); fc.type = 'checkbox'; fc.checked = !!a.featured; fe.appendChild(fc); fe.appendChild(document.createTextNode('★ Destacar esta noticia')); l2.appendChild(fe); two.appendChild(l2); f.appendChild(two);
       // ---- portada ----
       f.appendChild(h('h2', 'x', 'Imagen de portada'));
@@ -126,7 +128,7 @@ window.ADMIN_NEWS = function (b, U) {
         var up = blob ? N.upload(blob, 'webp') : Promise.resolve(mode === 'keep' ? a.cover_url : (mode === 'none' ? null : a.cover_url));
         up.then(function (url) { go.textContent = 'Guardando…';
           var keepDate = !isNew && a.status === 'published' && pm === 'published';
-          return N.save({ id: a.id, title: t, summary: su.value.trim(), body: bo.value.replace(/\s+$/, ''), category: cs.value, featured: fc.checked, cover_url: url, status: pm, publish_at: keepDate ? a.publish_at : when.toISOString(), author_email: window.MAGNA_ADMIN && MAGNA_ADMIN.email });
+          return N.save({ id: a.id, title: t, summary: su.value.trim(), body: bo.value.replace(/\s+$/, ''), category: cs.value, agent: ag.value || null, featured: fc.checked, cover_url: url, status: pm, publish_at: keepDate ? a.publish_at : when.toISOString(), author_email: window.MAGNA_ADMIN && MAGNA_ADMIN.email });
         }).then(function () { close(); toast(pm === 'draft' ? 'Borrador guardado' : pm === 'scheduled' ? 'Noticia programada' : 'Noticia publicada'); if (pm === 'published') { MAGNA.addNews('announcement', 'Nueva noticia: ' + t); MAGNA.save(); } load(); },
           function (e2) { go.disabled = false; go.textContent = label(); err.textContent = 'No se pudo guardar: ' + (e2 && e2.message || 'sin conexión'); });
       };
