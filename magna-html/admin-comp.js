@@ -74,6 +74,7 @@ ADMIN_MOD('comp', function (A) {
         box.innerHTML = ''; box.appendChild(h('p', 'sub', $.ST[c.status] + ' · ' + c.teamIds.length + ' equipos'));
         var a = h('div', 'bar2'); $.NEXT[c.status].forEach(function (x) { a.appendChild(btn(x[1], function () {
           if (x[0] === 'active' && c.status === 'draft' && c.teamIds.length < 2) return toast('Inscribe al menos 2 equipos antes de activar.', true);
+          if (L && c.status === 'finished' && x[0] !== 'finished') { var cl = leagueClash(c); if (cl.length) return toast('No se puede reabrir: ' + cl.join(', ') + ' ya juega en otra liga.', true); }
           var go = function () { c.status = x[0]; MAGNA.addNews(ty + '_' + x[0], (x[0] === 'active' ? 'Arranca ' : x[0] === 'paused' ? 'En pausa: ' : x[0] === 'finished' ? 'Finaliza ' : 'Se reanuda: ') + c.name + '.'); MAGNA.save(); draw(); render(); };
           x[0] === 'finished' ? confirmBox('¿Finalizar ' + c.name + '?', 'Ya no se podrá modificar.', 'Finalizar', go) : go(); }, x[0] === 'active' ? 'o' : '')); });
         if (c.status !== 'finished') a.appendChild(btn('Elegir equipos', function () { pickTeams(c, ty, draw); }));
@@ -100,15 +101,21 @@ ADMIN_MOD('comp', function (A) {
       draw(); var r = h('div', 'row'); r.appendChild(btn('Cerrar', function () { close(); render(); banner(); })); b.appendChild(r);
     });
   }
+  // Un equipo solo puede estar en una liga a la vez (cuentan las ligas que no han terminado)
+  function otherLeague(c, tid) { return (S().leagues || []).filter(function (l) { return l.id !== c.id && l.status !== 'finished' && (l.teamIds || []).indexOf(tid) >= 0; })[0] || null; }
+  function leagueClash(c) { var out = []; (c.teamIds || []).forEach(function (t) { var o = otherLeague(c, t); if (o) out.push(MAGNA.teamName(t) + ' (' + o.name + ')'); }); return out; }
   function pickTeams(c, ty, done) {
     dialog('Participantes de ' + c.name, function (b, close) {
       var chk = h('div', 'chk'), boxes = [];
-      S().teams.forEach(function (t) { var l = h('label'), i = h('input'); i.type = 'checkbox'; i.checked = c.teamIds.indexOf(t.id) >= 0; i.value = t.id; boxes.push(i); l.appendChild(i); l.appendChild(document.createTextNode(t.name)); chk.appendChild(l); });
+      S().teams.forEach(function (t) { var l = h('label'), i = h('input'), ol = ty === 'league' ? otherLeague(c, t.id) : null; i.type = 'checkbox'; i.checked = c.teamIds.indexOf(t.id) >= 0; i.value = t.id; boxes.push(i); l.appendChild(i); l.appendChild(document.createTextNode(t.name));
+        if (ol && !i.checked) { i.disabled = true; l.style.opacity = '.45'; l.title = 'Ya juega en ' + ol.name; l.appendChild(h('small', null, ' · ya está en ' + ol.name)); } chk.appendChild(l); });
+      if (ty === 'league') b.appendChild(h('p', 'sub', 'Un equipo solo puede estar en una liga a la vez. Los que ya juegan en otra liga aparecen bloqueados.'));
       if (!S().teams.length) b.appendChild(h('p', 'sub', 'Primero crea equipos.')); b.appendChild(chk); var err = h('p', 'err'); b.appendChild(err);
       var r = h('div', 'row'); r.appendChild(btn('Cancelar', close)); r.appendChild(btn('Guardar', function () {
         var ids = boxes.filter(function (i) { return i.checked; }).map(function (i) { return Number(i.value); });
         var removed = c.teamIds.filter(function (i) { return ids.indexOf(i) < 0; });
         if (removed.some(function (t) { return S().matches.some(function (m) { return m.type === ty && m.cid === c.id && m.status !== 'cancelled' && (m.home === t || m.away === t); }); })) { err.textContent = 'No puedes retirar a un equipo con partidos. Cancélalos antes.'; return; }
+        if (ty === 'league') { var dup = ids.filter(function (t) { return otherLeague(c, t); }); if (dup.length) { err.textContent = 'Estos equipos ya están en otra liga: ' + dup.map(function (t) { return MAGNA.teamName(t) + ' (' + otherLeague(c, t).name + ')'; }).join(', ') + '. Un equipo solo puede estar en una liga.'; return; } }
         c.teamIds = ids; MAGNA.save(); close(); done(); }, 'o')); b.appendChild(r);
     });
   }
