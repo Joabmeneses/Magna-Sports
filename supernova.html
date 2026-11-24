@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0d0a26"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>Magna Arena · Supernova</title>
+<meta name="description" content="El cuadro de la Supernova: cruces a partido único, resultados, partidos y camino al título.">
+<meta property="og:title" content="Supernova · Magna Arena"><meta property="og:description" content="Cruces a partido único. ¿Quién alcanzará la Supernova?"><meta property="og:image" content="img/bn-starnova.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@500;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="calle.css">
+<style>
+html body.cpp{font-family:Archivo,system-ui,sans-serif;--lava:#ff6a1a;--lava2:#ffb02e;--gold:#ffd23f;--vio:#8b5cf6;--vio2:#b18cff;--lime:#c6ff1a;--ink:#140906;--card:#1a0f17;--card2:#24131c;--line:rgba(255,176,46,.22);--mut:#c9b6a8;--k1:#ffb02e;--k2:#ff6a1a;--k3:#b18cff;--k4:#c6ff1a;background:#120806!important;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1.3px)!important;background-size:9px 9px!important;color:#fff4ea}
+html body.cpp:before,html body.cpp:after{background:radial-gradient(50% 40% at 0 0,rgba(255,106,26,.22),transparent 70%),radial-gradient(40% 35% at 100% 10%,rgba(139,92,246,.24),transparent 70%)!important}
+html body.cpp .wrap{max-width:1320px}
+html body.cpp .mono{font:700 11px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+/* portada */
+html body.cpp .cph{position:relative;margin-top:22px;border-radius:30px;overflow:hidden;isolation:isolate;padding:clamp(22px,4.4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;border:2px solid rgba(255,176,46,.35);box-shadow:0 0 0 4px #120806,0 0 0 6px rgba(255,106,26,.35),0 30px 80px -30px rgba(255,106,26,.55)}
+html body.cpp .cph-bg{position:absolute;inset:0;z-index:-2;background:url("img/bn-omega.webp") center 40%/cover;transform:scale(1.06);animation:cpZ 18s ease-in-out infinite alternate}
+@keyframes cpZ{to{transform:scale(1.14) translateY(-2%)}}
+html body.cpp .cph:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(18,8,6,.94) 0,rgba(18,8,6,.78) 45%,rgba(18,8,6,.25) 100%),linear-gradient(0deg,rgba(18,8,6,.9),transparent 55%)}
+html body.cpp .ey{display:inline-flex;align-items:center;gap:8px;color:var(--lava2)}html body.cpp .ey i{width:9px;height:9px;border-radius:50%;background:var(--lava);box-shadow:0 0 12px var(--lava);animation:cpP 1.4s infinite}
+@keyframes cpP{50%{opacity:.25}}
+html body.cpp .cph h1{margin:10px 0 8px;font:900 clamp(46px,9.6vw,120px)/.9 Archivo,sans-serif;font-stretch:125%;letter-spacing:-.035em;text-transform:uppercase;background:linear-gradient(180deg,#fff7d6 0,#ffd23f 45%,#ff6a1a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45));overflow-wrap:anywhere}
+html body.cpp .cph p.sub{margin:0;color:#f3dcc8;max-width:58ch}
+html body.cpp .ks{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+html body.cpp .k{min-width:96px;padding:10px 14px;border-radius:16px;background:rgba(20,9,6,.62);backdrop-filter:blur(6px);border:1px solid color-mix(in srgb,var(--c) 50%,transparent);border-bottom:3px solid var(--c);animation:cpIn .5s both}
+html body.cpp .k b{display:block;font:900 24px/1 Archivo,sans-serif;font-stretch:115%;color:var(--c)}html body.cpp .k span{display:block;margin-top:5px;font:700 10px "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#e9d6c6}
+@keyframes cpIn{from{opacity:0;transform:translateY(12px)}}
+html body.cpp .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+html body.cpp .btn2{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:14px;border:2px solid #120806;font:800 14px Archivo,sans-serif;text-decoration:none;cursor:pointer;color:#120806;background:linear-gradient(180deg,var(--lava2),var(--lava));box-shadow:4px 4px 0 #120806,0 0 0 2px rgba(255,176,46,.5);transition:transform .15s,box-shadow .15s}
+html body.cpp .btn2:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #120806,0 0 0 2px rgba(255,176,46,.7)}html body.cpp .btn2:active{transform:none}
+html body.cpp .btn2.v{background:linear-gradient(180deg,var(--vio2),var(--vio));color:#fff}html body.cpp .btn2:disabled{opacity:.6;cursor:wait}
+html body.cpp .tro{position:relative;width:clamp(120px,17vw,220px);display:grid;place-items:center}
+html body.cpp .tro img{width:100%;height:auto;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 62%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 62%,transparent 100%);animation:cpF 4.5s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(255,176,46,.55))}
+html body.cpp .tro:before{content:"";position:absolute;inset:12% 6%;border-radius:50%;background:radial-gradient(circle,rgba(255,176,46,.55),transparent 65%);filter:blur(16px);animation:cpG 3s ease-in-out infinite}
+@keyframes cpF{50%{transform:translateY(-10px) rotate(2deg)}}@keyframes cpG{50%{opacity:.5;transform:scale(.9)}}
+html body.cpp .emb{position:absolute;bottom:-10px;width:5px;height:5px;border-radius:50%;background:var(--lava2);box-shadow:0 0 8px var(--lava);z-index:-1;animation:cpE 6s linear infinite;opacity:0}
+@keyframes cpE{10%{opacity:1}to{transform:translate(var(--dx,20px),-420px);opacity:0}}
+/* campeón */
+html body.cpp .chp{margin-top:16px;display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:22px;background:linear-gradient(100deg,#3a2306,#1a0f17 60%);border:2px solid var(--gold);box-shadow:0 0 40px -10px rgba(255,210,63,.6)}
+html body.cpp .chp .cr{width:64px;height:64px}html body.cpp .chp b{display:block;font:900 clamp(24px,4vw,36px)/1 Archivo,sans-serif;font-stretch:120%;text-transform:uppercase;color:var(--gold)}html body.cpp .chp small{color:var(--mut)}
+/* próximo / en vivo */
+html body.cpp .nxt{margin-top:16px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 18px;border-radius:20px;background:var(--card);border:1px solid var(--line);text-decoration:none;color:inherit;transition:transform .15s,border-color .15s}
+html body.cpp .nxt:hover{transform:translateY(-2px);border-color:var(--lava2)}
+html body.cpp .nxt .tg{padding:6px 10px;border-radius:10px;background:var(--lava);color:#120806}html body.cpp .nxt.live .tg{background:#ff2d55;color:#fff;animation:cpP 1.4s infinite}
+html body.cpp .nxt .vs{display:flex;align-items:center;gap:10px;min-width:0;font:800 16px Archivo,sans-serif}html body.cpp .nxt .vs span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html body.cpp .nxt .vs em{font:700 13px "Space Mono",monospace;font-style:normal;color:var(--lava2);flex:none}
+html body.cpp .nxt .wh{color:var(--mut);white-space:nowrap}
+/* camino */
+html body.cpp .road{display:flex;gap:6px;margin:22px 0 6px;overflow-x:auto;padding-bottom:4px}
+html body.cpp .road button{flex:1;min-width:110px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:#fff4ea;cursor:pointer;text-align:left;position:relative;overflow:hidden}
+html body.cpp .road button b{font:900 16px Archivo,sans-serif;font-stretch:115%;text-transform:uppercase}html body.cpp .road button small{color:var(--mut);font:700 10px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+html body.cpp .road button i{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--lava),var(--gold));width:var(--p,0%);transition:width .6s}
+html body.cpp .road button.now{border-color:var(--lava2);background:linear-gradient(160deg,#3a1a0a,var(--card));box-shadow:0 0 24px -8px var(--lava)}
+html body.cpp .road button.done{opacity:.75}
+/* pestañas */
+html body.cpp .cptabs{display:flex;gap:6px;margin:18px 0 16px;padding:8px 0;background:linear-gradient(#120806 70%,transparent);overflow-x:auto}
+html body.cpp .cptabs button{flex:none;padding:10px 16px;border-radius:999px;border:2px solid rgba(255,176,46,.3);background:transparent;color:#fff4ea;font:800 14px Archivo,sans-serif;cursor:pointer}
+html body.cpp .cptabs button.on{background:var(--lava2);border-color:var(--lava2);color:#120806}
+html body.cpp .pane[hidden]{display:none}
+/* cuadro */
+html body.cpp .bk-w{position:relative;border-radius:26px;padding:22px clamp(12px,2vw,22px);background:linear-gradient(160deg,#21101a,#140a10 60%,#1d0f24);border:1px solid var(--line);overflow-x:auto;scroll-snap-type:x mandatory}
+html body.cpp .bk{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:34px;min-width:min-content}
+html body.cpp .bc{display:flex;flex-direction:column;scroll-snap-align:start}
+html body.cpp .bc-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+html body.cpp .bc-h b{padding:7px 12px;border-radius:999px;font:900 13px Archivo,sans-serif;font-stretch:120%;letter-spacing:.06em;text-transform:uppercase;color:#120806;background:var(--rc)}
+html body.cpp .bc-h small{color:var(--mut)}
+html body.cpp .bc-b{flex:1;display:flex;flex-direction:column}
+html body.cpp .sl{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding:8px 0}
+/* conectores: cada llave sale hacia la derecha y las parejas se unen */
+html body.cpp .bc:not(:last-child) .sl:after{content:"";position:absolute;right:-17px;top:50%;width:17px;border-top:2px solid var(--cn)}
+html body.cpp .bc.pr .sl:nth-child(odd):before{content:"";position:absolute;right:-17px;top:50%;height:100%;border-right:2px solid var(--cn)}
+html body.cpp .bc:not(:first-child) .sl .ktie:before{content:"";position:absolute;left:-19px;top:50%;width:17px;border-top:2px solid var(--cn)}
+html body.cpp .bk{--cn:rgba(255,176,46,.35)}
+html body.cpp .ktie{position:relative;border-radius:18px;background:linear-gradient(165deg,var(--card2),var(--card));border:2px solid color-mix(in srgb,var(--rc) 55%,transparent);padding:10px 12px 8px;box-shadow:0 10px 30px -18px #000;animation:cpIn .45s both;transition:transform .15s,border-color .15s}
+html body.cpp .ktie:hover{transform:translateY(-2px);border-color:var(--rc)}
+html body.cpp .ktie.live{border-color:#ff2d55;box-shadow:0 0 0 3px rgba(255,45,85,.18),0 0 30px -6px #ff2d55}
+html body.cpp .ktie.cp{border-color:var(--gold);box-shadow:0 0 30px -6px var(--gold)}
+html body.cpp .th{display:grid;grid-template-columns:minmax(0,1fr) 34px 34px 46px;gap:4px;align-items:center;color:var(--mut);margin-bottom:4px}
+html body.cpp .th span{text-align:center}html body.cpp .th span:first-child{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.cpp .th .lv{color:#ff4d6d}
+html body.cpp .tr{display:grid;grid-template-columns:minmax(0,1fr) 34px 34px 46px;gap:4px;align-items:center;padding:5px 0;transition:opacity .2s}
+html body.cpp .tr .nm{display:flex;align-items:center;gap:9px;min-width:0;font:800 15px Archivo,sans-serif;font-stretch:105%;text-transform:uppercase}
+html body.cpp .tr .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.cpp .tr .nm a{color:inherit;text-decoration:none}html body.cpp .tr .nm a:hover{text-decoration:underline}
+html body.cpp .tr.tbd .nm{font:italic 600 13px Archivo,sans-serif;text-transform:none;color:var(--mut)}
+html body.cpp .cr{width:28px;height:28px;flex:none;border-radius:50%;background:#2a1a22 center/cover;border:2px solid var(--tc,#5a4048);display:grid;place-items:center;font:900 11px Archivo,sans-serif;color:#fff;overflow:hidden}
+html body.cpp .cr img{width:100%;height:100%;object-fit:cover}
+html body.cpp .tr.tbd .cr{border-style:dashed;background:transparent;color:var(--mut)}
+html body.cpp .sc{text-align:center;font:700 14px "Space Mono",monospace;color:#e9d6c6}
+html body.cpp a.sc{text-decoration:none;border-radius:8px;padding:3px 0}html body.cpp a.sc:hover{background:rgba(255,176,46,.15);color:#fff}
+html body.cpp .gl{text-align:center;font:900 18px/1 Archivo,sans-serif;padding:8px 0;border-radius:10px;background:rgba(255,255,255,.06)}
+html body.cpp .tr.w .gl{background:linear-gradient(180deg,var(--lava2),var(--lava));color:#120806}
+html body.cpp .tr.w .nm{color:#fff}html body.cpp .tr.w .nm:after{content:"▶";font-size:10px;color:var(--lava2)}
+html body.cpp .tr.l{opacity:.45}html body.cpp .tr.l .nm span{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:rgba(255,255,255,.35)}
+html body.cpp .tf{display:flex;justify-content:space-between;gap:8px;margin-top:4px;padding-top:6px;border-top:1px dashed rgba(255,255,255,.1);color:var(--mut);font:700 10px "Space Mono",monospace;letter-spacing:.06em;text-transform:uppercase}
+html body.cpp .tf .dz{color:var(--gold)}html body.cpp .ktie.one .th,html body.cpp .ktie.one .tr{grid-template-columns:minmax(0,1fr) 52px}html body.cpp a.gl{text-decoration:none;color:inherit;display:block}html body.cpp a.gl:hover{filter:brightness(1.15)}html body.cpp .ktie.bye{border-style:dashed}html body.cpp .ktie.bye .gl{background:rgba(255,255,255,.08);color:var(--gold)}
+/* columna del campeón */
+html body.cpp .cw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:18px;border-radius:22px;border:2px dashed rgba(255,210,63,.45);background:radial-gradient(circle at 50% 35%,rgba(255,176,46,.22),transparent 65%)}
+html body.cpp .cw img.tw{width:110px;-webkit-mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 62%,transparent 100%);mask:radial-gradient(ellipse 46% 50% at 50% 50%,#000 62%,transparent 100%);animation:cpF 4.5s ease-in-out infinite}
+html body.cpp .cw b{font:900 22px/1.05 Archivo,sans-serif;font-stretch:115%;text-transform:uppercase;color:var(--gold)}html body.cpp .cw small{color:var(--mut)}
+html body.cpp .cw.has{border-style:solid;border-color:var(--gold);box-shadow:0 0 40px -10px var(--gold)}
+html body.cpp .cw .cr{width:56px;height:56px;font-size:18px}
+html body.cpp .hint{margin:10px 2px 0;color:var(--mut);font:700 11px "Space Mono",monospace}
+/* partidos */
+html body.cpp .rg{margin-bottom:22px}html body.cpp .rg h3{margin:0 0 10px;font:900 20px Archivo,sans-serif;font-stretch:120%;text-transform:uppercase;color:var(--lava2)}
+html body.cpp .ml{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:10px}
+html body.cpp .mc{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line);text-decoration:none;color:inherit;transition:transform .15s,border-color .15s}
+html body.cpp .mc:hover{transform:translateY(-2px);border-color:var(--lava2)}
+html body.cpp .mc .t{display:flex;align-items:center;gap:8px;min-width:0;font:800 14px Archivo,sans-serif;text-transform:uppercase}html body.cpp .mc .t span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.cpp .mc .t.r{flex-direction:row-reverse;text-align:right}
+html body.cpp .mc .m{display:flex;flex-direction:column;align-items:center;gap:3px}
+html body.cpp .mc .m b{font:900 20px/1 Archivo,sans-serif;white-space:nowrap}html body.cpp .mc .m small{color:var(--mut);font:700 9px "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+html body.cpp .mc.live{border-color:#ff2d55}html body.cpp .mc.live .m small{color:#ff4d6d}
+/* equipos */
+html body.cpp .tg2{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+html body.cpp .tm{position:relative;padding:16px;border-radius:20px;background:linear-gradient(165deg,var(--card2),var(--card));border:1px solid var(--line);overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .15s}
+html body.cpp .tm:hover{transform:translateY(-3px)}
+html body.cpp .tm:before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:var(--tc);opacity:.18;filter:blur(10px)}
+html body.cpp .tm .hd{display:flex;align-items:center;gap:12px}html body.cpp .tm .cr{width:48px;height:48px;font-size:15px}
+html body.cpp .tm b{font:900 18px/1.05 Archivo,sans-serif;font-stretch:110%;text-transform:uppercase}
+html body.cpp .tm .st{display:inline-block;margin-top:4px;padding:4px 8px;border-radius:8px;font:700 10px "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;background:rgba(46,229,157,.15);color:#2ee59d}
+html body.cpp .tm .st.out{background:rgba(255,255,255,.08);color:var(--mut)}html body.cpp .tm .st.ch{background:var(--gold);color:#120806}
+html body.cpp .tm.out{opacity:.62}
+html body.cpp .tm ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px}
+html body.cpp .tm li{display:flex;justify-content:space-between;gap:8px;font:700 12px "Space Mono",monospace;color:#e9d6c6}html body.cpp .tm li em{font-style:normal;color:var(--mut)}
+html body.cpp .tm li .w{color:#2ee59d}html body.cpp .tm li .l{color:#ff6b7d}
+/* reglas */
+html body.cpp .rl{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+html body.cpp .rc{padding:18px;border-radius:20px;background:var(--card);border:1px solid var(--line)}
+html body.cpp .rc i{font-style:normal;font-size:26px}html body.cpp .rc b{display:block;margin:8px 0 4px;font:900 17px Archivo,sans-serif;text-transform:uppercase}html body.cpp .rc p{margin:0;color:var(--mut);font-size:14px}
+html body.cpp .desc{margin:14px 0 0;padding:18px;border-radius:20px;background:var(--card);border:1px solid var(--line);white-space:pre-line;color:#f3dcc8}
+html body.cpp .pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+html body.cpp .pick[hidden]{display:none}html body.cpp .pick a{padding:7px 12px;border-radius:999px;border:1px solid var(--line);color:#fff4ea;text-decoration:none;font:700 12px "Space Mono",monospace}html body.cpp .pick a.on{background:var(--vio);border-color:var(--vio)}
+html body.cpp .empty{padding:40px 20px;text-align:center;border-radius:24px;border:2px dashed var(--line);color:var(--mut)}
+html body.cpp .foot{margin:40px 0 30px;color:var(--mut);font-size:12px;text-align:center}
+#toast3{position:fixed;left:50%;bottom:76px;transform:translateX(-50%) translateY(20px);background:#1a0f17;border:1px solid var(--lava2,#ffb02e);color:#fff4ea;border-radius:14px;padding:12px 20px;opacity:0;transition:.25s;z-index:120;pointer-events:none}#toast3.on{opacity:1;transform:translateX(-50%)}
+@media(max-width:760px){
+  html body.cpp .cph{grid-template-columns:1fr;text-align:left}html body.cpp .tro{position:absolute;right:-18px;top:6px;width:110px;opacity:.38;z-index:-1}html body.cpp .nxt .tg{justify-self:start}html body.cpp .acts .btn2{flex:1;justify-content:center;padding:11px 10px;font-size:13px;white-space:nowrap}
+  html body.cpp .cph h1{padding-right:70px}
+  html body.cpp .bk{grid-auto-columns:calc(100vw - 76px);gap:18px}html body.cpp .bk-w{padding:16px 12px}
+  html body.cpp .bc:not(:last-child) .sl:after,html body.cpp .bc.pr .sl:nth-child(odd):before,html body.cpp .bc:not(:first-child) .sl .ktie:before{display:none}
+  html body.cpp .nxt{grid-template-columns:1fr;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){html body.cpp *{animation:none!important}}
+/* ===== Supernova: cielo, estrellas y oro ===== */
+html body.cpp.nova{--lava:#8f7bff;--lava2:#5fd4ff;--gold:#ffd23f;--vio:#8f7bff;--vio2:#c3b5ff;--ink:#0d0a26;--card:#15123a;--card2:#1d1950;--line:rgba(143,123,255,.28);--mut:#b8b2e6;--k1:#5fd4ff;--k2:#ffd23f;--k3:#ff7ad9;--k4:#c6ff1a;background:#0b0920!important;color:#f1eeff}
+html body.cpp.nova:before,html body.cpp.nova:after{background:radial-gradient(50% 40% at 0 0,rgba(95,212,255,.2),transparent 70%),radial-gradient(40% 35% at 100% 10%,rgba(255,122,217,.18),transparent 70%)!important}
+html body.cpp.nova .cph{border-color:rgba(159,216,255,.45);box-shadow:0 0 0 4px #0b0920,0 0 0 6px rgba(143,123,255,.45),0 30px 80px -30px rgba(95,212,255,.5)}
+html body.cpp.nova .cph-bg{background-image:url("img/bn-starnova.webp")}
+html body.cpp.nova .cph:before{background:linear-gradient(90deg,rgba(11,9,32,.92) 0,rgba(11,9,32,.7) 45%,rgba(11,9,32,.15) 100%),linear-gradient(0deg,rgba(11,9,32,.9),transparent 55%)}
+html body.cpp.nova .cph h1{background:linear-gradient(180deg,#ffffff 0,#c9e9ff 40%,#8f7bff 80%,#ff7ad9 100%);-webkit-background-clip:text;background-clip:text}
+html body.cpp.nova .ey{color:#9fd8ff}html body.cpp.nova .ey i{background:#5fd4ff;box-shadow:0 0 12px #5fd4ff}
+html body.cpp.nova .k{background:rgba(11,9,32,.6)}html body.cpp.nova .k span{color:#d9d4ff}
+html body.cpp.nova .btn2{color:#0b0920;background:linear-gradient(180deg,#9fe6ff,#5fd4ff);border-color:#0b0920;box-shadow:4px 4px 0 #0b0920,0 0 0 2px rgba(95,212,255,.5)}
+html body.cpp.nova .btn2.v{background:linear-gradient(180deg,#ff9be4,#ff7ad9);color:#1a0624}
+html body.cpp.nova .tro img{filter:drop-shadow(0 0 30px rgba(143,123,255,.7))}html body.cpp.nova .tro:before{background:radial-gradient(circle,rgba(143,123,255,.6),transparent 65%)}
+html body.cpp.nova .star{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(159,216,255,.9);z-index:-1;animation:snT 3s ease-in-out infinite}
+html body.cpp.nova .star:nth-child(3n){width:70px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff);box-shadow:none;animation:snS 4s linear infinite}
+@keyframes snT{50%{opacity:.15;transform:scale(.5)}}@keyframes snS{0%{transform:translate(0,0) rotate(-24deg);opacity:0}10%{opacity:1}40%,100%{transform:translate(220px,95px) rotate(-24deg);opacity:0}}
+html body.cpp.nova .chp{background:linear-gradient(100deg,#2b2160,#15123a 60%)}
+html body.cpp.nova .nxt .tg{background:#5fd4ff;color:#0b0920}html body.cpp.nova .nxt.live .tg{background:#ff2d55;color:#fff}
+html body.cpp.nova .road button{color:#f1eeff}html body.cpp.nova .road button.now{background:linear-gradient(160deg,#2a2370,var(--card));box-shadow:0 0 24px -8px #8f7bff}
+html body.cpp.nova .road button i{background:linear-gradient(90deg,#5fd4ff,#ff7ad9)}
+html body.cpp.nova .cptabs{background:linear-gradient(#0b0920 70%,transparent)}html body.cpp.nova .cptabs button{color:#f1eeff;border-color:rgba(143,123,255,.4)}html body.cpp.nova .cptabs button.on{background:#5fd4ff;border-color:#5fd4ff;color:#0b0920}
+html body.cpp.nova .bk-w{background:linear-gradient(160deg,#1b1650,#100d2e 60%,#22123f)}html body.cpp.nova .bk{--cn:rgba(159,216,255,.4)}
+html body.cpp.nova .tr.w .gl{background:linear-gradient(180deg,#9fe6ff,#5fd4ff);color:#0b0920}html body.cpp.nova .tr.w .nm:after{color:#5fd4ff}
+html body.cpp.nova .rg h3{color:#9fd8ff}html body.cpp.nova .cr{background-color:#221d55}
+html body.cpp.nova .cw{border-color:rgba(255,210,63,.45);background:radial-gradient(circle at 50% 35%,rgba(143,123,255,.28),transparent 65%)}
+#toast3{background:#15123a}
+</style></head>
+<body class="cpp nova ac" data-cup="nova"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="wrap" id="app">
+  <section class="cph"><div class="cph-bg"></div>
+    <div><div class="ey mono"><i></i><span id="eyT">Copa eliminatoria · Partido único</span></div>
+      <h1 id="ttl">Supernova</h1>
+      <p class="sub" id="sub">Un solo partido por cruce: el que gana, avanza. Sin segundas oportunidades.</p>
+      <div class="ks" id="ks"></div>
+      <div class="acts"><a class="btn2" href="prediccion.html">🔮 Predice el cuadro</a><button class="btn2 v" type="button" id="shr">📸 Compartir el cuadro</button></div>
+      <div class="pick" id="pick" hidden></div></div>
+    <div class="tro"><img id="tro" src="trofeos/supernova.webp" alt="Trofeo de la Supernova" decoding="async"></div>
+  </section>
+  <div id="chp"></div>
+  <div id="nx"></div>
+  <div class="road" id="road" aria-label="Camino al título"></div>
+  <div class="cptabs" role="tablist"><button class="on" data-p="cuadro" type="button">🏆 Cuadro</button><button data-p="partidos" type="button">🎮 Partidos</button><button data-p="equipos" type="button">🛡️ Equipos</button><button data-p="reglas" type="button">📜 Reglas</button></div>
+  <section class="pane" id="p-cuadro"></section>
+  <section class="pane" id="p-partidos" hidden></section>
+  <section class="pane" id="p-equipos" hidden></section>
+  <section class="pane" id="p-reglas" hidden></section>
+  <p class="foot">Magna Sports es una comunidad independiente y gratuita. No es una plataforma oficial de Supercell ni está afiliada a ella.</p>
+</main>
+<div id="toast3" role="status"></div>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="copa.js"></script>
+<script src="mov.js" defer></script>
+</body></html>

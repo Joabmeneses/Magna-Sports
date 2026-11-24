@@ -67,16 +67,44 @@ var MAGNA = (function () {
   var SHOP_DEFAULT = [
     ['c-sangre', 'color', 'Carmesí', 'comun', 200, 'sangre'], ['c-menta', 'color', 'Menta', 'comun', 200, 'menta'], ['c-oro', 'color', 'Nombre dorado', 'rara', 400, 'oro'], ['c-hielo', 'color', 'Hielo', 'rara', 450, 'hielo'],
     ['c-neon-rosa', 'color', 'Neón rosa', 'epica', 900, 'neon-rosa'], ['c-neon-cian', 'color', 'Neón cian', 'epica', 900, 'neon-cian'], ['c-neon-verde', 'color', 'Neón verde', 'epica', 900, 'neon-verde'],
-    ['c-galaxia', 'color', 'Galaxia', 'legendaria', 1800, 'galaxia'], ['c-fuego', 'color', 'Fuego vivo', 'legendaria', 2000, 'fuego'], ['c-arcoiris', 'color', 'Arcoíris', 'legendaria', 2500, 'arcoiris'],
+    ['c-galaxia', 'color', 'Galaxia', 'rara', 1800, 'galaxia'], ['c-fuego', 'color', 'Fuego vivo', 'rara', 2000, 'fuego'], ['c-arcoiris', 'color', 'Arcoíris', 'rara', 2500, 'arcoiris'],
     ['p-noche', 'plate', 'Placa Medianoche', 'comun', 200, 'noche'], ['p-plata', 'plate', 'Placa de plata', 'comun', 250, 'plata'], ['p-selva', 'plate', 'Placa Selva', 'comun', 250, 'selva'], ['p-magna', 'plate', 'Placa Magna', 'rara', 500, 'magna'],
-    ['p-fuego', 'plate', 'Placa de fuego', 'epica', 1000, 'fuego'], ['p-neon', 'plate', 'Placa neón', 'epica', 1100, 'neon'], ['p-oro', 'plate', 'Placa de oro', 'epica', 1200, 'oro'], ['p-galaxia', 'plate', 'Placa Galaxia', 'legendaria', 2000, 'galaxia'],
+    ['p-fuego', 'plate', 'Placa de fuego', 'epica', 1000, 'fuego'], ['p-neon', 'plate', 'Placa neón', 'epica', 1100, 'neon'], ['p-oro', 'plate', 'Placa de oro', 'epica', 1200, 'oro'], ['p-sakura', 'plate', 'Placa Sakura', 'epica', 1300, 'sakura'], ['p-galaxia', 'plate', 'Placa Galaxia', 'rara', 2000, 'galaxia'],
     ['f-oro', 'frame', 'Marco dorado', 'rara', 600, 'oro'], ['f-hielo', 'frame', 'Marco de hielo', 'rara', 600, 'hielo'], ['f-toxico', 'frame', 'Marco tóxico', 'rara', 700, 'toxico'], ['f-neon', 'frame', 'Marco neón', 'epica', 1200, 'neon'],
-    ['f-elite', 'frame', 'Marco Élite', 'epica', 1500, 'elite'], ['f-fuego', 'frame', 'Marco de fuego', 'legendaria', 2200, 'fuego'], ['f-arcoiris', 'frame', 'Marco arcoíris', 'legendaria', 2400, 'arcoiris'], ['f-corona', 'frame', 'Corona real', 'legendaria', 3000, 'corona'],
+    ['f-elite', 'frame', 'Marco Élite', 'epica', 1500, 'elite'], ['f-fuego', 'frame', 'Marco de fuego', 'rara', 2200, 'fuego'], ['f-arcoiris', 'frame', 'Marco arcoíris', 'rara', 2400, 'arcoiris'], ['f-corona', 'frame', 'Corona real', 'rara', 3000, 'corona'],
     ['t-novato', 'title', 'Novato', 'comun', 100, ''], ['t-muro', 'title', 'El Muro', 'comun', 150, ''], ['t-goleador', 'title', 'Goleador', 'rara', 300, ''], ['t-mago', 'title', 'El Mago', 'rara', 300, ''], ['t-capitan', 'title', 'Capitán', 'rara', 350, ''],
-    ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'legendaria', 1500, '']
+    ['t-imparable', 'title', 'Imparable', 'epica', 700, ''], ['t-rey', 'title', 'Rey de la cancha', 'epica', 800, ''], ['t-leyenda', 'title', 'Leyenda viva', 'rara', 1500, '']
   ].map(function (x) { return { id: x[0], type: x[1], name: x[2], rarity: x[3], price: x[4], style: x[5], active: true }; });
+  // Colección Mítica: lo más premium y caro de la tienda
+  var SHOP_MITICA = [
+    ['m-c-holo', 'color', 'Holográfico', 8000, 'holo'], ['m-c-aurora', 'color', 'Aurora boreal', 9000, 'aurora'], ['m-c-lava', 'color', 'Lava fundida', 10000, 'lava'], ['m-c-diamante', 'color', 'Diamante', 12000, 'diamante'], ['m-c-oro24', 'color', 'Oro 24K', 15000, 'oro24'], ['m-c-vacio', 'color', 'Vacío', 18000, 'vacio'], ['m-c-punk', 'color', 'Punk', 12000, 'punk', { rarity: 'legendaria' }], ['m-c-dragoneterno', 'color', 'Nombre Dragón eterno', 6000, 'dragoneterno', { rarity: 'legendaria' }],
+    ['m-p-holo', 'plate', 'Placa holográfica', 10000, 'holo'], ['m-p-aurora', 'plate', 'Placa Aurora', 11000, 'aurora'], ['m-p-cosmos', 'plate', 'Placa Cosmos', 12000, 'cosmos'], ['m-p-diamante', 'plate', 'Placa de diamante', 14000, 'diamante'], ['m-p-dragon', 'plate', 'Placa del Dragón', 16000, 'dragon'], ['m-p-trono', 'plate', 'Placa del Trono', 20000, 'trono'],
+    ['m-p-navidad', 'plate', 'Placa Navidad', 18000, 'navidad'],
+    ['m-f-holo', 'frame', 'Marco holográfico', 12000, 'holo'], ['m-f-aurora', 'frame', 'Marco Aurora', 13000, 'aurora'], ['m-f-rayo', 'frame', 'Marco Rayo', 15000, 'rayo'], ['m-f-diamante', 'frame', 'Marco de diamante', 18000, 'diamante'], ['m-f-dragon', 'frame', 'Marco del Dragón', 20000, 'dragon'], ['m-f-vacio', 'frame', 'Marco del Vacío', 25000, 'vacio'],
+    ['m-f-navidad', 'frame', 'Marco Navidad', 6000, 'navidad', { lv: 1 }], ['m-f-navidad-2', 'frame', 'Navidad · Encendida', 9000, 'navidad', { lv: 2, upg: 'm-f-navidad', req: 'm-f-navidad' }], ['m-f-navidad-3', 'frame', 'Navidad · Noche mágica', 15000, 'navidad', { lv: 3, upg: 'm-f-navidad', req: 'm-f-navidad-2' }], ['m-f-magenta', 'frame', 'Marco Magenta', 7000, 'magenta', { rarity: 'legendaria', lv: 1 }], ['m-f-magenta-2', 'frame', 'Magenta · Corriente', 10000, 'magenta', { rarity: 'legendaria', lv: 2, upg: 'm-f-magenta', req: 'm-f-magenta' }], ['m-f-magenta-3', 'frame', 'Magenta · Singularidad', 20000, 'magenta', { rarity: 'legendaria', lv: 3, upg: 'm-f-magenta', req: 'm-f-magenta-2' }], ['m-f-blackmatter', 'frame', 'Marco Black Matter', 8000, 'blackmatter', { rarity: 'legendaria', lv: 1 }], ['m-f-blackmatter-2', 'frame', 'Black Matter · Derrame', 16000, 'blackmatter', { rarity: 'legendaria', lv: 2, upg: 'm-f-blackmatter', req: 'm-f-blackmatter' }], ['m-f-blackmatter-3', 'frame', 'Black Matter · Materia oscura', 24000, 'blackmatter', { rarity: 'legendaria', lv: 3, upg: 'm-f-blackmatter', req: 'm-f-blackmatter-2' }], ['m-p-dragoneterno', 'plate', 'Placa Dragón eterno', 5000, 'dragoneterno', { rarity: 'legendaria', lv: 1 }], ['m-p-dragoneterno-2', 'plate', 'Placa Dragón eterno · Despierta', 8000, 'dragoneterno', { rarity: 'legendaria', lv: 2, upg: 'm-p-dragoneterno', req: 'm-p-dragoneterno' }], ['m-p-dragoneterno-3', 'plate', 'Placa Dragón eterno · Furia', 15000, 'dragoneterno', { rarity: 'legendaria', lv: 3, upg: 'm-p-dragoneterno', req: 'm-p-dragoneterno-2' }], ['m-f-garra', 'frame', 'Marco Garra Sangrienta', 7000, 'garra', { rarity: 'legendaria', lv: 1 }], ['m-f-garra-2', 'frame', 'Garra · Herida', 10000, 'garra', { rarity: 'legendaria', lv: 2, upg: 'm-f-garra', req: 'm-f-garra' }], ['m-f-garra-3', 'frame', 'Garra · Pacto de sangre', 20000, 'garra', { rarity: 'legendaria', lv: 3, upg: 'm-f-garra', req: 'm-f-garra-2' }], ['m-f-mira', 'frame', 'Marco Francotirador', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 1 }], ['m-f-mira-2', 'frame', 'Francotirador · En la mira', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 2, upg: 'm-f-mira', req: 'm-f-mira' }], ['m-f-mira-3', 'frame', 'Francotirador · Headshot', 0, 'mira', { rarity: 'legendaria', exclusive: true, raffle: true, lv: 3, upg: 'm-f-mira', req: 'm-f-mira-2' }], ['m-f-sierra', 'frame', 'Marco Sierra Infernal', 7000, 'sierra', { rarity: 'legendaria', lv: 1 }], ['m-f-sierra-2', 'frame', 'Sierra · Encendida', 10000, 'sierra', { rarity: 'legendaria', lv: 2, upg: 'm-f-sierra', req: 'm-f-sierra' }], ['m-f-sierra-3', 'frame', 'Sierra · Desatada', 20000, 'sierra', { rarity: 'legendaria', lv: 3, upg: 'm-f-sierra', req: 'm-f-sierra-2' }], ['m-f-ouroboros', 'frame', 'Marco Dragón eterno', 7000, 'ouroboros', { rarity: 'legendaria', lv: 1 }], ['m-f-ouroboros-2', 'frame', 'Dragón eterno · Despierto', 10000, 'ouroboros', { rarity: 'legendaria', lv: 2, upg: 'm-f-ouroboros', req: 'm-f-ouroboros' }], ['m-f-ouroboros-3', 'frame', 'Dragón eterno · Furia', 20000, 'ouroboros', { rarity: 'legendaria', lv: 3, upg: 'm-f-ouroboros', req: 'm-f-ouroboros-2' }],
+    ['m-t-magnate', 'title', 'Magnate', 6000, ''], ['m-t-inmortal', 'title', 'Inmortal', 8000, ''], ['m-t-elegido', 'title', 'El Elegido', 10000, ''], ['m-t-dios', 'title', 'Dios del balón', 12000, ''], ['m-t-emperador', 'title', 'Emperador de Magna', 15000, '']
+  ].map(function (x) { return Object.assign({ id: x[0], type: x[1], name: x[2], rarity: 'mitica', price: x[3], style: x[4], active: true }, x[5] || {}); });
+  // Cosméticos exclusivos: no se compran; se entregan solos al desbloquear la insignia indicada en "award" (o los da la administración si es "manual")
+  var SHOP_EXCL = [
+    ['x-balon-marco', 'frame', 'Marco Balón de Oro', 'rara', 'balon', 'balon'], ['x-balon-titulo', 'title', 'Balón de Oro', 'rara', '', 'balon'],
+    ['x-campeon', 'plate', 'Placa de Campeón', 'epica', 'campeon', 'campeon'], ['x-dinastia', 'plate', 'Placa Dinastía', 'rara', 'dinastia', 'dinastia'],
+    ['x-estrella', 'color', 'Estrella fugaz', 'rara', 'estrella', 'estrella'], ['x-leyenda', 'frame', 'Marco Leyenda', 'rara', 'leyenda', 'leyenda'],
+    ['x-hattrick', 'title', 'Rey del hat-trick', 'epica', '', 'hattrick'], ['x-perfecto', 'title', 'Partido perfecto', 'rara', '', 'perfecto'],
+    ['x-fundador', 'frame', 'Fundador de Magna', 'rara', 'fundador', 'manual'], ['x-jackpot', 'frame', 'Jackpot Ludópata', 'legendaria', 'jackpot', 'manual', { lv: 1 }], ['x-jackpot-2', 'frame', 'Jackpot · Racha', 'legendaria', 'jackpot', 'manual', { lv: 2, upg: 'x-jackpot', req: 'x-jackpot' }], ['x-jackpot-3', 'frame', 'Jackpot · Premio mayor', 'legendaria', 'jackpot', 'manual', { lv: 3, upg: 'x-jackpot', req: 'x-jackpot-2' }]
+  ].map(function (x) { return Object.assign({ id: x[0], type: x[1], name: x[2], rarity: x[3], price: 0, style: x[4], active: true, exclusive: true, award: x[5] }, x[6] || {}); });
+  var AWARD_TXT = { balon: 'Gana el Balón de Oro', campeon: 'Gana un título', dinastia: 'Gana 5 títulos', estrella: 'Sé MVP 10 veces', leyenda: 'Juega 75 partidos', hattrick: 'Marca 3 goles en un partido', perfecto: 'Saca un 10 de nota en un partido', manual: 'Lo entrega la administración', ganador: 'Gana 20 partidos', goleador: 'Marca 10 goles', canonero: 'Marca 50 goles', veterano: 'Juega 25 partidos', mvp: 'Sé MVP de un partido', elite: 'Llega a media 80' };
+  // Arte oficial de los trofeos (carpeta trofeos/), en el orden de importancia de Magna
+  var TROPHY_ART = [['omegacup', /omega/i, 'OmegaCup'], ['mundial', /mundial|world/i, 'Mundial'], ['champions', /champions/i, 'Champions'], ['liga', /\bliga\b|divisi[oó]n|league/i, 'Liga'],
+    ['supernova', /supernova/i, 'Supernova'], ['centerium', /centerium/i, 'Centerium'], ['magnacup', /magna\s*cup|copa\s+magna|^\s*magna\b/i, 'MagnaCup'], ['copa-del-rey', /copa\s+del\s+rey|\brey\b/i, 'Copa del Rey'],
+    ['copa-de-oro', /copa\s+de\s+oro|gold\s*cup/i, 'Copa de Oro'], ['balon-de-oro', /bal[oó]n\s+de\s+oro|ballon/i, 'Balón de Oro']];
+  var ART_CAT = { liga: 'liga', champions: 'champions', mundial: 'mundial' };
+  function trophyArt(name, cat) { var n = String(name || ''), k = null;
+    if (/bal[oó]n\s+de\s+oro/i.test(n)) k = 'balon-de-oro'; else for (var i = 0; i < TROPHY_ART.length && !k; i++) if (TROPHY_ART[i][1].test(n)) k = TROPHY_ART[i][0];
+    if (!k && cat && ART_CAT[cat]) k = ART_CAT[cat]; if (!k) return null;
+    var o = 0; TROPHY_ART.forEach(function (x, j) { if (x[0] === k) o = j; }); return { key: k, src: 'trofeos/' + k + '.webp', label: TROPHY_ART[o][2], ord: o }; }
+  function trophyOrd(name, cat) { var a = trophyArt(name, cat); return a ? a.ord : 99; }
   // Partidos narrados de un jugador con su nota, goles, MVP y resultado (para su perfil)
-  function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
+  function playerGames(pid) { var out = []; S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).concat(histPlayed()).sort(byTime).forEach(function (m) { var L = m.live, sd = null;
       ['h', 'a'].forEach(function (k) { if (((L.lineup && L.lineup[k]) || []).indexOf(pid) >= 0) sd = k; }); (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in === pid) sd = e.side || 'h'; }); if (!sd) return;
       var g = (L.ev || []).filter(function (e) { return e.k === 'goal' && e.player === pid; }).length, my = sd === 'h' ? m.hs : m.as, op = sd === 'h' ? m.as : m.hs;
       out.push({ m: m, side: sd, team: sd === 'h' ? m.home : m.away, rival: sd === 'h' ? m.away : m.home, g: g, r: (L.ratings || {})[pid], mvp: String(L.mvp) === String(pid), res: my > op ? 'W' : my < op ? 'L' : 'D', score: my + '-' + op }); });
@@ -106,20 +134,20 @@ var MAGNA = (function () {
   var TCOL = ['#ff9d00', '#8b5cf6', '#4ade80', '#f472b6', '#a3e635', '#22d3ee', '#c9c7a6', '#2ee59d', '#fb7185', '#60a5fa'];
   function teamColor(tid) { var i = S.teams.map(function (t) { return t.id; }).indexOf(tid); return TCOL[(i < 0 ? 0 : i) % TCOL.length]; }
   // ---------- previa de un partido: lo que pesa en las cuotas de las apuestas ----------
-  // Nivel (resultados contra rivales fuertes o débiles), forma reciente (últimos 5), cara a cara (incluye el historial) y puntos de ranking.
+  // Forma reciente (últimos 5), cara a cara (incluye el historial), puntos de ranking y ventaja de local. (El nivel de equipo ya no se usa.)
   function matchPreview(m) {
-    var H = m.home, A = m.away, TL = teamLevels(), PT = teamPoints();
+    var H = m.home, A = m.away, PT = teamPoints();
     var played = histMatches().concat(S.matches.filter(function (x) { return x.status === 'finished' && x.hs != null && x.as != null && x.hs !== x.as && x.id !== m.id; })).sort(byTime).reverse();
     function won(x, t) { return x.home === t ? x.hs > x.as : x.as > x.hs; }
     function form(t) { var l = played.filter(function (x) { return x.home === t || x.away === t; }).slice(0, 5); return { s: l.map(function (x) { return won(x, t) ? 'V' : 'D'; }).join(''), w: l.length ? l.filter(function (x) { return won(x, t); }).length / l.length : 0.5, n: l.length }; }
     var fh = form(H), fa = form(A), meet = played.filter(function (x) { return (x.home === H && x.away === A) || (x.home === A && x.away === H); }), wh = meet.filter(function (x) { return won(x, H); }).length, wa = meet.length - wh;
-    var eh = TL.get(H), ea = TL.get(A), ph = (PT[H] || {}).pts || 0, pa = (PT[A] || {}).pts || 0;
-    var rk = S.teams.map(function (t) { return { id: t.id, p: (PT[t.id] || {}).pts || 0, l: TL.get(t.id) }; }).sort(function (a, b) { return b.p - a.p || b.l - a.l; }).map(function (x) { return x.id; });
-    var parts = { casa: 0.15, nivel: (eh - ea) * 0.004, forma: (fh.w - fa.w) * 0.9, h2h: meet.length ? (wh - wa) / (meet.length + 2) * 1.2 : 0, ranking: (ph - pa) / Math.max(ph + pa, 50000) * 0.8 };
-    var L = Math.max(-2.4, Math.min(2.4, parts.casa + parts.nivel + parts.forma + parts.h2h + parts.ranking));
+    var ph = (PT[H] || {}).pts || 0, pa = (PT[A] || {}).pts || 0;
+    var rk = S.teams.map(function (t) { return { id: t.id, p: (PT[t.id] || {}).pts || 0 }; }).sort(function (a, b) { return b.p - a.p; }).map(function (x) { return x.id; });
+    var parts = { casa: 0.15, forma: (fh.w - fa.w) * 0.9, h2h: meet.length ? (wh - wa) / (meet.length + 2) * 1.2 : 0, ranking: (ph - pa) / Math.max(ph + pa, 50000) * 0.8 };
+    var L = Math.max(-2.4, Math.min(2.4, parts.casa + parts.forma + parts.h2h + parts.ranking));
     return { sd: Math.round(L / 2 * 1000) / 1000, p: 1 / (1 + Math.exp(-L)), parts: parts,
       h2h: { n: meet.length, h: wh, a: wa, last: meet.slice(0, 5).map(function (x) { return { at: x.at, h: x.home === H ? x.hs : x.as, a: x.home === H ? x.as : x.hs, hist: !!x.hist }; }) },
-      form: { h: fh, a: fa }, level: { h: Math.round(eh), a: Math.round(ea) }, points: { h: ph, a: pa }, pos: { h: rk.indexOf(H) + 1, a: rk.indexOf(A) + 1, of: rk.length } };
+      form: { h: fh, a: fa }, points: { h: ph, a: pa }, pos: { h: rk.indexOf(H) + 1, a: rk.indexOf(A) + 1, of: rk.length } };
   }
   // ---------- puntos del ranking de equipos ----------
   // Liga 15.000 · Champions 35.000 · Mundial 50.000 · otro torneo 25.000 (por victoria) · amistoso 5.000 (gane o pierda).
@@ -158,13 +186,29 @@ var MAGNA = (function () {
       if (m.type !== 'tournament' || m.cid !== c.id || m.group !== g.name || m.status !== 'finished') return;
       var a = r[m.home], b = r[m.away]; if (!a || !b) return;
       a.pj++; b.pj++; a.gf += m.hs; a.gc += m.as; b.gf += m.as; b.gc += m.hs;
-      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3;
+      var w = m.hs > m.as ? [a, b] : [b, a]; w[0].g++; w[1].p++; w[0].pts += 3; if (c.format === 'champions') w[1].pts += 1; // Champions: victoria 3, derrota 1
     });
     return Object.keys(r).map(function (k) { r[k].dg = r[k].gf - r[k].gc; return r[k]; }).sort(function (x, y) { return y.pts - x.pts || y.dg - x.dg || y.gf - x.gf || x.team.localeCompare(y.team, 'es'); }).map(function (x, i) { x.pos = i + 1; return x; });
   }
   // Formato Champions: liga ida y vuelta → los D primeros directo, los K siguientes al play-off (D = K/2), el resto fuera.
   // K es la mayor potencia de 2 que no supera la mitad de los equipos (36 → 8 directo + 16 play-off, como la Champions real).
   function champSplit(n) { if (n < 3) return null; var k = 2; while (k * 2 <= n / 2) k *= 2; return { direct: k / 2, playoff: k, out: n - k / 2 - k }; }
+  // Eliminatoria a ida y vuelta: cada llave con su ida, su vuelta, el global y el desempate (si el global quedó igual).
+  // Las rondas que todavía no se juegan salen con los ganadores que se van conociendo (o vacías).
+  function koTies(c) {
+    if (!c || c.format !== 'knockout' || c.legs !== 2) return null;
+    var R = {}, st = c.state || {}, n = c.teamIds.length, size = 1; while (size < n) size *= 2;
+    S.matches.forEach(function (m) { if (m.type !== 'tournament' || m.cid !== c.id || m.status === 'cancelled' || !m.leg) return; var r = String(m.round || '').split(' · ')[0], T = R[r] = R[r] || {}; (T[m.tie] = T[m.tie] || {})[m.leg] = m; });
+    var g = function (m, t) { return m.home === t ? Number(m.hs) || 0 : Number(m.as) || 0; }, fin = function (m) { return m && m.status === 'finished'; }, out = [], prev = null;
+    for (var s = size; s >= 2; s /= 2) { var rn = koName(s), T = R[rn] || {}, ties = [];
+      for (var i = 0; i < s / 2; i++) { var L = T[i] || {}, a = null, b = null;
+        if (L[1]) { a = L[1].home; b = L[1].away; } else if (st.round === rn && st.ties && st.ties[i]) { a = st.ties[i][0]; b = st.ties[i][1]; } else if (prev) { a = prev[2 * i].win; b = prev[2 * i + 1].win; }
+        var t = { a: a, b: b, ida: L[1] || null, vta: L[2] || null, des: L[3] || null, ga: 0, gb: 0, win: null, live: [L[1], L[2], L[3]].some(function (m) { return m && m.status === 'live'; }) };
+        [L[1], L[2]].forEach(function (m) { if (fin(m)) { t.ga += g(m, a); t.gb += g(m, b); } });
+        if (fin(L[1]) && fin(L[2])) { if (t.ga !== t.gb) t.win = t.ga > t.gb ? a : b; else if (fin(L[3]) && L[3].hs !== L[3].as) t.win = L[3].hs > L[3].as ? L[3].home : L[3].away; }
+        ties.push(t); }
+      out.push({ round: rn, ties: ties }); prev = ties; }
+    return out; }
   function koName(n) { return n === 2 ? 'Final' : n === 4 ? 'Semifinales' : n === 8 ? 'Cuartos de final' : n === 16 ? 'Octavos de final' : 'Ronda de ' + n; }
   // Orden de los clasificados para el primer cruce: en la lista, el puesto i juega contra el puesto n-1-i.
   // Con 2 por grupo se cruzan grupos (1.º A vs 2.º B, 1.º B vs 2.º A...). Los primeros reciben los pases directos si sobran equipos.
@@ -212,7 +256,7 @@ var MAGNA = (function () {
   }
   function compOut(c, kind) {
     var o = { id: c.id, name: c.name, description: c.description || '', status: c.status, has_logo: false, teams: c.teamIds.map(function (t) { return { id: t, name: teamName(t) }; }),
-      config: { format: kind === 'leagues' ? 'round_robin' : c.format, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
+      config: { format: kind === 'leagues' ? 'round_robin' : c.format, legs: c.legs || 1, best_of: c.best_of || 1, rules: c.rules || '', max_teams: 64 } };
     if (kind === 'leagues') { o.standings = standings(Object.assign({ kind: 'league' }, c)); }
     else { o.bracket = c.state ? { phase: c.state.phase, round: c.state.round, champion: c.state.champion ? { id: c.state.champion, name: teamName(c.state.champion) } : undefined, groups: c.groups ? c.groups.map(function (g) { return { name: g.name, table: groupTable(c, g) }; }) : undefined } : null; }
     return o;
@@ -225,13 +269,16 @@ var MAGNA = (function () {
   function tierRank(id) { for (var i = 0; i < TIERS.length; i++) if (TIERS[i][0] === id) return i; return 1; }
   // ---------- nivel de los equipos (para saber si el rival era fuerte o débil) ----------
   // Cada equipo empieza en 1000 puntos de nivel. Ganar suma y perder resta, más o menos según el rival (sistema tipo Elo).
-  function byTime(a, b) { return String(a.at || '').localeCompare(String(b.at || '')) || a.id - b.id; }
+  // fechas 'AAAA-MM-DD HH:MM:SS': se ordenan comparando el texto directo (mucho más rápido que localeCompare)
+  function byTime(a, b) { var x = String(a.at || ''), y = String(b.at || ''); return x < y ? -1 : x > y ? 1 : a.id - b.id; }
   // ---------- historial (torneos jugados antes del sitio) ----------
   // Sus marcadores cuentan para el nivel de los equipos; sus campeones suman títulos. No tienen alineaciones ni valoraciones.
   function hnk(x) { return String(x || '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase(); }
   function histTeam(name) { var t = S.teams.filter(function (x) { return hnk(x.name) === hnk(name); })[0]; return t ? t.id : 'x:' + hnk(name); }
   function histDate(d) { d = String(d || ''); return /^\d{4}$/.test(d) ? d + '-01-01' : /^\d{4}-\d{2}$/.test(d) ? d + '-01' : d || '0000-01-01'; }
-  function histMatches() { var out = [], n = 0; (S.history || []).forEach(function (e) { var d = histDate(e.date); (e.matches || []).forEach(function (m, i) { n++; out.push({ id: -1e6 + n, hist: e.id, at: (m.d ? histDate(m.d) : d) + ' 00:' + String(Math.floor(i / 60)).padStart(2, '0') + ':' + String(i % 60).padStart(2, '0'), home: histTeam(m.home), away: histTeam(m.away), hs: m.hs, as: m.as }); }); }); return out; }
+  function histMatches() { var out = [], n = 0; (S.history || []).forEach(function (e) { var d = histDate(e.date); (e.matches || []).forEach(function (m, i) { n++; out.push({ id: -1e6 + n, hist: e.id, at: (m.d ? histDate(m.d) : d) + ' 00:' + String(Math.floor(i / 60)).padStart(2, '0') + ':' + String(i % 60).padStart(2, '0'), home: histTeam(m.home), away: histTeam(m.away), hs: m.hs, as: m.as, hp: m.hp, ap: m.ap, hname: e.name }); }); }); return out; }
+  // partidos del historial con jugadores anotados (hp/ap = ids de quienes jugaron por local/visitante): cuentan para partidos jugados, victorias y media
+  function histPlayed() { return histMatches().filter(function (m) { return (m.hp && m.hp.length) || (m.ap && m.ap.length); }).map(function (m) { return Object.assign({}, m, { status: 'finished', live: { lineup: { h: m.hp || [], a: m.ap || [] }, ev: [], ratings: {} } }); }); }
   function teamLevels() {
     var R = {}, K = 40, get = function (t) { return R[t] == null ? 1000 : R[t]; }, pre = {};
     var past = histMatches(), real = S.matches.filter(function (m) { return m.status === 'finished' && m.hs != null && m.as != null; });
@@ -248,7 +295,7 @@ var MAGNA = (function () {
   function playerStats() {
     var TL = teamLevels(), st = {};
     S.players.forEach(function (p) { st[p.id] = { pj: 0, g: 0, w: 0, l: 0, mvp: 0, media: 10, nota: null, rated: 0, sum: 0, score: 0, topW: 0, upsetL: 0, opp: 0, games: [] }; });
-    S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).sort(byTime).forEach(function (m) {
+    S.matches.filter(function (m) { return m.status === 'finished' && m.live; }).concat(histPlayed()).sort(byTime).forEach(function (m) {
       var L = m.live, win = m.hs > m.as ? 'h' : 'a', apps = { h: {}, a: {} }, pr = TL.pre[m.id] || { h: 1000, a: 1000, eh: .5 };
       ['h', 'a'].forEach(function (sd) { ((L.lineup && L.lineup[sd]) || []).forEach(function (id) { apps[sd][id] = 1; }); });
       (L.ev || []).forEach(function (e) { if (e.k === 'sub' && e.in) apps[e.side || 'h'][e.in] = 1; });
@@ -274,9 +321,15 @@ var MAGNA = (function () {
         ((m.live.lineup && m.live.lineup[sd]) || []).forEach(function (id) { who[id] = 1; }); (m.live.ev || []).forEach(function (e) { if (e.k === 'sub' && e.side === sd && e.in) who[e.in] = 1; }); });
       if (!Object.keys(who).length) S.players.forEach(function (p) { if (p.teamId === T.team) who[p.id] = 1; });
       Object.keys(who).forEach(function (id) { var x = st[id]; if (!x) return; x.titles = x.titles || []; x.titles.push(T.c.name); x.floor = (x.floor || 15) + T.w; }); });
-    (S.history || []).forEach(function (e) { (e.champIds || []).forEach(function (id) { var x = st[id], p = by(S.players, id); if (!x || !p) return; if ((p.prevTitles || []).some(function (n) { return hnk(n) === hnk(e.name); })) return; x.titles = x.titles || []; x.titles.push(e.name); x.floor = (x.floor || 15) + (e.mundial ? 15 : 10); }); });
+    // Un título del historial (por ejemplo «Champions III») reemplaza al título anterior genérico del jugador con el mismo nombre («Champions»): es el mismo trofeo, no se cuenta dos veces.
+    var prevLeft = {}; S.players.forEach(function (p) { prevLeft[p.id] = (p.prevTitles || []).slice(); });
+    (S.history || []).forEach(function (e) { (e.champIds || []).forEach(function (id) { var x = st[id], p = by(S.players, id); if (!x || !p) return; var L = prevLeft[id] || [], k = -1;
+      L.forEach(function (n, i) { if (k < 0 && hnk(n) === hnk(e.name)) k = i; }); if (k < 0) L.forEach(function (n, i) { if (k < 0 && hnk(baseName(n)) === hnk(baseName(e.name)) && editionNo(n) == null) k = i; });
+      if (k >= 0) L.splice(k, 1); x.titles = x.titles || []; x.titles.push(e.name); x.floor = (x.floor || 15) + (e.mundial ? 15 : 10); }); });
     // Títulos anteriores (historial cargado por la administración): Mundial +15, otros +10, igual que los del sitio.
-    S.players.forEach(function (p) { var x = st[p.id]; (p.prevTitles || []).forEach(function (n) { x.titles = x.titles || []; x.titles.push(n); x.floor = (x.floor || 15) + (/mundial|world/i.test(n) ? 15 : 10); }); });
+    // MVP y goles anteriores al sitio (totales cargados a mano): suman a sus números e insignias, no cambian la media
+    S.players.forEach(function (p) { var x = st[p.id], pv = p.prevStats; if (!x || !pv) return; x.mvp += Number(pv.mvp) || 0; x.g += Number(pv.g) || 0; });
+    S.players.forEach(function (p) { var x = st[p.id]; (prevLeft[p.id] || []).forEach(function (n) { x.titles = x.titles || []; x.titles.push(n); x.floor = (x.floor || 15) + (/mundial|world/i.test(n) ? 15 : 10); }); });
     Object.keys(st).forEach(function (id) { var x = st[id]; if (x.rated) x.nota = Math.round(x.sum / x.rated * 10) / 10; x.titles = x.titles || []; x.floor = x.floor ? Math.min(60, x.floor) : 10; if (x.floor > x.media) x.media = x.floor; if (!x.pj) return;
       x.opp = Math.round(x.opp / x.pj); var avg = x.score / x.pj, wgt = x.pj / (x.pj + 3);
       x.media = Math.max(x.floor, Math.min(100, Math.round(10 + (avg - 10) * wgt))); });
@@ -314,10 +367,10 @@ var MAGNA = (function () {
   load();
   return {
     get S() { return S; }, load: load, save: save, hasLocal: hasLocal, discardLocal: discardLocal, id: id, now: now, by: by, addNews: addNews, teamName: teamName, standings: standings, clone: clone, EMPTY: EMPTY,
-    MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
+    koTies: koTies, MODES: MODES, MAPS: MAPS, MODE_COLOR: MODE_COLOR, setLabel: setLabel, setScore: setScore, PHASES: PHASES, liveMinute: liveMinute, liveClock: liveClock, eventText: eventText, playerName: playerName,
     ROLES: ROLES, roleOf: roleOf, roleName: roleName, plays: plays, canCoach: canCoach, matchPreview: matchPreview, marketState: marketState, histMatches: histMatches, histTeam: histTeam, teamPoints: teamPoints, PTS: PTS, compKind: compKind, compOf: compOf, TIERS: TIERS, tierOf: tierOf, tierRank: tierRank, playerStats: playerStats, liveSecs: function (m) { return Math.floor(liveMs(m) / 1000); },
     teamLevels: teamLevels,
-    SHOP_DEFAULT: SHOP_DEFAULT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
+    trophyArt: trophyArt, trophyOrd: trophyOrd, TROPHY_ART: TROPHY_ART, SHOP_DEFAULT: SHOP_DEFAULT, SHOP_MITICA: SHOP_MITICA, SHOP_EXCL: SHOP_EXCL, AWARD_TXT: AWARD_TXT, playerGames: playerGames, playerBadges: playerBadges, ballonList: ballonList, ballonWho: ballonWho, ballonCount: ballonCount, baseName: baseName, editionNo: editionNo, romanNo: romanNo, toRoman: toRoman, editionName: editionName, groupTrophies: groupTrophies, groupTable: groupTable, groupSeeds: groupSeeds, champSplit: champSplit, koName: koName,
     TROPHY_CATS: [['liga', 'Liga'], ['torneo', 'Torneo'], ['champions', 'Champions'], ['mundial', 'Mundial'], ['otro', 'Otro']], teamTrophies: teamTrophies, teamColor: teamColor, TROPHY_ICON: { liga: '🥇', torneo: '🏆', champions: '⭐', mundial: '🌍', otro: '🎖️' },
     crestUrl: function (tid) { var t = by(S.teams, tid); return t && t.crest ? t.crest : null; },
     replace: function (o) { S = o; save(); },

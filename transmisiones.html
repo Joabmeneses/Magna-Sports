@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a0d18"><link rel="apple-touch-icon" href="img/app/apple-touch.png?v=3"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Magna">
+<title>Magna Arena · Transmisiones</title>
+<meta name="description" content="Partidos de Magna Sports en vivo y repeticiones.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:wght@400;700&family=Archivo+Black&display=swap"><link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="calle.css">
+<style>
+html body.trx{--ink:#0c0716;--coal:#170d2c;--panel:#1d1236;--pur:#8b5cf6;--pur2:#6d3fe0;--lime:#c6ff1a;--paper:#f2f2ee;--mut:#b9aee0;--red:#ff3b30;--dots:radial-gradient(rgba(255,255,255,.12) 1.2px,transparent 1.4px) 0 0/22px 22px;--stripes:repeating-linear-gradient(-62deg,rgba(255,255,255,.05) 0 2px,transparent 2px 20px);background:var(--coal)!important;background-image:none!important;color:var(--paper);font-family:Archivo,system-ui,sans-serif}
+html body.trx:before,html body.trx:after{display:none!important}
+html body.trx .tr-w{max-width:1200px;margin:0 auto;padding:22px 16px 130px}
+html body.trx .tr-h{position:relative;isolation:isolate;overflow:hidden;padding:clamp(22px,4vw,40px);background:var(--panel);border-bottom:4px solid var(--lime)}
+html body.trx .tr-h:before{content:"";position:absolute;inset:0;z-index:-2;background:var(--stripes),var(--dots),linear-gradient(115deg,var(--pur) 0 58%,var(--pur2) 58% 100%)}
+html body.trx .tr-h:after{content:"EN VIVO";position:absolute;right:-1%;bottom:-18%;z-index:-1;font:italic 400 clamp(110px,18vw,250px)/1 "Archivo Black",sans-serif;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.12);white-space:nowrap}
+html body.trx .tr-ey{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:var(--ink);color:#fff;font:700 12px/1 "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+html body.trx .tr-ey.on{background:var(--red)}html body.trx .tr-ey.on:before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:trP 1.2s infinite}@keyframes trP{50%{opacity:.25}}
+html body.trx .tr-h h1{margin:16px 0 10px;font:italic 400 clamp(48px,9vw,110px)/.9 "Archivo Black",sans-serif;text-transform:uppercase;color:#fff;letter-spacing:-.02em;text-shadow:6px 6px 0 var(--ink)}html body.trx .tr-h h1 span{color:var(--lime)}
+html body.trx .tr-h p{margin:0;max-width:56ch;color:#ece6ff;font-size:16px}
+html body.trx .tr-st{margin-top:26px}
+html body.trx .tr-now{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+html body.trx .tr-in{padding:16px;background:var(--panel);border-top:6px solid var(--red);box-shadow:6px 6px 0 var(--ink)}
+html body.trx .tr-in.off{border-top-color:var(--lime)}
+html body.trx .tr-in small{display:block;font:700 10px "Space Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+html body.trx .tr-in h3{margin:6px 0 12px;font:400 22px/1.05 "Archivo Black",sans-serif;text-transform:uppercase}
+html body.trx .tr-vs{display:flex;align-items:center;gap:10px;margin:8px 0}html body.trx .tr-vs b{flex:1;font:800 15px Archivo,sans-serif;text-transform:uppercase}html body.trx .tr-vs em{font:italic 400 22px "Archivo Black",sans-serif;font-style:normal;color:var(--lime)}
+html body.trx .tr-in a{display:inline-block;margin-top:12px;padding:11px 14px;background:var(--lime);color:var(--ink);font:700 11px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;box-shadow:4px 4px 0 var(--ink)}
+html body.trx .tr-sh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:46px 0 14px}
+html body.trx .tr-sh h2{margin:0;font:400 clamp(28px,4.4vw,44px)/1 "Archivo Black",sans-serif;text-transform:uppercase;color:#fff}html body.trx .tr-sh h2 span{font-style:italic;color:var(--lime)}
+html body.trx .tr-sh small{padding:7px 10px;background:var(--ink);font:700 11px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+html body.trx .tr-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+html body.trx .tr-c{position:relative;isolation:isolate;display:flex;flex-direction:column;gap:8px;padding:14px;border:0;border-top:5px solid var(--pc,var(--pur));background:var(--panel);color:var(--paper);text-align:left;font:inherit;cursor:pointer;box-shadow:6px 6px 0 var(--ink);transition:transform .12s}
+html body.trx .tr-c:before{content:"";position:absolute;inset:0;z-index:-1;background:var(--dots)}
+html body.trx .tr-c:hover,html body.trx .tr-c.on{transform:translate(-2px,-3px)}html body.trx .tr-c.on{box-shadow:0 0 0 3px var(--lime),6px 6px 0 var(--ink)}
+html body.trx .tr-c .pl{position:absolute;right:10px;top:10px;padding:4px 8px;background:var(--ink);font:700 10px "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase}
+html body.trx .tr-c .pl.yt{color:#ff4d4d}html body.trx .tr-c .pl.tw{color:#b18cff}html body.trx .tr-c .pl.ki{color:var(--lime)}
+html body.trx .tr-c .cp{font:700 10px "Space Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding-right:70px}
+html body.trx .tr-c .mt{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}
+html body.trx .tr-c .t{display:flex;align-items:center;gap:6px;min-width:0}html body.trx .tr-c .t.a{flex-direction:row-reverse;text-align:right}
+html body.trx .tr-c .t b{font:800 13px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body.trx .tr-c strong{font:italic 400 22px "Archivo Black",sans-serif}
+html body.trx .tr-c .ft{display:flex;justify-content:space-between;font:700 10px "Space Mono",monospace;color:var(--mut);text-transform:uppercase}html body.trx .tr-c .ft i{font-style:normal;color:var(--lime)}
+html body.trx .tr-e{padding:26px;border:2px dashed rgba(255,255,255,.18);color:var(--mut);text-align:center;font:700 12px/1.6 "Space Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
+@media(max-width:860px){html body.trx .tr-now{grid-template-columns:1fr}}
+</style></head>
+<body class="trx ac"><header class="top" id="top"></header><script src="nav.js"></script>
+<main class="tr-w" id="tr"></main>
+<script src="data.js"></script><script src="store.js"></script><script src="cos.js"></script><script src="cloud.js" defer></script><script src="live.js" defer></script><script src="site.js"></script><script src="stream.js"></script><script src="transmisiones.js" defer></script><script src="mov.js" defer></script>
+</body></html>

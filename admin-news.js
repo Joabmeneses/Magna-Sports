@@ -31,7 +31,7 @@ window.ADMIN_NEWS = function (b, U) {
     var go = btn('Redactar ahora', function () { go.disabled = true; go.textContent = 'Redactando…'; A.run().then(function () { load(); }, function () {}).then(function () { go.disabled = false; go.textContent = 'Redactar ahora'; refresh(); }); }, 'o'); t.appendChild(go); c.appendChild(t);
     var info = h('p', null, 'Convierte los resultados, campeones, avances de torneo y fichajes en borradores de noticia. Nunca publica sola: tú revisas, editas y publicas.'); c.appendChild(info);
     var extra = h('div'); c.appendChild(extra);
-    function refresh() { A.status().then(function (s) { extra.innerHTML = '';
+    function refresh() { A.status().then(function (s) { s = s || {}; extra.innerHTML = '';
         if (!s.configured) { pill.className = 'pill no'; pill.textContent = 'Falta la clave'; go.disabled = true;
           var ol = h('ol'); ol.innerHTML = '<li>Entra a <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, crea una cuenta y una <b>API key</b> (pide añadir saldo; cada noticia cuesta unos centavos de dólar).</li><li>En <a href="https://supabase.com/dashboard/project/ryahntcvsqjhcurvyrdr/functions/secrets" target="_blank" rel="noopener">Supabase → Edge Functions → Secrets</a>, añade un secreto llamado <code>ANTHROPIC_API_KEY</code> y pega la clave.</li><li>Vuelve aquí y pulsa <b>Redactar ahora</b>. No compartas la clave con nadie (tampoco en el chat).</li>'; extra.appendChild(ol); return; }
         pill.className = 'pill ok'; pill.textContent = 'Activo'; go.disabled = A.busy();
@@ -76,6 +76,8 @@ window.ADMIN_NEWS = function (b, U) {
       var bo = h('textarea', 'in'); bo.rows = 12; bo.maxLength = 40000; bo.value = a.body; bo.placeholder = 'Escribe la noticia completa…'; var hp = h('p', 'nw-help'); hp.innerHTML = 'Formato: deja una línea en blanco entre párrafos · <code>## Subtítulo</code> · <code>**negrita**</code> · <code>*cursiva*</code> · <code>- lista</code> · <code>&gt; cita</code>'; fld('Contenido completo', bo, hp);
       var two = h('div', 'nw-two'), cs = h('select', 'in'); N.CATS.forEach(function (c) { var o = h('option', null, c[1]); o.value = c[0]; if (c[0] === a.category) o.selected = true; cs.appendChild(o); });
       var l1 = h('label', 'f', 'Categoría'); l1.appendChild(cs); two.appendChild(l1);
+      var ag = h('select', 'in'), oa = h('option', null, 'Automática (según el tema)'); oa.value = ''; ag.appendChild(oa); N.AGENTS.forEach(function (x) { var o = h('option', null, x[1] + ' · @' + x[2]); o.value = x[0]; if (x[0] === a.agent) o.selected = true; ag.appendChild(o); });
+      var la = h('label', 'f', 'Publica la cuenta oficial'); la.appendChild(ag); two.appendChild(la);
       var l2 = h('div', 'f', 'Importancia'), fe = h('label'); fe.style.cssText = 'display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-top:6px;color:var(--fg);cursor:pointer'; var fc = h('input'); fc.type = 'checkbox'; fc.checked = !!a.featured; fe.appendChild(fc); fe.appendChild(document.createTextNode('★ Destacar esta noticia')); l2.appendChild(fe); two.appendChild(l2); f.appendChild(two);
       // ---- portada ----
       f.appendChild(h('h2', 'x', 'Imagen de portada'));
@@ -126,7 +128,7 @@ window.ADMIN_NEWS = function (b, U) {
         var up = blob ? N.upload(blob, 'webp') : Promise.resolve(mode === 'keep' ? a.cover_url : (mode === 'none' ? null : a.cover_url));
         up.then(function (url) { go.textContent = 'Guardando…';
           var keepDate = !isNew && a.status === 'published' && pm === 'published';
-          return N.save({ id: a.id, title: t, summary: su.value.trim(), body: bo.value.replace(/\s+$/, ''), category: cs.value, featured: fc.checked, cover_url: url, status: pm, publish_at: keepDate ? a.publish_at : when.toISOString(), author_email: window.MAGNA_ADMIN && MAGNA_ADMIN.email });
+          return N.save({ id: a.id, title: t, summary: su.value.trim(), body: bo.value.replace(/\s+$/, ''), category: cs.value, agent: ag.value || null, featured: fc.checked, cover_url: url, status: pm, publish_at: keepDate ? a.publish_at : when.toISOString(), author_email: window.MAGNA_ADMIN && MAGNA_ADMIN.email });
         }).then(function () { close(); toast(pm === 'draft' ? 'Borrador guardado' : pm === 'scheduled' ? 'Noticia programada' : 'Noticia publicada'); if (pm === 'published') { MAGNA.addNews('announcement', 'Nueva noticia: ' + t); MAGNA.save(); } load(); },
           function (e2) { go.disabled = false; go.textContent = label(); err.textContent = 'No se pudo guardar: ' + (e2 && e2.message || 'sin conexión'); });
       };

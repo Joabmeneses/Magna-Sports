@@ -337,7 +337,7 @@
         if (warn.length) confirmBox('¿Cambiar el rol de ' + p.name + '?', warn.join(' '), 'Cambiar rol', apply); else apply(); }; w.appendChild(b); });
     return w; }
   var PQ = '', PSORT = 'media', PFLAG = '';
-  var PICO = { copy: '<rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" fill="none" stroke="currentColor" stroke-width="2"/>',
+  var PICO = { tv: '<rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 2l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>', copy: '<rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2" fill="none" stroke="currentColor" stroke-width="2"/>',
     eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
     gift: '<rect x="3" y="9" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 .5 6-1.5S14 5 12 9z" fill="none" stroke="currentColor" stroke-width="2"/>',
     edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
@@ -527,6 +527,7 @@
       else {
         if (m.status !== 'finished' || m.live) { var lv = ibtn('play', m.status === 'live' ? 'Consola en vivo' : m.status === 'scheduled' ? 'Narrar en vivo' : 'Minuto a minuto', function () { LIVE = m.id; go('vivo'); }, 'go' + (m.status === 'live' ? ' hot' : '')); ft.appendChild(lv); }
         ft.appendChild(ibtn('score', 'Resultado', function () { resultDlg(m); }));
+        ft.appendChild(ibtn('tv', m.stream ? (m.status === 'finished' ? 'Repetición' : 'Transmisión ✓') : 'Transmisión', function () { streamDlg(m); }, m.stream ? 'go' : ''));
         ft.appendChild(ibtn('cal', m.at ? 'Fecha' : 'Poner fecha', function () { matchDlg(m); }, m.at ? '' : 'warn'));
         ft.appendChild(ibtn('sets', 'Sets' + (m.sets && m.sets.length ? ' · ' + m.sets.length : ''), function () { setsDlg(m); }));
         if (m.status === 'finished') ft.appendChild(ibtn('img', 'Imagen', function () { shareDlg(m); }));
@@ -592,6 +593,26 @@
         var u = toUtc(at.value); if (u === undefined) return err.textContent = 'Fecha no válida.'; var round = rd.value.trim() || null, m2 = { id: 0, type: p[0], cid: Number(p[1]) }; var ce = conflict(m2, u, home, away, round); if (ce) return err.textContent = ce;
         S().matches.push({ id: MAGNA.id(), type: p[0], cid: Number(p[1]), round: round, home: home, away: away, at: u, status: 'scheduled', hs: null, as: null, sets: sed.get() }); close(); commit('Partido programado'); };
       b.appendChild(f);
+    });
+  }
+  // enlace de transmisión (YouTube, Twitch o Kick) de un partido
+  function streamDlg(m) {
+    dialog('📺 Transmisión: ' + MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away), function (b, close) {
+      b.appendChild(h('p', 'sub', m.status === 'finished' ? 'Pega el enlace de la repetición (o del directo ya terminado). Se verá en la ficha del partido y en Transmisiones.' : 'Pega el enlace de YouTube, Twitch o Kick. Cuando el partido esté en vivo, el reproductor sale debajo del marcador en Partidos.'));
+      var l = h('label', 'f', 'Enlace'), i = h('input', 'in'); i.placeholder = 'https://youtube.com/live/…  ·  twitch.tv/tucanal  ·  kick.com/tucanal'; i.value = m.stream || ''; l.appendChild(i); b.appendChild(l);
+      var pv = h('div'); pv.style.marginTop = '10px'; b.appendChild(pv); var err = h('p', 'err'); b.appendChild(err);
+      function prev() { pv.innerHTML = ''; var s = window.MSTREAM && MSTREAM.parse(i.value); if (!i.value.trim()) return; if (!s) { pv.appendChild(h('p', 'hint', '⚠️ No reconozco el enlace. Usa uno de YouTube, Twitch o Kick.')); return; } pv.appendChild(h('p', 'hint', '✓ ' + s.n + ' · así se verá:')); pv.appendChild(MSTREAM.player(i.value)); }
+      var tm = null; i.oninput = function () { clearTimeout(tm); tm = setTimeout(prev, 500); }; prev();
+      var ou = location.href.replace(/admin\.html.*$/, 'overlay.html?m=' + m.id), ob = h('div', 'box'); ob.style.cssText = 'margin-top:34px;padding:12px;border-left:4px solid #c6ff1a';
+      ob.appendChild(h('b', null, '🎬 Marcador para OBS / Streamlabs')); ob.appendChild(h('p', 'hint', 'Agrega una «Fuente de navegador» de 1920×1080 con este enlace. Se actualiza solo con lo que cargues en la consola en vivo.'));
+      var oi = h('input', 'in'); oi.readOnly = true; oi.value = ou; ob.appendChild(oi); var orow = h('div', 'bar2'); orow.appendChild(btn('Copiar enlace', function () { oi.select(); try { navigator.clipboard.writeText(ou); toast('Enlace copiado'); } catch (e) { document.execCommand('copy'); } }, 'o'));
+      var ol = h('a', 'lk', 'Ver marcador ↗'); ol.href = ou; ol.target = '_blank'; orow.appendChild(ol); ob.appendChild(orow); b.appendChild(ob);
+      var ann = h('label', 'f'); ann.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:16px'; var cb = h('input'); cb.type = 'checkbox'; cb.checked = !m.stream && m.status !== 'finished'; ann.appendChild(cb); ann.appendChild(document.createTextNode('Avisar en Noticias que hay transmisión')); b.appendChild(ann);
+      var r = h('div', 'row'); r.appendChild(btn('Cancelar', close));
+      if (m.stream) r.appendChild(btn('Quitar enlace', function () { delete m.stream; close(); commit('Transmisión quitada'); }, 'd'));
+      r.appendChild(btn('Guardar', function () { var v = i.value.trim(); if (!v) { err.textContent = 'Pega un enlace.'; return; } if (!(window.MSTREAM && MSTREAM.ok(v))) { err.textContent = 'Ese enlace no es de YouTube, Twitch o Kick.'; return; }
+        m.stream = /^https?:/i.test(v) ? v : 'https://' + v; if (cb.checked) MAGNA.addNews('announcement', '📺 ' + (m.status === 'live' ? 'En vivo ahora: ' : m.status === 'finished' ? 'Ya está la repetición de ' : 'Se transmite: ') + MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) + '. Míralo en Magna Arena.');
+        close(); commit('Transmisión guardada'); }, 'o')); b.appendChild(r); i.focus();
     });
   }
   function resultDlg(m) {
@@ -725,7 +746,7 @@
   var MODDEF = {}, MODS = {}, MODV = '2611141600', MODOF = { vivo: 'live', ligas: 'comp', torneos: 'comp', balon: 'balon', historial: 'hist', economia: 'econ', roles: 'data', respaldo: 'data', eventos: 'events', tienda: 'shop', regalos: 'shop' };
   window.ADMIN_MOD = function (n, f) { MODDEF[n] = f; };
   var $ = {}; Object.defineProperties($, { ACCS: { get: function () { return ACCS; }, set: function (v) { ACCS = v; } }, BKK: { get: function () { return BKK; }, set: function (v) { BKK = v; } }, EVC: { get: function () { return EVC; }, set: function (v) { EVC = v; } }, EVK: { get: function () { return EVK; }, set: function (v) { EVK = v; } }, INV: { get: function () { return INV; }, set: function (v) { INV = v; } }, LIVE: { get: function () { return LIVE; }, set: function (v) { LIVE = v; } }, MF: { get: function () { return MF; }, set: function (v) { MF = v; } }, NEXT: { get: function () { return NEXT; }, set: function (v) { NEXT = v; } }, ST: { get: function () { return ST; }, set: function (v) { ST = v; } }, TF: { get: function () { return TF; }, set: function (v) { TF = v; } }, TICK: { get: function () { return TICK; }, set: function (v) { TICK = v; } }, UNDO: { get: function () { return UNDO; }, set: function (v) { UNDO = v; } }, exBusy: { get: function () { return exBusy; }, set: function (v) { exBusy = v; } }, tab: { get: function () { return tab; }, set: function (v) { tab = v; } } });
-  function modApi() { return { $: $, S: S, ibtn: ibtn, ppSum: ppSum, ppChips: ppChips, ppSearch: ppSearch, stack: stack, ask: ask, banner: banner, btn: btn, by: by, closesDlg: closesDlg, commit: commit, compName: compName, confirmBox: confirmBox, dialog: dialog, evRpc: evRpc, fdate: fdate, go: go, h: h, loadAccs: loadAccs, nk: nk, okName: okName, render: render, rr: rr, setsDlg: setsDlg, shareDlg: shareDlg, showCode: showCode, table: table, resultDlg: resultDlg, matchDlg: matchDlg, toLocal: toLocal, toUtc: toUtc, toast: toast }; }
+  function modApi() { return { $: $, S: S, ibtn: ibtn, ppSum: ppSum, ppChips: ppChips, ppSearch: ppSearch, stack: stack, ask: ask, banner: banner, btn: btn, by: by, closesDlg: closesDlg, commit: commit, compName: compName, confirmBox: confirmBox, dialog: dialog, evRpc: evRpc, fdate: fdate, go: go, h: h, loadAccs: loadAccs, nk: nk, okName: okName, render: render, rr: rr, setsDlg: setsDlg, shareDlg: shareDlg, showCode: showCode, table: table, resultDlg: resultDlg, matchDlg: matchDlg, streamDlg: streamDlg, toLocal: toLocal, toUtc: toUtc, toast: toast }; }
   function modLoad(n) { if (MODS[n]) return MODS[n];
     MODS[n] = new Promise(function (ok, ko) { var sc = document.createElement('script'); sc.src = 'admin-' + n + '.js?v=' + MODV; sc.async = true;
       sc.onload = function () { if (!MODDEF[n]) { delete MODS[n]; return ko(new Error('módulo vacío')); } try { ok(MODDEF[n](modApi())); } catch (e) { delete MODS[n]; ko(e); } };

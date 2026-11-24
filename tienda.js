@@ -1,43 +1,425 @@
 'use strict';
 // Tienda de cosméticos: se compran con Bits (moneda ficticia del sitio) y se equipan al momento.
 (function () {
-  var h = M.h, I = MAGNA_INV, root = document.getElementById('tn'), acc = null, inv = null, tab = (location.hash || '').slice(1) || 'all', busy = false, ready = false;
-  var TABS = [['all', '✨ Todo'], ['color', '🎨 Colores'], ['plate', '🏷️ Placas'], ['frame', '🖼️ Marcos'], ['title', '🔤 Títulos'], ['own', '🎒 Lo mío']], RO = { comun: 0, rara: 1, epica: 2, legendaria: 3 };
+  var h = M.h, I = MAGNA_INV, root = document.getElementById('tn'), acc = null, inv = null, busy = false, ready = false;
+  var tab = (location.hash || '').slice(1) || 'all', q = '', sort = 'rar', afford = false;
+  var TABS = [['all', '✨', 'Todo'], ['color', '🎨', 'Colores'], ['plate', '🏷️', 'Placas'], ['frame', '🖼️', 'Marcos'], ['title', '🔤', 'Títulos'], ['excl', '🔒', 'Exclusivos'], ['wish', '❤️', 'Deseos'], ['own', '🎒', 'Lo mío']];
+  var RO = { comun: 0, rara: 1, epica: 2, legendaria: 3, mitica: 4 }, ICO = { color: '🎨', plate: '🏷️', frame: '🖼️', title: '🔤' };
+  if (!TABS.some(function (t) { return t[0] === tab; })) tab = 'all';
+
+  // ---------- datos ----------
+  var WISH = {}; try { WISH = JSON.parse(localStorage.getItem('magna_wish') || '{}') || {}; } catch (e) {}
+  function saveWish() { try { localStorage.setItem('magna_wish', JSON.stringify(WISH)); } catch (e) {} }
   function owned(id) { return !!(inv && inv.rows.some(function (r) { return r.item_id === id; })); }
-  function render() {
-    root.innerHTML = ''; var L = I.shop();
-    var hd = h('section', 'tn-h'), tx = h('div'); tx.appendChild(h('div', 'ey', 'Cosméticos · Magna Arena')); tx.appendChild(h('h1', 'x', 'Tienda')); tx.appendChild(h('p', null, 'Dale estilo a tu nombre: colores neón, placas, marcos para tu foto y títulos. Se compran con Bits y se ven en todo el sitio.')); hd.appendChild(tx);
-    var bl = h('div', 'tn-bal');
-    if (acc) { var b = h('div', 'b'); b.appendChild(h('span', null, '🪙')); b.appendChild(document.createTextNode(I.fmt(acc.bits))); bl.appendChild(b); bl.appendChild(h('small', null, 'Tus Bits')); var a = h('a', null, '🎒 Mi inventario →'); a.href = 'cuenta.html#inventario'; bl.appendChild(a); }
-    else if (ready) { var a2 = h('a', 'btn2 o', 'Entra para comprar'); a2.href = 'cuenta.html'; bl.appendChild(a2); bl.appendChild(h('small', null, 'Necesitas tu cuenta de Magna')); }
-    hd.appendChild(bl); root.appendChild(hd);
-    if (acc && inv) { var me = h('div', 'tn-me'); me.appendChild(I.card(acc, inv.eq)); root.appendChild(me); }
-    if (!L.filter(function (x) { return x.active !== false; }).length) { var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
-    var tb = h('div', 'tn-tabs'); TABS.forEach(function (t) { if (t[0] === 'own' && !acc) return; var b2 = h('button', (tab === t[0] ? 'on' : '') + (t[0] === 'own' ? ' own' : ''), t[1]); b2.type = 'button'; b2.onclick = function () { tab = t[0]; try { history.replaceState(null, '', '#' + tab); } catch (e2) {} render(); }; tb.appendChild(b2); }); root.appendChild(tb);
-    var items = L.filter(function (x) { if (tab === 'own') return owned(x.id); if (x.active === false && !owned(x.id)) return false; return tab === 'all' || x.type === tab; }).sort(function (a3, b3) { return (RO[a3.rarity] || 0) - (RO[b3.rarity] || 0) || (a3.price || 0) - (b3.price || 0); });
-    if (!items.length) { root.appendChild(h('div', 'tn-emp', tab === 'own' ? 'Todavía no tienes cosméticos. ¡Elige el primero!' : 'No hay artículos en esta categoría.')); return; }
-    var g = h('div', 'tn-g'), name = acc ? acc.display_name : 'Tu nombre';
-    items.forEach(function (it, i) { var c = h('div', 'tn-it r-' + (it.rarity || 'comun')); c.style.animationDelay = Math.min(i, 16) * 35 + 'ms';
-      c.appendChild(M.cosPreview(it, name, acc && acc.player_id)); c.appendChild(h('b', null, it.name));
-      var mt = h('div', 'mt'); mt.appendChild(h('span', 'rar rar-' + (it.rarity || 'comun'), M.RAR[it.rarity] || 'Común')); mt.appendChild(h('span', null, M.KIND[it.type])); c.appendChild(mt);
-      var own = owned(it.id), on = own && inv.eq[it.type] === it.id, bt = h('button', own ? (on ? 'eqp' : 'own') : ''); bt.type = 'button'; bt.disabled = busy;
-      if (on) bt.textContent = '✓ Equipado'; else if (own) bt.textContent = 'Equipar'; else { bt.appendChild(h('span', 'co')); bt.appendChild(document.createTextNode(I.fmt(it.price) + ' Bits')); }
-      bt.onclick = function () { if (!acc) { location.href = 'cuenta.html'; return; } if (on) return; if (own) return wear(it); confirm(it); }; c.appendChild(bt); g.appendChild(c); });
-    root.appendChild(g);
+  function equipped(it) { return !!(inv && inv.eq[it.type] === it.id); }
+  // quién lleva puesto cada cosmético (sale de los cosméticos públicos de los jugadores)
+  function wearMap() { var m = {}; try { var c = JSON.parse(localStorage.getItem('magna_cos') || '{}') || {}; Object.keys(c).forEach(function (pid) { var eq = (c[pid] && c[pid].eq) || {}; Object.keys(eq).forEach(function (k) { if (eq[k]) (m[eq[k]] = m[eq[k]] || []).push(pid); }); }); } catch (e) {} return m; }
+  // ofertas y venta por tiempo limitado: "off" (% de descuento) hasta "saleUntil"; "until" = deja de venderse
+  function live(x) { var n = Date.now(); if (x.until && n > Date.parse(x.until)) return null; if (x.off && (!x.saleUntil || n <= Date.parse(x.saleUntil))) return Object.assign({}, x, { price0: x.price, price: Math.round(x.price * (100 - Math.min(90, Math.max(0, x.off))) / 100) }); return x; }
+  function SH() { return I.shop().map(live).filter(Boolean); }
+  function days(d) { var t = Date.parse(d) - Date.now(); if (t <= 0) return 'hoy'; var dd = Math.ceil(t / 864e5); return dd <= 1 ? 'menos de 1 día' : dd + ' días'; }
+  function fdate(d) { try { return new Date(d).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', timeZone: 'America/Bogota' }); } catch (e) { return ''; } }
+  function pbits(it, size) { if (!it.price0) return bits(it.price, size); var w = h('span', 'ts-off'); w.appendChild(h('s', null, I.fmt(it.price0))); w.appendChild(bits(it.price, size)); return w; }
+  function tags(it) { var t = []; if (it.price0) t.push(h('span', 'ts-tg sale', '🔥 −' + it.off + '%' + (it.saleUntil ? ' · ' + days(it.saleUntil) : ''))); if (it.until) t.push(h('span', 'ts-tg ltd', '⏳ Hasta el ' + fdate(it.until))); return t; }
+  function forSale() { return SH().filter(function (x) { return x.active !== false && !x.exclusive && !x.upg && !x.packOnly; }); }
+  // cosméticos que solo se venden dentro de un pack (colección): se ven en Lo mío, pero se compran en su pack
+  function packOf(it) { var P = (MAGNA.S && MAGNA.S.packs) || []; for (var i = 0; i < P.length; i++) { var L = P[i].levels || {}; for (var k in L) if ((L[k] || []).indexOf(it.id) >= 0) return P[i]; } return null; }
+  function goPack(it, close) { var pk = packOf(it); if (close) close(); setTimeout(function () { var el = pk && document.querySelector('[data-pack="' + pk.id + '"]'); if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.classList.remove('pk-hl'); void el.offsetWidth; el.classList.add('pk-hl'); } else I.toast('Búscalo en su pack, en la sección de especiales'); }, 60); }
+  function ups(it) { return SH().filter(function (x) { return x.upg === it.id && x.active !== false; }).sort(function (a, b) { return a.lv - b.lv; }); }
+  function topLv(it) { var lv = owned(it.id) ? 1 : 0; ups(it).forEach(function (u) { if (owned(u.id)) lv = Math.max(lv, u.lv); }); return lv; }
+  function pname(pid) { var p = MAGNA.by(MAGNA.S.players, Number(pid)); return p ? p.name : ''; }
+
+  // ---------- piezas ----------
+  function bits(n, size) { var s = h('span', 'ts-pr'); s.appendChild(MAGNA_BIT(size || 18)); s.appendChild(h('b', null, I.fmt(n))); return s; }
+  function ripple(b, e) { var r = b.getBoundingClientRect(), s = h('i', 'ts-rp'); s.style.left = ((e && e.clientX ? e.clientX : r.left + r.width / 2) - r.left) + 'px'; s.style.top = ((e && e.clientY ? e.clientY : r.top + r.height / 2) - r.top) + 'px'; b.appendChild(s); setTimeout(function () { s.remove(); }, 600); }
+  function btn(cls, txt, fn) { var b = h('button', 'ts-b ' + (cls || '')); b.type = 'button'; if (txt != null) b.textContent = txt; b.onclick = function (e) { ripple(b, e); fn && fn(e); }; return b; }
+  // botón de acción según el estado del artículo
+  function actBtn(it, small) {
+    var own = owned(it.id), on = own && equipped(it), b;
+    if (on) { b = btn('eqp', '✓ Equipado'); b.disabled = true; }
+    else if (own) b = btn('own', 'Equipar', function () { wear(it); });
+    else if (it.exclusive) { b = btn('lock', '🔒 ' + (small ? 'Exclusivo' : (MAGNA.AWARD_TXT[it.award] || 'Exclusivo'))); b.disabled = true; }
+    else if (!acc) b = btn('', 'Comprar', function () { location.href = 'cuenta.html'; });
+    else if (Number(acc.bits) < Number(it.price || 0)) b = btn('poor', 'Te faltan ' + I.fmt(it.price - acc.bits), function () { view(it); });
+    else b = btn('', 'Comprar', function () { view(it); });
+    if (busy && !b.disabled) b.disabled = true;
+    return b;
   }
-  function wear(it) { busy = true; render(); I.equip(it.type, it.id).then(function () { busy = false; inv.eq[it.type] = it.id; I.syncSelf(acc, inv.eq); I.toast('¡' + it.name + ' equipado!'); render(); }, function (e) { busy = false; I.toast(e.message || 'No se pudo equipar', true); render(); }); }
-  function confirm(it) {
-    M.modal(function (b, close) { var w = h('div', 'cf'); w.appendChild(h('h3', 'x', '¿Comprar ' + it.name + '?')); w.appendChild(M.cosPreview(it, acc.display_name, acc.player_id));
-      var after = Number(acc.bits) - Number(it.price || 0), sm = h('div', 'sum'); [['Precio', I.fmt(it.price) + ' Bits'], ['Tu saldo', I.fmt(acc.bits) + ' Bits'], ['Te quedan', (after < 0 ? '—' : I.fmt(after) + ' Bits')]].forEach(function (r) { sm.appendChild(h('span', null, r[0])); sm.appendChild(h('b', null, r[1])); }); w.appendChild(sm);
-      if (after < 0) w.appendChild(h('p', 'sub', 'Te faltan ' + I.fmt(-after) + ' Bits. Puedes ganarlos en Apuestas.'));
-      var r2 = h('div', 'r'), no = h('button', null, 'Cancelar'); no.type = 'button'; no.onclick = close; r2.appendChild(no);
-      if (after >= 0) { var go = h('button', 'go', 'Comprar y equipar'); go.type = 'button'; go.onclick = function () { go.disabled = true; go.textContent = 'Comprando…';
-        I.buy(it).then(function (bits) { acc.bits = bits; inv.rows.unshift({ item_id: it.id, kind: it.type, source: 'shop', price: it.price }); close(); return I.equip(it.type, it.id).then(function () { inv.eq[it.type] = it.id; I.syncSelf(acc, inv.eq); I.toast('🎉 ¡' + it.name + ' es tuyo y ya lo llevas puesto!'); render(); }, function () { I.toast('Comprado. Equípalo desde Lo mío.'); render(); }); },
-          function (e) { go.disabled = false; go.textContent = 'Comprar y equipar'; I.toast(e.message || 'No se pudo comprar', true); }); }; r2.appendChild(go); }
+  function heart(it) { var b = h('button', 'ts-hr' + (WISH[it.id] ? ' on' : '')); b.type = 'button'; b.setAttribute('aria-label', WISH[it.id] ? 'Quitar de deseos' : 'Añadir a deseos'); b.setAttribute('aria-pressed', !!WISH[it.id]); b.textContent = WISH[it.id] ? '❤' : '♡';
+    b.onclick = function (e) { e.stopPropagation(); if (WISH[it.id]) delete WISH[it.id]; else WISH[it.id] = 1; saveWish(); var on = !!WISH[it.id]; [].forEach.call(document.querySelectorAll('.ts-hr[data-id="' + it.id + '"]'), function (x) { x.classList.toggle('on', on); x.textContent = on ? '❤' : '♡'; x.setAttribute('aria-pressed', on); x.classList.remove('pop'); void x.offsetWidth; x.classList.add('pop'); }); counts(); if (tab === 'wish') grid(); I.toast(on ? '❤ Guardado en tus deseos' : 'Quitado de tus deseos'); };
+    b.dataset.id = it.id; return b; }
+  function card(it, i, W) {
+    var c = h('div', 'ts-c r-' + (it.rarity || 'comun') + (it.exclusive ? ' x' : '') + (owned(it.id) ? ' mine' : '')); c.style.animationDelay = Math.min(i, 16) * 35 + 'ms'; c.dataset.tilt = '8';
+    var art = h('button', 'art'); art.type = 'button'; art.setAttribute('aria-label', 'Ver ' + it.name); art.onclick = function () { view(it); };
+    art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id));
+    if (it.type === 'frame' && it.rarity === 'mitica') art.appendChild(h('span', 'evo-chip', '🧬 Evoluciona')); else if (it.type === 'frame' && it.lv && ups(it).length) art.appendChild(h('span', 'evo-chip up', '⬆️ 3 niveles'));
+    art.appendChild(h('span', 'rr', (M.RAR[it.rarity] || 'Común')));
+    if (owned(it.id)) art.appendChild(h('span', 'ok', equipped(it) ? '✓ Puesto' : '✓ Tuyo'));
+    var wn = (W[it.id] || []).length; if (wn) art.appendChild(h('span', 'wr', '👥 ' + wn));
+    var tg = tags(it); if (tg.length) { var tw = h('span', 'ts-tgs'); tg.forEach(function (x) { tw.appendChild(x); }); art.appendChild(tw); }
+    c.appendChild(art); c.appendChild(heart(it));
+    var tx = h('div', 'tx'); tx.appendChild(h('b', null, it.name)); tx.appendChild(h('small', null, ICO[it.type] + ' ' + M.KIND[it.type])); c.appendChild(tx);
+    var bt = h('div', 'bot'), pr = h('div', 'pv'); pr.appendChild(h('small', null, it.exclusive ? 'Se gana' : 'Precio')); if (it.exclusive) pr.appendChild(h('span', 'ts-pr', '🏅 En la cancha')); else pr.appendChild(pbits(it)); bt.appendChild(pr); bt.appendChild(actBtn(it, true)); c.appendChild(bt);
+    if (it.exclusive) { var bd = acc && acc.player_id != null && it.award !== 'manual' && MAGNA.playerBadges(acc.player_id).filter(function (z) { return z.id === it.award; })[0];
+      if (bd && !owned(it.id)) { var pg = h('div', 'tn-pg'), pi = h('i'); pi.style.width = Math.round(bd.v / bd.goal * 100) + '%'; pg.appendChild(pi); pg.appendChild(h('small', null, bd.ok ? '¡Desbloqueado! Llega en breve' : 'Tu progreso: ' + bd.v + ' / ' + bd.goal)); c.appendChild(pg); } }
+    return c;
+  }
+
+  // ---------- portada ----------
+  var cdT = null, countEls = {};
+  function hero() {
+    var L = forSale(), C = L.filter(function (x) { return x.rarity === 'mitica' || x.rarity === 'legendaria' || x.rarity === 'epica'; }), day = Math.floor(Date.now() / 864e5), next = (day + 1) * 864e5;
+    var a = C[day % (C.length || 1)], b2 = C[(day * 7 + 3) % (C.length || 1)]; if (b2 === a) b2 = C[(C.indexOf(a) + 1) % C.length];
+    var s = h('section', 'ts-h'), l = h('div', 'l');
+    l.appendChild(h('div', 'ey', '🛍️ Tienda · Magna Arena'));
+    var t = h('h1'); t.innerHTML = 'Colecciona <em>estilos</em><br>únicos para tu <em>nombre</em>'; l.appendChild(t);
+    l.appendChild(h('p', null, 'Colores neón, placas, marcos y títulos que se ven en todo el sitio: en tu perfil, en las alineaciones y en el ranking. Se compran con Bits.'));
+    var ac = h('div', 'cta'); ac.appendChild(btn('big', 'Explorar la tienda', function () { var c = document.getElementById('catalogo') || document.querySelector('.ts-s'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }));
+    var ib = btn('ghost big', acc ? '🎒 Mi inventario' : 'Entrar para comprar', function () { location.href = acc ? 'cuenta.html#inventario' : 'cuenta.html'; }); ac.appendChild(ib); l.appendChild(ac);
+    var st = h('div', 'sts'), W = wearMap(), styled = {}; Object.keys(W).forEach(function (k) { W[k].forEach(function (p) { styled[p] = 1; }); });
+    [[L.length, 'Cosméticos'], [L.filter(function (x) { return x.rarity === 'legendaria'; }).length, 'Legendarios'], [Object.keys(styled).length, 'Jugadores con estilo']].forEach(function (v) { var d = h('div'), n = h('b', null, '0'); d.appendChild(n); d.appendChild(h('small', null, v[1])); st.appendChild(d); count(n, v[0]); });
+    l.appendChild(st); s.appendChild(l);
+    var r = h('div', 'r');
+    if (acc) { var bal = h('div', 'ts-bal'), bi = MAGNA_BIT(34); bal.appendChild(bi); var bv = h('div'); bv.appendChild(h('b', null, I.fmt(acc.bits))); bv.appendChild(h('small', null, 'Tus Bits')); bal.appendChild(bv); r.appendChild(bal); setTimeout(function () { MAGNA_BIT.burst(bi); }, 400); }
+    if (a) r.appendChild(fcard(a, 'f1', next)); if (b2) r.appendChild(fcard(b2, 'f2'));
+    var sp = h('div', 'ts-stamp'); sp.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><defs><path id="tsCir" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs><text><textPath href="#tsCir">TIENDA MAGNA ✦ BITS ✦ ESTILO ✦ </textPath></text></svg>'; sp.appendChild(MAGNA_BIT(30)); r.appendChild(sp);
+    s.appendChild(r); return s;
+  }
+  // ---------- PROBADOR + DESPLEGABLES: pruébate los cosméticos antes de comprarlos ----------
+  var TRY = null, OPEN = (function () { try { return sessionStorage.getItem('tn_open') || 'color'; } catch (e) { return 'color'; } })();
+  var DR = [['color', '🎨', 'Colores de nombre', 'Tu nombre brilla en todo el sitio'], ['frame', '🖼️', 'Marcos', 'Alrededor de tu foto'], ['plate', '🏷️', 'Placas', 'La portada de tu tarjeta'], ['title', '🔤', 'Títulos', 'Debajo de tu nombre']];
+  function eq0() { return Object.assign({}, (inv && inv.eq) || {}); }
+  function tryEq() { if (!TRY) TRY = eq0(); return TRY; }
+  function bigCard(eq) { var nm = acc ? acc.display_name : 'Tu nombre', pid = acc && acc.player_id, w = h('div', 'tpb-card'), pl = eq.plate && M.item(eq.plate);
+    if (pl && pl.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { var bn = h('div', 'tpb-bn'); MAGNA_COS.banner(bn, pl.style, { lite: true }); if (pl.lv) bn.dataset.plv = pl.lv; w.appendChild(bn); } else w.appendChild(h('div', 'tpb-bn e'));
+    var av = M.tierAv(nm, pid != null ? (MAGNA.playerStats()[pid] || {}).media : 60, 104, pid != null ? pid : undefined), fr = eq.frame && M.item(eq.frame);
+    if (fr && fr.type === 'frame') { av.classList.add('fr-' + fr.style); if (fr.lv) av.dataset.lvi = fr.lv; if (window.MAGNA_COS && MAGNA_COS.deco) MAGNA_COS.deco(av); } var aw = h('div', 'tpb-av'); aw.appendChild(av); w.appendChild(aw);
+    var n = h('span', 'mpn tpb-nm'); n.appendChild(h('span', 'mpn-n', nm)); M.nameStyle(n, eq); var ti = eq.title && M.item(eq.title); if (ti && ti.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (ti.rarity || 'comun'), ti.name)); w.appendChild(n);
+    return w; }
+  function probador() {
+    var eq = tryEq(), base = eq0(), wrap = h('aside', 'tpb'), hd = h('div', 'tpb-h'); hd.appendChild(h('span', 'tpb-k', '● Probador')); hd.appendChild(h('small', null, 'Toca un cosmético para probártelo'));
+    if (acc) { var bal = h('span', 'tpb-bal'); bal.appendChild(MAGNA_BIT(18)); bal.appendChild(h('b', null, I.fmt(acc.bits))); hd.appendChild(bal); } wrap.appendChild(hd);
+    wrap.appendChild(bigCard(eq));
+    var diff = DR.map(function (d) { return eq[d[0]] && eq[d[0]] !== base[d[0]] ? M.item(eq[d[0]]) : null; }).filter(Boolean).map(function (x) { return SH().filter(function (y) { return y.id === x.id; })[0] || x; });
+    var ls = h('div', 'tpb-ls');
+    if (!diff.length) ls.appendChild(h('p', 'tpb-e', acc ? 'Así te ven ahora. Abre una categoría y pruébate algo.' : 'Abre una categoría y pruébate algo. Para comprar necesitas entrar.'));
+    diff.forEach(function (it) { var r = h('div', 'tpb-r r-' + (it.rarity || 'comun')); r.appendChild(h('i', null, ICO[it.type])); var t = h('div'); t.appendChild(h('b', null, it.name)); t.appendChild(h('small', null, M.KIND[it.type] + (owned(it.id) ? ' · ya es tuyo' : ''))); r.appendChild(t);
+      var x = h('button', 'tpb-x', '✕'); x.type = 'button'; x.title = 'Quitar'; x.onclick = function () { TRY[it.type] = base[it.type] || null; render(); }; r.appendChild(x); r.appendChild(actBtn(it, true)); ls.appendChild(r); });
+    wrap.appendChild(ls);
+    var buy = diff.filter(function (it) { return !owned(it.id) && !it.exclusive; }), tot = buy.reduce(function (a, it) { return a + Number(it.price || 0); }, 0);
+    if (diff.length) { var ft = h('div', 'tpb-ft'); var tt = h('div'); tt.appendChild(h('small', null, buy.length ? 'Total de lo que te probaste' : 'Todo lo que te probaste ya es tuyo')); if (buy.length) tt.appendChild(bits(tot, 20)); ft.appendChild(tt);
+      var rs = h('button', 'tpb-rs', 'Quitar todo'); rs.type = 'button'; rs.onclick = function () { TRY = eq0(); render(); }; ft.appendChild(rs); wrap.appendChild(ft); }
+    return wrap; }
+  function drawers() {
+    var eq = tryEq(), L = forSale(), box = h('div', 'tdw');
+    var extra = [];
+    if (inv && inv.rows && inv.rows.length) extra.push(['own', '🎒', 'Lo mío', 'Lo que ya tienes']);
+    if (Object.keys(WISH).length) extra.push(['wish', '❤', 'Deseos', 'Lo que marcaste con corazón']);
+    extra.push(['excl', '🔒', 'Exclusivos', 'No se compran: se ganan en la cancha']);
+    DR.concat(extra).forEach(function (d, i) {
+      var k = d[0], items = k === 'own' ? SH().filter(function (x) { return owned(x.id) && !x.upg; }) : k === 'wish' ? SH().filter(function (x) { return WISH[x.id]; }) : k === 'excl' ? SH().filter(function (x) { return x.exclusive && x.active !== false && !x.upg; }) : L.filter(function (x) { return x.type === k; });
+      if (!items.length) return; var RO = { comun: 0, rara: 1, epica: 2, legendaria: 3, mitica: 4 }; items.sort(function (a, b) { return (RO[b.rarity] || 0) - (RO[a.rarity] || 0) || a.price - b.price; });
+      var on = OPEN === k, d1 = h('section', 'tdw-i k-' + k + (on ? ' on' : '')); d1.style.setProperty('--i', i);
+      var bar = h('button', 'tdw-b'); bar.type = 'button'; bar.setAttribute('aria-expanded', on);
+      bar.appendChild(h('span', 'tdw-ic', d[1])); var tx = h('span', 'tdw-tx'); tx.appendChild(h('b', null, d[2])); tx.appendChild(h('small', null, d[3])); bar.appendChild(tx);
+      var prv = h('span', 'tdw-pv'); items.slice(0, 4).forEach(function (it) { prv.appendChild(h('i', 'r-' + (it.rarity || 'comun'))); }); bar.appendChild(prv);
+      var cheap = items.filter(function (x) { return !x.exclusive && x.price; }).map(function (x) { return x.price; }); bar.appendChild(h('span', 'tdw-n', items.length + (cheap.length ? ' · desde ' + I.fmt(Math.min.apply(null, cheap)) : '')));
+      bar.appendChild(h('span', 'tdw-ch', '▾'));
+      bar.onclick = function () { OPEN = on ? '' : k; try { sessionStorage.setItem('tn_open', OPEN); } catch (e) {} render(); if (!on) setTimeout(function () { var el = document.querySelector('.tdw-i.k-' + k); if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 60); };
+      d1.appendChild(bar);
+      if (on) { var st = h('div', 'tdw-st');
+        items.forEach(function (it, j) { var tried = eq[it.type] === it.id, c = h('div', 'tdw-c r-' + (it.rarity || 'comun') + (tried ? ' tr' : '') + (owned(it.id) ? ' mine' : '')); c.style.setProperty('--j', j);
+          var art = h('button', 'tdw-art'); art.type = 'button'; art.title = tried ? 'Quitártelo' : 'Probártelo'; art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id));
+          art.appendChild(h('span', 'tdw-try', tried ? '✓ Puesto' : '👆 Probar'));
+          art.onclick = function () { TRY = tryEq(); TRY[it.type] = tried ? (eq0()[it.type] || null) : it.id; render(); };
+          c.appendChild(art); var tg = tags(it); if (tg.length) { var tw = h('span', 'ts-tgs'); tg.forEach(function (x) { tw.appendChild(x); }); c.appendChild(tw); }
+          var t = h('div', 'tdw-t'); t.appendChild(h('b', null, it.name)); t.appendChild(h('small', null, M.RAR[it.rarity] || 'Común')); c.appendChild(t);
+          var bt = h('div', 'tdw-bt'); if (it.exclusive) bt.appendChild(h('span', 'ts-pr', '🏅 Se gana')); else bt.appendChild(pbits(it, 16)); var inf = h('button', 'tdw-in', 'ⓘ'); inf.type = 'button'; inf.title = 'Ver detalles'; inf.onclick = function () { view(it); }; bt.appendChild(inf); bt.appendChild(actBtn(it, true)); c.appendChild(bt);
+          st.appendChild(c); });
+        d1.appendChild(st); }
+      box.appendChild(d1); });
+    return box; }
+  function shopTop() { var w = h('section', 'tnp'), hd = h('div', 'tnp-h'), t = h('h1'); t.appendChild(document.createTextNode('Pruébatelo ')); t.appendChild(h('span', null, 'antes')); hd.appendChild(h('span', 'tnp-ey', '🛍️ Tienda · Magna Arena')); hd.appendChild(t);
+    hd.appendChild(h('p', null, 'Abre una categoría, toca un cosmético y mira cómo te queda en tu tarjeta. Cuando te guste, lo compras con Bits.')); w.appendChild(hd);
+    var g = h('div', 'tnp-g'); g.appendChild(probador()); g.appendChild(drawers()); w.appendChild(g); return w; }
+  // ---------- portada tipo marcador (como la página de Partidos) ----------
+  function heroX() {
+    var L = forSale(), C = L.filter(function (x) { return x.rarity === 'mitica' || x.rarity === 'legendaria' || x.rarity === 'epica'; }), day = Math.floor(Date.now() / 864e5), next = (day + 1) * 864e5;
+    if (!C.length) C = L; var a = C[day % (C.length || 1)], b2 = C[(day * 7 + 3) % (C.length || 1)]; if (b2 === a) b2 = C[(C.indexOf(a) + 1) % C.length];
+    var w = h('section', 'tsx'); if (!a) return hero();
+    // franja superior: estado + reloj + saldo
+    var top = h('div', 'tsx-top'), tl = h('div', 'tsx-tl'); tl.appendChild(h('span', 'tsx-lv', '● Destacado de hoy')); var ck = h('b', 'tsx-ck', ARENA.until(next)); tl.appendChild(ck); top.appendChild(tl);
+    top.appendChild(h('div', 'tsx-lg', '🛍️ Tienda Magna · ' + L.length + ' cosméticos'));
+    var ac = h('div', 'tsx-ac'); if (acc) { var bal = h('span', 'tsx-bal'); bal.appendChild(MAGNA_BIT(20)); bal.appendChild(h('b', null, I.fmt(acc.bits))); ac.appendChild(bal); }
+    var inb = h('a', 'tsx-ib', acc ? '🎒' : '👤'); inb.href = acc ? 'cuenta.html#inventario' : 'cuenta.html'; inb.title = acc ? 'Mi inventario' : 'Entrar para comprar'; ac.appendChild(inb); top.appendChild(ac); w.appendChild(top);
+    clearInterval(cdT); cdT = setInterval(function () { if (!document.body.contains(ck)) return clearInterval(cdT); if (Date.now() >= next) { clearInterval(cdT); return render(); } ck.textContent = ARENA.until(next); }, 1000);
+    // marcador: dos artículos frente a frente, el precio como número gigante
+    var g = h('div', 'tsx-g');
+    [[a, 'h', 'Destacado'], null, [b2 || a, 'a', 'Tendencia']].forEach(function (x) {
+      if (!x) { var md = h('div', 'tsx-md'); md.appendChild(h('span', 'tsx-vs', 'VS')); g.appendChild(md); return; }
+      var it = x[0], side = h('div', 'tsx-s ' + x[1] + ' r-' + (it.rarity || 'comun')); side.appendChild(h('span', 'tsx-k', x[2]));
+      side.appendChild(h('span', 'tsx-wm', it.name)); var art = h('button', 'tsx-art'); art.type = 'button'; art.setAttribute('aria-label', 'Ver ' + it.name); art.onclick = function () { view(it); };
+      art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id)); side.appendChild(art);
+      side.appendChild(h('b', 'tsx-nm', it.name)); side.appendChild(h('small', 'tsx-sub', (M.RAR[it.rarity] || 'Común') + ' · ' + M.KIND[it.type]));
+      var pr = h('div', 'tsx-pr'); if (it.price0) pr.appendChild(h('s', null, I.fmt(it.price0))); pr.appendChild(h('strong', null, I.fmt(it.price))); side.appendChild(pr);
+      g.appendChild(side); });
+    w.appendChild(g);
+    // fila de acciones, como "Posición · Apoyar"
+    var inf = h('div', 'tsx-in'); [a, b2 || a].forEach(function (it, i) { var c = h('div', 'tsx-ic ' + (i ? 'a' : 'h')); c.appendChild(h('span', 'tsx-tg', it.price0 ? '🔥 −' + it.off + '%' : (M.RAR[it.rarity] || ''))); var g2 = h('div', 'tsx-bt'); g2.appendChild(heart(it)); g2.appendChild(actBtn(it, true)); c.appendChild(g2); inf.appendChild(c); }); w.appendChild(inf);
+    // cinta tipo "Apuesta ya"
+    var sale = L.filter(function (x) { return x.price0; }), ad = h('a', 'tsx-ad'); ad.href = '#catalogo';
+    ad.appendChild(h('em', null, sale.length ? 'Oferta' : 'Colecciona')); ad.appendChild(h('span', null, sale.length ? sale.length + ' cosméticos con descuento' + (sale[0].saleUntil ? ' · terminan en ' + days(sale[0].saleUntil) : '') : 'Colores, placas, marcos y títulos que se ven en todo el sitio')); ad.appendChild(h('i', null, '→'));
+    ad.onclick = function (e) { e.preventDefault(); var c = document.getElementById('catalogo') || document.querySelector('.ts-s'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }; w.appendChild(ad);
+    // bloques como Goleador / Mejor nota / Goles
+    var Wm = wearMap(), worn = L.slice().sort(function (x, y) { return ((Wm[y.id] || []).length) - ((Wm[x.id] || []).length); })[0], big = sale.slice().sort(function (x, y) { return (y.price0 - y.price) - (x.price0 - x.price); })[0], leg = L.filter(function (x) { return x.rarity === 'legendaria' || x.rarity === 'mitica'; }).length;
+    var tl2 = h('div', 'tsx-tls');
+    function tile(k, ic, v, sub, it) { var d = h(it ? 'button' : 'div', 'tsx-t ' + k); if (it) { d.type = 'button'; d.onclick = function () { view(it); }; } d.appendChild(h('small', null, k === 'wr' ? 'Más usado' : k === 'of' ? 'Mayor descuento' : 'Legendarios y míticos')); d.appendChild(h('i', null, ic)); d.appendChild(h('b', null, v)); d.appendChild(h('span', null, sub)); tl2.appendChild(d); }
+    if (worn) tile('wr', '👥', worn.name, (Wm[worn.id] || []).length ? (Wm[worn.id] || []).length + ' lo llevan puesto' : 'Sé el primero en usarlo', worn);
+    if (big) tile('of', '🔥', big.name, '−' + big.off + '% · ahorras ' + I.fmt(big.price0 - big.price) + ' Bits', big);
+    tile('lg', '💎', String(leg), 'en la tienda ahora');
+    w.appendChild(tl2);
+    return w;
+  }
+  function fcard(it, cls, next) {
+    var c = h('div', 'ts-f ' + cls + ' r-' + it.rarity), art = h('button', 'art'); art.type = 'button'; art.setAttribute('aria-label', 'Ver ' + it.name); art.onclick = function () { view(it); };
+    art.appendChild(M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id));
+    if (next) { var tm = h('span', 'tm'), tb = h('b', null, ARENA.until(next)); tm.appendChild(document.createTextNode('⏳ ')); tm.appendChild(tb); art.appendChild(tm);
+      clearInterval(cdT); cdT = setInterval(function () { if (!document.body.contains(tb)) return clearInterval(cdT); if (Date.now() >= next) { clearInterval(cdT); return render(); } tb.textContent = ARENA.until(next); }, 1000); }
+    else art.appendChild(h('span', 'tm', '🔥 Tendencia'));
+    c.appendChild(art); var tx = h('div', 'tx'), nm = h('div'); nm.appendChild(h('b', null, it.name)); nm.appendChild(h('small', null, next ? '⭐ Destacado de hoy' : (M.RAR[it.rarity] + ' · ' + M.KIND[it.type]))); tx.appendChild(nm); tx.appendChild(heart(it)); c.appendChild(tx);
+    var bt = h('div', 'bot'), pv = h('div', 'pv'); pv.appendChild(h('small', null, 'Precio')); pv.appendChild(bits(it.price, 16)); bt.appendChild(pv); bt.appendChild(actBtn(it, true)); c.appendChild(bt); return c;
+  }
+  function count(el, to) { if (!to) { el.textContent = '0'; return; } var t0 = performance.now(); (function f(n) { var k = Math.min(1, (n - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0); }
+  function band() { var b = h('div', 'ts-band'), tr = h('div', 'trk'), w = ['🎨 Colores neón', '🏷️ Placas', '🖼️ Marcos', '🔤 Títulos', '🔒 Exclusivos', '🔥 Legendarios', '⭐ Destacado diario']; for (var k = 0; k < 3; k++) w.forEach(function (x) { tr.appendChild(h('span', null, x)); var o = MAGNA_BIT(20); tr.appendChild(o); }); b.appendChild(tr); var bw = h('div', 'ts-bw'); bw.appendChild(b); return bw; }
+
+  // ---------- catálogo ----------
+  var gridEl = null, chipsEl = null, toolsEl = null, infoEl = null;
+  function list() {
+    var L = SH().filter(function (x) { return !x.upg; }), W = wearMap(), ql = q.trim().toLowerCase();
+    var it = L.filter(function (x) {
+      if (tab === 'own') { if (!owned(x.id)) return false; }
+      else if (tab === 'wish') { if (!WISH[x.id]) return false; if (x.active === false && !owned(x.id)) return false; }
+      else { if (x.active === false && !owned(x.id)) return false; if (x.packOnly && !owned(x.id)) return false; if (tab === 'excl') { if (!x.exclusive) return false; } else { if (x.exclusive) return false; if (tab !== 'all' && x.type !== tab) return false; } }
+      if (ql && (x.name + ' ' + M.KIND[x.type] + ' ' + (M.RAR[x.rarity] || '')).toLowerCase().indexOf(ql) < 0) return false;
+      if (afford && acc && (x.exclusive || owned(x.id) || Number(x.price) > Number(acc.bits))) return false;
+      return true; });
+    // lo que viene en un pack activo (colección) va de primero en su fila, para que no quede escondido al final
+    var PK = {}; packs().forEach(function (pk) { Object.keys(pk.levels || {}).forEach(function (k) { (pk.levels[k] || []).forEach(function (id) { PK[id] = 1; }); }); });
+    var S = { rar: function (a, b) { return (PK[b.id] ? 1 : 0) - (PK[a.id] ? 1 : 0) || (RO[b.rarity] || 0) - (RO[a.rarity] || 0) || (b.price || 0) - (a.price || 0); }, asc: function (a, b) { return (a.price || 0) - (b.price || 0); }, desc: function (a, b) { return (b.price || 0) - (a.price || 0); }, pop: function (a, b) { return (W[b.id] || []).length - (W[a.id] || []).length || (RO[b.rarity] || 0) - (RO[a.rarity] || 0); }, az: function (a, b) { return a.name.localeCompare(b.name, 'es'); } };
+    return it.sort(S[sort] || S.rar);
+  }
+  function catalog() {
+    var s = h('section', 'ts-s'); s.id = 'catalogo';
+    var hd = h('div', 'ts-sh'); hd.appendChild(h('h2', null, 'Ofertas calientes 🔥')); if (acc) { var lk = h('button', 'ts-lk', 'Ver lo mío →'); lk.type = 'button'; lk.onclick = function () { setTab('own'); }; hd.appendChild(lk); } s.appendChild(hd);
+    chipsEl = h('div', 'ts-chips'); chipsEl.setAttribute('role', 'tablist'); s.appendChild(chipsEl);
+    toolsEl = h('div', 'ts-tools');
+    var sw = h('label', 'ts-q'); sw.appendChild(h('span', null, '🔎')); var qi = h('input'); qi.type = 'search'; qi.placeholder = 'Buscar: neón, marco, oro…'; qi.value = q; qi.setAttribute('aria-label', 'Buscar cosméticos'); qi.oninput = function () { q = qi.value; grid(); }; sw.appendChild(qi); toolsEl.appendChild(sw);
+    var so = h('label', 'ts-so'); so.appendChild(h('span', null, 'Ordenar')); var se = h('select'); [['rar', '💎 Rareza'], ['pop', '👥 Más usados'], ['asc', '⬆ Precio: menor'], ['desc', '⬇ Precio: mayor'], ['az', '🔤 A–Z']].forEach(function (o) { var op = h('option', null, o[1]); op.value = o[0]; se.appendChild(op); }); se.value = sort; se.onchange = function () { sort = se.value; grid(); }; so.appendChild(se); toolsEl.appendChild(so);
+    if (acc) { var tg = h('button', 'ts-tg' + (afford ? ' on' : '')); tg.type = 'button'; tg.setAttribute('aria-pressed', afford); tg.appendChild(h('i')); tg.appendChild(document.createTextNode('Me alcanza')); tg.onclick = function () { afford = !afford; tg.classList.toggle('on', afford); tg.setAttribute('aria-pressed', afford); grid(); }; toolsEl.appendChild(tg); }
+    s.appendChild(toolsEl);
+    infoEl = h('p', 'ts-inf'); s.appendChild(infoEl);
+    gridEl = h('div', 'ts-g'); s.appendChild(gridEl); counts(); grid(); return s;
+  }
+  function counts() { if (!chipsEl) return; chipsEl.innerHTML = ''; var L = SH().filter(function (x) { return !x.upg && (!x.packOnly || owned(x.id)); });
+    TABS.forEach(function (t) { if ((t[0] === 'own') && !acc) return;
+      var n = t[0] === 'own' ? L.filter(function (x) { return owned(x.id); }).length : t[0] === 'wish' ? L.filter(function (x) { return WISH[x.id] && x.active !== false; }).length : t[0] === 'excl' ? L.filter(function (x) { return x.exclusive && x.active !== false; }).length : L.filter(function (x) { return x.active !== false && !x.exclusive && (t[0] === 'all' || x.type === t[0]); }).length;
+      var b = h('button', 'ts-ch' + (tab === t[0] ? ' on' : '')); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', tab === t[0]); b.appendChild(h('span', 'i', t[1])); b.appendChild(h('span', null, t[2])); b.appendChild(h('small', null, String(n))); b.onclick = function () { setTab(t[0]); }; chipsEl.appendChild(b); }); }
+  function setTab(t) { tab = t; try { history.replaceState(null, '', '#' + tab); } catch (e) {} counts(); grid(); var c = document.getElementById('catalogo'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ behavior: 'smooth' }); }
+  function grid() {
+    if (!gridEl) return; gridEl.innerHTML = ''; var items = list(), W = wearMap();
+    infoEl.textContent = tab === 'excl' ? '🔒 Estos no se compran: se ganan en la cancha. Cuando desbloqueas la insignia, llegan solos a tu inventario.' : tab === 'wish' ? '❤️ Tus deseos se guardan en este dispositivo. Toca el corazón de cualquier cosmético para añadirlo.' : (items.length + (items.length === 1 ? ' cosmético' : ' cosméticos') + (q ? ' para “' + q + '”' : '') + (afford ? ' que te alcanzan' : ''));
+    if (!items.length) { var e = h('div', 'tn-emp'); e.appendChild(h('b', null, tab === 'own' ? '🎒 Todavía no tienes cosméticos' : tab === 'wish' ? '♡ Tu lista de deseos está vacía' : '🔎 Nada por aquí')); e.appendChild(h('p', null, tab === 'own' ? '¡Elige el primero!' : tab === 'wish' ? 'Toca el corazón de los que te gusten.' : 'Prueba con otro filtro o búsqueda.'));
+      if (q || afford || tab !== 'all') e.appendChild(btn('ghost', 'Ver todo', function () { q = ''; afford = false; tab = 'all'; render(); })); gridEl.appendChild(e); return; }
+    // una fila deslizable por categoría (se dibuja al acercarse a la pantalla: menos trabajo para el celular)
+    var G = [['color', 'Colores de nombre'], ['plate', 'Placas'], ['frame', 'Marcos'], ['title', 'Títulos']];
+    G.forEach(function (g) { var L = items.filter(function (x) { return x.type === g[0]; }); if (!L.length) return;
+      var row = h('div', 'ts-rw'), hd = h('div', 'ts-rwh'), tl = h('h3'); tl.appendChild(h('span', 'i', ICO[g[0]])); tl.appendChild(document.createTextNode(g[1])); tl.appendChild(h('small', null, String(L.length))); hd.appendChild(tl);
+      var tr = h('div', 'ts-row'); tr.setAttribute('role', 'list');
+      var ar = h('div', 'ts-rwa'); ['‹', '›'].forEach(function (a, k) { var b = h('button', null, a); b.type = 'button'; b.setAttribute('aria-label', (k ? 'Siguiente: ' : 'Anterior: ') + g[1]); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.max(240, tr.clientWidth * .85), behavior: 'smooth' }); }; ar.appendChild(b); }); hd.appendChild(ar);
+      var bar = h('div', 'ts-rwp'), bi = h('i'); bar.appendChild(bi);
+      tr.addEventListener('scroll', function () { var m = tr.scrollWidth - tr.clientWidth; bi.style.width = (m > 0 ? Math.max(12, (tr.scrollLeft + tr.clientWidth) / tr.scrollWidth * 100) : 100) + '%'; ar.classList.toggle('st', tr.scrollLeft < 4); ar.classList.toggle('en', tr.scrollLeft > m - 4); }, { passive: true });
+      for (var k = 0; k < Math.min(L.length, 4); k++) tr.appendChild(h('div', 'ts-ph'));
+      row.appendChild(hd); row.appendChild(tr); row.appendChild(bar); gridEl.appendChild(row);
+      function fill() { if (row.dataset.ok) return; row.dataset.ok = '1'; tr.innerHTML = ''; L.forEach(function (it, i) { var c = card(it, i, W); c.setAttribute('role', 'listitem'); tr.appendChild(c); }); tr.dispatchEvent(new Event('scroll')); }
+      if (window.IntersectionObserver) { var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); fill(); } }, { rootMargin: '300px 0px' }); io.observe(row); } else fill(); });
+  }
+
+  // ---------- lo más usado + tendencia + banner ----------
+  function top() {
+    var W = wearMap(), L = forSale(), used = L.filter(function (x) { return (W[x.id] || []).length; }).sort(function (a, b) { return W[b.id].length - W[a.id].length || b.price - a.price; }), byUse = used.length >= 3;
+    var rows = (byUse ? used : L.slice().sort(function (a, b) { return b.price - a.price; })).slice(0, 9); if (!rows.length) return null;
+    var s = h('section', 'ts-s'), hd = h('div', 'ts-sh'); hd.appendChild(h('h2', null, byUse ? 'Lo más usado en ' : 'Los más codiciados de ')); hd.firstChild.appendChild(h('em', null, 'Magna')); var lk = h('button', 'ts-lk', 'Ver ranking →'); lk.type = 'button'; lk.onclick = function () { sort = byUse ? 'pop' : 'desc'; tab = 'all'; render(); document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' }); }; hd.appendChild(lk); s.appendChild(hd);
+    var g = h('div', 'ts-top'); rows.forEach(function (it, i) { var r = h('button', 'ts-tr r-' + it.rarity); r.type = 'button'; r.onclick = function () { view(it); }; r.appendChild(h('span', 'n', String(i + 1)));
+      var sw = h('span', 'sw', ICO[it.type]); r.appendChild(sw); var tx = h('span', 'tx'); tx.appendChild(h('b', null, it.name)); tx.appendChild(h('small', null, M.RAR[it.rarity] + ' · ' + M.KIND[it.type])); r.appendChild(tx);
+      var rt = h('span', 'rt'), wn = (W[it.id] || []).length; rt.appendChild(h('em', wn ? 'up' : '', wn ? '👥 ' + wn + (wn === 1 ? ' lo usa' : ' lo usan') : 'Nuevo')); rt.appendChild(bits(it.price, 14)); r.appendChild(rt); g.appendChild(r); });
+    s.appendChild(g); return s;
+  }
+  // vitrina premium: la Colección Mítica, aparte y con su propio estilo
+  // Sección especial: marcos con niveles que se compran (Dragón eterno, Navidad). Cada tarjeta muestra el marco pasando solo por sus 3 niveles.
+  var SPX = { dragoneterno: { k: 'fire', tag: '🐉 Legendaria · Colección Dragón eterno', pitch: 'La placa del marco Dragón eterno: escamas de dragón que brillan detrás de tu nombre. Combínala con el marco y sube los dos juntos de nivel.' }, garra: { k: 'blood', tag: '🩸 Legendario', pitch: 'Un anillo de sangre que late y gotea alrededor de tu avatar, marcado por garras. Súbelo al Pacto de sangre: sello de runas, un corazón que se acelera y una gota que lo hace estallar todo.' }, sierra: { k: 'fire', tag: '⚙️ Legendario', pitch: 'Una sierra de metal forjado con un anillo de fuego alrededor de tu avatar. En su nivel máximo se desata: acelera como un motor, lanza chispas y hace temblar todo.' }, mira: { k: 'scope', tag: '🎯 Legendario', pitch: 'Estás en la mira: radar, distancia y una mira que te busca. En su nivel máximo dispara 3 veces —falla, pega y ¡HEADSHOT!— y recarga.' }, ouroboros: { k: 'fire', tag: '🐉 Legendario', pitch: 'Un dragón de fuego que se persigue la cola alrededor de tu avatar. Despiértalo y llévalo a la furia.' }, blackmatter: { k: 'ink', tag: '🖤 Legendario', pitch: 'Tinta viva con glitch de colores. En su nivel máximo la materia oscura se traga tu avatar, abre un ojo rojo de reptil y explota.' }, magenta: { k: 'mag', tag: '⚡ Legendario', pitch: 'Energía magenta que gira sin control alrededor de tu avatar. Súbelo hasta la Singularidad: un agujero negro que lo traga y lo hace renacer.' }, navidad: { k: 'xmas', tag: '🎄 Edición Navidad', pitch: 'Corona de pino con esferas, luces que parpadean y, en su nivel máximo, estrella, trineo y nevada.' } };
+  // ---------- PACKS: varios cosméticos del mismo nivel juntos, con descuento ----------
+  function byId(id) { var L = SH(); for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
+  function packs() { var P = (MAGNA.S && MAGNA.S.packs) || []; return P.filter(function (pk) { if (pk.active === false || pk.tempOff || !pk.levels) return false;
+    return Object.keys(pk.levels).every(function (k) { return pk.levels[k].every(function (id) { var x = byId(id); return x && x.active !== false && !x.exclusive; }); }); }); }
+  function packQuote(pk, lv) { var ids = pk.levels[lv] || [], items = ids.map(byId), miss = items.filter(function (x) { return x && !owned(x.id); }), sum = 0, pay = 0, off = Math.min(60, Math.max(0, pk.off || 0));
+    miss.forEach(function (x) { var pr = Number(x.price || 0); sum += pr; pay += miss.length > 1 ? Math.round(pr * (100 - off) / 100) : pr; }); return { items: items, miss: miss, sum: sum, pay: pay, all: items.reduce(function (a, x) { return a + Number(x.price || 0); }, 0) }; }
+  function packHave(pk) { var have = 0; Object.keys(pk.levels).sort().forEach(function (k) { if (pk.levels[k].every(owned)) have = Math.max(have, Number(k)); }); return have; }
+  function packCard(pk) { var lvs = Object.keys(pk.levels).map(Number).sort(), have = packHave(pk), cur = Math.min(lvs.length, have + 1), c = h('article', 'ts-spc fire ts-pk'); c.dataset.pack = pk.id;
+    var L1 = pk.levels[1].map(byId), ty = function (t) { return L1.filter(function (x) { return x && x.type === t; })[0]; }, fr = ty('frame'), pl = ty('plate'), cl = ty('color');
+    var stg = h('div', 'ts-sps pl'), prev = M.cosPreview(pl, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); prev.classList.add('sp-pl'); stg.appendChild(prev);
+    // el nombre de la tarjeta lleva el color del pack (si trae uno)
+    var nb = cl && prev.querySelector('.cp-tx b'); if (nb) { var nm = h('span', 'mpn'); nm.appendChild(h('span', 'mpn-n', nb.textContent)); var eq = {}; eq.color = cl.id; M.nameStyle(nm, eq); if (MAGNA_COS.letters) MAGNA_COS.letters(nm, true); nb.replaceWith(nm); }
+    var av = prev.querySelector('.tav'); if (av && fr) { av.style.setProperty('--s', '62px'); av.classList.add('fr-' + fr.style); av.dataset.lvx = '1'; av.dataset.lv = cur; MAGNA_COS.deco(av); }
+    var lvb = h('span', 'ts-spl', 'Nv.' + cur); stg.appendChild(lvb); c.appendChild(stg);
+    var tx = h('div', 'ts-spt'); var kinds = [fr && 'marco', pl && 'placa', cl && 'nombre'].filter(Boolean); tx.appendChild(h('span', 'ts-spg2', '🎁 Pack · ' + kinds.join(' + '))); tx.appendChild(h('h3', null, pk.name)); tx.appendChild(h('p', null, pk.desc || ''));
+    tx.appendChild(h('div', 'ts-spo sale', '🔥 −' + (pk.off || 0) + '% si te llevas ' + (kinds.length > 2 ? 'las ' + kinds.length + ' piezas juntas' : 'el marco y la placa juntos')));
+    var pl2 = h('div', 'ts-spp'); lvs.forEach(function (lv) { var q = packQuote(pk, lv), b = h('button', 'ts-spv' + (q.miss.length ? '' : ' own')); b.type = 'button'; b.appendChild(h('b', null, 'Pack Nv.' + lv)); var pr = h('span');
+      if (!q.miss.length) pr.textContent = '✓ Lo tienes'; else { if (q.pay < q.sum) pr.appendChild(h('s', null, I.fmt(q.sum) + ' ')); pr.appendChild(MAGNA_BIT(13)); pr.appendChild(document.createTextNode(' ' + I.fmt(q.pay))); }
+      b.appendChild(pr); b.onmouseenter = b.onfocus = function () { show(lv); }; b.onclick = function () { buyPackView(pk, lv); }; pl2.appendChild(b); }); tx.appendChild(pl2);
+    var qn = packQuote(pk, cur); if (qn.miss.length && qn.pay < qn.sum) tx.appendChild(h('small', 'ts-spm', 'Ahorras ' + I.fmt(qn.sum - qn.pay) + ' Bits frente a comprarlos por separado'));
+    tx.appendChild(btn('big', have >= lvs.length ? '✓ Pack completo' : 'Comprar pack Nv.' + cur + ' · ' + I.fmt(qn.pay) + ' Bits', function () { if (have < lvs.length) buyPackView(pk, cur); })); c.appendChild(tx);
+    function show(lv) { if (av) av.dataset.lv = lv; prev.dataset.plv = lv; lvb.textContent = 'Nv.' + lv; [].forEach.call(pl2.children, function (b, j) { b.classList.toggle('on', j === lv - 1); }); }
+    show(cur); return c; }
+  function buyPackView(pk, lv) { var q = packQuote(pk, lv), have = packHave(pk);
+    M.modal(function (b, close) { var w = h('div', 'cf r-legendaria'); w.appendChild(h('h3', null, pk.name + ' · Nv.' + lv));
+      if (lv > have + 1) { w.appendChild(h('p', 'sub', 'Primero necesitas el Pack Nv.' + (have + 1) + '.')); var r0 = h('div', 'r'); r0.appendChild(btn('ghost', 'Cerrar', close)); w.appendChild(r0); b.appendChild(w); return; }
+      var ul = h('div', 'cf-pk'); q.items.forEach(function (x) { ul.appendChild(h('div', owned(x.id) ? 'own' : '', ({ frame: '🖼️ ', plate: '🏷️ ', color: '🎨 ' }[x.type] || '✨ ') + x.name + (owned(x.id) ? ' · ya lo tienes' : ' · ' + I.fmt(x.price) + ' Bits'))); }); w.appendChild(ul);
+      if (!q.miss.length) { w.appendChild(h('p', 'sub', '✓ Ya tienes todo este pack.')); var r1 = h('div', 'r'); r1.appendChild(btn('ghost', 'Cerrar', close)); w.appendChild(r1); b.appendChild(w); return; }
+      var r2 = h('div', 'r'); r2.appendChild(btn('ghost', 'Cancelar', close));
+      if (!acc) { r2.appendChild(btn('', 'Entrar para comprar', function () { location.href = 'cuenta.html'; })); w.appendChild(r2); b.appendChild(w); return; }
+      var after = Number(acc.bits) - q.pay, sm = h('div', 'sum'); [['Precio del pack', I.fmt(q.pay)], ['Ahorras', I.fmt(q.sum - q.pay)], ['Tu saldo', I.fmt(acc.bits)], ['Te quedan', after < 0 ? '—' : I.fmt(after)]].forEach(function (x) { sm.appendChild(h('span', null, x[0])); var v = h('b'); v.appendChild(MAGNA_BIT(14)); v.appendChild(document.createTextNode(' ' + x[1])); sm.appendChild(v); }); w.appendChild(sm);
+      if (after < 0) { w.appendChild(h('p', 'sub', 'Te faltan ' + I.fmt(-after) + ' Bits. Puedes ganarlos en Apuestas.')); r2.appendChild(btn('', '🎯 Ganar Bits', function () { location.href = 'apuestas.html'; })); }
+      else { var go = btn('', 'Comprar pack y equipar', function () { go.disabled = true; go.textContent = 'Comprando…';
+        I.buyPack(pk.id, lv).then(function (nb) { acc.bits = nb; q.miss.forEach(function (x) { inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); }); close();
+          var fr = q.items.filter(function (x) { return x.type === 'frame'; })[0], pl = q.items.filter(function (x) { return x.type === 'plate'; })[0], cl = q.items.filter(function (x) { return x.type === 'color'; })[0];
+          return Promise.all([fr ? I.equip('frame', fr.id) : 0, pl ? I.equip('plate', pl.id) : 0, cl ? I.equip('color', cl.id) : 0]).then(function () { if (fr) inv.eq.frame = fr.id; if (pl) inv.eq.plate = pl.id; if (cl) inv.eq.color = cl.id; I.syncSelf(acc, inv.eq); render(); I.toast('🎉 ¡' + pk.name + ' Nv.' + lv + ' es tuyo y ya lo llevas puesto!'); }, function () { render(); I.toast('Comprado. Equípalo desde Lo mío.'); }); },
+          function (e) { go.disabled = false; go.textContent = 'Comprar pack y equipar'; I.toast(e.message || 'No se pudo comprar', true); }); }); r2.appendChild(go); }
       w.appendChild(r2); b.appendChild(w); }); }
+  function special() { var L = forSale().filter(function (x) { return (x.type === 'frame' || x.type === 'plate') && x.lv && ups(x).length; }); if ((!L.length && !packs().length) || !window.MAGNA_COS) return null;
+    var s = h('section', 'ts-s ts-sp'), hd = h('div', 'ts-sph'); hd.appendChild(h('span', 'ts-spk', '✨ Edición especial')); hd.appendChild(h('h2', null, L.some(function (x) { return x.type === 'plate'; }) ? 'Cosméticos que suben de nivel' : 'Marcos que suben de nivel')); hd.appendChild(h('p', null, 'Compra el marco y desbloquea su poder nivel por nivel. Cada mejora cambia cómo lo ve toda la comunidad.')); s.appendChild(hd);
+    var g = h('div', 'ts-spg'); packs().forEach(function (pk) { g.appendChild(packCard(pk)); }); L.forEach(function (it) { var X = SPX[it.style] || { k: 'fire', tag: '✨ Especial', pitch: '' }, U = [it].concat(ups(it)), have = topLv(it), T = LVT[it.style] || [], c = h('article', 'ts-spc ' + X.k);
+      var stg = h('div', 'ts-sps'), isPl = it.type === 'plate', av; if (isPl) { av = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); av.classList.add('sp-pl'); av.dataset.plv = Math.max(1, have); stg.classList.add('pl'); } else { av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 128); av.classList.add('fr-' + it.style); av.dataset.lvx = '1'; av.dataset.lv = Math.max(1, have); MAGNA_COS.deco(av); } stg.appendChild(av); var lvb = h('span', 'ts-spl', 'Nv.' + Math.max(1, have)); stg.appendChild(lvb); c.appendChild(stg);
+      var tx = h('div', 'ts-spt'); tx.appendChild(h('span', 'ts-spg2', X.tag)); tx.appendChild(h('h3', null, it.name)); tx.appendChild(h('p', null, X.pitch)); if (it.price0) tx.appendChild(h('div', 'ts-spo sale', '🔥 Oferta de lanzamiento: −' + it.off + '% en los 3 niveles' + (it.saleUntil ? ' · termina en ' + days(it.saleUntil) : ''))); if (it.until) tx.appendChild(h('div', 'ts-spo ltd', '⏳ Edición limitada: se vende solo hasta el ' + fdate(it.until) + ' · quedan ' + days(it.until)));
+      var pl = h('div', 'ts-spp'); U.forEach(function (u, i) { var lv = u.lv || i + 1, b = h('button', 'ts-spv' + (have >= lv ? ' own' : '')); b.type = 'button'; b.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); var pr = h('span'); if (u.price0) pr.appendChild(h('s', null, I.fmt(u.price0) + ' ')); pr.appendChild(MAGNA_BIT(11)); pr.appendChild(document.createTextNode(' ' + I.fmt(u.price))); b.appendChild(have >= lv ? h('span', null, '✓ Tuyo') : pr);
+        b.onmouseenter = b.onfocus = function () { stop(); show(lv); }; b.onmouseleave = b.onblur = function () { auto(); }; b.onclick = function () { view(it); }; pl.appendChild(b); }); tx.appendChild(pl);
+      var tot = U.reduce(function (a, u) { return a + Number(u.price || 0); }, 0), tot0 = U.reduce(function (a, u) { return a + Number(u.price0 || u.price || 0); }, 0); tx.appendChild(h('small', 'ts-spm', 'Completo: ' + I.fmt(tot) + ' Bits en total' + (tot0 > tot ? ' (antes ' + I.fmt(tot0) + ')' : '')));
+      tx.appendChild(btn('big', have >= U.length ? '✓ Nivel máximo · Ver' : have ? '⬆️ Mejorar a Nv.' + (have + 1) : 'Comprar · ' + I.fmt(it.price) + ' Bits', function () { view(it); })); c.appendChild(tx);
+      var cur = Math.max(1, have), T2 = null; function show(lv) { av.dataset.lv = lv; if (isPl) av.dataset.plv = lv; lvb.textContent = 'Nv.' + lv + ((T[lv - 1] && T[lv - 1][1]) ? ' · ' + T[lv - 1][1].split('· ')[1] : ''); [].forEach.call(pl.children, function (b, j) { b.classList.toggle('on', j === lv - 1); }); }
+      function stop() { clearTimeout(T2); } function auto() { stop(); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; (function tick() { T2 = setTimeout(function () { if (!document.body.contains(c)) return stop(); if (!document.hidden) { cur = cur % U.length + 1; show(cur); } tick(); }, cur >= 3 ? 6500 : 3200); })(); }
+      show(cur); auto(); g.appendChild(c); }); s.appendChild(g); return s; }
+  function mythic() { var C = forSale().filter(function (x) { return x.rarity === 'mitica'; }).sort(function (a, b) { return a.price - b.price; }); if (!C.length) return null;
+    var s = h('section', 'ts-s ts-my'), hd = h('div', 'ts-sh c'), tx = h('div'); tx.appendChild(h('span', 'my-ey', '💎 Nuevo · Edición limitada')); tx.appendChild(h('h2', null, 'Colección Mítica')); tx.appendChild(h('p', null, 'Lo más exclusivo de Magna Arena. Brillan, se mueven y se ven desde lejos. Solo para quien de verdad tenga Bits.')); hd.appendChild(tx); s.appendChild(hd);
+    var spot = spotlight(C.filter(function (x) { return x.type === 'plate'; })); if (spot) s.appendChild(spot);
+    var tabs = h('div', 'my-tb'), cur = 'all', wr = h('div', 'ts-car'), tr = h('div', 'trk'), W = wearMap();
+    function fill() { tr.innerHTML = ''; C.filter(function (x) { return cur === 'all' || x.type === cur; }).forEach(function (it, i) { tr.appendChild(card(it, i, W)); }); tr.scrollLeft = 0; }
+    [['all', 'Todo'], ['color', '🎨 Nombres'], ['plate', '🏷️ Placas'], ['frame', '🖼️ Marcos'], ['title', '🔤 Títulos']].forEach(function (t) { if (t[0] !== 'all' && !C.some(function (x) { return x.type === t[0]; })) return; var b = h('button', t[0] === cur ? 'on' : null, t[1]); b.type = 'button'; b.onclick = function () { cur = t[0]; [].forEach.call(tabs.children, function (y) { y.classList.toggle('on', y === b); }); fill(); }; tabs.appendChild(b); });
+    s.appendChild(tabs); fill(); wr.appendChild(tr);
+    ['‹', '›'].forEach(function (a, k) { var b = h('button', 'ts-ar ' + (k ? 'nx' : 'pv'), a); b.type = 'button'; b.setAttribute('aria-label', k ? 'Siguiente' : 'Anterior'); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.min(tr.clientWidth * .8, 600), behavior: 'smooth' }); }; wr.appendChild(b); });
+    s.appendChild(wr); return s; }
+  // vitrina grande: las placas míticas como portada de perfil, rotando solas
+  var LVT = { dragoneterno: [[1, 'Nv.1 · Dormido', 'Escamas oscuras de dragón con un brillo lento que las recorre; el ojo duerme con una brasa en el párpado'], [2, 'Nv.2 · Despierta', 'Lava que late entre las escamas, el ojo ámbar se abre y mira a los lados y suben brasas'], [3, 'Nv.3 · Furia', 'Las escamas se encienden en oleadas de fuego, salen llamas, el ojo arde en rojo y parpadea y un borde de fuego recorre la placa']], garra: [[1, 'Nv.1 · Rasguño', 'Un anillo de sangre que late como una vena; cada tanto 3 garras lo rasguñan y cae una gota'], [2, 'Nv.2 · Herida', 'Anillo más grueso con sangre que corre alrededor y gotea; una gota late encima y un zarpazo de 3 garras te raja'], [3, 'Nv.3 · Pacto de sangre', 'Anillo en corona y sello de runas que se dibuja mientras el corazón se acelera; cae la gota, estalla, llega el zarpazo y llueve sangre']], sierra: [[1, 'Nv.1 · Forjada', 'La sierra avanza a golpes de trinquete y el fuego de adentro respira despacio'], [2, 'Nv.2 · Encendida', 'Gira sin parar, el fuego arde y titila, halo naranja y brasas que suben'], [3, 'Nv.3 · Desatada', 'Acelera y frena como un motor con estela de giro, fuego en contra, lluvia de chispas, destello y temblor']], mira: [[1, 'Nv.1 · Mira', 'Mira roja de francotirador que se mece con el pulso del tirador y un punto láser que tiembla sobre ti'], [2, 'Nv.2 · En la mira', 'Radar que barre, distancia que baja hasta 0 m, una mira que te busca por todo el avatar y LOCK'], [3, 'Nv.3 · Headshot', '3 disparos con contador de balas: el 1º falla, el 2º pega (+50) y el 3º es ¡HEADSHOT! con objetivo eliminado; luego recarga']], blackmatter: [[1, 'Nv.1 · Tinta', 'Un anillo de tinta viva que hierve, con el borde partido en cian, magenta y amarillo'], [2, 'Nv.2 · Derrame', 'La tinta late, se derrite en gotas, salpica y el borde hace glitch más fuerte'], [3, 'Nv.3 · Materia oscura', 'Por un momento la tinta te traga y abre un ojo rojo de reptil… y explota; reapareces partido en colores']], jackpot: [[1, 'Nv.1 · Ficha', 'Marquesina de casino, la carta que se voltea y una moneda que lanzas al aire'], [2, 'Nv.2 · Racha', 'Una ruleta: la bola corre por los bombillos, frena y enciende el premio; fichas en órbita que saltan'], [3, 'Nv.3 · Premio mayor', 'Jalas la palanca y la tragamonedas gira sobre tu avatar: primero ¡CASI!, luego 7-7-7 y explota el JACKPOT']], ouroboros: [[1, 'Nv.1 · Dormido', 'Incluido con el marco: descansa, apagado y lento'], [2, 'Nv.2 · Despierto', 'Fuego vivo, ojo encendido y 2 brasas en órbita'], [3, 'Nv.3 · Furia', 'Llamas al rojo, aura de fuego y gira más rápido']], magenta: [[1, 'Nv.1 · Chispa', 'Un remolino de energía magenta, tenue y lento'], [2, 'Nv.2 · Corriente', 'Dos remolinos opuestos, brillo intenso y chispas en órbita'], [3, 'Nv.3 · Singularidad', 'Un agujero negro se traga tu avatar en espiral y lo hace renacer en cada estallido']], navidad: [[1, 'Nv.1 · Nevada', 'Incluido con el marco: corona de pino, esferas y moño'], [2, 'Nv.2 · Encendida', 'Luces de colores que parpadean y copos en órbita'], [3, 'Nv.3 · Noche mágica', 'Estrella dorada, trineo volando alrededor y nevada']] };
+  // Niveles que se compran (Dragón eterno): Nv.1 viene con el marco; Nv.2 y Nv.3 son mejoras que se pagan aparte, en orden
+  function upBox(it, close) { var box = h('div', 'cf-evo'), eh = h('div', 'cf-evh'), have = topLv(it), L = [it].concat(ups(it)), T = LVT[it.style] || [];
+    eh.appendChild(h('b', null, '⬆️ Mejoras del marco')); eh.appendChild(h('small', null, 'Compra el marco y despiértalo nivel por nivel. Cada mejora se equipa sola.')); box.appendChild(eh);
+    var lr = h('div', 'cf-evl'); L.forEach(function (x, i) { var lv = x.lv || i + 1, c = h('div', 'cf-lv' + (have >= lv ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + x.style); av.dataset.lv = lv; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw);
+      c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); var pr = h('span', 'cf-lvp'); if (x.price0) pr.appendChild(h('s', null, I.fmt(x.price0) + ' ')); pr.appendChild(MAGNA_BIT(12)); pr.appendChild(document.createTextNode(' ' + I.fmt(x.price))); c.appendChild(pr);
+      if (i > 0 && acc) { if (have >= lv) { var ok = h('em', 'cf-lvk', inv && inv.eq.frame === x.id ? '✓ Puesto' : 'Tuyo'); if (!(inv && inv.eq.frame === x.id)) { ok = btn('own sm', 'Equipar', function () { close(); wear(x); }); } c.appendChild(ok); }
+        else if (have === lv - 1 && have > 0 && x.packOnly) c.appendChild(btn('sm', '📦 En el pack', function () { goPack(x, close); }));
+        else if (have === lv - 1 && have > 0) { var bb = btn('sm', Number(acc.bits) >= x.price ? 'Mejorar' : 'Te faltan ' + I.fmt(x.price - Number(acc.bits)), function () { bb.disabled = true; bb.textContent = 'Mejorando…';
+            I.buy(x).then(function (nb) { acc.bits = nb; inv.rows.unshift({ item_id: x.id, kind: x.type, source: 'shop', price: x.price }); close(); return I.equip(x.type, x.id).then(function () { inv.eq[x.type] = x.id; I.syncSelf(acc, inv.eq); celebrate(x); }, function () { render(); }); }, function (e) { bb.disabled = false; bb.textContent = 'Mejorar'; I.toast(e.message || 'No se pudo mejorar', true); }); });
+          if (Number(acc.bits) < x.price) bb.disabled = true; c.appendChild(bb); }
+        else c.appendChild(h('em', 'cf-lvk lk', have ? '🔒 Primero Nv.' + (lv - 1) : '🔒 Compra el marco')); }
+      lr.appendChild(c); }); box.appendChild(lr);
+    box.appendChild(h('small', 'cf-evt', '👆 Pásale el dedo o el mouse para desatar su fuego.')); return box; }
+  // vista de niveles para marcos exclusivos (no se compran): solo muestra los 3 niveles
+  function lvShow(it) { var box = h('div', 'cf-evo'), eh = h('div', 'cf-evh'), T = LVT[it.style] || []; eh.appendChild(h('b', null, '✨ Los 3 niveles incluidos')); eh.appendChild(h('small', null, it.raffle ? 'El ganador del sorteo se lo lleva completo, ya en el nivel máximo.' : 'Exclusivo: la administración lo entrega completo, ya en el nivel máximo.')); box.appendChild(eh);
+    var lr = h('div', 'cf-evl'); [1, 2, 3].forEach(function (lv, i) { var c = h('div', 'cf-lv on'), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + it.style); av.dataset.lv = lv; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw); c.appendChild(h('b', null, (T[i] && T[i][1]) || 'Nv.' + lv)); c.appendChild(h('small', null, (T[i] && T[i][2]) || '')); lr.appendChild(c); }); box.appendChild(lr); return box; }
+  function spotlight(P) { if (!P.length || !window.MAGNA_COS || !MAGNA_COS.banner) return null;
+    var w = h('div', 'my-sp'), bn = h('div', 'my-bn'), inf = h('div', 'my-in'), dots = h('div', 'my-dt'), i = 0, T = null, nm = acc ? acc.display_name : 'Tu nombre';
+    var big = h('div', 'my-nm'), lb = h('span', 'my-lb'), tt = h('b', 'my-tt'), pr = h('div', 'my-pr'), go = btn('big', '💎 Ver placa', function () { view(P[i]); });
+    inf.appendChild(lb); inf.appendChild(big); inf.appendChild(tt); inf.appendChild(pr); inf.appendChild(go); bn.appendChild(inf); w.appendChild(bn);
+    P.forEach(function (it, k) { var d = h('button', null); d.type = 'button'; d.setAttribute('aria-label', it.name); d.onclick = function () { show(k); auto(); }; dots.appendChild(d); }); w.appendChild(dots);
+    function show(k) { i = (k + P.length) % P.length; var it = P[i]; MAGNA_COS.banner(bn, it.style); bn.classList.remove('in'); void bn.offsetWidth; bn.classList.add('in');
+      lb.textContent = 'Así se verá tu perfil'; big.textContent = nm; tt.textContent = it.name; pr.innerHTML = ''; pr.appendChild(pbits(it)); if (owned(it.id)) pr.appendChild(h('span', 'ok', '✓ Ya es tuya'));
+      [].forEach.call(dots.children, function (d, j) { d.classList.toggle('on', j === i); }); }
+    function auto() { clearInterval(T); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; T = setInterval(function () { if (!document.hidden && document.body.contains(w)) show(i + 1); }, 5000); }
+    bn.onmouseenter = function () { clearInterval(T); }; bn.onmouseleave = auto;
+    show(0); auto(); return w; }
+  function trend() {
+    var C = forSale().filter(function (x) { return x.rarity === 'legendaria'; }); if (C.length < 3) C = forSale().filter(function (x) { return x.rarity !== 'comun'; }); if (!C.length) return null;
+    var s = h('section', 'ts-s ts-tn'), hd = h('div', 'ts-sh c'); hd.appendChild(h('h2', null, 'Legendarios en tendencia ⚡')); s.appendChild(hd);
+    var wr = h('div', 'ts-car'), tr = h('div', 'trk'), W = wearMap(); C.forEach(function (it, i) { tr.appendChild(card(it, i, W)); }); wr.appendChild(tr);
+    ['‹', '›'].forEach(function (a, k) { var b = h('button', 'ts-ar ' + (k ? 'nx' : 'pv'), a); b.type = 'button'; b.setAttribute('aria-label', k ? 'Siguiente' : 'Anterior'); b.onclick = function () { tr.scrollBy({ left: (k ? 1 : -1) * Math.min(tr.clientWidth * .8, 600), behavior: 'smooth' }); }; wr.appendChild(b); });
+    s.appendChild(wr); return s;
+  }
+  function cta() { var s = h('section', 'ts-cta'), l = h('div'); l.appendChild(h('h2', null, '¿Te faltan Bits?')); l.appendChild(h('p', null, 'Gánalos acertando pronósticos en Apuestas o en la Predicción de la llave. Son una moneda ficticia: solo sirven para darle estilo a tu nombre.')); s.appendChild(l);
+    var r = h('div', 'cta'); r.appendChild(btn('big', '🎯 Ir a Apuestas', function () { location.href = 'apuestas.html'; })); r.appendChild(btn('ghost big', '🏆 Predicción', function () { location.href = 'prediccion.html'; })); s.appendChild(r); var o = MAGNA_BIT(120); o.classList.add('big'); s.appendChild(o); return s; }
+
+  // ---------- vista rápida / compra ----------
+  function view(it) {
+    M.modal(function (b, close) { var w = h('div', 'cf r-' + (it.rarity || 'comun')), own = owned(it.id), on = own && equipped(it), W = wearMap()[it.id] || [];
+      var tp = h('div', 'cf-t'); tp.appendChild(h('span', 'rr', M.RAR[it.rarity] || 'Común')); tp.appendChild(h('span', null, ICO[it.type] + ' ' + M.KIND[it.type])); w.appendChild(tp);
+      w.appendChild(h('h3', 'x', it.name)); var pv = M.cosPreview(it, acc ? acc.display_name : 'Tu nombre', acc && acc.player_id); w.appendChild(pv); if (it.type === 'frame' && it.lv && ups(it).length && !it.exclusive) w.appendChild(upBox(it, close)); else if (it.type === 'frame' && it.lv && it.exclusive && window.MAGNA_COS) w.appendChild(lvShow(it)); else if (it.type === 'frame' && window.MAGNA_COS && MAGNA_COS.MYF && MAGNA_COS.MYF[it.style]) { var ev = h('div', 'cf-evo'), eh = h('div', 'cf-evh'); eh.appendChild(h('b', null, '🧬 Evoluciona contigo')); eh.appendChild(h('small', null, 'Sube de nivel jugando: cada partido suma 1 punto y cada MVP 3.')); ev.appendChild(eh);
+      var me = acc && acc.player_id != null ? MAGNA_COS.evo(acc.player_id) : null, lr = h('div', 'cf-evl');
+      (LVT[it.style] || [[1, 'Nv.1', 'Al comprarlo: gema y momento mítico'], [2, 'Nv.2', '15 pts: + 2 satélites en órbita'], [3, 'Nv.3', '40 pts: aura, 3 satélites y gema de oro']]).forEach(function (L) { var c = h('div', 'cf-lv' + (me && me.lv >= L[0] ? ' on' : '')), av = M.tierAv(acc ? acc.display_name : 'Tú', 80, 54); av.classList.add('fr-' + it.style); av.dataset.lv = L[0]; av.dataset.lvx = '1'; MAGNA_COS.deco(av); var aw = h('div', 'cf-lva'); aw.appendChild(av); c.appendChild(aw); c.appendChild(h('b', null, L[1])); c.appendChild(h('small', null, L[2])); lr.appendChild(c); });
+      ev.appendChild(lr); if (me) { var pr2 = h('div', 'cf-evp'), bar = h('i'); bar.style.width = Math.min(100, me.pts / 40 * 100) + '%'; pr2.appendChild(bar); ev.appendChild(pr2); ev.appendChild(h('small', 'cf-evt', 'Tienes ' + me.pts + ' pts' + (me.next ? ' · te faltan ' + (me.next - me.pts) + ' para Nv.' + (me.lv + 1) : ' · ¡nivel máximo!'))); }
+      ev.appendChild(h('small', 'cf-evt', '👆 Pásale el dedo o el mouse a un marco mítico para desatar su poder.')); w.appendChild(ev); }
+    if (it.type === 'plate' && window.MAGNA_COS && MAGNA_COS.banner) { var vb = h('div', 'cf-bn'); vb.appendChild(h('small', null, 'Portada de tu perfil')); vb.appendChild(h('b', null, acc ? acc.display_name : 'Tu nombre')); MAGNA_COS.banner(vb, it.style); w.appendChild(vb); } w.appendChild(ctx(it));
+      if (W.length) { var wr = h('div', 'cf-w'), av = h('div', 'avs'); W.slice(0, 5).forEach(function (pid) { av.appendChild(M.tierAv(pname(pid), null, 30, pid)); }); wr.appendChild(av); wr.appendChild(h('span', null, W.length === 1 ? 'Lo lleva ' + pname(W[0]) : 'Lo llevan ' + W.length + ' jugadores')); w.appendChild(wr); }
+      if (it.exclusive) { if (it.raffle) { var rf = h('p', 'sub', '🎟️ Exclusivo: solo se gana en el Sorteo, con sus 3 niveles. '); var ra = h('a', null, 'Ir al sorteo →'); ra.href = 'sorteo.html'; rf.appendChild(ra); w.appendChild(rf); } else w.appendChild(h('p', 'sub', '🔒 ' + (MAGNA.AWARD_TXT[it.award] || 'Exclusivo: lo entrega la administración.'))); }
+      var r2 = h('div', 'r'), no = btn('ghost', own || it.exclusive ? 'Cerrar' : 'Cancelar', close); r2.appendChild(no);
+      if (it.packOnly && !own) { w.appendChild(h('p', 'sub', '📦 Este cosmético es parte de una colección: solo se consigue comprando su pack.')); r2.appendChild(btn('', '📦 Ver el pack', function () { goPack(it, close); })); }
+      else if (!it.exclusive && !own && acc) {
+        var after = Number(acc.bits) - Number(it.price || 0), sm = h('div', 'sum'); [['Precio', I.fmt(it.price)], ['Tu saldo', I.fmt(acc.bits)], ['Te quedan', after < 0 ? '—' : I.fmt(after)]].forEach(function (x) { sm.appendChild(h('span', null, x[0])); var v = h('b'); v.appendChild(MAGNA_BIT(14)); v.appendChild(document.createTextNode(' ' + x[1])); sm.appendChild(v); }); w.insertBefore(sm, null);
+        var mt = h('div', 'cf-m'), mi = h('i'); mi.style.width = Math.min(100, Math.round(Number(acc.bits) / Math.max(1, it.price) * 100)) + '%'; mt.appendChild(mi); w.appendChild(mt);
+        if (after < 0) { w.appendChild(h('p', 'sub', 'Te faltan ' + I.fmt(-after) + ' Bits. Puedes ganarlos en Apuestas.')); r2.appendChild(btn('', '🎯 Ganar Bits', function () { location.href = 'apuestas.html'; })); }
+        else { var go = btn('', 'Comprar y equipar', function () { go.disabled = true; go.textContent = 'Comprando…';
+          I.buy(it).then(function (nb) { acc.bits = nb; inv.rows.unshift({ item_id: it.id, kind: it.type, source: 'shop', price: it.price }); close(); return I.equip(it.type, it.id).then(function () { inv.eq[it.type] = it.id; I.syncSelf(acc, inv.eq); celebrate(it); }, function () { I.toast('Comprado. Equípalo desde Lo mío.'); render(); }); },
+            function (e) { go.disabled = false; go.textContent = 'Comprar y equipar'; I.toast(e.message || 'No se pudo comprar', true); }); }); r2.appendChild(go); }
+      } else if (!it.exclusive && !acc) r2.appendChild(btn('', 'Entrar para comprar', function () { location.href = 'cuenta.html'; }));
+      else if (own && !on) r2.appendChild(btn('own', 'Equipar', function () { close(); wear(it); }));
+      else if (on) { var eb = btn('eqp', '✓ Ya lo llevas puesto'); eb.disabled = true; r2.appendChild(eb); }
+      var hb = heart(it); hb.classList.add('in'); r2.appendChild(hb);
+      w.appendChild(r2); b.appendChild(w); });
+  }
+  // mini escenas: el cosmético dentro del ranking, una alineación y el perfil; se puede combinar con lo que ya llevas
+  var combo = true;
+  function ctx(it) {
+    var box = h('div', 'cx'), nm = acc ? acc.display_name : 'Tu nombre', pid = acc && acc.player_id, x = pid != null ? (MAGNA.playerStats()[pid] || {}) : {};
+    var tabs = h('div', 'cx-t'), stage = h('div', 'cx-s'), cur = 'rank', hasEq = !!(inv && Object.keys(inv.eq || {}).some(function (k) { return inv.eq[k] && k !== it.type; }));
+    function eqNow() { var e = {}; if (combo && inv) Object.keys(inv.eq || {}).forEach(function (k) { if (inv.eq[k]) e[k] = inv.eq[k]; }); e[it.type] = it.id; return e; }
+    function av(size, e) { var a = M.tierAv(nm, x.media != null ? x.media : 70, size, pid); var f = e.frame && M.item(e.frame); if (f && f.type === 'frame') { a.classList.add('fr-' + f.style); if (f.lv) a.dataset.lvi = f.lv; } return a; }
+    function name(e, big) { var n = h('span', 'mpn'); n.appendChild(h('span', 'mpn-n', nm)); M.nameStyle(n, e); var t = e.title && M.item(e.title); if (t && t.type === 'title') n.appendChild(h('small', 'mpn-t tr-' + (t.rarity || 'comun'), t.name)); if (big) n.style.fontSize = '26px'; return n; }
+    function draw() { stage.innerHTML = ''; var e = eqNow(), sc;
+      if (cur === 'rank') { sc = h('div', 'cx-rk'); [['2', 'Zirma', 84], ['1', null, 0], ['3', 'Gowther', 81]].sort(function (a, b) { return a[0] - b[0]; }).forEach(function (r) { var row = h('div', 'cx-row' + (r[1] ? '' : ' me')); row.appendChild(h('b', 'n', r[0])); if (r[1]) { row.appendChild(M.tierAv(r[1], r[2], 30)); row.appendChild(h('span', 'o', r[1])); } else { row.appendChild(av(30, e)); row.appendChild(name(e)); } row.appendChild(h('em', null, r[1] ? String(r[2]) : 'TÚ')); sc.appendChild(row); }); }
+      else if (cur === 'pitch') { sc = h('div', 'cx-pt'); ['Zirma', null, 'Gowther'].forEach(function (n2, i) { var tk = h('div', 'tk' + (n2 ? '' : ' me')); tk.style.left = [20, 50, 80][i] + '%'; tk.style.top = [62, 36, 62][i] + '%'; tk.appendChild(n2 ? M.tierAv(n2, 75, 40) : av(46, e)); var nn = n2 ? h('span', 'o', n2) : name(e); tk.appendChild(nn); sc.appendChild(tk); }); }
+      else { sc = h('div', 'cx-pf'); sc.appendChild(av(84, e)); var d = h('div'); d.appendChild(name(e, true)); d.appendChild(h('small', null, 'Perfil público · Magna Arena')); sc.appendChild(d); }
+      stage.appendChild(sc); }
+    [['rank', '🏆 Ranking'], ['pitch', '⚽ Alineación'], ['prof', '👤 Perfil']].forEach(function (t) { var b = h('button', t[0] === cur ? 'on' : '', t[1]); b.type = 'button'; b.onclick = function () { cur = t[0]; [].forEach.call(tabs.children, function (c) { c.classList.toggle('on', c === b); }); draw(); }; tabs.appendChild(b); });
+    box.appendChild(h('small', 'cx-l', 'Así se ve en…')); box.appendChild(tabs); box.appendChild(stage);
+    if (hasEq) { var tg = h('button', 'ts-tg cx-c' + (combo ? ' on' : '')); tg.type = 'button'; tg.setAttribute('aria-pressed', combo); tg.appendChild(h('i')); tg.appendChild(document.createTextNode('Combinar con lo que llevas puesto')); tg.onclick = function () { combo = !combo; tg.classList.toggle('on', combo); tg.setAttribute('aria-pressed', combo); draw(); }; box.appendChild(tg); }
+    draw(); return box;
+  }
+  function celebrate(it) { render(); I.toast('🎉 ¡' + it.name + ' es tuyo y ya lo llevas puesto!');
+    var bal = document.querySelector('.ts-bal'); if (bal) MAGNA_BIT.burst(bal, 18);
+    var fx = h('div', 'ts-win'), in2 = h('div', 'in'); in2.appendChild(h('small', null, '¡Nuevo cosmético!')); in2.appendChild(M.cosPreview(it, acc.display_name, acc.player_id)); in2.appendChild(h('b', null, it.name)); fx.appendChild(in2);
+    for (var k = 0; k < 26; k++) { var p = h('i', 'cf2'); p.style.left = Math.random() * 100 + '%'; p.style.background = ['#c6f432', '#ffd23f', '#ff5ad1', '#22d3ee', '#ff8a00'][k % 5]; p.style.animationDelay = Math.random() * .5 + 's'; p.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg'); fx.appendChild(p); }
+    fx.onclick = function () { fx.remove(); }; document.body.appendChild(fx); setTimeout(function () { fx.classList.add('out'); setTimeout(function () { fx.remove(); }, 400); }, 2200); }
+  function wear(it) { busy = true; render(); I.equip(it.type, it.id).then(function () { busy = false; inv.eq[it.type] = it.id; I.syncSelf(acc, inv.eq); I.toast('¡' + it.name + ' equipado!'); render(); }, function (e) { busy = false; I.toast(e.message || 'No se pudo equipar', true); render(); }); }
+
+  // ---------- montaje ----------
+  function render() {
+    var y = window.scrollY; root.innerHTML = ''; gridEl = null;
+    if (!SH().filter(function (x) { return x.active !== false; }).length) { root.appendChild(hero()); var e = h('div', 'tn-emp'); e.style.marginTop = '26px'; e.appendChild(h('b', null, '🛍️ La tienda abre muy pronto')); e.appendChild(h('p', null, 'La administración está preparando los primeros cosméticos.')); root.appendChild(e); return; }
+    root.appendChild(shopTop());
+    var spc = special(); if (spc) { root.appendChild(spc); if (window.IntersectionObserver) { var spIO = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('cos-off', !e.isIntersecting); }); }, { rootMargin: '150px 0px' }); [].forEach.call(spc.querySelectorAll('.ts-spc'), function (c) { spIO.observe(c); }); } } root.appendChild(cta());
+    window.scrollTo(0, y);
+  }
   function boot() { render();
     if (!window.ACCOUNTS) { ready = true; return render(); }
     ACCOUNTS.me().then(function (a) { acc = a; ready = true; if (!a) return render(); return I.data().then(function (d) { inv = d; render(); }, function () { inv = { rows: [], eq: {} }; render(); }); }, function () { ready = true; render(); }); }
   window.addEventListener('magna:update', function () { if (!busy) render(); });
+  window.addEventListener('magna:cosloaded', function () { if (!busy && !(document.activeElement && document.activeElement.type === 'search') && !document.querySelector('.ts-win')) render(); });
+  window.addEventListener('magna:cos', function () { if (!busy && document.activeElement && document.activeElement.type !== 'search') render(); });
   if (document.readyState === 'complete') boot(); else addEventListener('load', boot);
 })();

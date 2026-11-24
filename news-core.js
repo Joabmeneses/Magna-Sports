@@ -29,7 +29,7 @@ window.NEWS = (function () {
   function ago(s) { var d = (Date.now() - new Date(s).getTime()) / 1000; if (d < 60) return 'hace un momento'; if (d < 3600) return 'hace ' + Math.floor(d / 60) + ' min'; if (d < 86400) return 'hace ' + Math.floor(d / 3600) + ' h'; if (d < 7 * 86400) return 'hace ' + Math.floor(d / 86400) + ' d'; return fdate(s); }
   function sb() { return window.MAGNA_SB(); }
   // ---------- lectura pública ----------
-  function listPublic() { return sb().then(function (c) { return c.from('articles').select('id,title,summary,body,category,cover_url,status,publish_at,featured,updated_at').in('status', ['published', 'scheduled']).lte('publish_at', new Date().toISOString()).order('publish_at', { ascending: false }).limit(200); }); }
+  function listPublic() { return sb().then(function (c) { return c.from('articles').select('id,title,summary,body,category,cover_url,status,publish_at,featured,updated_at,agent').in('status', ['published', 'scheduled']).lte('publish_at', new Date().toISOString()).order('publish_at', { ascending: false }).limit(200); }); }
   function totals(ids) { return sb().then(function (c) { return ids.length ? c.from('article_reaction_totals').select('article_id,emoji,total').in('article_id', ids) : { data: [] }; }); }
   function session() { return sb().then(function (c) { return c.auth.getSession().then(function (r) { return r.data && r.data.session; }); }); }
   function isAdmin() { return session().then(function (s) { if (!s || s.user.is_anonymous) return false; return sb().then(function (c) { return c.rpc('is_admin').then(function (r) { return r.data === true; }); }); }).catch(function () { return false; }); }
@@ -46,7 +46,7 @@ window.NEWS = (function () {
   function chk(r) { if (r && r.error) throw r.error; return r; }
   // ---------- administración ----------
   function listAll() { return sb().then(function (c) { return c.from('articles').select('*').order('publish_at', { ascending: false }).limit(500).then(chk); }); }
-  function save(a) { return sb().then(function (c) { var row = { title: a.title, summary: a.summary, body: a.body, category: a.category, cover_url: a.cover_url || null, status: a.status, publish_at: a.publish_at, featured: !!a.featured };
+  function save(a) { return sb().then(function (c) { var row = { title: a.title, summary: a.summary, body: a.body, category: a.category, cover_url: a.cover_url || null, status: a.status, publish_at: a.publish_at, featured: !!a.featured, agent: a.agent || null };
     if (a.id) return c.from('articles').update(row).eq('id', a.id).select().then(chk);
     row.author_email = a.author_email || null; return c.from('articles').insert(row).select().then(chk); }); }
   function remove(id) { return sb().then(function (c) { return c.from('articles').delete().eq('id', id).then(chk); }); }
@@ -60,7 +60,7 @@ window.NEWS = (function () {
   // Portada combinada 1600x900: fondo (diseño de marca o foto) + mascota opcional + título opcional. La mascota no se altera: solo se coloca y se funde con el fondo.
   function compose(o) {
     var W = 1600, H = 900, cv = document.createElement('canvas'); cv.width = W; cv.height = H; var x = cv.getContext('2d'), cc = cat(o.category), F = 'Archivo, "Arial Narrow", Arial, sans-serif';
-    var jobs = [o.photo ? loadImg(o.photo) : null, o.mascot ? loadImg(mascotUrl(o.mascot)) : null, loadImg('logo.png').catch(function () { return null; })];
+    var jobs = [o.photo ? loadImg(o.photo) : null, o.mascot ? loadImg(mascotUrl(o.mascot)) : null, loadImg('logo.webp').catch(function () { return null; })];
     return Promise.all(jobs).then(function (ims) {
       var ph = ims[0], ms = ims[1], lg = ims[2];
       if (ph) { var k = Math.max(W / ph.width, H / ph.height); x.drawImage(ph, (W - ph.width * k) / 2, (H - ph.height * k) / 2, ph.width * k, ph.height * k); var sh = x.createLinearGradient(0, 0, W, 0); sh.addColorStop(0, 'rgba(10,13,24,.88)'); sh.addColorStop(.6, 'rgba(10,13,24,.35)'); sh.addColorStop(1, 'rgba(10,13,24,.1)'); if (o.title || ms) { x.fillStyle = sh; x.fillRect(0, 0, W, H); } }
@@ -91,6 +91,46 @@ window.NEWS = (function () {
       return toBlob(cv, .9).then(function (b) { return { blob: b, url: URL.createObjectURL(b) }; });
     });
   }
-  return { CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
+  // ---------- cuentas oficiales que publican (agentes) ----------
+  // id, nombre, @usuario, color, color del texto, sigla del avatar, fondo de portada
+  var AGENTS = [
+    ['magna', 'Magna Sports', 'magnasports', '#c6ff1a', '#0c0716', 'M', null, 'Cuenta oficial de la comunidad'],
+    ['champions', 'Champions Magna', 'championsmagna', '#3b5bff', '#ffffff', '★', 'img/bn-champions-sm.webp', 'Cuenta oficial de la Champions'],
+    ['omega', 'OmegaCup Oficial', 'omegacup', '#ff6a1a', '#1a0600', 'Ω', 'img/bn-omega-sm.webp', 'Cuenta oficial de la OmegaCup'],
+    ['starnova', 'Supernova Oficial', 'supernova', '#8b5cf6', '#ffffff', '✦', 'img/bn-starnova-sm.webp', 'Cuenta oficial de la Supernova'],
+    ['mundial', 'Mundial Magna', 'mundialmagna', '#2ee59d', '#04140d', 'W', null, 'Cuenta oficial del Mundial'],
+    ['ligas', 'Ligas Magna', 'ligasmagna', '#ffd23f', '#1a1400', 'L', null, 'Cuenta oficial de las ligas'],
+    ['mercado', 'Mercado Magna', 'mercadomagna', '#ff4fa3', '#ffffff', '⇄', null, 'Fichajes y mercado'],
+    ['amistosos', 'Amistosos Magna', 'amistososmagna', '#22d3ee', '#04141a', '🤝', 'img/bn-amistoso-sm.webp', 'Partidos amistosos'],
+    ['presidente', 'Presidente de Magna Sports', 'presidentemagna', '#ffd23f', '#1a1400', '♛', null, 'Mensajes del presidente de la comunidad'],
+    // periodistas con IA (personajes ficticios: escriben con datos reales de la página)
+    ['ia-pizarra', 'Valentina Pizarra', 'lapizarra', '#22d3ee', '#04141a', 'VP', null, 'Periodista IA · análisis táctico y tablas', 1, 'img/ia-pizarra.svg'],
+    ['ia-relato', 'Facundo Relato', 'elrelato', '#ff5a36', '#ffffff', 'FR', null, 'Periodista IA · crónicas de partido', 1, 'img/ia-relato.svg'],
+    ['ia-dato', 'Dato Duro', 'datoduro', '#2ee59d', '#04140d', 'DD', null, 'Periodista IA · estadísticas, ranking y apuestas', 1, 'img/ia-dato.webp'],
+    ['ia-mercado', 'Mercado Picante', 'mercadopicante', '#ff4fa3', '#ffffff', 'MP', null, 'Periodista IA · fichajes y mercado', 1, 'img/ia-mercado.webp']];
+  function slugT(n) { return String(n || 'equipo').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ''); }
+  function agent(id) { var jm = /^juez:(\d+)$/.exec(id || ''); if (jm) { var pid = Number(jm[1]), pn = (window.MAGNA && MAGNA.playerName && MAGNA.playerName(pid)) || 'Juez ' + pid;
+      return { id: id, judge: pid, name: pn, handle: '@juez' + slugT(pn), color: '#8b5cf6', ink: '#ffffff', mark: String(pn).slice(0, 2).toUpperCase(), crest: null, bg: null, bio: 'Juez oficial de Magna Sports', kind: 'judge' }; }
+    var m = /^team:(\d+)$/.exec(id || ''); if (m && window.MAGNA) { var tid = Number(m[1]), nm = MAGNA.teamName(tid), col = MAGNA.teamColor ? MAGNA.teamColor(tid) : '#8b5cf6';
+      return { id: id, team: tid, name: nm, handle: '@' + slugT(nm), color: col, ink: '#ffffff', mark: String(nm).slice(0, 2).toUpperCase(), crest: MAGNA.crestUrl ? MAGNA.crestUrl(tid) : null, bg: null, bio: 'Cuenta oficial del equipo ' + nm, kind: 'team' }; }
+    var g = agent0(id); if (g) g.kind = g.ai ? 'ai' : id === 'presidente' ? 'pres' : 'org'; return g; }
+  function agent0(id) { for (var i = 0; i < AGENTS.length; i++) if (AGENTS[i][0] === id) { var x = AGENTS[i]; return { id: x[0], name: x[1], handle: '@' + x[2], color: x[3], ink: x[4], mark: x[5], bg: x[6], bio: x[7], ai: !!x[8], crest: x[9] || null }; } return null; }
+  // cuenta que publica: la elegida en el panel o, si no hay, la que corresponde por el tema
+  function agentOf(a) { var g = a && a.agent && agent(a.agent); if (g) return g; var t = ((a && a.title) || '') + ' ' + ((a && a.summary) || '');
+    return agent(/champions/i.test(t) ? 'champions' : /omega/i.test(t) ? 'omega' : /(star|super)\s*nova/i.test(t) ? 'starnova' : /mundial/i.test(t) ? 'mundial' : a && a.category === 'fichajes' ? 'mercado' : /amistos/i.test(t) ? 'amistosos' : a && /^(primera|segunda|tercera)$/.test(a.category) ? 'ligas' : 'magna'); }
+  // ---------- comentarios ----------
+  function myTeam() { return sb().then(function (c) { return c.rpc('team_post_me').then(function (r) { return r.error ? null : r.data; }); }).catch(function () { return null; }); }
+  function teamPost(t, su, b) { return sb().then(function (c) { return c.rpc('team_post', { p_title: t, p_summary: su, p_body: b }).then(chk); }); }
+  function follows() { return sb().then(function (c) { return c.rpc('news_follows').then(function (r) { var o = {}; (r.data || []).forEach(function (x) { o[x.agent] = { n: x.followers, mine: !!x.mine }; }); return o; }); }).catch(function () { return {}; }); }
+  function follow(ag, on) { return sb().then(function (c) { return c.rpc('news_follow', { p_agent: ag, p_on: !!on }).then(chk).then(function (r) { return r.data; }); }); }
+  function notifyDue() { return sb().then(function (c) { return c.rpc('news_notify_due'); }).catch(function () {}); }
+  function myJudge() { return sb().then(function (c) { return c.rpc('judge_post_me').then(function (r) { return r.error ? null : r.data; }); }).catch(function () { return null; }); }
+  function judgePost(t, su, b) { return sb().then(function (c) { return c.rpc('judge_post', { p_title: t, p_summary: su, p_body: b }).then(chk); }); }
+  function teamPostDel(id) { return sb().then(function (c) { return c.rpc('team_post_del', { p_id: id }).then(chk); }); }
+  function comments(id) { return sb().then(function (c) { return c.rpc('news_comments', { p_article: id }).then(chk); }); }
+  function commentCounts(ids) { return sb().then(function (c) { return ids.length ? c.rpc('news_comment_counts', { p_ids: ids }).then(chk) : { data: [] }; }); }
+  function comment(id, body) { return sb().then(function (c) { return c.rpc('news_comment_add', { p_article: id, p_body: body }).then(chk); }); }
+  function uncomment(cid) { return sb().then(function (c) { return c.rpc('news_comment_del', { p_id: cid }).then(chk); }); }
+  return { follows: follows, follow: follow, notifyDue: notifyDue, myJudge: myJudge, judgePost: judgePost, myTeam: myTeam, teamPost: teamPost, teamPostDel: teamPostDel, AGENTS: AGENTS, agent: agent, agentOf: agentOf, comments: comments, commentCounts: commentCounts, comment: comment, uncomment: uncomment, CATS: CATS, REACT: REACT, MASCOT: MASCOT, cat: cat, mascotUrl: mascotUrl, esc: esc, render: render, fdate: fdate, ago: ago,
     listPublic: listPublic, totals: totals, session: session, isAdmin: isAdmin, mine: mine, react: react, listAll: listAll, save: save, remove: remove, upload: upload, prepPhoto: prepPhoto, compose: compose, toBlob: toBlob };
 })();
