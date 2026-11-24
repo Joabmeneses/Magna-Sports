@@ -115,7 +115,18 @@
     var t = (c.querySelector('.mc-cat span') || {}).textContent || '', k = /champions/i.test(t) ? 'champions' : /(star|super)\s*nova/i.test(t) ? 'starnova' : /omega/i.test(t) ? 'omega' : /amistos/i.test(t) ? 'amistoso' : /mundial/i.test(t) ? 'mundial' : isLeague(t) ? 'liga' : '';
     if ((c.getAttribute('data-comp') || '') !== k) { if (k) c.setAttribute('data-comp', k); else c.removeAttribute('data-comp'); }
     if (!c.style.getPropertyValue('--i')) { c.style.setProperty('--i', i); c.style.setProperty('--tilt', (i % 2 ? 1.2 : -1.2) + 'deg'); } }); }
-  function all() { lead(); clock(); fanBar(); deco(); names(); cards(); }
+  // transmisión del partido: botón en la franja superior y reproductor debajo del marcador
+  var stOpen = null, stPl = null;
+  function stream() {
+    if (!window.MSTREAM || !B) return; var m = cur(), M = window.MAGNA, sm = m && M && M.S && M.by ? M.by(M.S.matches, m.mid) : null, url = sm && sm.stream && sm.status !== 'cancelled' ? sm.stream : null, s = url && MSTREAM.parse(url);
+    var bt = $('.es-tv', B), row = $('.es-tl', B); B.toggleAttribute('data-tv', !!(s && sm.status === 'live'));
+    if (!s) { if (bt) bt.remove(); if (stPl) { stPl.remove(); stPl = null; } stOpen = null; return; }
+    if (!bt && row) { bt = el('button', 'es-tv'); bt.type = 'button'; bt.onclick = function (e) { e.stopPropagation(); stOpen = stOpen === url ? null : url; stream(); if (stOpen && stPl) stPl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }; row.appendChild(bt); }
+    if (bt) { var on = stOpen === url; bt.textContent = on ? '✕ Cerrar video' : sm.status === 'live' ? '📺 Ver transmisión' : sm.status === 'finished' ? '▶ Ver repetición' : '📺 Se transmite aquí'; bt.classList.toggle('on', on); }
+    if (stOpen !== url && stPl) { stPl.remove(); stPl = null; }
+    if (stOpen === url && !stPl) { stPl = el('section', 'es-stream'); var hd = el('div', 'es-sth'); hd.appendChild(el('b', null, (sm.status === 'live' ? '● EN VIVO · ' : '') + s.n)); hd.appendChild(el('span', null, (m.h || '') + ' vs ' + (m.a || ''))); stPl.appendChild(hd); stPl.appendChild(MSTREAM.player(url)); B.parentNode.insertBefore(stPl, B.nextSibling); }
+  }
+  function all() { lead(); clock(); fanBar(); deco(); names(); cards(); stream(); }
 
   // imágenes para descargar/compartir (marcador y alineación); match-poster.js se carga al pedirlas
   var LP = null;

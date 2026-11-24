@@ -52,6 +52,7 @@
     s.appendChild(sb);
     var ac = h('div', 'pt-ac'), sh = h('button', 'pt-b o', '🔗 Compartir partido'); sh.type = 'button'; sh.onclick = function () { share(m); }; ac.appendChild(sh); if (window.SHARE_CARD) { var im = h('button', 'pt-b y', '📸 Imagen del partido'); im.type = 'button'; im.onclick = function () { SHARE_CARD.open('match', function () { return cardData(m); }); }; ac.appendChild(im); }
     if (live) { var lv = h('a', 'pt-b r', '📺 Ver en vivo'); lv.href = 'index.html?m=' + m.id; ac.appendChild(lv); }
+    if (m.stream && window.MSTREAM && MSTREAM.ok(m.stream)) { var tv = h('a', 'pt-b r', m.status === 'finished' ? '▶ Ver repetición' : '📺 Transmisión'); tv.href = '#video'; ac.appendChild(tv); }
     if (m.status === 'scheduled') { var ap = h('a', 'pt-b', '🎲 Apostar'); ap.href = 'apuestas.html'; ac.appendChild(ap); }
     var cal = h('a', 'pt-b', '📅 Calendario'); cal.href = 'calendario.html'; ac.appendChild(cal); s.appendChild(ac);
     return s; }
@@ -122,6 +123,7 @@
     if (!m) { var e = h('div', 'pt-emp'); e.appendChild(h('h1', 'x', 'No encontramos ese partido')); e.appendChild(h('p', 'em', 'Puede que se haya borrado o que el enlace esté incompleto.')); var a = h('a', 'pt-b o', 'Ir al calendario'); a.href = 'calendario.html'; e.appendChild(a); root.appendChild(e); return; }
     document.title = nm(m.home) + ' vs ' + nm(m.away) + ' · Magna Arena';
     root.appendChild(hero(m));
+    if (m.stream && window.MSTREAM && MSTREAM.ok(m.stream)) { var vs = h('section', 'pt-s'); vs.id = 'video'; vs.appendChild(h('h2', 'x', m.status === 'finished' ? '▶ Repetición' : m.status === 'live' ? '📺 En vivo' : '📺 Se transmite aquí')); vs.appendChild(MSTREAM.player(m.stream)); vs.style.paddingBottom = '40px'; root.appendChild(vs); }
     var played = m.status === 'live' || m.status === 'finished';
     if (played) { root.appendChild(facts(m)); var st = sets(m); if (st) root.appendChild(st); root.appendChild(lineups(m)); root.appendChild(timeline(m)); }
     else { var pv = preview(m); if (pv) root.appendChild(pv); var st2 = sets(m); if (st2) root.appendChild(st2); root.appendChild(timeline(m)); }

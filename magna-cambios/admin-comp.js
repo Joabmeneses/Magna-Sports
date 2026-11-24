@@ -1,7 +1,7 @@
 'use strict';
 // Panel de administración · módulo «comp»: se descarga solo al abrir su sección (lo carga admin.js).
 ADMIN_MOD('comp', function (A) {
-  var resultDlg = A.resultDlg, matchDlg = A.matchDlg;
+  var resultDlg = A.resultDlg, matchDlg = A.matchDlg, streamDlg = A.streamDlg;
   var $ = A.$, ibtn = A.ibtn, ppSum = A.ppSum, stack = A.stack, S = A.S, ask = A.ask, banner = A.banner, btn = A.btn, by = A.by, commit = A.commit, confirmBox = A.confirmBox, dialog = A.dialog, evRpc = A.evRpc, go = A.go, h = A.h, nk = A.nk, okName = A.okName, render = A.render, rr = A.rr, table = A.table, toast = A.toast;
   function predDlg(c) {
     dialog('🔮 Predicciones · ' + c.name, function (b, close) {
@@ -296,6 +296,7 @@ ADMIN_MOD('comp', function (A) {
         [['h', m.home], null, ['a', m.away]].forEach(function (x) { if (!x) { var sc = h('div', 'gm-sc'); sc.appendChild(h('strong', null, f || lv ? (m.hs || 0) + ' - ' + (m.as || 0) : 'vs')); sc.appendChild(h('small', null, lv ? '● En vivo' : f ? 'Final' : m.at ? A.fdate(m.at) : 'Sin fecha')); r.appendChild(sc); return; }
           var w = f && ((x[0] === 'h' && m.hs > m.as) || (x[0] === 'a' && m.as > m.hs)), t = h('div', 't ' + x[0] + (w ? ' w' : '')); t.appendChild(M.crest(x[1], MAGNA.teamName(x[1]), 26)); t.appendChild(h('b', null, MAGNA.teamName(x[1]))); r.appendChild(t); });
         var ac = h('div', 'gm-ac'); if (!lv && resultDlg) { var rb = btn(f ? '✎' : 'Resultado', function () { resultDlg(m); }, f ? '' : 'o'); rb.title = f ? 'Corregir resultado' : 'Cargar resultado'; ac.appendChild(rb); }
+        if (streamDlg) { var sb2 = btn(m.stream ? '📺✓' : '📺', function () { streamDlg(m); }, m.stream ? 'o' : ''); sb2.title = m.stream ? 'Cambiar transmisión' : 'Poner enlace de transmisión'; ac.appendChild(sb2); }
         if (!f && matchDlg) { var fb = btn('📅', function () { matchDlg(m); }); fb.title = m.at ? 'Cambiar fecha' : 'Poner fecha'; ac.appendChild(fb); }
         if (canDel && m.status === 'scheduled') { var xb = btn('✕', function () { confirmBox('¿Borrar este partido?', MAGNA.teamName(m.home) + ' vs ' + MAGNA.teamName(m.away) + ' (' + k + '). Aún no se ha jugado.', 'Borrar', function () { S().matches = S().matches.filter(function (z) { return z.id !== m.id; }); done(null, 'Partido borrado'); }); }, 'd'); xb.title = 'Borrar partido'; ac.appendChild(xb); }
         r.appendChild(ac); L.appendChild(r); });
